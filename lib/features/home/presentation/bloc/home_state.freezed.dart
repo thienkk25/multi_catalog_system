@@ -131,14 +131,14 @@ return page(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( String data)?  success,TResult Function( String message)?  error,TResult Function( int index)?  page,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( String data)?  success,TResult Function( String message)?  error,TResult Function( int index,  String title)?  page,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case _Loading() when loading != null:
 return loading();case _Success() when success != null:
 return success(_that.data);case _Error() when error != null:
 return error(_that.message);case _Page() when page != null:
-return page(_that.index);case _:
+return page(_that.index,_that.title);case _:
   return orElse();
 
 }
@@ -156,14 +156,14 @@ return page(_that.index);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( String data)  success,required TResult Function( String message)  error,required TResult Function( int index)  page,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( String data)  success,required TResult Function( String message)  error,required TResult Function( int index,  String title)  page,}) {final _that = this;
 switch (_that) {
 case _Initial():
 return initial();case _Loading():
 return loading();case _Success():
 return success(_that.data);case _Error():
 return error(_that.message);case _Page():
-return page(_that.index);case _:
+return page(_that.index,_that.title);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -180,14 +180,14 @@ return page(_that.index);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( String data)?  success,TResult? Function( String message)?  error,TResult? Function( int index)?  page,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( String data)?  success,TResult? Function( String message)?  error,TResult? Function( int index,  String title)?  page,}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case _Loading() when loading != null:
 return loading();case _Success() when success != null:
 return success(_that.data);case _Error() when error != null:
 return error(_that.message);case _Page() when page != null:
-return page(_that.index);case _:
+return page(_that.index,_that.title);case _:
   return null;
 
 }
@@ -395,10 +395,11 @@ as String,
 
 
 class _Page implements HomeState {
-  const _Page(this.index);
+  const _Page(this.index, this.title);
   
 
  final  int index;
+ final  String title;
 
 /// Create a copy of HomeState
 /// with the given fields replaced by the non-null parameter values.
@@ -410,16 +411,16 @@ _$PageCopyWith<_Page> get copyWith => __$PageCopyWithImpl<_Page>(this, _$identit
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Page&&(identical(other.index, index) || other.index == index));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Page&&(identical(other.index, index) || other.index == index)&&(identical(other.title, title) || other.title == title));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,index);
+int get hashCode => Object.hash(runtimeType,index,title);
 
 @override
 String toString() {
-  return 'HomeState.page(index: $index)';
+  return 'HomeState.page(index: $index, title: $title)';
 }
 
 
@@ -430,7 +431,7 @@ abstract mixin class _$PageCopyWith<$Res> implements $HomeStateCopyWith<$Res> {
   factory _$PageCopyWith(_Page value, $Res Function(_Page) _then) = __$PageCopyWithImpl;
 @useResult
 $Res call({
- int index
+ int index, String title
 });
 
 
@@ -447,10 +448,11 @@ class __$PageCopyWithImpl<$Res>
 
 /// Create a copy of HomeState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? index = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? index = null,Object? title = null,}) {
   return _then(_Page(
 null == index ? _self.index : index // ignore: cast_nullable_to_non_nullable
-as int,
+as int,null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as String,
   ));
 }
 

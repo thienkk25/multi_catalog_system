@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:multi_catalog_system/features/home/presentation/bloc/home_bloc.dart';
+import 'package:multi_catalog_system/features/home/presentation/bloc/home_event.dart';
+import 'package:multi_catalog_system/features/home/presentation/bloc/home_state.dart';
 
 class DrawerWidget extends StatelessWidget {
   const DrawerWidget({super.key});
@@ -57,144 +61,84 @@ class _MainDrawer extends StatelessWidget {
           spacing: 10,
           children: [
             Divider(),
-            InkWell(
-              borderRadius: BorderRadius.circular(10),
-              hoverColor: Colors.blue.withValues(alpha: .2),
-              onTap: () {},
-              child: ListTile(
-                leading: Icon(Icons.search, size: 20),
-                title: Text('Tra cứu danh mục'),
-              ),
+            _DrawerItem(
+              icon: Icon(Icons.search, size: 20),
+              title: 'Tra cứu danh mục',
+              pageIndex: 0,
             ),
-            InkWell(
-              borderRadius: BorderRadius.circular(10),
-              hoverColor: Colors.blue.withValues(alpha: .2),
-              onTap: () {},
-              child: ListTile(
-                leading: SvgPicture.asset(
-                  'assets/icons/folder-favourites-svgrepo-com.svg',
-                  height: 20,
-                  width: 20,
-                  fit: BoxFit.contain,
-                ),
-                title: Text('Lĩnh vực'),
+            _DrawerItem(
+              icon: SvgPicture.asset(
+                'assets/icons/folder-favourites-svgrepo-com.svg',
+                height: 20,
               ),
+              title: 'Lĩnh vực',
+              pageIndex: 1,
             ),
-
-            InkWell(
-              borderRadius: BorderRadius.circular(10),
-              hoverColor: Colors.blue.withValues(alpha: .2),
-              onTap: () {},
-              child: ListTile(
-                leading: SvgPicture.asset(
-                  'assets/icons/folder-document-svgrepo-com.svg',
-                  height: 20,
-                  width: 20,
-                  fit: BoxFit.contain,
-                ),
-                title: Text('Nhóm danh mục'),
+            _DrawerItem(
+              icon: SvgPicture.asset(
+                'assets/icons/folder-document-svgrepo-com.svg',
+                height: 20,
               ),
+              title: 'Nhóm danh mục',
+              pageIndex: 2,
             ),
-            InkWell(
-              borderRadius: BorderRadius.circular(10),
-              hoverColor: Colors.blue.withValues(alpha: .2),
-              onTap: () {},
-              child: ListTile(
-                leading: SvgPicture.asset(
-                  'assets/icons/document-text-svgrepo-com.svg',
-                  height: 20,
-                  width: 20,
-                  fit: BoxFit.contain,
-                ),
-                title: Text('Mục danh mục'),
+            _DrawerItem(
+              icon: SvgPicture.asset(
+                'assets/icons/document-text-svgrepo-com.svg',
+                height: 20,
               ),
+              title: 'Mục danh mục',
+              pageIndex: 3,
             ),
-            InkWell(
-              borderRadius: BorderRadius.circular(10),
-              hoverColor: Colors.blue.withValues(alpha: .2),
-              onTap: () {},
-              child: ListTile(
-                leading: SvgPicture.asset(
-                  'assets/icons/legal-hammer-symbol-svgrepo-com.svg',
-                  height: 20,
-                  width: 20,
-                  fit: BoxFit.contain,
-                ),
-                title: Text('Văn bản pháp lý'),
+            _DrawerItem(
+              icon: SvgPicture.asset(
+                'assets/icons/legal-hammer-symbol-svgrepo-com.svg',
+                height: 20,
               ),
+              title: 'Văn bản pháp lý',
+              pageIndex: 4,
             ),
-            InkWell(
-              borderRadius: BorderRadius.circular(10),
-              hoverColor: Colors.blue.withValues(alpha: .2),
-              onTap: () {},
-              child: ListTile(
-                leading: SvgPicture.asset(
-                  'assets/icons/approve-invoice-svgrepo-com.svg',
-                  height: 20,
-                  width: 20,
-                  fit: BoxFit.contain,
-                ),
-                title: Text('Danh sách chờ duyệt'),
+            _DrawerItem(
+              icon: SvgPicture.asset(
+                'assets/icons/approve-invoice-svgrepo-com.svg',
+                height: 20,
               ),
+              title: 'Danh sách chờ duyệt',
+              pageIndex: 5,
             ),
 
             Divider(),
 
-            InkWell(
-              borderRadius: BorderRadius.circular(10),
-              hoverColor: Colors.blue.withValues(alpha: .2),
-              onTap: () {},
-              child: ListTile(
-                leading: SvgPicture.asset(
-                  'assets/icons/import-svgrepo-com.svg',
-                  height: 20,
-                  width: 20,
-                  fit: BoxFit.contain,
-                ),
-                title: Text('Nhập dữ liệu File'),
+            _DrawerItem(
+              icon: SvgPicture.asset(
+                'assets/icons/import-svgrepo-com.svg',
+                height: 20,
               ),
+              title: 'Nhập dữ liệu File',
+              onTap: () {
+                // custom action
+              },
             ),
-            InkWell(
-              borderRadius: BorderRadius.circular(10),
-              hoverColor: Colors.blue.withValues(alpha: .2),
-              onTap: () {},
-              child: ListTile(
-                leading: SvgPicture.asset(
-                  'assets/icons/group-svgrepo-com.svg',
-                  height: 20,
-                  width: 20,
-                  fit: BoxFit.contain,
-                ),
-                title: Text('Quản lý người dùng'),
+            _DrawerItem(
+              icon: SvgPicture.asset(
+                'assets/icons/group-svgrepo-com.svg',
+                height: 20,
               ),
+              title: 'Quản lý người dùng',
             ),
-            InkWell(
-              borderRadius: BorderRadius.circular(10),
-              hoverColor: Colors.blue.withValues(alpha: .2),
-              onTap: () {},
-              child: ListTile(
-                leading: SvgPicture.asset(
-                  'assets/icons/key-svgrepo-com.svg',
-                  height: 20,
-                  width: 20,
-                  fit: BoxFit.contain,
-                ),
-                title: Text('API Key'),
+            _DrawerItem(
+              icon: SvgPicture.asset(
+                'assets/icons/key-svgrepo-com.svg',
+                height: 20,
               ),
+              title: 'API Key',
             ),
-            InkWell(
-              borderRadius: BorderRadius.circular(10),
-              hoverColor: Colors.blue.withValues(alpha: .2),
-              onTap: () {},
-              child: ListTile(
-                leading: SvgPicture.asset(
-                  'assets/icons/history-svgrepo-com.svg',
-                  height: 20,
-                  width: 20,
-                  fit: BoxFit.contain,
-                ),
-                title: Text('Nhật kí hệ thống'),
+            _DrawerItem(
+              icon: SvgPicture.asset(
+                'assets/icons/history-svgrepo-com.svg',
+                height: 20,
               ),
+              title: 'Nhật kí hệ thống',
             ),
           ],
         ),
@@ -234,6 +178,49 @@ class _FooterDrawer extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _DrawerItem extends StatelessWidget {
+  final Widget icon;
+  final String title;
+  final int? pageIndex;
+  final VoidCallback? onTap;
+
+  const _DrawerItem({
+    required this.icon,
+    required this.title,
+    this.pageIndex,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final selected = pageIndex != null
+        ? (context.watch<HomeBloc>().state.mapOrNull(
+                page: (value) => value.index == pageIndex,
+              ) ??
+              false)
+        : false;
+
+    return InkWell(
+      borderRadius: BorderRadius.circular(10),
+      hoverColor: Colors.blue.withValues(alpha: .2),
+      onTap: () {
+        if (pageIndex != null) {
+          context.read<HomeBloc>().add(HomeEvent.changePage(pageIndex!, title));
+        } else {
+          onTap?.call();
+        }
+        Navigator.pop(context);
+      },
+      child: ListTile(
+        selected: selected,
+        selectedColor: const Color(0xFF1976D2),
+        leading: icon,
+        title: Text(title),
+      ),
     );
   }
 }

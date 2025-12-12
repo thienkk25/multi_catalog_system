@@ -7,5 +7,5 @@ class HomeEvent with _$HomeEvent {
   const factory HomeEvent.started() = _Started;
   const factory HomeEvent.fetchData() = _FetchData;
   const factory HomeEvent.refresh() = _Refresh;
-  const factory HomeEvent.changePage(int index) = _ChangePage;
+  const factory HomeEvent.changePage(int index, String title) = _ChangePage;
 }

@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:multi_catalog_system/core/config/app/url_strategy.dart'
     if (dart.library.html) 'package:multi_catalog_system/core/config/app/url_strategy_web.dart';
 import 'package:multi_catalog_system/core/core.dart';
+import 'package:multi_catalog_system/features/home/presentation/widgets/drawer_widget.dart';
+
+import 'features/features.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,10 +17,18 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: '',
-      routerConfig: AppRouter.router,
+    // return MaterialApp.router(
+    //   title: '',
+    //   routerConfig: AppRouter.router,
+    //   debugShowCheckedModeBanner: false,
+    // );
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Multi Catalog System')),
+        drawer: DrawerWidget(),
+        body: SafeArea(child: DomainPage()),
+      ),
     );
   }
 }

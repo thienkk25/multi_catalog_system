@@ -4,9 +4,11 @@ import 'home_event.dart';
 import 'home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
-  HomeBloc() : super(const HomeState.page(0)) {
+  HomeBloc() : super(const HomeState.page(0, 'Tra cứu Danh mục')) {
     on<HomeEvent>((event, emit) {
-      event.mapOrNull(changePage: (value) => emit(HomeState.page(value.index)));
+      event.mapOrNull(
+        changePage: (value) => emit(HomeState.page(value.index, value.title)),
+      );
     });
   }
 }

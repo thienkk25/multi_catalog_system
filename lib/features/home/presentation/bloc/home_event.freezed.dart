@@ -128,13 +128,13 @@ return changePage(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  started,TResult Function()?  fetchData,TResult Function()?  refresh,TResult Function( int index)?  changePage,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  started,TResult Function()?  fetchData,TResult Function()?  refresh,TResult Function( int index,  String title)?  changePage,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Started() when started != null:
 return started();case _FetchData() when fetchData != null:
 return fetchData();case _Refresh() when refresh != null:
 return refresh();case _ChangePage() when changePage != null:
-return changePage(_that.index);case _:
+return changePage(_that.index,_that.title);case _:
   return orElse();
 
 }
@@ -152,13 +152,13 @@ return changePage(_that.index);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  started,required TResult Function()  fetchData,required TResult Function()  refresh,required TResult Function( int index)  changePage,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  started,required TResult Function()  fetchData,required TResult Function()  refresh,required TResult Function( int index,  String title)  changePage,}) {final _that = this;
 switch (_that) {
 case _Started():
 return started();case _FetchData():
 return fetchData();case _Refresh():
 return refresh();case _ChangePage():
-return changePage(_that.index);case _:
+return changePage(_that.index,_that.title);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -175,13 +175,13 @@ return changePage(_that.index);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  started,TResult? Function()?  fetchData,TResult? Function()?  refresh,TResult? Function( int index)?  changePage,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  started,TResult? Function()?  fetchData,TResult? Function()?  refresh,TResult? Function( int index,  String title)?  changePage,}) {final _that = this;
 switch (_that) {
 case _Started() when started != null:
 return started();case _FetchData() when fetchData != null:
 return fetchData();case _Refresh() when refresh != null:
 return refresh();case _ChangePage() when changePage != null:
-return changePage(_that.index);case _:
+return changePage(_that.index,_that.title);case _:
   return null;
 
 }
@@ -289,10 +289,11 @@ String toString() {
 
 
 class _ChangePage implements HomeEvent {
-  const _ChangePage(this.index);
+  const _ChangePage(this.index, this.title);
   
 
  final  int index;
+ final  String title;
 
 /// Create a copy of HomeEvent
 /// with the given fields replaced by the non-null parameter values.
@@ -304,16 +305,16 @@ _$ChangePageCopyWith<_ChangePage> get copyWith => __$ChangePageCopyWithImpl<_Cha
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChangePage&&(identical(other.index, index) || other.index == index));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChangePage&&(identical(other.index, index) || other.index == index)&&(identical(other.title, title) || other.title == title));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,index);
+int get hashCode => Object.hash(runtimeType,index,title);
 
 @override
 String toString() {
-  return 'HomeEvent.changePage(index: $index)';
+  return 'HomeEvent.changePage(index: $index, title: $title)';
 }
 
 
@@ -324,7 +325,7 @@ abstract mixin class _$ChangePageCopyWith<$Res> implements $HomeEventCopyWith<$R
   factory _$ChangePageCopyWith(_ChangePage value, $Res Function(_ChangePage) _then) = __$ChangePageCopyWithImpl;
 @useResult
 $Res call({
- int index
+ int index, String title
 });
 
 
@@ -341,10 +342,11 @@ class __$ChangePageCopyWithImpl<$Res>
 
 /// Create a copy of HomeEvent
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? index = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? index = null,Object? title = null,}) {
   return _then(_ChangePage(
 null == index ? _self.index : index // ignore: cast_nullable_to_non_nullable
-as int,
+as int,null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as String,
   ));
 }
 
