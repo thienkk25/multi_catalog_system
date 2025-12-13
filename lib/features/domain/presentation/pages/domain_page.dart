@@ -27,11 +27,7 @@ class _DomainPageState extends State<DomainPage> {
             ],
           ),
         ),
-        Positioned(
-          right: 20,
-          bottom: 50,
-          child: FloatingActionButton(onPressed: () {}, child: Icon(Icons.add)),
-        ),
+        CustomFloatingActionButton(onPressedImport: () {}, onPressedAdd: () {}),
       ],
     );
   }
@@ -107,20 +103,15 @@ class _DomainGridView extends StatelessWidget {
                 Positioned(
                   right: 0,
                   top: 0,
-                  child: IconButton(
+                  child: PopupMenuButton(
                     icon: SvgPicture.asset(
                       'assets/icons/menu-vertical-menu-dots-more-svgrepo-com.svg',
                       width: 20,
                       height: 20,
                     ),
-                    onPressed: () {
-                      showModalBottomSheet(
-                        context: context,
-                        builder: (context) {
-                          return _DomainCardMenu();
-                        },
-                      );
-                    },
+                    itemBuilder: (context) => [
+                      PopupMenuItem(child: _DomainCardMenu()),
+                    ],
                   ),
                 ),
               ],
@@ -139,20 +130,30 @@ class _DomainCardMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
+      spacing: 5,
       children: [
-        ListTile(
-          leading: Icon(Icons.edit),
-          title: Text('Chỉnh sửa lĩnh vực'),
-          onTap: () {
-            Navigator.pop(context);
-          },
+        InkWell(
+          borderRadius: BorderRadius.circular(10),
+
+          onTap: () {},
+          child: Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: ListTile(
+              leading: Icon(Icons.edit, color: Colors.blue),
+              title: Text('Chỉnh sửa'),
+            ),
+          ),
         ),
-        ListTile(
-          leading: Icon(Icons.delete),
-          title: Text('Xóa lĩnh vực'),
-          onTap: () {
-            Navigator.pop(context);
-          },
+        InkWell(
+          borderRadius: BorderRadius.circular(10),
+          onTap: () {},
+          child: Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: ListTile(
+              leading: Icon(Icons.delete, color: Colors.red),
+              title: Text('Xóa'),
+            ),
+          ),
         ),
       ],
     );
