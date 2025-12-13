@@ -17,18 +17,32 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // return MaterialApp.router(
-    //   title: '',
-    //   routerConfig: AppRouter.router,
-    //   debugShowCheckedModeBanner: false,
-    // );
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: AppBar(title: const Text('Multi Catalog System')),
-        drawer: DrawerWidget(),
-        body: SafeArea(child: DomainPage()),
+    return MaterialApp.router(
+      title: '',
+      theme: ThemeData(
+        scaffoldBackgroundColor: Colors.white,
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.blue,
+          foregroundColor: Colors.white,
+        ),
       ),
+      routerConfig: AppRouter.router,
+      debugShowCheckedModeBanner: false,
     );
+    // return MaterialApp(
+    //   debugShowCheckedModeBanner: false,
+    //   theme: ThemeData(
+    //     scaffoldBackgroundColor: Colors.white,
+    //     appBarTheme: AppBarTheme(
+    //       backgroundColor: Colors.blue,
+    //       foregroundColor: Colors.white,
+    //     ),
+    //   ),
+    //   home: Scaffold(
+    //     appBar: AppBar(title: const Text('Multi Catalog System')),
+    //     drawer: DrawerWidget(),
+    //     body: SafeArea(child: CategoryGroupPage()),
+    //   ),
+    // );
   }
 }
