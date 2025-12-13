@@ -45,6 +45,9 @@ class _HomePageState extends State<HomePage> {
       case 3:
         return CategoryItemPage();
 
+      case 4:
+        return LegalDocumentPage();
+
       default:
         return Center(child: Text("Page không tồn tại"));
     }

@@ -20,7 +20,7 @@ class MainApp extends StatelessWidget {
     return MaterialApp.router(
       title: '',
       theme: ThemeData(
-        scaffoldBackgroundColor: Colors.white,
+        scaffoldBackgroundColor: Color(0xFFF5F7FA),
         appBarTheme: AppBarTheme(
           backgroundColor: Colors.blue,
           foregroundColor: Colors.white,
@@ -32,7 +32,7 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        scaffoldBackgroundColor: Colors.white,
+        scaffoldBackgroundColor: Color(0xFFF5F7FA),
         appBarTheme: AppBarTheme(
           backgroundColor: Colors.blue,
           foregroundColor: Colors.white,
@@ -41,7 +41,7 @@ class MainApp extends StatelessWidget {
       home: Scaffold(
         appBar: AppBar(title: const Text('Multi Catalog System')),
         drawer: DrawerWidget(),
-        body: SafeArea(child: CategoryItemPage()),
+        body: SafeArea(child: LegalDocumentPage()),
       ),
     );
   }
