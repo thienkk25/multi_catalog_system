@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:multi_catalog_system/core/core.dart';
 import 'package:multi_catalog_system/features/features.dart';
 import 'package:multi_catalog_system/features/home/presentation/bloc/home_state.dart';
 import 'package:multi_catalog_system/features/home/presentation/widgets/drawer_widget.dart';
@@ -37,7 +38,10 @@ class _HomePageState extends State<HomePage> {
         return CategoryLookupPage();
 
       case 1:
-        return DomainManagementPage();
+        return BlocProvider(
+          create: (_) => getIt<DomainManagementBloc>(),
+          child: DomainManagementPage(),
+        );
 
       case 2:
         return CategoryGroupPage();

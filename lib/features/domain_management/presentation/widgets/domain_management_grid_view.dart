@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:multi_catalog_system/core/core.dart';
+import 'package:multi_catalog_system/features/domain_management/domain/entities/domain_entry.dart';
+import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_management_event.dart';
+import 'package:multi_catalog_system/features/features.dart';
 
 class DomainManagementGridView extends StatelessWidget {
-  const DomainManagementGridView({super.key});
+  final List<DomainEntry> domains;
+
+  const DomainManagementGridView({super.key, this.domains = const []});
 
   @override
   Widget build(BuildContext context) {
-    screenWidth(BuildContext context) {
+    double screenWidth(BuildContext context) {
       return MediaQuery.of(context).size.width;
     }
 
@@ -19,21 +25,24 @@ class DomainManagementGridView extends StatelessWidget {
         childAspectRatio: 2,
       ),
       shrinkWrap: true,
-      physics: AlwaysScrollableScrollPhysics(),
-      itemCount: 10,
+      physics: const AlwaysScrollableScrollPhysics(),
+      itemCount: domains.length,
       itemBuilder: (context, index) {
+        final domain = domains[index];
         return GestureDetector(
           onTap: () {
             showDialog(
               context: context,
               builder: (context) {
                 return AlertDialog(
-                  title: Text('Chi tiết lĩnh vực ${index + 1}'),
-                  content: Text('Đây là chi tiết về lĩnh vực ${index + 1}.'),
+                  title: Text('Chi tiết lĩnh vực ${domain.name}'),
+                  content: Text(
+                    'Mã: ${domain.code}\nMô tả: ${domain.description}',
+                  ),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.pop(context),
-                      child: Text('Đóng'),
+                      child: const Text('Đóng'),
                     ),
                   ],
                 );
@@ -49,23 +58,23 @@ class DomainManagementGridView extends StatelessWidget {
                   spacing: 5,
                   children: [
                     Text(
-                      'Mã: ${index + 1}',
-                      style: TextStyle(
+                      'Mã: ${domain.code}',
+                      style: const TextStyle(
                         fontSize: 12,
                         color: Colors.blue,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     Text(
-                      'Lĩnh vực ${index + 1}',
-                      style: TextStyle(
+                      domain.name,
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     Text(
-                      'Mô tả ngắn về lĩnh vực ${index + 1}',
-                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                      domain.description,
+                      style: const TextStyle(fontSize: 12, color: Colors.grey),
                     ),
                   ],
                 ),
@@ -79,7 +88,19 @@ class DomainManagementGridView extends StatelessWidget {
                       height: 20,
                     ),
                     itemBuilder: (context) => [
-                      PopupMenuItem(child: _DomainCardMenu()),
+                      PopupMenuItem(
+                        child: _DomainCardMenu(
+                          onEdit: () {
+                            Navigator.pop(context);
+                          },
+                          onDelete: () {
+                            Navigator.pop(context);
+                            context.read<DomainManagementBloc>().add(
+                              DomainManagementEvent.delete(id: domain.id),
+                            );
+                          },
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -93,7 +114,10 @@ class DomainManagementGridView extends StatelessWidget {
 }
 
 class _DomainCardMenu extends StatelessWidget {
-  const _DomainCardMenu();
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
+
+  const _DomainCardMenu({required this.onEdit, required this.onDelete});
 
   @override
   Widget build(BuildContext context) {
@@ -103,8 +127,7 @@ class _DomainCardMenu extends StatelessWidget {
       children: [
         InkWell(
           borderRadius: BorderRadius.circular(10),
-
-          onTap: () {},
+          onTap: onEdit,
           child: Padding(
             padding: const EdgeInsets.all(5.0),
             child: ListTile(
@@ -115,7 +138,7 @@ class _DomainCardMenu extends StatelessWidget {
         ),
         InkWell(
           borderRadius: BorderRadius.circular(10),
-          onTap: () {},
+          onTap: onDelete,
           child: Padding(
             padding: const EdgeInsets.all(5.0),
             child: ListTile(

@@ -20,7 +20,7 @@ class DomainRemoteDataSourceImpl implements DomainRemoteDataSource {
   Future<List<DomainModel>> getAll() async {
     try {
       final response = await dio.get('${AppConstant.apiBaseUrl}domain');
-      final List<dynamic> jsonList = response.data;
+      final List<dynamic> jsonList = response.data['data']['data'];
       return jsonList.map((json) => DomainModel.fromJson(json)).toList();
     } catch (e) {
       throw Exception('Failed to fetch domains: $e');

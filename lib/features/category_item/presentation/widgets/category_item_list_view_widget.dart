@@ -70,7 +70,7 @@ class CategoryItemListViewWidget extends StatelessWidget {
           ),
         );
       },
-      separatorBuilder: (_, __) => SizedBox(height: 10),
+      separatorBuilder: (_, _) => SizedBox(height: 10),
     );
   }
 }

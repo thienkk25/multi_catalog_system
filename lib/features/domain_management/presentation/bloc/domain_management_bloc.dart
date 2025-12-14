@@ -73,7 +73,9 @@ class DomainManagementBloc
           emit(const DomainManagementState.loading());
           try {
             await deleteDomainUseCase(e.id);
-            emit(const DomainManagementState.loaded(domains: []));
+            final domains =
+                await getAllDomainUseCase(); // fetch lại dữ liệu mới
+            emit(DomainManagementState.loaded(domains: domains));
           } catch (e) {
             emit(DomainManagementState.error(message: e.toString()));
           }

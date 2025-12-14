@@ -1,4 +1,4 @@
 class AppConstant {
-  static const String apiBaseUrl = "localhost:8080/v1/api/";
+  static const String apiBaseUrl = "http://localhost:3000/api/v1/";
   static const int timeoutDuration = 30;
 }

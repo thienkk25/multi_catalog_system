@@ -5,3 +5,4 @@ export 'widgets/custom_dropdown_button.dart';
 export 'widgets/custom_button.dart';
 export 'widgets/custom_floating_action_button.dart';
 export 'widgets/custom_label.dart';
+export 'config/di/injection.dart';

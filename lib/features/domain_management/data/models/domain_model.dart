@@ -11,8 +11,8 @@ abstract class DomainModel with _$DomainModel {
     required String code,
     required String name,
     required String description,
-    @JsonKey(name: 'create_at') required DateTime createdAt,
-    @JsonKey(name: 'update_at') DateTime? updatedAt,
+    @JsonKey(name: 'created_at') required DateTime createdAt,
+    @JsonKey(name: 'updated_at') DateTime? updatedAt,
   }) = _DomainModel;
 
   factory DomainModel.fromJson(Map<String, dynamic> json) =>

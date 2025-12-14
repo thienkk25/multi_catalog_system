@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:multi_catalog_system/core/core.dart';
 import 'package:multi_catalog_system/features/domain_management/presentation/presentation.dart';
+
+import '../bloc/domain_management_event.dart';
+import '../bloc/domain_management_state.dart';
 
 class DomainManagementPage extends StatefulWidget {
   const DomainManagementPage({super.key});
@@ -10,6 +14,16 @@ class DomainManagementPage extends StatefulWidget {
 }
 
 class _DomainManagementPageState extends State<DomainManagementPage> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<DomainManagementBloc>().add(
+        const DomainManagementEvent.getAll(),
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -23,7 +37,21 @@ class _DomainManagementPageState extends State<DomainManagementPage> {
                 hintText: 'Tìm kiếm lĩnh vực',
                 icon: Icon(Icons.search),
               ),
-              Expanded(child: DomainManagementGridView()),
+              Expanded(
+                child: BlocBuilder<DomainManagementBloc, DomainManagementState>(
+                  builder: (context, state) {
+                    return state.when(
+                      initial: () =>
+                          const Center(child: Text('Chưa có dữ liệu')),
+                      loading: () =>
+                          const Center(child: CircularProgressIndicator()),
+                      loaded: (domains) =>
+                          DomainManagementGridView(domains: domains),
+                      error: (message) => Center(child: Text('Lỗi: $message')),
+                    );
+                  },
+                ),
+              ),
             ],
           ),
         ),
