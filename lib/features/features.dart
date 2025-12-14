@@ -4,7 +4,7 @@ export 'auth/auth.dart';
 export 'category_group/category_group.dart';
 export 'category_item/category_item.dart';
 export 'category_lookup/category_lookup.dart';
-export 'domain/domain.dart';
+export 'domain_management/domain_management.dart';
 export 'home/home.dart';
 export 'import_file/import_file.dart';
 export 'legal_document/legal_document.dart';

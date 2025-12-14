@@ -37,7 +37,7 @@ class _HomePageState extends State<HomePage> {
         return CategoryLookupPage();
 
       case 1:
-        return DomainPage();
+        return DomainManagementPage();
 
       case 2:
         return CategoryGroupPage();

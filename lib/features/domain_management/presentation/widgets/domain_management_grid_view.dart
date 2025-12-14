@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:multi_catalog_system/core/core.dart';
 
-class DomainGridView extends StatelessWidget {
-  const DomainGridView({super.key});
+class DomainManagementGridView extends StatelessWidget {
+  const DomainManagementGridView({super.key});
 
   @override
   Widget build(BuildContext context) {

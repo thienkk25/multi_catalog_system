@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:multi_catalog_system/core/core.dart';
-import 'package:multi_catalog_system/features/domain/presentation/presentation.dart';
+import 'package:multi_catalog_system/features/domain_management/presentation/presentation.dart';
 
-class DomainPage extends StatefulWidget {
-  const DomainPage({super.key});
+class DomainManagementPage extends StatefulWidget {
+  const DomainManagementPage({super.key});
 
   @override
-  State<DomainPage> createState() => _DomainPageState();
+  State<DomainManagementPage> createState() => _DomainManagementPageState();
 }
 
-class _DomainPageState extends State<DomainPage> {
+class _DomainManagementPageState extends State<DomainManagementPage> {
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -23,7 +23,7 @@ class _DomainPageState extends State<DomainPage> {
                 hintText: 'Tìm kiếm lĩnh vực',
                 icon: Icon(Icons.search),
               ),
-              Expanded(child: DomainGridView()),
+              Expanded(child: DomainManagementGridView()),
             ],
           ),
         ),
