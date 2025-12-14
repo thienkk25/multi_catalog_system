@@ -55,7 +55,21 @@ class _DomainManagementPageState extends State<DomainManagementPage> {
             ],
           ),
         ),
-        CustomFloatingActionButton(onPressedImport: () {}, onPressedAdd: () {}),
+        CustomFloatingActionButton(
+          onPressedImport: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => const ImportFileWidget()),
+            );
+          },
+          onPressedAdd: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) =>
+                    const DomainManagementAddEditPage(isEdit: false),
+              ),
+            );
+          },
+        ),
       ],
     );
   }

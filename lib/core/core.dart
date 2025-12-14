@@ -6,3 +6,4 @@ export 'widgets/custom_button.dart';
 export 'widgets/custom_floating_action_button.dart';
 export 'widgets/custom_label.dart';
 export 'config/di/injection.dart';
+export 'widgets/import_file_widget.dart';

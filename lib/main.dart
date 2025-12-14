@@ -46,7 +46,7 @@ class MainApp extends StatelessWidget {
       home: Scaffold(
         appBar: AppBar(title: const Text('Multi Catalog System')),
         drawer: DrawerWidget(),
-        body: SafeArea(child: LegalDocumentPage()),
+        body: SafeArea(child: DomainManagementPage()),
       ),
     );
   }

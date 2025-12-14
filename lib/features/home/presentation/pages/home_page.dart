@@ -21,7 +21,10 @@ class _HomePageState extends State<HomePage> {
         return Scaffold(
           appBar: AppBar(
             title: context.watch<HomeBloc>().state.mapOrNull(
-              page: (value) => Text(value.title),
+              page: (value) => Text(
+                value.title,
+                style: TextStyle(fontWeight: FontWeight(600), fontSize: 20),
+              ),
             ),
             centerTitle: true,
           ),
