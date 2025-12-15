@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:multi_catalog_system/core/core.dart';
 import 'package:multi_catalog_system/features/domain_management/presentation/presentation.dart';
+import 'package:multi_catalog_system/features/import_file/presentation/pages/import_file_page.dart';
 
 import '../bloc/domain_management_event.dart';
 import '../bloc/domain_management_state.dart';
@@ -58,7 +59,7 @@ class _DomainManagementPageState extends State<DomainManagementPage> {
         CustomFloatingActionButton(
           onPressedImport: () {
             Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => const ImportFileWidget()),
+              MaterialPageRoute(builder: (context) => const ImportFilePage()),
             );
           },
           onPressedAdd: () {
