@@ -27,7 +27,10 @@ class DomainManagementAddEditPage extends StatelessWidget {
                     children: [
                       TextSpan(
                         text: 'Mã lĩnh vực ',
-                        style: TextStyle(fontWeight: FontWeight(600)),
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight(600),
+                        ),
                       ),
                       TextSpan(
                         text: '*',
@@ -47,7 +50,10 @@ class DomainManagementAddEditPage extends StatelessWidget {
                     children: [
                       TextSpan(
                         text: 'Tên lĩnh vực ',
-                        style: TextStyle(fontWeight: FontWeight(600)),
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight(600),
+                        ),
                       ),
                       TextSpan(
                         text: '*',

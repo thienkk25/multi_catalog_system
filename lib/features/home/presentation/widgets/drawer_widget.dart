@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:multi_catalog_system/features/home/presentation/bloc/home_bloc.dart';
 import 'package:multi_catalog_system/features/home/presentation/bloc/home_event.dart';
 import 'package:multi_catalog_system/features/home/presentation/bloc/home_state.dart';
+import 'package:multi_catalog_system/features/import_file/presentation/pages/import_file_page.dart';
 
 class DrawerWidget extends StatelessWidget {
   const DrawerWidget({super.key});
@@ -116,7 +117,12 @@ class _MainDrawer extends StatelessWidget {
               ),
               title: 'Nhập dữ liệu File',
               onTap: () {
-                // custom action
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ImportFilePage(typeImport: 0),
+                  ),
+                );
               },
             ),
             _DrawerItem(
@@ -125,6 +131,7 @@ class _MainDrawer extends StatelessWidget {
                 height: 20,
               ),
               title: 'Quản lý người dùng',
+              pageIndex: 7,
             ),
             _DrawerItem(
               icon: SvgPicture.asset(
@@ -132,6 +139,7 @@ class _MainDrawer extends StatelessWidget {
                 height: 20,
               ),
               title: 'API Key',
+              pageIndex: 8,
             ),
             _DrawerItem(
               icon: SvgPicture.asset(
@@ -139,6 +147,7 @@ class _MainDrawer extends StatelessWidget {
                 height: 20,
               ),
               title: 'Nhật kí hệ thống',
+              pageIndex: 9,
             ),
           ],
         ),
@@ -210,10 +219,10 @@ class _DrawerItem extends StatelessWidget {
       onTap: () {
         if (pageIndex != null) {
           context.read<HomeBloc>().add(HomeEvent.changePage(pageIndex!, title));
+          Navigator.pop(context);
         } else {
           onTap?.call();
         }
-        Navigator.pop(context);
       },
       child: ListTile(
         selected: selected,

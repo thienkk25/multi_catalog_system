@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 import 'custom_card.dart';
 
@@ -84,6 +85,7 @@ Widget _getFileIcon(String fileName) {
 
   late IconData icon;
   late Color color;
+  Widget? iconCustom;
 
   switch (ext) {
     case 'pdf':
@@ -99,8 +101,14 @@ Widget _getFileIcon(String fileName) {
 
     case 'xls':
     case 'xlsx':
-      icon = Icons.table_chart;
+    case 'csv':
       color = Colors.green;
+      iconCustom = SvgPicture.asset(
+        'assets/icons/excel-file-type-svgrepo-com.svg',
+        height: 30,
+        width: 30,
+        colorFilter: ColorFilter.mode(Colors.green, BlendMode.srcIn),
+      );
       break;
 
     default:
@@ -114,6 +122,6 @@ Widget _getFileIcon(String fileName) {
       borderRadius: BorderRadius.circular(50),
       color: color.withValues(alpha: .15),
     ),
-    child: Icon(icon, color: color),
+    child: iconCustom ?? Icon(icon, color: color),
   );
 }

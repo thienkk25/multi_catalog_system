@@ -59,7 +59,9 @@ class _DomainManagementPageState extends State<DomainManagementPage> {
         CustomFloatingActionButton(
           onPressedImport: () {
             Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => const ImportFilePage()),
+              MaterialPageRoute(
+                builder: (context) => ImportFilePage(typeImport: 1),
+              ),
             );
           },
           onPressedAdd: () {

@@ -8,7 +8,13 @@ import 'package:multi_catalog_system/core/core.dart';
 import 'package:multi_catalog_system/features/import_file/presentation/widgets/dashed_boder_widget.dart';
 
 class ImportFilePage extends StatefulWidget {
-  const ImportFilePage({super.key});
+  const ImportFilePage({
+    super.key,
+    required this.typeImport,
+    this.allowedExtensions,
+  });
+  final int typeImport;
+  final List<String>? allowedExtensions;
 
   @override
   State<ImportFilePage> createState() => _ImportFilePageState();
@@ -23,7 +29,9 @@ class _ImportFilePageState extends State<ImportFilePage> {
       withData: kIsWeb,
       allowMultiple: true,
       type: FileType.custom,
-      allowedExtensions: ['pdf', 'doc', 'docx', 'xls', 'xlsx'],
+      allowedExtensions:
+          widget.allowedExtensions ??
+          ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'csv'],
     );
     if (result == null) return;
     if (kIsWeb) {
@@ -128,14 +136,14 @@ class _ImportFilePageState extends State<ImportFilePage> {
                     'Loại dữ liệu',
                     style: TextStyle(fontWeight: FontWeight(600)),
                   ),
-                  value: 0,
+                  value: widget.typeImport,
                   items: [
                     DropdownMenuItem(value: 0, child: Text('Tất cả')),
                     DropdownMenuItem(value: 1, child: Text('Lĩnh vực')),
                     DropdownMenuItem(value: 2, child: Text('Nhóm danh mục')),
                     DropdownMenuItem(value: 3, child: Text('Mục danh mục')),
                   ],
-                  onChanged: (value) {},
+                  onChanged: widget.typeImport != 0 ? null : (value) {},
                 ),
                 SizedBox(height: 40),
                 CustomButton(
