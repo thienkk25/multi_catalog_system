@@ -3,7 +3,8 @@ import 'package:multi_catalog_system/features/auth/domain/repositories/auth_repo
 class AuthCheckAuthenticatedUseCase {
   final AuthRepository authRepository;
 
-  AuthCheckAuthenticatedUseCase(this.authRepository);
+  AuthCheckAuthenticatedUseCase({required this.authRepository});
+
   Future<bool> call() {
     return authRepository.checkAuthenticated();
   }
