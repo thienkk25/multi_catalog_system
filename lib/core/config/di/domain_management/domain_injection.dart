@@ -11,13 +11,17 @@ void initDomainModule() {
     () => DomainRepositoryImpl(remoteDataSource: getIt()),
   );
 
-  getIt.registerLazySingleton(() => CreateDomainUseCase(getIt()));
-  getIt.registerLazySingleton(() => CreateManyDomainUseCase(getIt()));
-  getIt.registerLazySingleton(() => UpdateDomainUseCase(getIt()));
-  getIt.registerLazySingleton(() => DeleteDomainUseCase(getIt()));
-  getIt.registerLazySingleton(() => GetByIdDomainUseCase(getIt()));
-  getIt.registerLazySingleton(() => GetAllDomainUseCase(getIt()));
-  getIt.registerLazySingleton(() => UpsertManyDomainUseCase(getIt()));
+  getIt.registerLazySingleton(() => CreateDomainUseCase(repository: getIt()));
+  getIt.registerLazySingleton(
+    () => CreateManyDomainUseCase(repository: getIt()),
+  );
+  getIt.registerLazySingleton(() => UpdateDomainUseCase(repository: getIt()));
+  getIt.registerLazySingleton(() => DeleteDomainUseCase(repository: getIt()));
+  getIt.registerLazySingleton(() => GetByIdDomainUseCase(repository: getIt()));
+  getIt.registerLazySingleton(() => GetAllDomainUseCase(repository: getIt()));
+  getIt.registerLazySingleton(
+    () => UpsertManyDomainUseCase(repository: getIt()),
+  );
 
   getIt.registerFactory(
     () => DomainManagementBloc(

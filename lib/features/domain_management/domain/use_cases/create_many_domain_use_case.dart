@@ -3,7 +3,8 @@ import 'package:multi_catalog_system/features/domain_management/domain/repositor
 
 class CreateManyDomainUseCase {
   final DomainRepository repository;
-  CreateManyDomainUseCase(this.repository);
+
+  CreateManyDomainUseCase({required this.repository});
 
   Future<List<DomainEntry>> call(List<DomainEntry> entries) async {
     return await repository.createMany(entries);

@@ -3,7 +3,8 @@ import 'package:multi_catalog_system/features/domain_management/domain/repositor
 
 class GetByIdDomainUseCase {
   final DomainRepository repository;
-  GetByIdDomainUseCase(this.repository);
+
+  GetByIdDomainUseCase({required this.repository});
 
   Future<DomainEntry> call(String id) async {
     return await repository.getById(id);

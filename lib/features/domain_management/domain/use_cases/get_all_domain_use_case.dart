@@ -3,7 +3,8 @@ import 'package:multi_catalog_system/features/domain_management/domain/repositor
 
 class GetAllDomainUseCase {
   final DomainRepository repository;
-  GetAllDomainUseCase(this.repository);
+
+  GetAllDomainUseCase({required this.repository});
 
   Future<List<DomainEntry>> call() async {
     return await repository.getAll();

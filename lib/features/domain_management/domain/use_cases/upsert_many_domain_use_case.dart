@@ -3,7 +3,8 @@ import 'package:multi_catalog_system/features/domain_management/domain/repositor
 
 class UpsertManyDomainUseCase {
   final DomainRepository repository;
-  UpsertManyDomainUseCase(this.repository);
+
+  UpsertManyDomainUseCase({required this.repository});
 
   Future<List<DomainEntry>> call(List<DomainEntry> entries) async {
     return await repository.upsertMany(entries);

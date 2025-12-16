@@ -3,7 +3,8 @@ import 'package:multi_catalog_system/features/domain_management/domain/repositor
 
 class UpdateDomainUseCase {
   final DomainRepository repository;
-  UpdateDomainUseCase(this.repository);
+
+  UpdateDomainUseCase({required this.repository});
 
   Future<DomainEntry> call(DomainEntry entry) async {
     return repository.update(entry);
