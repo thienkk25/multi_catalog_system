@@ -1,3 +1,6 @@
+import 'package:dartz/dartz.dart';
+import 'package:multi_catalog_system/core/error/exceptions.dart';
+import 'package:multi_catalog_system/core/error/failures.dart';
 import 'package:multi_catalog_system/features/auth/data/data_sources/auth_local_data_source.dart';
 import 'package:multi_catalog_system/features/auth/data/data_sources/auth_remote_data_source.dart';
 import 'package:multi_catalog_system/features/auth/data/models/user_model.dart';
@@ -13,52 +16,78 @@ class AuthRepositoryImpl implements AuthRepository {
     required this.authLocalDataSource,
   });
 
-  /// Check auth dựa vào local token
-  @override
-  Future<bool> checkAuthenticated() async {
-    final token = await authLocalDataSource.getCachedAuthToken();
-    return token != null && token.isNotEmpty;
-  }
-
   /// Ưu tiên local → fallback remote
   @override
-  Future<UserEntry?> getCurrentUser() async {
-    final cachedUser = await authLocalDataSource.getCachedUser();
-    if (cachedUser != null) {
-      return cachedUser.toEntry();
-    }
+  Future<Either<Failure, UserEntry>> getCurrentUser() async {
+    try {
+      final cachedUser = await authLocalDataSource.getCachedUser();
 
-    final remoteUser = await authRemoteDataSource.getCurrentUser();
-    if (remoteUser != null) {
+      if (cachedUser != null) {
+        return Right(cachedUser.toEntry());
+      }
+
+      final token = await authLocalDataSource.getCachedAuthToken();
+      if (token == null) {
+        return Left(CacheFailure());
+      }
+
+      final remoteUser = await authRemoteDataSource.getCurrentUser();
+
+      if (remoteUser == null) {
+        return Left(ServerFailure());
+      }
+
       await authLocalDataSource.cacheUser(remoteUser);
-      return remoteUser.toEntry();
+      return Right(remoteUser.toEntry());
+    } catch (_) {
+      return Left(ServerFailure());
     }
-
-    return null;
   }
 
   /// Login → cache token + refresh token + user
   @override
-  Future<void> login({required String email, required String pass}) async {
-    final result = await authRemoteDataSource.login(email: email, pass: pass);
+  Future<Either<Failure, UserEntry>> login({
+    required String email,
+    required String pass,
+  }) async {
+    try {
+      final result = await authRemoteDataSource.login(email: email, pass: pass);
 
-    await authLocalDataSource.cacheAuthToken(result.accessToken);
-    await authLocalDataSource.cacheRefreshToken(result.refreshToken);
-    await authLocalDataSource.cacheUser(result.user);
+      await authLocalDataSource.cacheAuthToken(result.accessToken);
+      await authLocalDataSource.cacheRefreshToken(result.refreshToken);
+      await authLocalDataSource.cacheUser(result.user);
+
+      return Right(result.user.toEntry());
+    } on InvalidCredentialsException {
+      return Left(InvalidCredentialsFailure());
+    } on ServerException {
+      return Left(ServerFailure());
+    } on CacheException {
+      return Left(CacheFailure());
+    }
   }
 
   /// Refresh token → cập nhật token mới
   @override
-  Future<void> refreshToken({required String refreshToken}) async {
-    final result = await authRemoteDataSource.refreshToken(
-      refreshToken: refreshToken,
-    );
+  Future<Either<Failure, Unit>> refreshToken({
+    required String refreshToken,
+  }) async {
+    try {
+      final result = await authRemoteDataSource.refreshToken(
+        refreshToken: refreshToken,
+      );
 
-    await authLocalDataSource.cacheAuthToken(result.accessToken);
+      await authLocalDataSource.cacheAuthToken(result.accessToken);
 
-    // Backend có thể trả refresh token mới
-    if (result.refreshToken.isNotEmpty) {
-      await authLocalDataSource.cacheRefreshToken(result.refreshToken);
+      if (result.refreshToken.isNotEmpty) {
+        await authLocalDataSource.cacheRefreshToken(result.refreshToken);
+      }
+
+      return const Right(unit);
+    } on ServerException {
+      return Left(ServerFailure());
+    } on CacheException {
+      return Left(CacheFailure());
     }
   }
 

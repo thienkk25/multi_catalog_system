@@ -3,7 +3,6 @@ import 'package:multi_catalog_system/features/auth/data/data_sources/auth_local_
 import 'package:multi_catalog_system/features/auth/data/data_sources/auth_remote_data_source.dart';
 import 'package:multi_catalog_system/features/auth/data/repositories_impl/auth_repository_impl.dart';
 import 'package:multi_catalog_system/features/auth/domain/repositories/auth_repository.dart';
-import 'package:multi_catalog_system/features/auth/domain/use_cases/auth_check_authenticated_use_case.dart';
 import 'package:multi_catalog_system/features/auth/domain/use_cases/auth_get_current_user_use_case.dart';
 import 'package:multi_catalog_system/features/auth/domain/use_cases/auth_login_use_case.dart';
 import 'package:multi_catalog_system/features/auth/domain/use_cases/auth_logout_use_case.dart';
@@ -27,9 +26,6 @@ void initAuthModule() {
     ),
   );
 
-  getIt.registerLazySingleton<AuthCheckAuthenticatedUseCase>(
-    () => AuthCheckAuthenticatedUseCase(authRepository: getIt()),
-  );
   getIt.registerLazySingleton<AuthGetCurrentUserUseCase>(
     () => AuthGetCurrentUserUseCase(authRepository: getIt()),
   );
@@ -45,7 +41,6 @@ void initAuthModule() {
 
   getIt.registerFactory<AuthBloc>(
     () => AuthBloc(
-      authCheckAuthenticatedUseCase: getIt<AuthCheckAuthenticatedUseCase>(),
       authGetCurrentUserUseCase: getIt<AuthGetCurrentUserUseCase>(),
       authLoginUseCase: getIt<AuthLoginUseCase>(),
       authLogoutUseCase: getIt<AuthLogoutUseCase>(),

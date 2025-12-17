@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:multi_catalog_system/core/core.dart';
+import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_event.dart';
 import 'package:multi_catalog_system/features/features.dart';
 import 'package:multi_catalog_system/features/home/presentation/bloc/home_state.dart';
 import 'package:multi_catalog_system/features/home/presentation/widgets/drawer_widget.dart';
@@ -13,6 +15,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<AuthBloc>().add(const AuthEvent.checkAuthenticated());
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<HomeBloc, HomeState>(

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:multi_catalog_system/core/config/app/url_strategy.dart'
     if (dart.library.html) 'package:multi_catalog_system/core/config/app/url_strategy_web.dart';
 import 'package:multi_catalog_system/core/core.dart';
+import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:multi_catalog_system/features/home/presentation/widgets/drawer_widget.dart';
 
 import 'features/features.dart';
@@ -19,8 +20,11 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => getIt<HomeBloc>(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => getIt<HomeBloc>()),
+        BlocProvider(create: (_) => getIt<AuthBloc>()),
+      ],
       child: MaterialApp.router(
         title: '',
         theme: ThemeData(
@@ -34,20 +38,20 @@ class MainApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
       ),
     );
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        scaffoldBackgroundColor: Color(0xFFF5F7FA),
-        appBarTheme: AppBarTheme(
-          backgroundColor: Colors.blue,
-          foregroundColor: Colors.white,
-        ),
-      ),
-      home: Scaffold(
-        appBar: AppBar(title: const Text('Multi Catalog System')),
-        drawer: DrawerWidget(),
-        body: SafeArea(child: DomainManagementPage()),
-      ),
-    );
+    // return MaterialApp(
+    //   debugShowCheckedModeBanner: false,
+    //   theme: ThemeData(
+    //     scaffoldBackgroundColor: Color(0xFFF5F7FA),
+    //     appBarTheme: AppBarTheme(
+    //       backgroundColor: Colors.blue,
+    //       foregroundColor: Colors.white,
+    //     ),
+    //   ),
+    //   home: Scaffold(
+    //     appBar: AppBar(title: const Text('Multi Catalog System')),
+    //     drawer: DrawerWidget(),
+    //     body: SafeArea(child: DomainManagementPage()),
+    //   ),
+    // );
   }
 }

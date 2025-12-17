@@ -19,7 +19,7 @@ class DomainRemoteDataSourceImpl implements DomainRemoteDataSource {
   @override
   Future<List<DomainModel>> getAll() async {
     try {
-      final response = await dio.get('${AppConstant.apiBaseUrl}domain');
+      final response = await dio.get('${AppConstant.apiBaseUrl}/domain');
       final List<dynamic> jsonList = response.data['data']['data'];
       return jsonList.map((json) => DomainModel.fromJson(json)).toList();
     } catch (e) {
@@ -30,7 +30,7 @@ class DomainRemoteDataSourceImpl implements DomainRemoteDataSource {
   @override
   Future<DomainModel> getById(String id) async {
     try {
-      final response = await dio.get('${AppConstant.apiBaseUrl}domain/$id');
+      final response = await dio.get('${AppConstant.apiBaseUrl}/domain/$id');
       return DomainModel.fromJson(response.data);
     } catch (e) {
       throw Exception('Failed to fetch domain $id: $e');
@@ -41,7 +41,7 @@ class DomainRemoteDataSourceImpl implements DomainRemoteDataSource {
   Future<DomainModel> create(DomainModel entry) async {
     try {
       final response = await dio.post(
-        '${AppConstant.apiBaseUrl}domain',
+        '${AppConstant.apiBaseUrl}/domain',
         data: entry.toJson(),
       );
       return DomainModel.fromJson(response.data);
@@ -55,7 +55,7 @@ class DomainRemoteDataSourceImpl implements DomainRemoteDataSource {
     try {
       final data = entries.map((e) => e.toJson()).toList();
       final response = await dio.post(
-        '${AppConstant.apiBaseUrl}domain/bulk',
+        '${AppConstant.apiBaseUrl}/domain/bulk',
         data: data,
       );
       final List<dynamic> jsonList = response.data;
@@ -70,7 +70,7 @@ class DomainRemoteDataSourceImpl implements DomainRemoteDataSource {
     try {
       final data = entries.map((e) => e.toJson()).toList();
       final response = await dio.post(
-        '${AppConstant.apiBaseUrl}domain/bulk/upsert',
+        '${AppConstant.apiBaseUrl}/domain/bulk/upsert',
         data: data,
       );
       final List<dynamic> jsonList = response.data;
@@ -84,7 +84,7 @@ class DomainRemoteDataSourceImpl implements DomainRemoteDataSource {
   Future<DomainModel> update(DomainModel entry) async {
     try {
       final response = await dio.put(
-        '${AppConstant.apiBaseUrl}domain/${entry.id}',
+        '${AppConstant.apiBaseUrl}/domain/${entry.id}',
         data: entry.toJson(),
       );
       return DomainModel.fromJson(response.data);
@@ -96,7 +96,7 @@ class DomainRemoteDataSourceImpl implements DomainRemoteDataSource {
   @override
   Future<void> delete(String id) async {
     try {
-      await dio.delete('${AppConstant.apiBaseUrl}domain/$id');
+      await dio.delete('${AppConstant.apiBaseUrl}/domain/$id');
     } catch (e) {
       throw Exception('Failed to delete domain $id: $e');
     }

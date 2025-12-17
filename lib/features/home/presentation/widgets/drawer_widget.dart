@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_state.dart';
 import 'package:multi_catalog_system/features/home/presentation/bloc/home_bloc.dart';
 import 'package:multi_catalog_system/features/home/presentation/bloc/home_event.dart';
 import 'package:multi_catalog_system/features/home/presentation/bloc/home_state.dart';
@@ -34,16 +36,62 @@ class _HeaderDrawer extends StatelessWidget {
     return Row(
       spacing: 10,
       children: [
-        CircleAvatar(radius: 30),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Nguyễn Văn A',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight(600)),
-            ),
-            Text('Email: admin@gmail.com'),
-          ],
+        BlocBuilder<AuthBloc, AuthState>(
+          builder: (context, state) {
+            return state.when(
+              initial: () => const SizedBox(),
+
+              loading: () => const CircularProgressIndicator(),
+
+              unauthenticated: () {
+                return Row(
+                  children: const [
+                    CircleAvatar(radius: 30, child: Icon(Icons.person_outline)),
+                    SizedBox(width: 12),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Chưa đăng nhập',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Text('Vui lòng đăng nhập'),
+                      ],
+                    ),
+                  ],
+                );
+              },
+
+              authenticated: (user) {
+                return Row(
+                  children: [
+                    CircleAvatar(radius: 30, child: const Icon(Icons.person)),
+                    const SizedBox(width: 12),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          user.fullName ?? 'Không tên',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Text('Email: ${user.email}'),
+                      ],
+                    ),
+                  ],
+                );
+              },
+
+              error: (message) {
+                return Text(message, style: const TextStyle(color: Colors.red));
+              },
+            );
+          },
         ),
       ],
     );

@@ -8,8 +8,8 @@ part 'auth_response_model.g.dart';
 @freezed
 abstract class AuthResponseModel with _$AuthResponseModel {
   const factory AuthResponseModel({
-    required String accessToken,
-    required String refreshToken,
+    @JsonKey(name: 'access_token') required String accessToken,
+    @JsonKey(name: 'refresh_token') required String refreshToken,
     required UserModel user,
   }) = _AuthResponseModel;
 

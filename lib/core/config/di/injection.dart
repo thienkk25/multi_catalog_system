@@ -9,8 +9,9 @@ import 'domain_management/domain_injection.dart';
 final getIt = GetIt.instance;
 
 Future<void> init() async {
+  final sharedPreferences = await SharedPreferences.getInstance();
+  getIt.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
   getIt.registerLazySingleton(() => Dio());
-  getIt.registerLazySingleton(() => SharedPreferences.getInstance());
 
   initDomainModule();
   initAuthModule();
