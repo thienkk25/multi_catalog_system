@@ -13,26 +13,27 @@ abstract class Failure extends Equatable {
 /// ===== SERVER =====
 
 class ServerFailure extends Failure {
-  const ServerFailure({super.message = 'Server error', super.statusCode});
+  const ServerFailure({super.message = 'Máy chủ lỗi', super.statusCode});
 }
 
 class NetworkFailure extends Failure {
-  const NetworkFailure() : super(message: 'No internet connection');
+  const NetworkFailure() : super(message: 'Không có kết nối internet');
 }
 
 class TimeoutFailure extends Failure {
-  const TimeoutFailure() : super(message: 'Connection timeout');
+  const TimeoutFailure() : super(message: 'Hết thời gian kết nối');
 }
 
 class NotFoundFailure extends Failure {
   const NotFoundFailure()
-    : super(message: 'Resource not found', statusCode: 404);
+    : super(message: 'Không tìm thấy tài nguyên', statusCode: 404);
 }
 
 /// ===== AUTH =====
 
 class UnauthorizedFailure extends Failure {
-  const UnauthorizedFailure() : super(message: 'Unauthorized', statusCode: 401);
+  const UnauthorizedFailure()
+    : super(message: 'Chưa đăng nhập hoặc token không hợp lệ', statusCode: 401);
 }
 
 class InvalidCredentialsFailure extends Failure {
@@ -41,13 +42,14 @@ class InvalidCredentialsFailure extends Failure {
 }
 
 class ForbiddenFailure extends Failure {
-  const ForbiddenFailure() : super(message: 'Access denied', statusCode: 403);
+  const ForbiddenFailure()
+    : super(message: 'Quyền truy cập bị từ chối', statusCode: 403);
 }
 
 /// ===== CACHE =====
 
 class CacheFailure extends Failure {
-  const CacheFailure({super.message = 'Cache error'});
+  const CacheFailure({super.message = 'Lỗi bộ đệm'});
 }
 
 /// ===== FALLBACK =====
