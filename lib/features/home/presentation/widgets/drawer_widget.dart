@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
+import 'package:multi_catalog_system/core/router/router_names.dart';
+import 'package:multi_catalog_system/core/widgets/custom_button.dart';
 import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_event.dart';
 import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_state.dart';
 import 'package:multi_catalog_system/features/home/presentation/bloc/home_bloc.dart';
 import 'package:multi_catalog_system/features/home/presentation/bloc/home_event.dart';
@@ -13,7 +17,10 @@ class DrawerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final drawerWidth = MediaQuery.of(context).size.width * 0.6;
+
     return Drawer(
+      width: drawerWidth,
       child: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(10.0),
@@ -44,24 +51,21 @@ class _HeaderDrawer extends StatelessWidget {
               loading: () => const CircularProgressIndicator(),
 
               unauthenticated: () {
-                return Row(
-                  children: const [
-                    CircleAvatar(radius: 30, child: Icon(Icons.person_outline)),
-                    SizedBox(width: 12),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Chưa đăng nhập',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        Text('Vui lòng đăng nhập'),
-                      ],
+                return SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.6 - 20,
+                  child: CustomButton(
+                    onTap: () {
+                      context.go(RouterNames.login);
+                    },
+                    colorBackground: Colors.blue,
+                    textButton: Text(
+                      'Đăng nhập',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight(600),
+                      ),
                     ),
-                  ],
+                  ),
                 );
               },
 
@@ -209,32 +213,43 @@ class _FooterDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        InkWell(
-          borderRadius: BorderRadius.circular(10),
-          hoverColor: Colors.blue.withValues(alpha: .2),
-          onTap: () {},
-          child: ListTile(
-            leading: SvgPicture.asset(
-              'assets/icons/profile-circle-svgrepo-com.svg',
-              height: 20,
-              width: 20,
-              fit: BoxFit.contain,
-            ),
-            title: Text('Hồ sơ'),
-          ),
-        ),
-        InkWell(
-          borderRadius: BorderRadius.circular(10),
-          hoverColor: Colors.blue.withValues(alpha: .2),
-          onTap: () {},
-          child: ListTile(
-            leading: Icon(Icons.exit_to_app_outlined, size: 20),
-            title: Text('Đăng xuất'),
-          ),
-        ),
-      ],
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+        return state.maybeMap(
+          orElse: () => SizedBox.shrink(),
+          authenticated: (value) {
+            return Column(
+              children: [
+                InkWell(
+                  borderRadius: BorderRadius.circular(10),
+                  hoverColor: Colors.blue.withValues(alpha: .2),
+                  onTap: () {},
+                  child: ListTile(
+                    leading: SvgPicture.asset(
+                      'assets/icons/profile-circle-svgrepo-com.svg',
+                      height: 20,
+                      width: 20,
+                      fit: BoxFit.contain,
+                    ),
+                    title: Text('Hồ sơ'),
+                  ),
+                ),
+                InkWell(
+                  borderRadius: BorderRadius.circular(10),
+                  hoverColor: Colors.blue.withValues(alpha: .2),
+                  onTap: () {
+                    context.read<AuthBloc>().add(AuthEvent.logout());
+                  },
+                  child: ListTile(
+                    leading: Icon(Icons.exit_to_app_outlined, size: 20),
+                    title: Text('Đăng xuất'),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 }

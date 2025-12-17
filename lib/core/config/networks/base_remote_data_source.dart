@@ -7,9 +7,6 @@ abstract class BaseRemoteDataSource {
     if (status == 401) throw const UnauthorizedException();
     if (status == 403) throw const ForbiddenException();
     if (status == 404) throw const NotFoundException();
-    throw ServerException(
-      e.response?.data['message'] ?? 'Server error',
-      status,
-    );
+    throw ServerException(e.response?.data['message'] ?? 'Máy chủ lỗi', status);
   }
 }

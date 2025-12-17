@@ -36,7 +36,7 @@ class _DomainManagementPageState extends State<DomainManagementPage> {
             children: [
               CustomInput(
                 hintText: 'Tìm kiếm lĩnh vực',
-                icon: Icon(Icons.search),
+                suffixIcon: Icon(Icons.search),
               ),
               Expanded(
                 child: BlocBuilder<DomainManagementBloc, DomainManagementState>(
@@ -48,7 +48,7 @@ class _DomainManagementPageState extends State<DomainManagementPage> {
                           const Center(child: CircularProgressIndicator()),
                       loaded: (domains) =>
                           DomainManagementGridView(domains: domains),
-                      error: (message) => Center(child: Text('Lỗi: $message')),
+                      error: (message) => Center(child: Text(message)),
                     );
                   },
                 ),

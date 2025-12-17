@@ -38,7 +38,7 @@ class _CategoryLookupPageState extends State<CategoryLookupPage> {
                       'Tìm kiếm',
                       style: TextStyle(fontWeight: FontWeight(600)),
                     ),
-                    icon: Icon(Icons.search),
+                    suffixIcon: Icon(Icons.search),
                   ),
                   CustomDropdownButton(
                     lable: Text(

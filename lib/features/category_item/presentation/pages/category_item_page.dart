@@ -57,7 +57,7 @@ class _CategoryItemPageState extends State<CategoryItemPage> {
             children: [
               CustomInput(
                 hintText: 'Tìm kiếm theo tên, mã...',
-                icon: Icon(Icons.search),
+                suffixIcon: Icon(Icons.search),
               ),
               if (selectionMode)
                 Row(

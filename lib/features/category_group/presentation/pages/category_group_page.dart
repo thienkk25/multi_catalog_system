@@ -27,7 +27,7 @@ class _CategoryGroupPageState extends State<CategoryGroupPage> {
                   Expanded(
                     child: CustomInput(
                       hintText: 'Tìm kiếm theo mã, tên...',
-                      icon: Icon(Icons.search),
+                      suffixIcon: Icon(Icons.search),
                     ),
                   ),
                   IconButton(

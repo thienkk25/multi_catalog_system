@@ -21,7 +21,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage> {
             children: [
               CustomInput(
                 hintText: 'Tìm kiếm văn bản...',
-                icon: Icon(Icons.search),
+                suffixIcon: Icon(Icons.search),
               ),
               Expanded(child: LegalDocumentListViewWidget()),
             ],

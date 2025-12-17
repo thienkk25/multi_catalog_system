@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 class CustomButton extends StatelessWidget {
   const CustomButton({
     super.key,
-    required this.onTap,
+    this.onTap,
     required this.colorBackground,
     required this.textButton,
     this.colorBorder,
   });
-  final Function() onTap;
+  final Function()? onTap;
   final Color colorBackground;
   final Color? colorBorder;
   final Widget textButton;

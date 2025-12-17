@@ -1,4 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:multi_catalog_system/core/core.dart';
+import 'package:multi_catalog_system/core/router/router_names.dart';
+import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_event.dart';
+import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_state.dart';
+import 'package:multi_catalog_system/features/auth/presentation/widgets/password_field_widget.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -8,8 +16,133 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  // Regular expression for email validation
+  final RegExp emailRegExp = RegExp(
+    r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+",
+  );
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final FocusNode passFocusNode = FocusNode();
+
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    final size = MediaQuery.of(context).size;
+    return Scaffold(
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Form(
+            key: formKey,
+            child: Column(
+              spacing: 20,
+              children: [
+                Text(
+                  'Đăng nhập',
+                  style: TextStyle(fontSize: 30, fontWeight: FontWeight(600)),
+                ),
+                CustomInput(
+                  lable: Text('Email'),
+                  controller: emailController,
+                  prefixIcon: Icon(Icons.email_outlined),
+                  textInputAction: TextInputAction.next,
+                  onFieldSubmitted: (_) =>
+                      FocusScope.of(context).requestFocus(passFocusNode),
+                  validator: (p0) {
+                    if (p0 == null || p0.isEmpty) {
+                      return 'Vui lòng nhập email';
+                    } else if (!emailRegExp.hasMatch(emailController.text)) {
+                      return 'Email không đúng định dạng';
+                    }
+                    return null;
+                  },
+                ),
+                PasswordFieldWidget(
+                  label: Text('Mật khẩu'),
+                  controller: passwordController,
+                  focusNode: passFocusNode,
+                  validator: (p0) => (p0 == null || p0.isEmpty)
+                      ? 'Vui lòng nhập mật khẩu'
+                      : null,
+                ),
+                SizedBox(height: 5),
+                BlocListener<AuthBloc, AuthState>(
+                  listener: (context, state) {
+                    state.mapOrNull(
+                      authenticated: (_) => context.go(RouterNames.home),
+                      error: (e) => ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(SnackBar(content: Text(e.message))),
+                    );
+                  },
+                  child: SizedBox(
+                    width: size.width / 2,
+                    child: BlocBuilder<AuthBloc, AuthState>(
+                      builder: (context, state) {
+                        final isLoading = state.maybeMap(
+                          loading: (_) => true,
+                          orElse: () => false,
+                        );
+
+                        return CustomButton(
+                          onTap: isLoading
+                              ? null
+                              : () {
+                                  if (formKey.currentState!.validate()) {
+                                    context.read<AuthBloc>().add(
+                                      AuthEvent.login(
+                                        email: emailController.text,
+                                        pass: passwordController.text,
+                                      ),
+                                    );
+                                  }
+                                },
+                          colorBackground: Colors.blue,
+                          textButton: isLoading
+                              ? const SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : const Text(
+                                  'Đăng nhập',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+
+                SizedBox(
+                  width: size.width / 2,
+                  child: CustomButton(
+                    onTap: () {
+                      if (context.canPop()) {
+                        context.pop();
+                        return;
+                      }
+                      context.go(RouterNames.home);
+                    },
+                    colorBackground: Colors.transparent,
+                    colorBorder: Colors.blue,
+                    textButton: Text(
+                      'Quay lại',
+                      style: TextStyle(fontWeight: FontWeight(600)),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
