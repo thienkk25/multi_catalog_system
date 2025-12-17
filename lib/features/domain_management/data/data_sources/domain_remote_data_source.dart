@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:multi_catalog_system/core/config/constants/app_constant.dart';
+import 'package:multi_catalog_system/core/config/networks/base_remote_data_source.dart';
+import 'package:multi_catalog_system/core/error/exceptions.dart';
 import 'package:multi_catalog_system/features/domain_management/data/models/domain_model.dart';
 
 abstract class DomainRemoteDataSource {
@@ -12,7 +14,8 @@ abstract class DomainRemoteDataSource {
   Future<void> delete(String id);
 }
 
-class DomainRemoteDataSourceImpl implements DomainRemoteDataSource {
+class DomainRemoteDataSourceImpl extends BaseRemoteDataSource
+    implements DomainRemoteDataSource {
   final Dio dio;
   DomainRemoteDataSourceImpl({Dio? dio}) : dio = dio ?? Dio();
 
@@ -22,8 +25,12 @@ class DomainRemoteDataSourceImpl implements DomainRemoteDataSource {
       final response = await dio.get('${AppConstant.apiBaseUrl}/domain');
       final List<dynamic> jsonList = response.data['data']['data'];
       return jsonList.map((json) => DomainModel.fromJson(json)).toList();
+    } on DioException catch (e) {
+      handleDioError(e);
+    } on AppException {
+      rethrow;
     } catch (e) {
-      throw Exception('Failed to fetch domains: $e');
+      throw UnexpectedException(e.toString());
     }
   }
 
@@ -32,8 +39,12 @@ class DomainRemoteDataSourceImpl implements DomainRemoteDataSource {
     try {
       final response = await dio.get('${AppConstant.apiBaseUrl}/domain/$id');
       return DomainModel.fromJson(response.data);
+    } on DioException catch (e) {
+      handleDioError(e);
+    } on AppException {
+      rethrow;
     } catch (e) {
-      throw Exception('Failed to fetch domain $id: $e');
+      throw UnexpectedException(e.toString());
     }
   }
 
@@ -45,8 +56,12 @@ class DomainRemoteDataSourceImpl implements DomainRemoteDataSource {
         data: entry.toJson(),
       );
       return DomainModel.fromJson(response.data);
+    } on DioException catch (e) {
+      handleDioError(e);
+    } on AppException {
+      rethrow;
     } catch (e) {
-      throw Exception('Failed to create domain: $e');
+      throw UnexpectedException(e.toString());
     }
   }
 
@@ -60,8 +75,12 @@ class DomainRemoteDataSourceImpl implements DomainRemoteDataSource {
       );
       final List<dynamic> jsonList = response.data;
       return jsonList.map((json) => DomainModel.fromJson(json)).toList();
+    } on DioException catch (e) {
+      handleDioError(e);
+    } on AppException {
+      rethrow;
     } catch (e) {
-      throw Exception('Failed to create domain: $e');
+      throw UnexpectedException(e.toString());
     }
   }
 
@@ -75,8 +94,12 @@ class DomainRemoteDataSourceImpl implements DomainRemoteDataSource {
       );
       final List<dynamic> jsonList = response.data;
       return jsonList.map((json) => DomainModel.fromJson(json)).toList();
+    } on DioException catch (e) {
+      handleDioError(e);
+    } on AppException {
+      rethrow;
     } catch (e) {
-      throw Exception('Failed to upsert domains: $e');
+      throw UnexpectedException(e.toString());
     }
   }
 
@@ -88,8 +111,12 @@ class DomainRemoteDataSourceImpl implements DomainRemoteDataSource {
         data: entry.toJson(),
       );
       return DomainModel.fromJson(response.data);
+    } on DioException catch (e) {
+      handleDioError(e);
+    } on AppException {
+      rethrow;
     } catch (e) {
-      throw Exception('Failed to update domain ${entry.id}: $e');
+      throw UnexpectedException(e.toString());
     }
   }
 
@@ -98,7 +125,7 @@ class DomainRemoteDataSourceImpl implements DomainRemoteDataSource {
     try {
       await dio.delete('${AppConstant.apiBaseUrl}/domain/$id');
     } catch (e) {
-      throw Exception('Failed to delete domain $id: $e');
+      throw UnexpectedException(e.toString());
     }
   }
 }

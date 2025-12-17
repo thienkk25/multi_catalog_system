@@ -21,26 +21,21 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failure, UserEntry>> getCurrentUser() async {
     try {
       final cachedUser = await authLocalDataSource.getCachedUser();
-
-      if (cachedUser != null) {
-        return Right(cachedUser.toEntry());
-      }
+      if (cachedUser != null) return Right(cachedUser.toEntry());
 
       final token = await authLocalDataSource.getCachedAuthToken();
-      if (token == null) {
-        return Left(CacheFailure());
-      }
+      if (token == null) return Left(CacheFailure(message: "Token not found"));
 
       final remoteUser = await authRemoteDataSource.getCurrentUser();
-
-      if (remoteUser == null) {
-        return Left(ServerFailure());
-      }
-
       await authLocalDataSource.cacheUser(remoteUser);
+
       return Right(remoteUser.toEntry());
-    } catch (_) {
-      return Left(ServerFailure());
+    } on ServerException catch (e) {
+      return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
+    } on CacheException catch (e) {
+      return Left(CacheFailure(message: e.message));
+    } on UnexpectedException catch (e) {
+      return Left(UnexpectedFailure(e.message));
     }
   }
 
@@ -60,10 +55,12 @@ class AuthRepositoryImpl implements AuthRepository {
       return Right(result.user.toEntry());
     } on InvalidCredentialsException {
       return Left(InvalidCredentialsFailure());
-    } on ServerException {
-      return Left(ServerFailure());
-    } on CacheException {
-      return Left(CacheFailure());
+    } on ServerException catch (e) {
+      return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
+    } on CacheException catch (e) {
+      return Left(CacheFailure(message: e.message));
+    } on UnexpectedException catch (e) {
+      return Left(UnexpectedFailure(e.message));
     }
   }
 
@@ -84,20 +81,28 @@ class AuthRepositoryImpl implements AuthRepository {
       }
 
       return const Right(unit);
-    } on ServerException {
-      return Left(ServerFailure());
-    } on CacheException {
-      return Left(CacheFailure());
+    } on ServerException catch (e) {
+      return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
+    } on CacheException catch (e) {
+      return Left(CacheFailure(message: e.message));
+    } on UnexpectedException catch (e) {
+      return Left(UnexpectedFailure(e.message));
     }
   }
 
   /// Logout → clear local + gọi API
   @override
-  Future<void> logout() async {
+  Future<Either<Failure, Unit>> logout() async {
     try {
       await authRemoteDataSource.logout();
-    } finally {
       await authLocalDataSource.clearAuthToken();
+      return const Right(unit);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
+    } on CacheException catch (e) {
+      return Left(CacheFailure(message: e.message));
+    } on UnexpectedException catch (e) {
+      return Left(UnexpectedFailure(e.message));
     }
   }
 }

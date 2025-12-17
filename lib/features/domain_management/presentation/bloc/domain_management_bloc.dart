@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:multi_catalog_system/core/error/failures.dart';
 import 'package:multi_catalog_system/features/domain_management/domain/domain.dart';
 import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_management_event.dart';
 import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_management_state.dart';
@@ -23,73 +24,90 @@ class DomainManagementBloc
     required this.createManyDomainUseCase,
   }) : super(const DomainManagementState.initial()) {
     on<DomainManagementEvent>((event, emit) async {
+      emit(const DomainManagementState.loading());
+
       await event.map(
         getAll: (_) async {
-          emit(const DomainManagementState.loading());
-          try {
-            final domains = await getAllDomainUseCase();
-            emit(DomainManagementState.loaded(domains: domains));
-          } catch (e) {
-            emit(DomainManagementState.error(message: e.toString()));
-          }
+          final result = await getAllDomainUseCase();
+          result.fold(
+            (failure) => emit(
+              DomainManagementState.error(message: _mapFailure(failure)),
+            ),
+            (domains) => emit(DomainManagementState.loaded(domains: domains)),
+          );
         },
         getById: (e) async {
-          emit(const DomainManagementState.loading());
-          try {
-            final domain = await getByIdDomainUseCase(e.id);
-            emit(DomainManagementState.loaded(domains: [domain]));
-          } catch (e) {
-            emit(DomainManagementState.error(message: e.toString()));
-          }
+          final result = await getByIdDomainUseCase(e.id);
+          result.fold(
+            (failure) => emit(
+              DomainManagementState.error(message: _mapFailure(failure)),
+            ),
+            (domain) => emit(DomainManagementState.loaded(domains: [domain])),
+          );
         },
         create: (e) async {
-          emit(const DomainManagementState.loading());
-          try {
-            final createdDomain = await createDomainUseCase(e.domain);
-            emit(DomainManagementState.loaded(domains: [createdDomain]));
-          } catch (e) {
-            emit(DomainManagementState.error(message: e.toString()));
-          }
+          final result = await createDomainUseCase(e.domain);
+          result.fold(
+            (failure) => emit(
+              DomainManagementState.error(message: _mapFailure(failure)),
+            ),
+            (domain) => emit(DomainManagementState.loaded(domains: [domain])),
+          );
         },
         createMany: (e) async {
-          emit(const DomainManagementState.loading());
-          try {
-            final createdDomains = await createManyDomainUseCase(e.domains);
-            emit(DomainManagementState.loaded(domains: createdDomains));
-          } catch (e) {
-            emit(DomainManagementState.error(message: e.toString()));
-          }
+          final result = await createManyDomainUseCase(e.domains);
+          result.fold(
+            (failure) => emit(
+              DomainManagementState.error(message: _mapFailure(failure)),
+            ),
+            (domains) => emit(DomainManagementState.loaded(domains: domains)),
+          );
         },
         update: (e) async {
-          emit(const DomainManagementState.loading());
-          try {
-            final updatedDomain = await updateDomainUseCase(e.domain);
-            emit(DomainManagementState.loaded(domains: [updatedDomain]));
-          } catch (e) {
-            emit(DomainManagementState.error(message: e.toString()));
-          }
+          final result = await updateDomainUseCase(e.domain);
+          result.fold(
+            (failure) => emit(
+              DomainManagementState.error(message: _mapFailure(failure)),
+            ),
+            (domain) => emit(DomainManagementState.loaded(domains: [domain])),
+          );
         },
         delete: (e) async {
-          emit(const DomainManagementState.loading());
-          try {
-            await deleteDomainUseCase(e.id);
-            final domains =
-                await getAllDomainUseCase(); // fetch lại dữ liệu mới
-            emit(DomainManagementState.loaded(domains: domains));
-          } catch (e) {
-            emit(DomainManagementState.error(message: e.toString()));
-          }
+          final result = await deleteDomainUseCase(e.id);
+          result.fold(
+            (failure) => emit(
+              DomainManagementState.error(message: _mapFailure(failure)),
+            ),
+            (_) async {
+              final updatedDomains = await getAllDomainUseCase();
+              updatedDomains.fold(
+                (failure) => emit(
+                  DomainManagementState.error(message: _mapFailure(failure)),
+                ),
+                (domains) =>
+                    emit(DomainManagementState.loaded(domains: domains)),
+              );
+            },
+          );
         },
         upsertMany: (e) async {
-          emit(const DomainManagementState.loading());
-          try {
-            final upsertedDomains = await upsertManyDomainUseCase(e.domains);
-            emit(DomainManagementState.loaded(domains: upsertedDomains));
-          } catch (e) {
-            emit(DomainManagementState.error(message: e.toString()));
-          }
+          final result = await upsertManyDomainUseCase(e.domains);
+          result.fold(
+            (failure) => emit(
+              DomainManagementState.error(message: _mapFailure(failure)),
+            ),
+            (domains) => emit(DomainManagementState.loaded(domains: domains)),
+          );
         },
       );
     });
+  }
+
+  /// Helper map Failure -> message
+  String _mapFailure(Failure failure) {
+    if (failure is ServerFailure) return failure.message;
+    if (failure is CacheFailure) return failure.message;
+    if (failure is UnexpectedFailure) return failure.message;
+    return 'Unknown error';
   }
 }
