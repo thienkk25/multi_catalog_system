@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:multi_catalog_system/features/auth/data/data_sources/auth_local_data_source.dart';
 import 'package:multi_catalog_system/features/auth/data/data_sources/auth_remote_data_source.dart';
@@ -12,39 +13,43 @@ import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_bloc.d
 void initAuthModule() {
   final getIt = GetIt.instance;
 
-  getIt.registerLazySingleton<AuthLocalDataSource>(
-    () => AuthLocalDataSourceImpl(sharedPreferences: getIt()),
-  );
+  // Remote DS (refreshDio)
   getIt.registerLazySingleton<AuthRemoteDataSource>(
-    () => AuthRemoteDataSourceImpl(dio: getIt()),
+    () => AuthRemoteDataSourceImpl(dio: getIt<Dio>(instanceName: 'refreshDio')),
   );
 
+  // Repository IMPLEMENTATION
   getIt.registerLazySingleton<AuthRepository>(
     () => AuthRepositoryImpl(
-      authRemoteDataSource: getIt(),
-      authLocalDataSource: getIt(),
+      authRemoteDataSource: getIt<AuthRemoteDataSource>(),
+      authLocalDataSource: getIt<AuthLocalDataSource>(),
     ),
   );
 
+  // Use cases
   getIt.registerLazySingleton<AuthGetCurrentUserUseCase>(
     () => AuthGetCurrentUserUseCase(authRepository: getIt()),
   );
+
   getIt.registerLazySingleton<AuthLoginUseCase>(
     () => AuthLoginUseCase(authRepository: getIt()),
   );
+
   getIt.registerLazySingleton<AuthLogoutUseCase>(
     () => AuthLogoutUseCase(authRepository: getIt()),
   );
+
   getIt.registerLazySingleton<AuthRefreshTokenUseCase>(
     () => AuthRefreshTokenUseCase(authRepository: getIt()),
   );
 
+  // Bloc
   getIt.registerFactory<AuthBloc>(
     () => AuthBloc(
-      authGetCurrentUserUseCase: getIt<AuthGetCurrentUserUseCase>(),
-      authLoginUseCase: getIt<AuthLoginUseCase>(),
-      authLogoutUseCase: getIt<AuthLogoutUseCase>(),
-      authRefreshTokenUseCase: getIt<AuthRefreshTokenUseCase>(),
+      authGetCurrentUserUseCase: getIt(),
+      authLoginUseCase: getIt(),
+      authLogoutUseCase: getIt(),
+      authRefreshTokenUseCase: getIt(),
     ),
   );
 }

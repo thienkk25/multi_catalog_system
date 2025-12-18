@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:multi_catalog_system/core/config/constants/app_constant.dart';
 import 'package:multi_catalog_system/core/config/networks/base_remote_data_source.dart';
 import 'package:multi_catalog_system/core/error/exceptions.dart';
 import 'package:multi_catalog_system/features/auth/data/models/user_model.dart';
@@ -40,7 +39,7 @@ class AuthRemoteDataSourceImpl extends BaseRemoteDataSource
   }) async {
     try {
       final response = await dio.post(
-        '${AppConstant.apiBaseUrl}/auth/login',
+        '/auth/login',
         data: {'email': email, 'password': pass},
       );
 
@@ -81,7 +80,7 @@ class AuthRemoteDataSourceImpl extends BaseRemoteDataSource
   @override
   Future<UserModel> getCurrentUser() async {
     try {
-      final response = await dio.get('${AppConstant.apiBaseUrl}/auth/me');
+      final response = await dio.get('/auth/me');
 
       final data = response.data;
       if (data is! Map<String, dynamic>) {
@@ -102,8 +101,9 @@ class AuthRemoteDataSourceImpl extends BaseRemoteDataSource
   Future<AuthResponseModel> refreshToken({required String refreshToken}) async {
     try {
       final response = await dio.post(
-        '${AppConstant.apiBaseUrl}/auth/refresh',
+        '/auth/refresh',
         data: {'refresh_token': refreshToken},
+        options: Options(headers: {'Authorization': null}),
       );
 
       final data = response.data;
@@ -124,7 +124,7 @@ class AuthRemoteDataSourceImpl extends BaseRemoteDataSource
   @override
   Future<void> logout() async {
     try {
-      await dio.post('${AppConstant.apiBaseUrl}/auth/logout');
+      await dio.post('/auth/logout');
     } on DioException catch (e) {
       handleDioError(e);
     } catch (e) {
