@@ -12,6 +12,7 @@ class DomainManagementGridView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bloc = context.read<DomainManagementBloc>();
     double screenWidth(BuildContext context) {
       return MediaQuery.of(context).size.width;
     }
@@ -30,22 +31,14 @@ class DomainManagementGridView extends StatelessWidget {
         final domain = domains[index];
         return GestureDetector(
           onTap: () {
-            showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  title: Text('Chi tiết lĩnh vực ${domain.name}'),
-                  content: Text(
-                    'Mã: ${domain.code}\nMô tả: ${domain.description}',
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text('Đóng'),
-                    ),
-                  ],
-                );
-              },
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DomainManagementViewAddEditPage(
+                  type: Type.view,
+                  entry: domain,
+                ),
+              ),
             );
           },
           child: CustomCard(
@@ -91,11 +84,23 @@ class DomainManagementGridView extends StatelessWidget {
                         child: _DomainCardMenu(
                           onEdit: () {
                             Navigator.pop(context);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => BlocProvider.value(
+                                  value: bloc,
+                                  child: DomainManagementViewAddEditPage(
+                                    type: Type.edit,
+                                    entry: domain,
+                                  ),
+                                ),
+                              ),
+                            );
                           },
                           onDelete: () {
                             Navigator.pop(context);
                             context.read<DomainManagementBloc>().add(
-                              DomainManagementEvent.delete(id: domain.id),
+                              DomainManagementEvent.delete(id: domain.id!),
                             );
                           },
                         ),

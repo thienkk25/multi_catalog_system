@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:dio/dio.dart';
 import 'package:multi_catalog_system/features/auth/data/data_sources/auth_local_data_source.dart';
 import 'package:multi_catalog_system/features/auth/domain/repositories/auth_repository.dart';
@@ -9,7 +8,7 @@ class AuthInterceptor extends Interceptor {
   final AuthLocalDataSource authLocal;
   final AuthRepository authRepository;
 
-  Completer<void>? _refreshCompleter;
+  Completer<bool>? _refreshCompleter;
 
   AuthInterceptor({
     required this.dio,
@@ -17,6 +16,7 @@ class AuthInterceptor extends Interceptor {
     required this.authRepository,
   });
 
+  // ================= REQUEST =================
   @override
   void onRequest(
     RequestOptions options,
@@ -29,55 +29,63 @@ class AuthInterceptor extends Interceptor {
     handler.next(options);
   }
 
+  // ================= ERROR =================
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
     final is401 = err.response?.statusCode == 401;
     final isRefresh = err.requestOptions.path.contains('/auth/refresh');
 
     if (is401 && !isRefresh) {
-      try {
-        await _refreshToken();
+      final refreshed = await _refreshToken();
 
-        final newToken = await authLocal.getCachedAuthToken();
-        final requestOptions = err.requestOptions;
-
-        requestOptions.headers['Authorization'] = 'Bearer $newToken';
-
-        final response = await dio.fetch(requestOptions);
-        return handler.resolve(response);
-      } catch (_) {
+      if (!refreshed) {
         await authRepository.logout();
-        return handler.next(err);
+        return handler.reject(err); // ❗ KHÔNG next
       }
+
+      final newToken = await authLocal.getCachedAuthToken();
+      if (newToken == null || newToken.isEmpty) {
+        await authRepository.logout();
+        return handler.reject(err);
+      }
+
+      final requestOptions = err.requestOptions;
+      requestOptions.headers['Authorization'] = 'Bearer $newToken';
+
+      final response = await dio.fetch(requestOptions);
+      return handler.resolve(response);
     }
 
     handler.next(err);
   }
 
-  Future<void> _refreshToken() async {
+  // ================= REFRESH TOKEN =================
+  Future<bool> _refreshToken() async {
+    // Nếu đang refresh → chờ
     if (_refreshCompleter != null) {
       return _refreshCompleter!.future;
     }
 
-    _refreshCompleter = Completer();
+    _refreshCompleter = Completer<bool>();
 
     try {
       final refreshToken = await authLocal.getCachedRefreshToken();
 
-      if (refreshToken == null) {
-        throw Exception('No refresh token');
+      if (refreshToken == null || refreshToken.isEmpty) {
+        _refreshCompleter!.complete(false);
+        return false;
       }
 
       final result = await authRepository.refreshToken(
         refreshToken: refreshToken,
       );
 
-      result.fold((failure) => throw Exception(failure), (_) => null);
-
-      _refreshCompleter!.complete();
-    } catch (e) {
-      _refreshCompleter!.completeError(e);
-      rethrow;
+      final success = result.isRight();
+      _refreshCompleter!.complete(success);
+      return success;
+    } catch (_) {
+      _refreshCompleter!.complete(false);
+      return false;
     } finally {
       _refreshCompleter = null;
     }

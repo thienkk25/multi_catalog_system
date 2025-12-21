@@ -4,11 +4,11 @@ import 'package:multi_catalog_system/features/domain_management/domain/domain.da
 part 'domain_management_state.freezed.dart';
 
 @freezed
-class DomainManagementState with _$DomainManagementState {
-  const factory DomainManagementState.initial() = _Initial;
-  const factory DomainManagementState.loading() = _Loading;
-  const factory DomainManagementState.loaded({
-    required List<DomainEntry> domains,
-  }) = _Loaded;
-  const factory DomainManagementState.error({required String message}) = _Error;
+abstract class DomainManagementState with _$DomainManagementState {
+  const factory DomainManagementState({
+    @Default(false) bool isLoading,
+    @Default([]) List<DomainEntry> domains,
+    String? error,
+    String? successMessage,
+  }) = _DomainManagementState;
 }

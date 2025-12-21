@@ -40,64 +40,55 @@ class _HeaderDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      spacing: 10,
-      children: [
-        BlocBuilder<AuthBloc, AuthState>(
-          builder: (context, state) {
-            return state.when(
-              initial: () => const SizedBox(),
-
-              loading: () => const CircularProgressIndicator(),
-
-              unauthenticated: () {
-                return SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.6 - 20,
-                  child: CustomButton(
-                    onTap: () {
-                      context.go(RouterNames.login);
-                    },
-                    colorBackground: Colors.blue,
-                    textButton: Text(
-                      'Đăng nhập',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight(600),
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+        final sizeW = MediaQuery.of(context).size.width * 0.6 - 20;
+        return state.when(
+          initial: () => const SizedBox.shrink(),
+          loading: () => const Center(child: CircularProgressIndicator()),
+          unauthenticated: () => SizedBox(
+            width: sizeW,
+            child: CustomButton(
+              onTap: () {
+                context.go(RouterNames.login);
+              },
+              colorBackground: Colors.blue,
+              textButton: const Text(
+                'Đăng nhập',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight(600),
+                ),
+              ),
+            ),
+          ),
+          authenticated: (user) {
+            return Row(
+              children: [
+                CircleAvatar(radius: 30, child: const Icon(Icons.person)),
+                const SizedBox(width: 12),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      user.fullName ?? 'Không tên',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
-                  ),
-                );
-              },
-
-              authenticated: (user) {
-                return Row(
-                  children: [
-                    CircleAvatar(radius: 30, child: const Icon(Icons.person)),
-                    const SizedBox(width: 12),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          user.fullName ?? 'Không tên',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        Text('Email: ${user.email}'),
-                      ],
-                    ),
+                    Text('Email: ${user.email}'),
                   ],
-                );
-              },
-
-              error: (message) {
-                return Text(message, style: const TextStyle(color: Colors.red));
-              },
+                ),
+              ],
             );
           },
-        ),
-      ],
+
+          error: (message) {
+            return Text(message, style: const TextStyle(color: Colors.red));
+          },
+        );
+      },
     );
   }
 }
@@ -238,6 +229,9 @@ class _FooterDrawer extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                   hoverColor: Colors.blue.withValues(alpha: .2),
                   onTap: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Đăng xuất thành công')),
+                    );
                     context.read<AuthBloc>().add(AuthEvent.logout());
                   },
                   child: ListTile(

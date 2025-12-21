@@ -1,5 +1,5 @@
 class DomainEntry {
-  final String id;
+  final String? id;
   final String code;
   final String name;
   final String description;
@@ -7,7 +7,7 @@ class DomainEntry {
   final DateTime? updatedAt;
 
   DomainEntry({
-    required this.id,
+    this.id,
     required this.code,
     required this.name,
     required this.description,

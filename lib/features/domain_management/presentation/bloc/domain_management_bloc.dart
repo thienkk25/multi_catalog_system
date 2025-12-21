@@ -16,94 +16,164 @@ class DomainManagementBloc
 
   DomainManagementBloc({
     required this.createDomainUseCase,
+    required this.createManyDomainUseCase,
     required this.updateDomainUseCase,
     required this.deleteDomainUseCase,
     required this.getByIdDomainUseCase,
     required this.getAllDomainUseCase,
     required this.upsertManyDomainUseCase,
-    required this.createManyDomainUseCase,
-  }) : super(const DomainManagementState.initial()) {
-    on<DomainManagementEvent>((event, emit) async {
-      emit(const DomainManagementState.loading());
-
-      await event.map(
-        getAll: (_) async {
-          final result = await getAllDomainUseCase();
-          result.fold(
-            (failure) => emit(
-              DomainManagementState.error(message: _mapFailure(failure)),
-            ),
-            (domains) => emit(DomainManagementState.loaded(domains: domains)),
-          );
-        },
-        getById: (e) async {
-          final result = await getByIdDomainUseCase(e.id);
-          result.fold(
-            (failure) => emit(
-              DomainManagementState.error(message: _mapFailure(failure)),
-            ),
-            (domain) => emit(DomainManagementState.loaded(domains: [domain])),
-          );
-        },
-        create: (e) async {
-          final result = await createDomainUseCase(e.domain);
-          result.fold(
-            (failure) => emit(
-              DomainManagementState.error(message: _mapFailure(failure)),
-            ),
-            (domain) => emit(DomainManagementState.loaded(domains: [domain])),
-          );
-        },
-        createMany: (e) async {
-          final result = await createManyDomainUseCase(e.domains);
-          result.fold(
-            (failure) => emit(
-              DomainManagementState.error(message: _mapFailure(failure)),
-            ),
-            (domains) => emit(DomainManagementState.loaded(domains: domains)),
-          );
-        },
-        update: (e) async {
-          final result = await updateDomainUseCase(e.domain);
-          result.fold(
-            (failure) => emit(
-              DomainManagementState.error(message: _mapFailure(failure)),
-            ),
-            (domain) => emit(DomainManagementState.loaded(domains: [domain])),
-          );
-        },
-        delete: (e) async {
-          final result = await deleteDomainUseCase(e.id);
-          result.fold(
-            (failure) => emit(
-              DomainManagementState.error(message: _mapFailure(failure)),
-            ),
-            (_) async {
-              final updatedDomains = await getAllDomainUseCase();
-              updatedDomains.fold(
-                (failure) => emit(
-                  DomainManagementState.error(message: _mapFailure(failure)),
-                ),
-                (domains) =>
-                    emit(DomainManagementState.loaded(domains: domains)),
-              );
-            },
-          );
-        },
-        upsertMany: (e) async {
-          final result = await upsertManyDomainUseCase(e.domains);
-          result.fold(
-            (failure) => emit(
-              DomainManagementState.error(message: _mapFailure(failure)),
-            ),
-            (domains) => emit(DomainManagementState.loaded(domains: domains)),
-          );
-        },
-      );
-    });
+  }) : super(const DomainManagementState()) {
+    on<DomainManagementEvent>(_onEvent);
   }
 
-  /// Helper map Failure -> message
+  Future<void> _onEvent(
+    DomainManagementEvent event,
+    Emitter<DomainManagementState> emit,
+  ) async {
+    await event.map(
+      getAll: (_) async {
+        emit(
+          state.copyWith(isLoading: true, error: null, successMessage: null),
+        );
+
+        final result = await getAllDomainUseCase();
+        if (emit.isDone) return;
+
+        result.fold(
+          (f) => emit(state.copyWith(isLoading: false, error: _mapFailure(f))),
+          (domains) => emit(state.copyWith(isLoading: false, domains: domains)),
+        );
+      },
+
+      getById: (e) async {
+        emit(
+          state.copyWith(isLoading: true, error: null, successMessage: null),
+        );
+
+        final result = await getByIdDomainUseCase(e.id);
+        if (emit.isDone) return;
+
+        result.fold(
+          (f) => emit(state.copyWith(isLoading: false, error: _mapFailure(f))),
+          (domain) {
+            final updated = [
+              for (final d in state.domains)
+                if (d.id == domain.id) domain else d,
+            ];
+            emit(state.copyWith(isLoading: false, domains: updated));
+          },
+        );
+      },
+
+      create: (e) async {
+        emit(
+          state.copyWith(isLoading: true, error: null, successMessage: null),
+        );
+
+        final result = await createDomainUseCase(e.domain);
+        if (emit.isDone) return;
+
+        result.fold(
+          (f) => emit(state.copyWith(isLoading: false, error: _mapFailure(f))),
+          (domain) => emit(
+            state.copyWith(
+              isLoading: false,
+              domains: [...state.domains, domain],
+              successMessage: 'Tạo lĩnh vực thành công',
+            ),
+          ),
+        );
+      },
+
+      createMany: (e) async {
+        emit(
+          state.copyWith(isLoading: true, error: null, successMessage: null),
+        );
+
+        final result = await createManyDomainUseCase(e.domains);
+        if (emit.isDone) return;
+
+        result.fold(
+          (f) => emit(state.copyWith(isLoading: false, error: _mapFailure(f))),
+          (domains) => emit(
+            state.copyWith(
+              isLoading: false,
+              domains: [...state.domains, ...domains],
+              successMessage: 'Tạo lĩnh vực thành công',
+            ),
+          ),
+        );
+      },
+
+      update: (e) async {
+        emit(
+          state.copyWith(isLoading: true, error: null, successMessage: null),
+        );
+
+        final result = await updateDomainUseCase(e.domain);
+        if (emit.isDone) return;
+
+        result.fold(
+          (f) => emit(state.copyWith(isLoading: false, error: _mapFailure(f))),
+          (domain) {
+            final updated = [
+              for (final d in state.domains)
+                if (d.id == domain.id) domain else d,
+            ];
+            emit(
+              state.copyWith(
+                isLoading: false,
+                domains: updated,
+                successMessage: 'Cập nhật lĩnh vực thành công',
+              ),
+            );
+          },
+        );
+      },
+
+      delete: (e) async {
+        final previous = List<DomainEntry>.from(state.domains);
+
+        emit(
+          state.copyWith(
+            domains: state.domains.where((d) => d.id != e.id).toList(),
+            successMessage: null,
+          ),
+        );
+
+        final result = await deleteDomainUseCase(e.id);
+        if (emit.isDone) return;
+
+        result.fold(
+          (f) => emit(state.copyWith(domains: previous, error: _mapFailure(f))),
+          (_) {
+            emit(state.copyWith(successMessage: 'Xóa thành công'));
+          },
+        );
+      },
+
+      upsertMany: (e) async {
+        emit(
+          state.copyWith(isLoading: true, error: null, successMessage: null),
+        );
+
+        final result = await upsertManyDomainUseCase(e.domains);
+        if (emit.isDone) return;
+
+        result.fold(
+          (f) => emit(state.copyWith(isLoading: false, error: _mapFailure(f))),
+          (domains) => emit(
+            state.copyWith(
+              isLoading: false,
+              domains: domains,
+              successMessage: 'Cập nhật hoăc tạo lĩnh vực thành công',
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   String _mapFailure(Failure failure) {
     if (failure is ServerFailure) return failure.message;
     if (failure is CacheFailure) return failure.message;

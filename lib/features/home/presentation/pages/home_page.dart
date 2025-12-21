@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:multi_catalog_system/core/core.dart';
-import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_event.dart';
+import 'package:multi_catalog_system/features/auth/presentation/pages/not_found_page.dart';
 import 'package:multi_catalog_system/features/features.dart';
 import 'package:multi_catalog_system/features/home/presentation/bloc/home_state.dart';
 import 'package:multi_catalog_system/features/home/presentation/widgets/drawer_widget.dart';
@@ -15,31 +14,42 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  late final DomainManagementBloc domainBloc;
+
   @override
   void initState() {
     super.initState();
-    context.read<AuthBloc>().add(const AuthEvent.checkAuthenticated());
+    domainBloc = getIt<DomainManagementBloc>();
+  }
+
+  @override
+  void dispose() {
+    domainBloc.close();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<HomeBloc, HomeState>(
-      builder: (context, state) {
-        final pageIndex = state.mapOrNull(page: (p) => p.index);
-        return Scaffold(
-          appBar: AppBar(
-            title: context.watch<HomeBloc>().state.mapOrNull(
-              page: (value) => Text(
-                value.title,
-                style: TextStyle(fontWeight: FontWeight(600), fontSize: 20),
+    return MultiBlocProvider(
+      providers: [BlocProvider.value(value: domainBloc)],
+      child: BlocBuilder<HomeBloc, HomeState>(
+        builder: (context, state) {
+          final pageIndex = state.mapOrNull(page: (p) => p.index);
+          return Scaffold(
+            appBar: AppBar(
+              title: context.watch<HomeBloc>().state.mapOrNull(
+                page: (value) => Text(
+                  value.title,
+                  style: TextStyle(fontWeight: FontWeight(600), fontSize: 20),
+                ),
               ),
+              centerTitle: true,
             ),
-            centerTitle: true,
-          ),
-          drawer: DrawerWidget(),
-          body: SafeArea(child: _buildPage(pageIndex ?? 0)),
-        );
-      },
+            drawer: DrawerWidget(),
+            body: SafeArea(child: _buildPage(pageIndex ?? 0)),
+          );
+        },
+      ),
     );
   }
 
@@ -49,10 +59,7 @@ class _HomePageState extends State<HomePage> {
         return CategoryLookupPage();
 
       case 1:
-        return BlocProvider(
-          create: (_) => getIt<DomainManagementBloc>(),
-          child: DomainManagementPage(),
-        );
+        return DomainManagementPage();
 
       case 2:
         return CategoryGroupPage();
@@ -64,7 +71,7 @@ class _HomePageState extends State<HomePage> {
         return LegalDocumentPage();
 
       default:
-        return Center(child: Text("Page không tồn tại"));
+        return NotFoundPage();
     }
   }
 }

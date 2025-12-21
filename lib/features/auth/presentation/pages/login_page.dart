@@ -67,12 +67,34 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 SizedBox(height: 5),
                 BlocListener<AuthBloc, AuthState>(
+                  listenWhen: (previous, current) {
+                    final wasAuth = previous.maybeMap(
+                      authenticated: (_) => true,
+                      error: (_) => true,
+                      orElse: () => false,
+                    );
+
+                    final isAuth = current.maybeMap(
+                      authenticated: (_) => true,
+                      error: (_) => true,
+                      orElse: () => false,
+                    );
+
+                    return wasAuth != isAuth;
+                  },
                   listener: (context, state) {
                     state.mapOrNull(
-                      authenticated: (_) => context.go(RouterNames.home),
-                      error: (e) => ScaffoldMessenger.of(
-                        context,
-                      ).showSnackBar(SnackBar(content: Text(e.message))),
+                      authenticated: (_) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Đăng nhập thành công')),
+                        );
+                        context.go(RouterNames.home);
+                      },
+                      error: (state) {
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(SnackBar(content: Text(state.message)));
+                      },
                     );
                   },
                   child: SizedBox(

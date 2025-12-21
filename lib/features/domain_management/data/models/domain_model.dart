@@ -7,7 +7,7 @@ part 'domain_model.g.dart';
 @freezed
 abstract class DomainModel with _$DomainModel {
   const factory DomainModel({
-    required String id,
+    String? id,
     required String code,
     required String name,
     required String description,
@@ -40,5 +40,13 @@ extension DomainModelMapper on DomainModel {
       createdAt: createdAt,
       updatedAt: updatedAt,
     );
+  }
+}
+
+extension DomainModelCreateJson on DomainModel {
+  Map<String, dynamic> toCreateJson() {
+    final json = toJson();
+    json.remove('id');
+    return json;
   }
 }

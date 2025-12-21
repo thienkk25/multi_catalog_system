@@ -38,7 +38,7 @@ class DomainRemoteDataSourceImpl extends BaseRemoteDataSource
   Future<DomainModel> getById(String id) async {
     try {
       final response = await dio.get('/domain/$id');
-      return DomainModel.fromJson(response.data);
+      return DomainModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);
     } on AppException {
@@ -51,8 +51,8 @@ class DomainRemoteDataSourceImpl extends BaseRemoteDataSource
   @override
   Future<DomainModel> create(DomainModel entry) async {
     try {
-      final response = await dio.post('/domain', data: entry.toJson());
-      return DomainModel.fromJson(response.data);
+      final response = await dio.post('/domain', data: entry.toCreateJson());
+      return DomainModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);
     } on AppException {
@@ -101,7 +101,7 @@ class DomainRemoteDataSourceImpl extends BaseRemoteDataSource
         '/domain/${entry.id}',
         data: entry.toJson(),
       );
-      return DomainModel.fromJson(response.data);
+      return DomainModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);
     } on AppException {

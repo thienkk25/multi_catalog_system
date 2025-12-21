@@ -27,6 +27,7 @@ class _DomainManagementPageState extends State<DomainManagementPage> {
 
   @override
   Widget build(BuildContext context) {
+    final bloc = context.read<DomainManagementBloc>();
     return Stack(
       children: [
         Padding(
@@ -39,19 +40,61 @@ class _DomainManagementPageState extends State<DomainManagementPage> {
                 suffixIcon: Icon(Icons.search),
               ),
               Expanded(
-                child: BlocBuilder<DomainManagementBloc, DomainManagementState>(
-                  builder: (context, state) {
-                    return state.when(
-                      initial: () =>
-                          const Center(child: Text('Chưa có dữ liệu')),
-                      loading: () =>
-                          const Center(child: CircularProgressIndicator()),
-                      loaded: (domains) =>
-                          DomainManagementGridView(domains: domains),
-                      error: (message) => Center(child: Text(message)),
-                    );
-                  },
-                ),
+                child:
+                    BlocConsumer<DomainManagementBloc, DomainManagementState>(
+                      listener: (context, state) {
+                        if (state.successMessage != null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(state.successMessage!),
+                              backgroundColor: Colors.green,
+                            ),
+                          );
+                        }
+                      },
+                      builder: (context, state) {
+                        return state.when((
+                          isLoading,
+                          domains,
+                          error,
+                          successMessage,
+                        ) {
+                          if (isLoading) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                          if (error != null) {
+                            return Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              spacing: 20,
+                              children: [
+                                Text(
+                                  error,
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                                SizedBox(
+                                  width: 150,
+                                  child: CustomButton(
+                                    onTap: () {
+                                      context.read<DomainManagementBloc>().add(
+                                        const DomainManagementEvent.getAll(),
+                                      );
+                                    },
+                                    colorBackground: Colors.red,
+                                    textButton: Text(
+                                      'Thử lại',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          }
+                          return DomainManagementGridView(domains: domains);
+                        });
+                      },
+                    ),
               ),
             ],
           ),
@@ -67,8 +110,10 @@ class _DomainManagementPageState extends State<DomainManagementPage> {
           onPressedAdd: () {
             Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (context) =>
-                    const DomainManagementAddEditPage(isEdit: false),
+                builder: (context) => BlocProvider.value(
+                  value: bloc,
+                  child: const DomainManagementViewAddEditPage(type: Type.add),
+                ),
               ),
             );
           },
