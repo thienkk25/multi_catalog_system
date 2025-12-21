@@ -31,12 +31,12 @@ class DomainManagementBloc
     Emitter<DomainManagementState> emit,
   ) async {
     await event.map(
-      getAll: (_) async {
+      getAll: (v) async {
         emit(
           state.copyWith(isLoading: true, error: null, successMessage: null),
         );
 
-        final result = await getAllDomainUseCase();
+        final result = await getAllDomainUseCase(search: v.search);
         if (emit.isDone) return;
 
         result.fold(
@@ -78,7 +78,7 @@ class DomainManagementBloc
           (domain) => emit(
             state.copyWith(
               isLoading: false,
-              domains: [...state.domains, domain],
+              domains: [domain, ...state.domains],
               successMessage: 'Tạo lĩnh vực thành công',
             ),
           ),
@@ -98,7 +98,7 @@ class DomainManagementBloc
           (domains) => emit(
             state.copyWith(
               isLoading: false,
-              domains: [...state.domains, ...domains],
+              domains: [...domains, ...state.domains],
               successMessage: 'Tạo lĩnh vực thành công',
             ),
           ),

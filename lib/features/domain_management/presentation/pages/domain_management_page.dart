@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:multi_catalog_system/core/core.dart';
@@ -17,6 +19,12 @@ class DomainManagementPage extends StatefulWidget {
 class _DomainManagementPageState extends State<DomainManagementPage>
     with AutomaticKeepAliveClientMixin {
   @override
+  bool get wantKeepAlive => true;
+
+  final TextEditingController _searchController = TextEditingController();
+  Timer? _debounce;
+
+  @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -24,6 +32,13 @@ class _DomainManagementPageState extends State<DomainManagementPage>
         const DomainManagementEvent.getAll(),
       );
     });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _debounce?.cancel();
+    super.dispose();
   }
 
   @override
@@ -38,8 +53,24 @@ class _DomainManagementPageState extends State<DomainManagementPage>
             spacing: 10,
             children: [
               CustomInput(
+                controller: _searchController,
                 hintText: 'Tìm kiếm lĩnh vực',
                 suffixIcon: Icon(Icons.search),
+                onChanged: (value) {
+                  final search = value.trim();
+                  if (_debounce?.isActive ?? false) _debounce?.cancel();
+                  _debounce = Timer(const Duration(milliseconds: 500), () {
+                    if (search.isEmpty) {
+                      context.read<DomainManagementBloc>().add(
+                        const DomainManagementEvent.getAll(),
+                      );
+                    } else {
+                      context.read<DomainManagementBloc>().add(
+                        DomainManagementEvent.getAll(search: search),
+                      );
+                    }
+                  });
+                },
               ),
               Expanded(
                 child:
@@ -123,7 +154,4 @@ class _DomainManagementPageState extends State<DomainManagementPage>
       ],
     );
   }
-
-  @override
-  bool get wantKeepAlive => true;
 }

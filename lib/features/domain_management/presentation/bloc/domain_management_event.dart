@@ -5,7 +5,7 @@ part 'domain_management_event.freezed.dart';
 
 @freezed
 class DomainManagementEvent with _$DomainManagementEvent {
-  const factory DomainManagementEvent.getAll() = _GetAll;
+  const factory DomainManagementEvent.getAll({String? search}) = _GetAll;
   const factory DomainManagementEvent.getById({required String id}) = _GetById;
 
   const factory DomainManagementEvent.create({required DomainEntry domain}) =

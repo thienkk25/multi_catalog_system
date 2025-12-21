@@ -16,6 +16,7 @@ class CustomInput extends StatelessWidget {
     this.suffixIcon,
     this.prefixIcon,
     this.obscureText,
+    this.onChanged,
   });
   final Widget? lable;
   final String? hintText;
@@ -30,6 +31,7 @@ class CustomInput extends StatelessWidget {
   final Widget? suffixIcon;
   final Widget? prefixIcon;
   final bool? obscureText;
+  final Function(String)? onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -47,6 +49,7 @@ class CustomInput extends StatelessWidget {
           enabled: enabled,
           controller: controller,
           obscureText: obscureText ?? false,
+          onChanged: onChanged,
           decoration: InputDecoration(
             prefixIcon: prefixIcon,
             suffixIcon: suffixIcon,

@@ -53,9 +53,9 @@ class DomainRepositoryImpl implements DomainRepository {
   }
 
   @override
-  Future<Either<Failure, List<DomainEntry>>> getAll() async {
+  Future<Either<Failure, List<DomainEntry>>> getAll({String? search}) async {
     try {
-      final models = await remoteDataSource.getAll();
+      final models = await remoteDataSource.getAll(search: search);
       return Right(models.map((m) => m.toEntity()).toList());
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message, statusCode: e.statusCode));

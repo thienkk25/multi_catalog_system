@@ -4,7 +4,7 @@ import 'package:multi_catalog_system/core/error/exceptions.dart';
 import 'package:multi_catalog_system/features/domain_management/data/models/domain_model.dart';
 
 abstract class DomainRemoteDataSource {
-  Future<List<DomainModel>> getAll();
+  Future<List<DomainModel>> getAll({String? search});
   Future<DomainModel> getById(String id);
   Future<DomainModel> create(DomainModel entry);
   Future<List<DomainModel>> createMany(List<DomainModel> entries);
@@ -20,9 +20,14 @@ class DomainRemoteDataSourceImpl extends BaseRemoteDataSource
   DomainRemoteDataSourceImpl({required this.dio});
 
   @override
-  Future<List<DomainModel>> getAll() async {
+  Future<List<DomainModel>> getAll({String? search}) async {
     try {
-      final response = await dio.get('/domain');
+      final queryParams = <String, dynamic>{};
+
+      if (search != null) queryParams['search'] = search;
+
+      final response = await dio.get('/domain', queryParameters: queryParams);
+
       final List<dynamic> jsonList = response.data['data']['data'];
       return jsonList.map((json) => DomainModel.fromJson(json)).toList();
     } on DioException catch (e) {

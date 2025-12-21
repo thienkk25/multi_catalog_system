@@ -4,7 +4,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/core.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
-import 'package:multi_catalog_system/core/widgets/custom_button.dart';
 import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_event.dart';
 import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_state.dart';
