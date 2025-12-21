@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:multi_catalog_system/features/auth/data/models/user_model.dart';
+import 'package:multi_catalog_system/features/auth/data/models/user_role_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class AuthLocalDataSource {
@@ -13,6 +14,9 @@ abstract class AuthLocalDataSource {
   Future<void> cacheUser(UserModel user);
   Future<UserModel?> getCachedUser();
 
+  Future<void> cacheUserRole(UserRoleModel userRole);
+  Future<UserRoleModel?> getCachedUserRole();
+
   Future<void> clearAuthToken();
 }
 
@@ -22,6 +26,7 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   static const String _accessTokenKey = 'CACHED_AUTH_TOKEN';
   static const String _refreshTokenKey = 'CACHED_REFRESH_TOKEN';
   static const String _userKey = 'CACHED_USER';
+  static const String _userRoleKey = 'CACHED_USER_ROLE';
 
   AuthLocalDataSourceImpl({required this.sharedPreferences});
 
@@ -60,9 +65,25 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   }
 
   @override
+  Future<void> cacheUserRole(UserRoleModel userRole) {
+    final userRoleJson = jsonEncode(userRole.toJson());
+    return sharedPreferences.setString(_userRoleKey, userRoleJson);
+  }
+
+  @override
+  Future<UserRoleModel?> getCachedUserRole() async {
+    final userRoleJson = sharedPreferences.getString(_userRoleKey);
+
+    if (userRoleJson == null) return null;
+
+    return UserRoleModel.fromJson(jsonDecode(userRoleJson));
+  }
+
+  @override
   Future<void> clearAuthToken() async {
     await sharedPreferences.remove(_accessTokenKey);
     await sharedPreferences.remove(_refreshTokenKey);
     await sharedPreferences.remove(_userKey);
+    await sharedPreferences.remove(_userRoleKey);
   }
 }

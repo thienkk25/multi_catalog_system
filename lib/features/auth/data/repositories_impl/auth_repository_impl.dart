@@ -47,10 +47,13 @@ class AuthRepositoryImpl implements AuthRepository {
   }) async {
     try {
       final result = await authRemoteDataSource.login(email: email, pass: pass);
+      final role = await authRemoteDataSource.getRole(result.accessToken);
 
       await authLocalDataSource.cacheAuthToken(result.accessToken);
       await authLocalDataSource.cacheRefreshToken(result.refreshToken);
       await authLocalDataSource.cacheUser(result.user);
+
+      await authLocalDataSource.cacheUserRole(role);
 
       return Right(result.user.toEntry());
     } on InvalidCredentialsException {

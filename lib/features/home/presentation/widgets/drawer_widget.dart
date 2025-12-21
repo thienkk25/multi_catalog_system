@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:multi_catalog_system/core/core.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/core/widgets/custom_button.dart';
 import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_bloc.dart';
@@ -84,9 +85,22 @@ class _HeaderDrawer extends StatelessWidget {
             );
           },
 
-          error: (message) {
-            return Text(message, style: const TextStyle(color: Colors.red));
-          },
+          error: (_) => SizedBox(
+            width: sizeW,
+            child: CustomButton(
+              onTap: () {
+                context.go(RouterNames.login);
+              },
+              colorBackground: Colors.blue,
+              textButton: const Text(
+                'Đăng nhập',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight(600),
+                ),
+              ),
+            ),
+          ),
         );
       },
     );
@@ -142,55 +156,70 @@ class _MainDrawer extends StatelessWidget {
               title: 'Văn bản pháp lý',
               pageIndex: 4,
             ),
-            _DrawerItem(
-              icon: SvgPicture.asset(
-                'assets/icons/approve-invoice-svgrepo-com.svg',
-                height: 20,
+            RoleBasedWidget(
+              permission: ['approver'],
+              child: _DrawerItem(
+                icon: SvgPicture.asset(
+                  'assets/icons/approve-invoice-svgrepo-com.svg',
+                  height: 20,
+                ),
+                title: 'Danh sách chờ duyệt',
+                pageIndex: 5,
               ),
-              title: 'Danh sách chờ duyệt',
-              pageIndex: 5,
             ),
-
             Divider(),
 
-            _DrawerItem(
-              icon: SvgPicture.asset(
-                'assets/icons/import-svgrepo-com.svg',
-                height: 20,
+            RoleBasedWidget(
+              permission: ['admin', 'domainOfficer'],
+              child: _DrawerItem(
+                icon: SvgPicture.asset(
+                  'assets/icons/import-svgrepo-com.svg',
+                  height: 20,
+                ),
+                title: 'Nhập dữ liệu File',
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ImportFilePage(typeImport: 0),
+                    ),
+                  );
+                },
               ),
-              title: 'Nhập dữ liệu File',
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ImportFilePage(typeImport: 0),
+            ),
+
+            RoleBasedWidget(
+              permission: ['admin'],
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                spacing: 10,
+                children: [
+                  _DrawerItem(
+                    icon: SvgPicture.asset(
+                      'assets/icons/group-svgrepo-com.svg',
+                      height: 20,
+                    ),
+                    title: 'Quản lý người dùng',
+                    pageIndex: 7,
                   ),
-                );
-              },
-            ),
-            _DrawerItem(
-              icon: SvgPicture.asset(
-                'assets/icons/group-svgrepo-com.svg',
-                height: 20,
+                  _DrawerItem(
+                    icon: SvgPicture.asset(
+                      'assets/icons/key-svgrepo-com.svg',
+                      height: 20,
+                    ),
+                    title: 'API Key',
+                    pageIndex: 8,
+                  ),
+                  _DrawerItem(
+                    icon: SvgPicture.asset(
+                      'assets/icons/history-svgrepo-com.svg',
+                      height: 20,
+                    ),
+                    title: 'Nhật kí hệ thống',
+                    pageIndex: 9,
+                  ),
+                ],
               ),
-              title: 'Quản lý người dùng',
-              pageIndex: 7,
-            ),
-            _DrawerItem(
-              icon: SvgPicture.asset(
-                'assets/icons/key-svgrepo-com.svg',
-                height: 20,
-              ),
-              title: 'API Key',
-              pageIndex: 8,
-            ),
-            _DrawerItem(
-              icon: SvgPicture.asset(
-                'assets/icons/history-svgrepo-com.svg',
-                height: 20,
-              ),
-              title: 'Nhật kí hệ thống',
-              pageIndex: 9,
             ),
           ],
         ),

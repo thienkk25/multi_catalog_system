@@ -70,42 +70,45 @@ class DomainManagementGridView extends StatelessWidget {
                     ),
                   ],
                 ),
-                Positioned(
-                  right: 0,
-                  top: 0,
-                  child: PopupMenuButton(
-                    icon: SvgPicture.asset(
-                      'assets/icons/menu-vertical-menu-dots-more-svgrepo-com.svg',
-                      width: 20,
-                      height: 20,
-                    ),
-                    itemBuilder: (context) => [
-                      PopupMenuItem(
-                        child: _DomainCardMenu(
-                          onEdit: () {
-                            Navigator.pop(context);
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => BlocProvider.value(
-                                  value: bloc,
-                                  child: DomainManagementViewAddEditPage(
-                                    type: Type.edit,
-                                    entry: domain,
+                RoleBasedWidget(
+                  permission: ['admin', 'domainOfficer'],
+                  child: Positioned(
+                    right: 0,
+                    top: 0,
+                    child: PopupMenuButton(
+                      icon: SvgPicture.asset(
+                        'assets/icons/menu-vertical-menu-dots-more-svgrepo-com.svg',
+                        width: 20,
+                        height: 20,
+                      ),
+                      itemBuilder: (context) => [
+                        PopupMenuItem(
+                          child: _DomainCardMenu(
+                            onEdit: () {
+                              Navigator.pop(context);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => BlocProvider.value(
+                                    value: bloc,
+                                    child: DomainManagementViewAddEditPage(
+                                      type: Type.edit,
+                                      entry: domain,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            );
-                          },
-                          onDelete: () {
-                            Navigator.pop(context);
-                            context.read<DomainManagementBloc>().add(
-                              DomainManagementEvent.delete(id: domain.id!),
-                            );
-                          },
+                              );
+                            },
+                            onDelete: () {
+                              Navigator.pop(context);
+                              context.read<DomainManagementBloc>().add(
+                                DomainManagementEvent.delete(id: domain.id!),
+                              );
+                            },
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ],

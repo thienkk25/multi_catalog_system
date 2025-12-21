@@ -3,6 +3,7 @@ import 'package:multi_catalog_system/core/config/networks/base_remote_data_sourc
 import 'package:multi_catalog_system/core/error/exceptions.dart';
 import 'package:multi_catalog_system/features/auth/data/models/user_model.dart';
 import 'package:multi_catalog_system/features/auth/data/models/auth_response_model.dart';
+import 'package:multi_catalog_system/features/auth/data/models/user_role_model.dart';
 
 abstract class AuthRemoteDataSource {
   Future<AuthResponseModel> login({
@@ -15,6 +16,8 @@ abstract class AuthRemoteDataSource {
   Future<AuthResponseModel> refreshToken({required String refreshToken});
 
   Future<void> logout();
+
+  Future<UserRoleModel> getRole(String accessToken);
 }
 
 class AuthRemoteDataSourceImpl extends BaseRemoteDataSource
@@ -46,6 +49,10 @@ class AuthRemoteDataSourceImpl extends BaseRemoteDataSource
       final data = response.data;
       if (data is! Map<String, dynamic>) {
         throw const ParseException();
+      }
+
+      if (data['success'] == false) {
+        throw InvalidCredentialsException();
       }
 
       final session = data['data']?['session'];
@@ -80,14 +87,23 @@ class AuthRemoteDataSourceImpl extends BaseRemoteDataSource
   @override
   Future<UserModel> getCurrentUser() async {
     try {
-      final response = await dio.get('/auth/me');
+      final response = await dio.get('/user');
 
       final data = response.data;
       if (data is! Map<String, dynamic>) {
         throw const ParseException();
       }
 
-      return UserModel.fromJson(data);
+      if (data['success'] == false) {
+        throw const ParseException();
+      }
+
+      final userJson = data['data'];
+      if (userJson == null) {
+        throw const ParseException();
+      }
+
+      return UserModel.fromJson(userJson);
     } on DioException catch (e) {
       handleDioError(e);
     } on AppException {
@@ -127,6 +143,34 @@ class AuthRemoteDataSourceImpl extends BaseRemoteDataSource
       await dio.post('/auth/logout');
     } on DioException catch (e) {
       handleDioError(e);
+    } on AppException {
+      rethrow;
+    } catch (e) {
+      throw UnexpectedException(e.toString());
+    }
+  }
+
+  @override
+  Future<UserRoleModel> getRole(String accessToken) async {
+    try {
+      final response = await dio.get(
+        '/user/role',
+        options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
+      );
+
+      if (response.data is! Map<String, dynamic>) {
+        throw const ParseException();
+      }
+
+      if (response.data['success'] == false) {
+        throw const ParseException();
+      }
+
+      return UserRoleModel.fromJson(response.data['data']['role']);
+    } on DioException catch (e) {
+      handleDioError(e);
+    } on AppException {
+      rethrow;
     } catch (e) {
       throw UnexpectedException(e.toString());
     }
