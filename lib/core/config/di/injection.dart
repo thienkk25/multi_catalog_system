@@ -32,13 +32,19 @@ Future<void> init() async {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
+        validateStatus: (status) => status != null && status < 500,
       ),
     ),
   );
 
   // Dio RIÊNG cho refresh (KHÔNG interceptor)
   getIt.registerLazySingleton<Dio>(
-    () => Dio(BaseOptions(baseUrl: AppConstant.apiBaseUrl)),
+    () => Dio(
+      BaseOptions(
+        baseUrl: AppConstant.apiBaseUrl,
+        validateStatus: (status) => status != null && status < 500,
+      ),
+    ),
     instanceName: 'refreshDio',
   );
 

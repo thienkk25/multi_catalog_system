@@ -14,64 +14,76 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late final DomainManagementBloc domainBloc;
+  late final List<Widget?> _pages;
 
   @override
   void initState() {
     super.initState();
-    domainBloc = getIt<DomainManagementBloc>();
+    _pages = List.filled(5, null);
   }
 
-  @override
-  void dispose() {
-    domainBloc.close();
-    super.dispose();
+  Widget _buildPage(int index) {
+    if (_pages[index] != null) return _pages[index]!;
+
+    late final Widget page;
+
+    switch (index) {
+      case 0:
+        page = const CategoryLookupPage();
+        break;
+      case 1:
+        page = BlocProvider(
+          create: (_) => getIt<DomainManagementBloc>(),
+          child: const DomainManagementPage(),
+        );
+        break;
+      case 2:
+        page = const CategoryGroupPage();
+        break;
+      case 3:
+        page = const CategoryItemPage();
+        break;
+      case 4:
+        page = const LegalDocumentPage();
+        break;
+      default:
+        page = const NotFoundPage();
+    }
+
+    _pages[index] = page;
+    return page;
   }
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [BlocProvider.value(value: domainBloc)],
-      child: BlocBuilder<HomeBloc, HomeState>(
-        builder: (context, state) {
-          final pageIndex = state.mapOrNull(page: (p) => p.index);
-          return Scaffold(
-            appBar: AppBar(
-              title: context.watch<HomeBloc>().state.mapOrNull(
-                page: (value) => Text(
-                  value.title,
-                  style: TextStyle(fontWeight: FontWeight(600), fontSize: 20),
+    return BlocBuilder<HomeBloc, HomeState>(
+      builder: (context, state) {
+        final index = state.mapOrNull(page: (p) => p.index) ?? 0;
+
+        return Scaffold(
+          appBar: AppBar(
+            title: state.mapOrNull(
+              page: (p) => Text(
+                p.title,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 20,
                 ),
               ),
-              centerTitle: true,
             ),
-            drawer: DrawerWidget(),
-            body: SafeArea(child: _buildPage(pageIndex ?? 0)),
-          );
-        },
-      ),
+            centerTitle: true,
+          ),
+          drawer: const DrawerWidget(),
+          body: SafeArea(
+            child: Stack(
+              children: List.generate(
+                _pages.length,
+                (i) => Offstage(offstage: i != index, child: _buildPage(i)),
+              ),
+            ),
+          ),
+        );
+      },
     );
-  }
-
-  Widget _buildPage(int index) {
-    switch (index) {
-      case 0:
-        return CategoryLookupPage();
-
-      case 1:
-        return DomainManagementPage();
-
-      case 2:
-        return CategoryGroupPage();
-
-      case 3:
-        return CategoryItemPage();
-
-      case 4:
-        return LegalDocumentPage();
-
-      default:
-        return NotFoundPage();
-    }
   }
 }

@@ -39,21 +39,48 @@ class AuthInterceptor extends Interceptor {
       final refreshed = await _refreshToken();
 
       if (!refreshed) {
+        // Nếu refresh token thất bại → logout
         await authRepository.logout();
-        return handler.reject(err); // ❗ KHÔNG next
+        return handler.reject(err);
       }
 
+      // Lấy token mới
       final newToken = await authLocal.getCachedAuthToken();
       if (newToken == null || newToken.isEmpty) {
         await authRepository.logout();
         return handler.reject(err);
       }
 
-      final requestOptions = err.requestOptions;
-      requestOptions.headers['Authorization'] = 'Bearer $newToken';
+      try {
+        // Clone requestOptions để retry
+        final requestOptions = err.requestOptions;
+        final opts = Options(
+          method: requestOptions.method,
+          headers: {
+            ...requestOptions.headers,
+            'Authorization': 'Bearer $newToken',
+          },
+          responseType: requestOptions.responseType,
+          contentType: requestOptions.contentType,
+          extra: requestOptions.extra,
+          followRedirects: requestOptions.followRedirects,
+          receiveDataWhenStatusError: requestOptions.receiveDataWhenStatusError,
+          validateStatus: requestOptions.validateStatus,
+          sendTimeout: requestOptions.sendTimeout,
+          receiveTimeout: requestOptions.receiveTimeout,
+        );
 
-      final response = await dio.fetch(requestOptions);
-      return handler.resolve(response);
+        final cloneReq = await dio.request(
+          requestOptions.path,
+          data: requestOptions.data,
+          queryParameters: requestOptions.queryParameters,
+          options: opts,
+        );
+
+        return handler.resolve(cloneReq);
+      } catch (e) {
+        return handler.reject(err);
+      }
     }
 
     handler.next(err);
@@ -61,7 +88,6 @@ class AuthInterceptor extends Interceptor {
 
   // ================= REFRESH TOKEN =================
   Future<bool> _refreshToken() async {
-    // Nếu đang refresh → chờ
     if (_refreshCompleter != null) {
       return _refreshCompleter!.future;
     }
@@ -70,7 +96,6 @@ class AuthInterceptor extends Interceptor {
 
     try {
       final refreshToken = await authLocal.getCachedRefreshToken();
-
       if (refreshToken == null || refreshToken.isEmpty) {
         _refreshCompleter!.complete(false);
         return false;
@@ -79,7 +104,6 @@ class AuthInterceptor extends Interceptor {
       final result = await authRepository.refreshToken(
         refreshToken: refreshToken,
       );
-
       final success = result.isRight();
       _refreshCompleter!.complete(success);
       return success;

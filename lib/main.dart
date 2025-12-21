@@ -42,20 +42,5 @@ class MainApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
       ),
     );
-    // return MaterialApp(
-    //   debugShowCheckedModeBanner: false,
-    //   theme: ThemeData(
-    //     scaffoldBackgroundColor: Color(0xFFF5F7FA),
-    //     appBarTheme: AppBarTheme(
-    //       backgroundColor: Colors.blue,
-    //       foregroundColor: Colors.white,
-    //     ),
-    //   ),
-    //   home: Scaffold(
-    //     appBar: AppBar(title: const Text('Multi Catalog System')),
-    //     drawer: DrawerWidget(),
-    //     body: SafeArea(child: DomainManagementPage()),
-    //   ),
-    // );
   }
 }

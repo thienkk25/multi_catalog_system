@@ -14,7 +14,8 @@ class DomainManagementPage extends StatefulWidget {
   State<DomainManagementPage> createState() => _DomainManagementPageState();
 }
 
-class _DomainManagementPageState extends State<DomainManagementPage> {
+class _DomainManagementPageState extends State<DomainManagementPage>
+    with AutomaticKeepAliveClientMixin {
   @override
   void initState() {
     super.initState();
@@ -27,6 +28,7 @@ class _DomainManagementPageState extends State<DomainManagementPage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final bloc = context.read<DomainManagementBloc>();
     return Stack(
       children: [
@@ -121,4 +123,7 @@ class _DomainManagementPageState extends State<DomainManagementPage> {
       ],
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
