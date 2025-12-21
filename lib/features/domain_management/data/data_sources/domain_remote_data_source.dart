@@ -56,7 +56,8 @@ class DomainRemoteDataSourceImpl extends BaseRemoteDataSource
   @override
   Future<DomainModel> create(DomainModel entry) async {
     try {
-      final response = await dio.post('/domain', data: entry.toCreateJson());
+      final data = entry.toJson()..remove('id');
+      final response = await dio.post('/domain', data: data);
       return DomainModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);

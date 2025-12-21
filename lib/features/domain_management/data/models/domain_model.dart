@@ -42,11 +42,3 @@ extension DomainModelMapper on DomainModel {
     );
   }
 }
-
-extension DomainModelCreateJson on DomainModel {
-  Map<String, dynamic> toCreateJson() {
-    final json = toJson();
-    json.remove('id');
-    return json;
-  }
-}
