@@ -167,7 +167,7 @@ class _DomainManagementViewAddEditPageState
                               updatedAt: DateTime.now(),
                             );
                             context.read<DomainManagementBloc>().add(
-                              DomainManagementEvent.update(domain: entry),
+                              DomainManagementEvent.update(entry: entry),
                             );
                           } else {
                             final entry = DomainEntry(
@@ -177,7 +177,7 @@ class _DomainManagementViewAddEditPageState
                               createdAt: DateTime.now(),
                             );
                             context.read<DomainManagementBloc>().add(
-                              DomainManagementEvent.create(domain: entry),
+                              DomainManagementEvent.create(entry: entry),
                             );
                           }
                           Navigator.pop(context);
