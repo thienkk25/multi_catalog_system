@@ -26,7 +26,10 @@ class CategoryGroupRemoteDataSourceImpl extends BaseRemoteDataSource
 
       if (search != null) queryParams['search'] = search;
 
-      final response = await dio.get('/domain', queryParameters: queryParams);
+      final response = await dio.get(
+        '/category-group',
+        queryParameters: queryParams,
+      );
 
       final List<dynamic> jsonList = response.data['data']['data'];
       return jsonList.map((json) => CategoryGroupModel.fromJson(json)).toList();
@@ -42,7 +45,7 @@ class CategoryGroupRemoteDataSourceImpl extends BaseRemoteDataSource
   @override
   Future<CategoryGroupModel> getById(String id) async {
     try {
-      final response = await dio.get('/domain/$id');
+      final response = await dio.get('/category-group/$id');
       return CategoryGroupModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);
@@ -57,7 +60,7 @@ class CategoryGroupRemoteDataSourceImpl extends BaseRemoteDataSource
   Future<CategoryGroupModel> create(CategoryGroupModel entry) async {
     try {
       final data = entry.toJson()..remove('id');
-      final response = await dio.post('/domain', data: data);
+      final response = await dio.post('/category-group', data: data);
       return CategoryGroupModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);
@@ -74,7 +77,7 @@ class CategoryGroupRemoteDataSourceImpl extends BaseRemoteDataSource
   ) async {
     try {
       final data = entries.map((e) => e.toJson()).toList();
-      final response = await dio.post('/domain/bulk', data: data);
+      final response = await dio.post('/category-group/bulk', data: data);
       final List<dynamic> jsonList = response.data;
       return jsonList.map((json) => CategoryGroupModel.fromJson(json)).toList();
     } on DioException catch (e) {
@@ -92,7 +95,10 @@ class CategoryGroupRemoteDataSourceImpl extends BaseRemoteDataSource
   ) async {
     try {
       final data = entries.map((e) => e.toJson()).toList();
-      final response = await dio.post('/domain/bulk/upsert', data: data);
+      final response = await dio.post(
+        '/category-group/bulk/upsert',
+        data: data,
+      );
       final List<dynamic> jsonList = response.data;
       return jsonList.map((json) => CategoryGroupModel.fromJson(json)).toList();
     } on DioException catch (e) {
@@ -108,7 +114,7 @@ class CategoryGroupRemoteDataSourceImpl extends BaseRemoteDataSource
   Future<CategoryGroupModel> update(CategoryGroupModel entry) async {
     try {
       final response = await dio.put(
-        '/domain/${entry.id}',
+        '/category-group/${entry.id}',
         data: entry.toJson(),
       );
       return CategoryGroupModel.fromJson(response.data['data']);
@@ -124,7 +130,7 @@ class CategoryGroupRemoteDataSourceImpl extends BaseRemoteDataSource
   @override
   Future<void> delete(String id) async {
     try {
-      await dio.delete('/domain/$id');
+      await dio.delete('/category-group/$id');
     } catch (e) {
       throw UnexpectedException(e.toString());
     }

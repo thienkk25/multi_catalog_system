@@ -85,7 +85,7 @@ class _DomainManagementPageState extends State<DomainManagementPage>
                       builder: (context, state) {
                         return state.when((
                           isLoading,
-                          domains,
+                          entities,
                           error,
                           successMessage,
                         ) {
@@ -95,33 +95,16 @@ class _DomainManagementPageState extends State<DomainManagementPage>
                             );
                           }
                           if (error != null) {
-                            return Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              spacing: 20,
-                              children: [
-                                Text(
-                                  error,
-                                  style: TextStyle(color: Colors.red),
-                                ),
-                                SizedBox(
-                                  width: 150,
-                                  child: CustomButton(
-                                    onTap: () {
-                                      context.read<DomainManagementBloc>().add(
-                                        const DomainManagementEvent.getAll(),
-                                      );
-                                    },
-                                    colorBackground: Colors.red,
-                                    textButton: Text(
-                                      'Thử lại',
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                  ),
-                                ),
-                              ],
+                            return ErrorRetryWidget(
+                              error: error,
+                              onRetry: () {
+                                context.read<DomainManagementBloc>().add(
+                                  const DomainManagementEvent.getAll(),
+                                );
+                              },
                             );
                           }
-                          return DomainManagementGridView(domains: domains);
+                          return DomainManagementGridView(domains: entities);
                         });
                       },
                     ),
@@ -142,7 +125,7 @@ class _DomainManagementPageState extends State<DomainManagementPage>
               MaterialPageRoute(
                 builder: (context) => BlocProvider.value(
                   value: bloc,
-                  child: const DomainManagementViewAddEditPage(type: Type.add),
+                  child: const DomainManagementFormPage(type: Type.add),
                 ),
               ),
             );

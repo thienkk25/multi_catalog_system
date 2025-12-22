@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:multi_catalog_system/core/core.dart';
 import 'package:multi_catalog_system/features/category_group/presentation/presentation.dart';
+import 'package:multi_catalog_system/features/import_file/presentation/pages/import_file_page.dart';
 
 class CategoryGroupPage extends StatefulWidget {
   const CategoryGroupPage({super.key});
@@ -9,16 +11,28 @@ class CategoryGroupPage extends StatefulWidget {
   State<CategoryGroupPage> createState() => _CategoryGroupPageState();
 }
 
-class _CategoryGroupPageState extends State<CategoryGroupPage> {
+class _CategoryGroupPageState extends State<CategoryGroupPage>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<CategoryGroupBloc>().add(const CategoryGroupEvent.getAll());
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Stack(
       children: [
         Padding(
           padding: const EdgeInsets.all(10.0),
           child: Column(
             spacing: 10,
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 mainAxisSize: MainAxisSize.min,
@@ -41,11 +55,63 @@ class _CategoryGroupPageState extends State<CategoryGroupPage> {
                   ),
                 ],
               ),
-              Expanded(child: CategoryGroupListViewWidget()),
+              Expanded(
+                child: BlocConsumer<CategoryGroupBloc, CategoryGroupState>(
+                  listener: (context, state) {
+                    if (state.successMessage != null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(state.successMessage!),
+                          backgroundColor: Colors.green,
+                        ),
+                      );
+                    }
+                  },
+                  builder: (context, state) {
+                    return state.when((
+                      isLoading,
+                      entities,
+                      error,
+                      successMessage,
+                    ) {
+                      if (isLoading) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      if (error != null) {
+                        return ErrorRetryWidget(
+                          error: error,
+                          onRetry: () {
+                            context.read<CategoryGroupBloc>().add(
+                              const CategoryGroupEvent.getAll(),
+                            );
+                          },
+                        );
+                      }
+                      return CategoryGroupListViewWidget(
+                        categoryGroup: entities,
+                      );
+                    });
+                  },
+                ),
+              ),
             ],
           ),
         ),
-        CustomFloatingActionButton(onPressedImport: () {}, onPressedAdd: () {}),
+        CustomFloatingActionButton(
+          onPressedImport: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => ImportFilePage(typeImport: 2),
+              ),
+            );
+          },
+          onPressedAdd: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => CategoryGroupFormPage()),
+            );
+          },
+        ),
       ],
     );
   }

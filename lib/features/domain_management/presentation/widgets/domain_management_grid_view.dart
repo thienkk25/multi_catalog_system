@@ -33,10 +33,8 @@ class DomainManagementGridView extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => DomainManagementViewAddEditPage(
-                  type: Type.view,
-                  entry: domain,
-                ),
+                builder: (context) =>
+                    DomainManagementFormPage(type: Type.view, entry: domain),
               ),
             );
           },
@@ -90,7 +88,7 @@ class DomainManagementGridView extends StatelessWidget {
                                 MaterialPageRoute(
                                   builder: (context) => BlocProvider.value(
                                     value: bloc,
-                                    child: DomainManagementViewAddEditPage(
+                                    child: DomainManagementFormPage(
                                       type: Type.edit,
                                       entry: domain,
                                     ),

@@ -35,7 +35,10 @@ class _HomePageState extends State<HomePage> {
         );
         break;
       case 2:
-        page = const CategoryGroupPage();
+        page = BlocProvider(
+          create: (_) => getIt<CategoryGroupBloc>(),
+          child: const CategoryGroupPage(),
+        );
         break;
       case 3:
         page = const CategoryItemPage();

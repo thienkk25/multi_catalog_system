@@ -8,12 +8,14 @@ class CustomDropdownButton<T> extends StatelessWidget {
     this.onChanged,
     this.hint,
     this.lable,
+    this.validator,
   });
   final Widget? lable;
   final T? value;
   final List<DropdownMenuItem<T>>? items;
   final ValueChanged<T?>? onChanged;
   final String? hint;
+  final String? Function(T?)? validator;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -38,7 +40,7 @@ class CustomDropdownButton<T> extends StatelessWidget {
               borderSide: BorderSide(color: Colors.blue.withValues(alpha: .5)),
             ),
           ),
-          validator: (value) => value == null ? 'Vui lòng chọn' : null,
+          validator: validator,
         ),
       ],
     );

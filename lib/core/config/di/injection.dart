@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'auth/auth_injection.dart';
 import 'auth/auth_interceptor.dart';
+import 'category_group/category_group_injection.dart';
 import 'domain_management/domain_injection.dart';
 
 final getIt = GetIt.instance;
@@ -61,6 +62,8 @@ Future<void> init() async {
   getIt<Dio>().interceptors.add(getIt<AuthInterceptor>());
 
   initDomainModule();
+
+  initCategoryGroupModule();
 
   getIt.registerFactory(() => HomeBloc());
 }
