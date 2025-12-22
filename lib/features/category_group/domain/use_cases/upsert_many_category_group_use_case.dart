@@ -3,10 +3,10 @@ import 'package:multi_catalog_system/core/error/failures.dart';
 import 'package:multi_catalog_system/features/category_group/domain/entities/category_group_entry.dart';
 import 'package:multi_catalog_system/features/category_group/domain/repositories/category_group_repository.dart';
 
-class UpsertManyDomainUseCase {
+class UpsertManyCategoryGroupUseCase {
   final CategoryGroupRepository repository;
 
-  UpsertManyDomainUseCase({required this.repository});
+  UpsertManyCategoryGroupUseCase({required this.repository});
 
   Future<Either<Failure, List<CategoryGroupEntry>>> call(
     List<CategoryGroupEntry> entries,

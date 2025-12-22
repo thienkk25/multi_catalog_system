@@ -18,7 +18,7 @@ class CategoryGroupBloc extends Bloc<CategoryGroupEvent, CategoryGroupState> {
   final DeleteCategoryGroupUseCase delete;
   final GetByIdCategoryGroupUseCase getById;
   final GetAllCategoryGroupUseCase getAll;
-  final UpsertManyDomainUseCase upsertMany;
+  final UpsertManyCategoryGroupUseCase upsertMany;
 
   CategoryGroupBloc({
     required this.create,

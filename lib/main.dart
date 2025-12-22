@@ -5,8 +5,6 @@ import 'package:multi_catalog_system/core/config/app/url_strategy.dart'
 import 'package:multi_catalog_system/core/core.dart';
 import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_event.dart';
-// import 'package:multi_catalog_system/features/home/presentation/widgets/drawer_widget.dart';
-
 import 'features/features.dart';
 
 Future<void> main() async {
