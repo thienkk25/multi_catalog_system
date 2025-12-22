@@ -28,11 +28,17 @@ class CustomDropdownButton<T> extends StatelessWidget {
           onChanged: onChanged,
           hint: hint != null ? Text(hint!) : null,
           decoration: InputDecoration(
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: Colors.blue),
+            ),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: Colors.blue.withValues(alpha: .5)),
             ),
           ),
+          validator: (value) => value == null ? 'Vui lòng chọn' : null,
         ),
       ],
     );

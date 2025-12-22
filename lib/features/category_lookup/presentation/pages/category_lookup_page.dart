@@ -10,6 +10,8 @@ class CategoryLookupPage extends StatefulWidget {
 }
 
 class _CategoryLookupPageState extends State<CategoryLookupPage> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -19,63 +21,74 @@ class _CategoryLookupPageState extends State<CategoryLookupPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           spacing: 10,
           children: [
-            CustomCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: 10,
-                children: [
-                  Text(
-                    'Bộ lọc tìm kiếm',
-                    style: TextStyle(fontWeight: FontWeight(600), fontSize: 16),
-                  ),
-                  Text(
-                    'Sử dụng các bộ lọc bên dưới để tìm kiếm.',
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                  CustomInput(
-                    hintText: 'Nhập mã hoặc tên danh mục...',
-                    lable: Text(
-                      'Tìm kiếm',
-                      style: TextStyle(fontWeight: FontWeight(600)),
+            Form(
+              key: _formKey,
+              child: CustomCard(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  spacing: 10,
+                  children: [
+                    Text(
+                      'Bộ lọc tìm kiếm',
+                      style: TextStyle(
+                        fontWeight: FontWeight(600),
+                        fontSize: 16,
+                      ),
                     ),
-                    suffixIcon: Icon(Icons.search),
-                  ),
-                  CustomDropdownButton(
-                    lable: Text(
-                      'Lĩnh vực',
-                      style: TextStyle(fontWeight: FontWeight(600)),
+                    Text(
+                      'Sử dụng các bộ lọc bên dưới để tìm kiếm.',
+                      style: TextStyle(color: Colors.grey),
                     ),
-                    items: [
-                      DropdownMenuItem(value: 1, child: Text('1')),
-                      DropdownMenuItem(value: 2, child: Text('2')),
-                      DropdownMenuItem(value: 3, child: Text('3')),
-                    ],
-                    hint: 'Chọn Nhóm danh mục',
-                    onChanged: (value) {},
-                  ),
-                  CustomDropdownButton(
-                    lable: Text(
-                      'Nhóm danh mục',
-                      style: TextStyle(fontWeight: FontWeight(600)),
+                    CustomInput(
+                      hintText: 'Nhập mã hoặc tên danh mục...',
+                      lable: Text(
+                        'Tìm kiếm',
+                        style: TextStyle(fontWeight: FontWeight(600)),
+                      ),
+                      suffixIcon: Icon(Icons.search),
+                      validator: (v) => v == null || v.isEmpty
+                          ? 'Vui lòng nhập dữ liệu cần tìm'
+                          : null,
                     ),
-                    items: [
-                      DropdownMenuItem(value: 1, child: Text('1')),
-                      DropdownMenuItem(value: 2, child: Text('2')),
-                      DropdownMenuItem(value: 3, child: Text('3')),
-                    ],
-                    hint: 'Chọn Nhóm danh mục',
-                    onChanged: (value) {},
-                  ),
-                  SizedBox(height: 5),
-                  CustomButton(
-                    colorBackground: Colors.blue,
-                    onTap: () {},
-                    textButton: Text(
-                      'Tìm kiếm',
-                      style: TextStyle(color: Colors.white),
+                    CustomDropdownButton(
+                      lable: Text(
+                        'Lĩnh vực',
+                        style: TextStyle(fontWeight: FontWeight(600)),
+                      ),
+                      items: [
+                        DropdownMenuItem(value: 1, child: Text('1')),
+                        DropdownMenuItem(value: 2, child: Text('2')),
+                        DropdownMenuItem(value: 3, child: Text('3')),
+                      ],
+                      hint: 'Chọn Nhóm danh mục',
+                      onChanged: (value) {},
                     ),
-                  ),
-                ],
+                    CustomDropdownButton(
+                      lable: Text(
+                        'Nhóm danh mục',
+                        style: TextStyle(fontWeight: FontWeight(600)),
+                      ),
+                      items: [
+                        DropdownMenuItem(value: 1, child: Text('1')),
+                        DropdownMenuItem(value: 2, child: Text('2')),
+                        DropdownMenuItem(value: 3, child: Text('3')),
+                      ],
+                      hint: 'Chọn Nhóm danh mục',
+                      onChanged: (value) {},
+                    ),
+                    SizedBox(height: 5),
+                    CustomButton(
+                      colorBackground: Colors.blue,
+                      onTap: () {
+                        if (_formKey.currentState!.validate()) {}
+                      },
+                      textButton: Text(
+                        'Tìm kiếm',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             Text(
