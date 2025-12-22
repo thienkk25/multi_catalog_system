@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:multi_catalog_system/core/core.dart';
-import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_management_event.dart';
 import 'package:multi_catalog_system/features/features.dart';
 
 class DomainManagementGridView extends StatelessWidget {

@@ -6,9 +6,6 @@ import 'package:multi_catalog_system/core/core.dart';
 import 'package:multi_catalog_system/features/domain_management/presentation/presentation.dart';
 import 'package:multi_catalog_system/features/import_file/presentation/pages/import_file_page.dart';
 
-import '../bloc/domain_management_event.dart';
-import '../bloc/domain_management_state.dart';
-
 class DomainManagementPage extends StatefulWidget {
   const DomainManagementPage({super.key});
 

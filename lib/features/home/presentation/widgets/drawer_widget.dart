@@ -3,13 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/core.dart';
-import 'package:multi_catalog_system/core/router/router_names.dart';
-import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_event.dart';
-import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_state.dart';
-import 'package:multi_catalog_system/features/home/presentation/bloc/home_bloc.dart';
-import 'package:multi_catalog_system/features/home/presentation/bloc/home_event.dart';
-import 'package:multi_catalog_system/features/home/presentation/bloc/home_state.dart';
+import 'package:multi_catalog_system/features/auth/presentation/presentation.dart';
+import 'package:multi_catalog_system/features/home/presentation/presentation.dart';
 import 'package:multi_catalog_system/features/import_file/presentation/pages/import_file_page.dart';
 
 class DrawerWidget extends StatelessWidget {

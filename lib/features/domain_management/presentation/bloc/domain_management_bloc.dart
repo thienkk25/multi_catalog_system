@@ -1,8 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:multi_catalog_system/core/error/failures.dart';
 import 'package:multi_catalog_system/features/domain_management/domain/domain.dart';
-import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_management_event.dart';
-import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_management_state.dart';
+
+import 'domain_management_event.dart';
+import 'domain_management_state.dart';
 
 class DomainManagementBloc
     extends Bloc<DomainManagementEvent, DomainManagementState> {

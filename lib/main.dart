@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:multi_catalog_system/core/config/app/url_strategy.dart'
     if (dart.library.html) 'package:multi_catalog_system/core/config/app/url_strategy_web.dart';
-import 'package:multi_catalog_system/core/core.dart';
-import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_event.dart';
-import 'features/features.dart';
+
+import 'core/core.dart';
+import 'features/auth/presentation/presentation.dart';
+import 'features/home/presentation/presentation.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

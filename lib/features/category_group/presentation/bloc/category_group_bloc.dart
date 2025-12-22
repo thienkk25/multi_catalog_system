@@ -1,15 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:multi_catalog_system/core/error/failures.dart';
-import 'package:multi_catalog_system/features/category_group/domain/entities/category_group_entry.dart';
-import 'package:multi_catalog_system/features/category_group/domain/use_cases/create_category_group_use_case.dart';
-import 'package:multi_catalog_system/features/category_group/domain/use_cases/create_many_category_group_use_case.dart';
-import 'package:multi_catalog_system/features/category_group/domain/use_cases/delete_category_group_use_case.dart';
-import 'package:multi_catalog_system/features/category_group/domain/use_cases/get_all_category_group_use_case.dart';
-import 'package:multi_catalog_system/features/category_group/domain/use_cases/get_by_id_category_group_use_case.dart';
-import 'package:multi_catalog_system/features/category_group/domain/use_cases/update_category_group_use_case.dart';
-import 'package:multi_catalog_system/features/category_group/domain/use_cases/upsert_many_category_group_use_case.dart';
-import 'package:multi_catalog_system/features/category_group/presentation/bloc/category_group_event.dart';
-import 'package:multi_catalog_system/features/category_group/presentation/bloc/category_group_state.dart';
+import 'package:multi_catalog_system/features/category_group/domain/domain.dart';
+
+import 'category_group_event.dart';
+import 'category_group_state.dart';
 
 class CategoryGroupBloc extends Bloc<CategoryGroupEvent, CategoryGroupState> {
   final CreateCategoryGroupUseCase create;

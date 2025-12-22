@@ -1,11 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:multi_catalog_system/core/error/failures.dart';
-import 'package:multi_catalog_system/features/auth/domain/use_cases/auth_get_current_user_use_case.dart';
-import 'package:multi_catalog_system/features/auth/domain/use_cases/auth_login_use_case.dart';
-import 'package:multi_catalog_system/features/auth/domain/use_cases/auth_logout_use_case.dart';
-import 'package:multi_catalog_system/features/auth/domain/use_cases/auth_refresh_token_use_case.dart';
-import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_event.dart';
-import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_state.dart';
+import 'package:multi_catalog_system/features/auth/domain/domain.dart';
+
+import 'auth_event.dart';
+import 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthLoginUseCase authLoginUseCase;

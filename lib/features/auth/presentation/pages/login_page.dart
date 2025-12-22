@@ -2,11 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/core.dart';
-import 'package:multi_catalog_system/core/router/router_names.dart';
-import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_event.dart';
-import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_state.dart';
-import 'package:multi_catalog_system/features/auth/presentation/widgets/password_field_widget.dart';
+import 'package:multi_catalog_system/features/auth/presentation/presentation.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});

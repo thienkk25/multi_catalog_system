@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:multi_catalog_system/core/core.dart';
+import 'package:multi_catalog_system/core/widgets/custom_input.dart';
 
 class PasswordFieldWidget extends StatefulWidget {
   final Widget? label;
