@@ -7,22 +7,22 @@ import 'domain_management_state.dart';
 
 class DomainManagementBloc
     extends Bloc<DomainManagementEvent, DomainManagementState> {
-  final CreateDomainUseCase createDomainUseCase;
-  final CreateManyDomainUseCase createManyDomainUseCase;
-  final UpdateDomainUseCase updateDomainUseCase;
-  final DeleteDomainUseCase deleteDomainUseCase;
-  final GetByIdDomainUseCase getByIdDomainUseCase;
-  final GetAllDomainUseCase getAllDomainUseCase;
-  final UpsertManyDomainUseCase upsertManyDomainUseCase;
+  final CreateDomainUseCase create;
+  final CreateManyDomainUseCase createMany;
+  final UpdateDomainUseCase update;
+  final DeleteDomainUseCase delete;
+  final GetByIdDomainUseCase getById;
+  final GetAllDomainUseCase getAll;
+  final UpsertManyDomainUseCase upsertMany;
 
   DomainManagementBloc({
-    required this.createDomainUseCase,
-    required this.createManyDomainUseCase,
-    required this.updateDomainUseCase,
-    required this.deleteDomainUseCase,
-    required this.getByIdDomainUseCase,
-    required this.getAllDomainUseCase,
-    required this.upsertManyDomainUseCase,
+    required this.create,
+    required this.createMany,
+    required this.update,
+    required this.delete,
+    required this.getById,
+    required this.getAll,
+    required this.upsertMany,
   }) : super(const DomainManagementState()) {
     on<DomainManagementEvent>(_onEvent);
   }
@@ -37,7 +37,7 @@ class DomainManagementBloc
           state.copyWith(isLoading: true, error: null, successMessage: null),
         );
 
-        final result = await getAllDomainUseCase(search: v.search);
+        final result = await getAll(search: v.search);
         if (emit.isDone) return;
 
         result.fold(
@@ -52,7 +52,7 @@ class DomainManagementBloc
           state.copyWith(isLoading: true, error: null, successMessage: null),
         );
 
-        final result = await getByIdDomainUseCase(e.id);
+        final result = await getById(e.id);
         if (emit.isDone) return;
 
         result.fold(
@@ -72,7 +72,7 @@ class DomainManagementBloc
           state.copyWith(isLoading: true, error: null, successMessage: null),
         );
 
-        final result = await createDomainUseCase(e.entry);
+        final result = await create(e.entry);
         if (emit.isDone) return;
 
         result.fold(
@@ -92,7 +92,7 @@ class DomainManagementBloc
           state.copyWith(isLoading: true, error: null, successMessage: null),
         );
 
-        final result = await createManyDomainUseCase(e.entities);
+        final result = await createMany(e.entities);
         if (emit.isDone) return;
 
         result.fold(
@@ -112,7 +112,7 @@ class DomainManagementBloc
           state.copyWith(isLoading: true, error: null, successMessage: null),
         );
 
-        final result = await updateDomainUseCase(e.entry);
+        final result = await update(e.entry);
         if (emit.isDone) return;
 
         result.fold(
@@ -143,7 +143,7 @@ class DomainManagementBloc
           ),
         );
 
-        final result = await deleteDomainUseCase(e.id);
+        final result = await delete(e.id);
         if (emit.isDone) return;
 
         result.fold(
@@ -160,7 +160,7 @@ class DomainManagementBloc
           state.copyWith(isLoading: true, error: null, successMessage: null),
         );
 
-        final result = await upsertManyDomainUseCase(e.entities);
+        final result = await upsertMany(e.entities);
         if (emit.isDone) return;
 
         result.fold(

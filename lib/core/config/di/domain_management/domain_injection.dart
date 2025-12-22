@@ -25,13 +25,13 @@ void initDomainModule() {
 
   getIt.registerFactory(
     () => DomainManagementBloc(
-      createDomainUseCase: getIt<CreateDomainUseCase>(),
-      updateDomainUseCase: getIt<UpdateDomainUseCase>(),
-      deleteDomainUseCase: getIt<DeleteDomainUseCase>(),
-      getByIdDomainUseCase: getIt<GetByIdDomainUseCase>(),
-      getAllDomainUseCase: getIt<GetAllDomainUseCase>(),
-      upsertManyDomainUseCase: getIt<UpsertManyDomainUseCase>(),
-      createManyDomainUseCase: getIt<CreateManyDomainUseCase>(),
+      create: getIt<CreateDomainUseCase>(),
+      update: getIt<UpdateDomainUseCase>(),
+      delete: getIt<DeleteDomainUseCase>(),
+      getById: getIt<GetByIdDomainUseCase>(),
+      getAll: getIt<GetAllDomainUseCase>(),
+      upsertMany: getIt<UpsertManyDomainUseCase>(),
+      createMany: getIt<CreateManyDomainUseCase>(),
     ),
   );
 }
