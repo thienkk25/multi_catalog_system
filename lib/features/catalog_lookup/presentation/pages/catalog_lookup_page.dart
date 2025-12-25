@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:multi_catalog_system/core/core.dart';
-import 'package:multi_catalog_system/features/category_lookup/presentation/widgets/infor_card_widget.dart';
+import 'package:multi_catalog_system/features/catalog_lookup/presentation/widgets/infor_card_widget.dart';
 
 class CategoryLookupPage extends StatefulWidget {
   const CategoryLookupPage({super.key});

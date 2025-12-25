@@ -19,9 +19,9 @@ class DomainManagementFormPage extends StatefulWidget {
 }
 
 class _DomainManagementFormPageState extends State<DomainManagementFormPage> {
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController codeController = TextEditingController();
-  final TextEditingController descriptionController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _codeController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey _bottomBarKey = GlobalKey();
@@ -31,17 +31,17 @@ class _DomainManagementFormPageState extends State<DomainManagementFormPage> {
   void initState() {
     super.initState();
     if (widget.entry != null) {
-      nameController.text = widget.entry!.name;
-      codeController.text = widget.entry!.code;
-      descriptionController.text = widget.entry!.description;
+      _nameController.text = widget.entry!.name;
+      _codeController.text = widget.entry!.code;
+      _descriptionController.text = widget.entry!.description;
     }
   }
 
   @override
   void dispose() {
-    nameController.dispose();
-    codeController.dispose();
-    descriptionController.dispose();
+    _nameController.dispose();
+    _codeController.dispose();
+    _descriptionController.dispose();
     super.dispose();
   }
 
@@ -98,7 +98,7 @@ class _DomainManagementFormPageState extends State<DomainManagementFormPage> {
                                 spacing: 20,
                                 children: [
                                   CustomInput(
-                                    controller: codeController,
+                                    controller: _codeController,
                                     enabled: !isView,
                                     lable: _requiredLabel('Mã lĩnh vực'),
                                     hintText: 'Ví dụ: CT-A,...',
@@ -107,7 +107,7 @@ class _DomainManagementFormPageState extends State<DomainManagementFormPage> {
                                         : null,
                                   ),
                                   CustomInput(
-                                    controller: nameController,
+                                    controller: _nameController,
                                     enabled: !isView,
                                     lable: _requiredLabel('Tên lĩnh vực'),
                                     hintText: 'Ví dụ: Chăn nuôi, Môi trường...',
@@ -120,7 +120,7 @@ class _DomainManagementFormPageState extends State<DomainManagementFormPage> {
                             ),
                             CustomCard(
                               child: CustomInput(
-                                controller: descriptionController,
+                                controller: _descriptionController,
                                 enabled: !isView,
                                 lable: Row(
                                   mainAxisAlignment:
@@ -167,9 +167,9 @@ class _DomainManagementFormPageState extends State<DomainManagementFormPage> {
                   if (isEdit) {
                     final entry = DomainEntry(
                       id: widget.entry!.id,
-                      code: codeController.text,
-                      name: nameController.text,
-                      description: descriptionController.text,
+                      code: _codeController.text,
+                      name: _nameController.text,
+                      description: _descriptionController.text,
                       createdAt: widget.entry!.createdAt,
                       updatedAt: DateTime.now(),
                     );
@@ -178,9 +178,9 @@ class _DomainManagementFormPageState extends State<DomainManagementFormPage> {
                     );
                   } else {
                     final entry = DomainEntry(
-                      code: codeController.text,
-                      name: nameController.text,
-                      description: descriptionController.text,
+                      code: _codeController.text,
+                      name: _nameController.text,
+                      description: _descriptionController.text,
                       createdAt: DateTime.now(),
                     );
                     context.read<DomainManagementBloc>().add(

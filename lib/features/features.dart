@@ -3,7 +3,7 @@ export 'approver/approver.dart';
 export 'auth/auth.dart';
 export 'category_group/category_group.dart';
 export 'category_item/category_item.dart';
-export 'category_lookup/category_lookup.dart';
+export 'catalog_lookup/catalog_lookup.dart';
 export 'domain_management/domain_management.dart';
 export 'home/home.dart';
 export 'import_file/import_file.dart';
