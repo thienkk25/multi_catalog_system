@@ -52,32 +52,11 @@ class AuthInterceptor extends Interceptor {
       }
 
       try {
-        // Clone requestOptions để retry
         final requestOptions = err.requestOptions;
-        final opts = Options(
-          method: requestOptions.method,
-          headers: {
-            ...requestOptions.headers,
-            'Authorization': 'Bearer $newToken',
-          },
-          responseType: requestOptions.responseType,
-          contentType: requestOptions.contentType,
-          extra: requestOptions.extra,
-          followRedirects: requestOptions.followRedirects,
-          receiveDataWhenStatusError: requestOptions.receiveDataWhenStatusError,
-          validateStatus: requestOptions.validateStatus,
-          sendTimeout: requestOptions.sendTimeout,
-          receiveTimeout: requestOptions.receiveTimeout,
-        );
+        requestOptions.headers['Authorization'] = 'Bearer $newToken';
 
-        final cloneReq = await dio.request(
-          requestOptions.path,
-          data: requestOptions.data,
-          queryParameters: requestOptions.queryParameters,
-          options: opts,
-        );
-
-        return handler.resolve(cloneReq);
+        final response = await dio.fetch(requestOptions);
+        return handler.resolve(response);
       } catch (e) {
         return handler.reject(err);
       }

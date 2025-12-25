@@ -33,7 +33,8 @@ Future<void> init() async {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
-        validateStatus: (status) => status != null && status < 500,
+        validateStatus: (status) =>
+            status != null && status >= 200 && status < 300,
       ),
     ),
   );
@@ -43,7 +44,8 @@ Future<void> init() async {
     () => Dio(
       BaseOptions(
         baseUrl: AppConstant.apiBaseUrl,
-        validateStatus: (status) => status != null && status < 500,
+        validateStatus: (status) =>
+            status != null && status >= 200 && status < 300,
       ),
     ),
     instanceName: 'refreshDio',

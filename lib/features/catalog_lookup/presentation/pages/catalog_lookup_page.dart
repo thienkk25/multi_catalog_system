@@ -13,7 +13,11 @@ class CategoryLookupPage extends StatefulWidget {
   State<CategoryLookupPage> createState() => _CategoryLookupPageState();
 }
 
-class _CategoryLookupPageState extends State<CategoryLookupPage> {
+class _CategoryLookupPageState extends State<CategoryLookupPage>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String? _selectedDomainId;
   String? _selectedCategoryGroupId;
@@ -35,6 +39,7 @@ class _CategoryLookupPageState extends State<CategoryLookupPage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return BlocBuilder<CatalogLookupBloc, CatalogLookupState>(
       builder: (context, state) {
         return SingleChildScrollView(
@@ -141,12 +146,36 @@ class _CategoryLookupPageState extends State<CategoryLookupPage> {
                     ),
                   ),
                 ),
-
-                const SizedBox(height: 16),
-                const Text(
-                  'Kết quả tìm kiếm',
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
-                ),
+                state.catalog.isEmpty
+                    ? const SizedBox.shrink()
+                    : Column(
+                        children: [
+                          const Text(
+                            'Kết quả tìm kiếm',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                            ),
+                          ),
+                          ListView.separated(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: state.catalog.length,
+                            itemBuilder: (context, index) {
+                              final catalog = state.catalog[index];
+                              return InforCardWidget(
+                                subDomain: '',
+                                title: '',
+                                subGroup: '',
+                                subDocument: '',
+                                dateTime: DateTime.now(),
+                              );
+                            },
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(height: 10),
+                          ),
+                        ],
+                      ),
               ],
             ),
           ),

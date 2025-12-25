@@ -3,6 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:multi_catalog_system/core/core.dart';
 import 'package:multi_catalog_system/features/features.dart';
 
+class HomePageConfig {
+  final Widget Function() builder;
+  const HomePageConfig({required this.builder});
+}
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -11,82 +16,85 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  late final List<HomePageConfig> _configs;
   late final List<Widget?> _pages;
 
   @override
   void initState() {
     super.initState();
-    _pages = List.filled(5, null);
-  }
-
-  Widget _buildPage(int index) {
-    if (_pages[index] != null) return _pages[index]!;
-
-    late final Widget page;
-
-    switch (index) {
-      case 0:
-        page = BlocProvider(
+    _configs = [
+      HomePageConfig(
+        builder: () => BlocProvider(
           create: (_) => getIt<CatalogLookupBloc>(),
           child: const CategoryLookupPage(),
-        );
-        break;
-      case 1:
-        page = BlocProvider(
+        ),
+      ),
+      HomePageConfig(
+        builder: () => BlocProvider(
           create: (_) => getIt<DomainManagementBloc>(),
           child: const DomainManagementPage(),
-        );
-        break;
-      case 2:
-        page = BlocProvider(
+        ),
+      ),
+      HomePageConfig(
+        builder: () => BlocProvider(
           create: (_) => getIt<CategoryGroupBloc>(),
           child: const CategoryGroupPage(),
-        );
-        break;
-      case 3:
-        page = const CategoryItemPage();
-        break;
-      case 4:
-        page = const LegalDocumentPage();
-        break;
-      default:
-        page = const NotFoundPage();
-    }
+        ),
+      ),
+      HomePageConfig(builder: () => const CategoryItemPage()),
+      HomePageConfig(builder: () => const LegalDocumentPage()),
+    ];
+    _pages = List.filled(_configs.length, null);
+  }
 
-    _pages[index] = page;
-    return page;
+  Widget _getPage(int index) {
+    return _pages[index] ??= _configs[index].builder();
+  }
+
+  void _clearCache() {
+    for (var i = 0; i < _pages.length; i++) {
+      _pages[i] = null;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<HomeBloc, HomeState>(
-      builder: (context, state) {
-        final index = state.mapOrNull(page: (p) => p.index) ?? 0;
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        state.mapOrNull(unauthenticated: (_) => _clearCache());
+      },
+      child: BlocBuilder<HomeBloc, HomeState>(
+        builder: (context, state) {
+          final index = state.mapOrNull(page: (p) => p.index) ?? 0;
 
-        return Scaffold(
-          appBar: AppBar(
-            title: state.mapOrNull(
-              page: (p) => Text(
-                p.title,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 20,
+          _getPage(index);
+
+          return Scaffold(
+            appBar: AppBar(
+              centerTitle: true,
+              title: state.mapOrNull(
+                page: (p) => Text(
+                  p.title,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 20,
+                  ),
                 ),
               ),
             ),
-            centerTitle: true,
-          ),
-          drawer: const DrawerWidget(),
-          body: SafeArea(
-            child: Stack(
-              children: List.generate(
-                _pages.length,
-                (i) => Offstage(offstage: i != index, child: _buildPage(i)),
+            drawer: const DrawerWidget(),
+            body: SafeArea(
+              child: IndexedStack(
+                index: index,
+                children: List.generate(
+                  _pages.length,
+                  (i) => _pages[i] ?? const SizedBox.shrink(),
+                ),
               ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }
