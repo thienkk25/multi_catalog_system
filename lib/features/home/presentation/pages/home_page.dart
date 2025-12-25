@@ -26,7 +26,10 @@ class _HomePageState extends State<HomePage> {
 
     switch (index) {
       case 0:
-        page = const CategoryLookupPage();
+        page = BlocProvider(
+          create: (_) => getIt<CatalogLookupBloc>(),
+          child: const CategoryLookupPage(),
+        );
         break;
       case 1:
         page = BlocProvider(
