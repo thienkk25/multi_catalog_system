@@ -21,7 +21,6 @@ class DomainManagementGridView extends StatelessWidget {
         crossAxisCount: screenWidth(context) < 600 ? 2 : 3,
         mainAxisSpacing: 10,
         crossAxisSpacing: 10,
-        childAspectRatio: 2,
       ),
       shrinkWrap: true,
       physics: const AlwaysScrollableScrollPhysics(),

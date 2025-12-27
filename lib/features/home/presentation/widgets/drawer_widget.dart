@@ -12,7 +12,7 @@ class DrawerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final drawerWidth = MediaQuery.of(context).size.width * 0.6;
+    final drawerWidth = MediaQuery.of(context).size.width * 0.8;
 
     return Drawer(
       width: drawerWidth,
@@ -22,7 +22,11 @@ class DrawerWidget extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             spacing: 10,
-            children: [_HeaderDrawer(), _MainDrawer(), _FooterDrawer()],
+            children: [
+              _HeaderDrawer(drawerWidth: drawerWidth),
+              _MainDrawer(),
+              _FooterDrawer(),
+            ],
           ),
         ),
       ),
@@ -31,13 +35,14 @@ class DrawerWidget extends StatelessWidget {
 }
 
 class _HeaderDrawer extends StatelessWidget {
-  const _HeaderDrawer();
+  final double drawerWidth;
+  const _HeaderDrawer({required this.drawerWidth});
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
-        final sizeW = MediaQuery.of(context).size.width * 0.6 - 20;
+        final sizeW = drawerWidth - 20;
         return state.when(
           initial: () => const SizedBox.shrink(),
           loading: () => const Center(child: CircularProgressIndicator()),
@@ -62,18 +67,20 @@ class _HeaderDrawer extends StatelessWidget {
               children: [
                 CircleAvatar(radius: 30, child: const Icon(Icons.person)),
                 const SizedBox(width: 12),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      user.fullName ?? 'Không tên',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        user.fullName ?? 'Không tên',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                    ),
-                    Text('Email: ${user.email}'),
-                  ],
+                      Text('Email: ${user.email}'),
+                    ],
+                  ),
                 ),
               ],
             );
