@@ -125,7 +125,9 @@ class _DomainManagementPageState extends State<DomainManagementPage>
               MaterialPageRoute(
                 builder: (context) => BlocProvider.value(
                   value: bloc,
-                  child: const DomainManagementFormPage(type: Type.add),
+                  child: const DomainManagementFormPage(
+                    type: DomainFormType.create,
+                  ),
                 ),
               ),
             );

@@ -140,6 +140,7 @@ class DomainManagementBloc
           state.copyWith(
             entities: state.entities.where((d) => d.id != e.id).toList(),
             successMessage: null,
+            error: null,
           ),
         );
 
@@ -169,7 +170,7 @@ class DomainManagementBloc
             state.copyWith(
               isLoading: false,
               entities: entities,
-              successMessage: 'Cập nhật hoăc tạo lĩnh vực thành công',
+              successMessage: 'Cập nhật hoặc tạo lĩnh vực thành công',
             ),
           ),
         );

@@ -80,7 +80,7 @@ class CategoryGroupBloc extends Bloc<CategoryGroupEvent, CategoryGroupState> {
             state.copyWith(
               isLoading: false,
               entities: [domain, ...state.entities],
-              successMessage: 'Tạo lĩnh vực thành công',
+              successMessage: 'Tạo nhóm danh mục thành công',
             ),
           ),
         );
@@ -100,7 +100,7 @@ class CategoryGroupBloc extends Bloc<CategoryGroupEvent, CategoryGroupState> {
             state.copyWith(
               isLoading: false,
               entities: [...entities, ...state.entities],
-              successMessage: 'Tạo lĩnh vực thành công',
+              successMessage: 'Tạo nhóm danh mục thành công',
             ),
           ),
         );
@@ -125,7 +125,7 @@ class CategoryGroupBloc extends Bloc<CategoryGroupEvent, CategoryGroupState> {
               state.copyWith(
                 isLoading: false,
                 entities: updated,
-                successMessage: 'Cập nhật lĩnh vực thành công',
+                successMessage: 'Cập nhật nhóm danh mục thành công',
               ),
             );
           },
@@ -139,6 +139,7 @@ class CategoryGroupBloc extends Bloc<CategoryGroupEvent, CategoryGroupState> {
           state.copyWith(
             entities: state.entities.where((d) => d.id != e.id).toList(),
             successMessage: null,
+            error: null,
           ),
         );
 
@@ -168,7 +169,7 @@ class CategoryGroupBloc extends Bloc<CategoryGroupEvent, CategoryGroupState> {
             state.copyWith(
               isLoading: false,
               entities: entities,
-              successMessage: 'Cập nhật hoăc tạo lĩnh vực thành công',
+              successMessage: 'Cập nhật hoặc tạo nhóm danh mục thành công',
             ),
           ),
         );

@@ -33,8 +33,10 @@ class DomainManagementGridView extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) =>
-                    DomainManagementFormPage(type: Type.view, entry: domain),
+                builder: (context) => DomainManagementFormPage(
+                  type: DomainFormType.detail,
+                  entry: domain,
+                ),
               ),
             );
           },
@@ -81,27 +83,16 @@ class DomainManagementGridView extends StatelessWidget {
                       itemBuilder: (context) => [
                         PopupMenuItem(
                           child: _DomainCardMenu(
-                            onEdit: () {
-                              Navigator.pop(context);
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => BlocProvider.value(
-                                    value: bloc,
-                                    child: DomainManagementFormPage(
-                                      type: Type.edit,
-                                      entry: domain,
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                            onDelete: () {
-                              Navigator.pop(context);
-                              context.read<DomainManagementBloc>().add(
-                                DomainManagementEvent.delete(id: domain.id!),
-                              );
-                            },
+                            onEdit: () => _onEdit(
+                              context: context,
+                              bloc: bloc,
+                              entry: domain,
+                            ),
+                            onDelete: () => _onDelete(
+                              context: context,
+                              bloc: bloc,
+                              entry: domain,
+                            ),
                           ),
                         ),
                       ],
@@ -113,6 +104,44 @@ class DomainManagementGridView extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  void _onEdit({
+    required BuildContext context,
+    required DomainManagementBloc bloc,
+    required DomainEntry entry,
+  }) {
+    Navigator.pop(context);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => BlocProvider.value(
+          value: bloc,
+          child: DomainManagementFormPage(
+            type: DomainFormType.update,
+            entry: entry,
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _onDelete({
+    required BuildContext context,
+    required DomainManagementBloc bloc,
+    required DomainEntry entry,
+  }) {
+    Navigator.pop(context);
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => CustomAlertDialog(
+        onConfirm: () {
+          bloc.add(DomainManagementEvent.delete(id: entry.id!));
+          Navigator.pop(context);
+        },
+      ),
     );
   }
 }

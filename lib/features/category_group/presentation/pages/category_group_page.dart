@@ -112,7 +112,9 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
               MaterialPageRoute(
                 builder: (context) => BlocProvider.value(
                   value: bloc,
-                  child: CategoryGroupFormPage(),
+                  child: CategoryGroupFormPage(
+                    type: CategoryGroupFormType.create,
+                  ),
                 ),
               ),
             );

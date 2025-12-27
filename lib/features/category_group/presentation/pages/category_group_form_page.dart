@@ -7,8 +7,12 @@ import 'package:multi_catalog_system/features/category_group/domain/domain.dart'
 import 'package:multi_catalog_system/features/category_group/presentation/bloc/category_group_bloc.dart';
 import 'package:multi_catalog_system/features/category_group/presentation/bloc/category_group_event.dart';
 
+enum CategoryGroupFormType { detail, create, update }
+
 class CategoryGroupFormPage extends StatefulWidget {
-  const CategoryGroupFormPage({super.key});
+  final CategoryGroupFormType type;
+  final CategoryGroupEntry? entry;
+  const CategoryGroupFormPage({super.key, required this.type, this.entry});
 
   @override
   State<CategoryGroupFormPage> createState() => _CategoryGroupFormPageState();
@@ -22,6 +26,17 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
   String? _selectedDomainId;
   final GlobalKey _bottomBarKey = GlobalKey();
   double _bottomBarHeight = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.entry != null) {
+      _codeController.text = widget.entry!.code;
+      _nameController.text = widget.entry!.name;
+      _descriptionController.text = widget.entry!.description;
+      _selectedDomainId = widget.entry!.domainId;
+    }
+  }
 
   @override
   void didChangeDependencies() {
@@ -48,10 +63,18 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isEdit = widget.type == CategoryGroupFormType.update;
+    final isView = widget.type == CategoryGroupFormType.detail;
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        title: const Text('Thêm nhóm danh mục'),
+        title: Text(
+          isView
+              ? 'Chi tiết nhóm danh mục'
+              : isEdit
+              ? 'Chỉnh sửa nhóm danh mục'
+              : 'Thêm nhóm danh mục',
+        ),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -74,6 +97,7 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
                                 spacing: 20,
                                 children: [
                                   CustomInput(
+                                    enabled: isView ? false : true,
                                     controller: _codeController,
                                     lable: _requiredLabel('Mã Nhóm danh mục'),
                                     hintText: 'Nhập mã nhóm danh mục',
@@ -82,6 +106,7 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
                                         : null,
                                   ),
                                   CustomInput(
+                                    enabled: isView ? false : true,
                                     controller: _nameController,
                                     lable: _requiredLabel('Tên Nhóm danh mục'),
                                     hintText: 'Nhập tên nhóm danh mục',
@@ -113,13 +138,15 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
                                               ),
                                             )
                                             .toList(),
-                                        onChanged: (value) {
-                                          if (value == null) return;
+                                        onChanged: isView
+                                            ? null
+                                            : (value) {
+                                                if (value == null) return;
 
-                                          setState(() {
-                                            _selectedDomainId = value;
-                                          });
-                                        },
+                                                setState(() {
+                                                  _selectedDomainId = value;
+                                                });
+                                              },
                                         validator: (p0) =>
                                             p0 == null || p0.isEmpty
                                             ? 'Vui lòng chọn lĩnh vực'
@@ -132,6 +159,7 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
                             ),
                             CustomCard(
                               child: CustomInput(
+                                enabled: isView ? false : true,
                                 controller: _descriptionController,
                                 lable: Row(
                                   mainAxisAlignment:
@@ -167,12 +195,12 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
                 ),
               ],
             ),
-
-            BottomFormActions(
-              key: _bottomBarKey,
-              onCancel: () => Navigator.pop(context),
-              onSave: () => _onSave(context),
-            ),
+            if (!isView)
+              BottomFormActions(
+                key: _bottomBarKey,
+                onCancel: () => Navigator.pop(context),
+                onSave: () => _onSave(context: context, isEdit: isEdit),
+              ),
           ],
         ),
       ),
@@ -199,28 +227,41 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
     );
   }
 
-  void _onSave(BuildContext context) {
+  void _onSave({required BuildContext context, required bool isEdit}) {
     if (!_formKey.currentState!.validate()) return;
+    if (isEdit) {
+      final entry = CategoryGroupEntry(
+        id: widget.entry!.id,
+        domainId: widget.entry!.domainId,
+        code: _codeController.text,
+        name: _nameController.text,
+        description: _descriptionController.text,
+        createdAt: widget.entry!.createdAt,
+        updatedAt: DateTime.now(),
+      );
+      context.read<CategoryGroupBloc>().add(
+        CategoryGroupEvent.update(entry: entry),
+      );
+    } else {
+      final domainId = _selectedDomainId;
+      if (domainId == null) return;
 
-    final domainId = _selectedDomainId;
-    if (domainId == null) return;
+      final code = _codeController.text;
+      final name = _nameController.text;
+      final description = _descriptionController.text;
 
-    final code = _codeController.text;
-    final name = _nameController.text;
-    final description = _descriptionController.text;
+      final entry = CategoryGroupEntry(
+        domainId: domainId,
+        code: code,
+        name: name,
+        description: description,
+        createdAt: DateTime.now(),
+      );
 
-    final entry = CategoryGroupEntry(
-      domainId: domainId,
-      code: code,
-      name: name,
-      description: description,
-      createdAt: DateTime.now(),
-    );
-
-    context.read<CategoryGroupBloc>().add(
-      CategoryGroupEvent.create(entry: entry),
-    );
-
+      context.read<CategoryGroupBloc>().add(
+        CategoryGroupEvent.create(entry: entry),
+      );
+    }
     Navigator.pop(context);
   }
 }

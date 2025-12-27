@@ -5,12 +5,12 @@ import 'package:multi_catalog_system/features/domain_management/domain/domain.da
 import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_management_bloc.dart';
 import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_management_event.dart';
 
-enum Type { add, edit, view }
+enum DomainFormType { detail, create, update }
 
 class DomainManagementFormPage extends StatefulWidget {
   const DomainManagementFormPage({super.key, required this.type, this.entry});
 
-  final Type type;
+  final DomainFormType type;
   final DomainEntry? entry;
 
   @override
@@ -62,8 +62,8 @@ class _DomainManagementFormPageState extends State<DomainManagementFormPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isEdit = widget.type == Type.edit;
-    final isView = widget.type == Type.view;
+    final isEdit = widget.type == DomainFormType.update;
+    final isView = widget.type == DomainFormType.detail;
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -162,33 +162,7 @@ class _DomainManagementFormPageState extends State<DomainManagementFormPage> {
               BottomFormActions(
                 key: _bottomBarKey,
                 onCancel: () => Navigator.pop(context),
-                onSave: () {
-                  if (!_formKey.currentState!.validate()) return;
-                  if (isEdit) {
-                    final entry = DomainEntry(
-                      id: widget.entry!.id,
-                      code: _codeController.text,
-                      name: _nameController.text,
-                      description: _descriptionController.text,
-                      createdAt: widget.entry!.createdAt,
-                      updatedAt: DateTime.now(),
-                    );
-                    context.read<DomainManagementBloc>().add(
-                      DomainManagementEvent.update(entry: entry),
-                    );
-                  } else {
-                    final entry = DomainEntry(
-                      code: _codeController.text,
-                      name: _nameController.text,
-                      description: _descriptionController.text,
-                      createdAt: DateTime.now(),
-                    );
-                    context.read<DomainManagementBloc>().add(
-                      DomainManagementEvent.create(entry: entry),
-                    );
-                  }
-                  Navigator.pop(context);
-                },
+                onSave: () => _onSave(context: context, isEdit: isEdit),
               ),
           ],
         ),
@@ -214,5 +188,33 @@ class _DomainManagementFormPageState extends State<DomainManagementFormPage> {
         ],
       ),
     );
+  }
+
+  void _onSave({required BuildContext context, required bool isEdit}) {
+    if (!_formKey.currentState!.validate()) return;
+    if (isEdit) {
+      final entry = DomainEntry(
+        id: widget.entry!.id,
+        code: _codeController.text,
+        name: _nameController.text,
+        description: _descriptionController.text,
+        createdAt: widget.entry!.createdAt,
+        updatedAt: DateTime.now(),
+      );
+      context.read<DomainManagementBloc>().add(
+        DomainManagementEvent.update(entry: entry),
+      );
+    } else {
+      final entry = DomainEntry(
+        code: _codeController.text,
+        name: _nameController.text,
+        description: _descriptionController.text,
+        createdAt: DateTime.now(),
+      );
+      context.read<DomainManagementBloc>().add(
+        DomainManagementEvent.create(entry: entry),
+      );
+    }
+    Navigator.pop(context);
   }
 }
