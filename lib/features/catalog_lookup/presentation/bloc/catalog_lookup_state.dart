@@ -11,5 +11,7 @@ abstract class CatalogLookupState with _$CatalogLookupState {
     @Default([]) List<DomainRefEntry> domainsRef,
     @Default([]) List<CategoryGroupRefEntry> categoryGroupRef,
     @Default([]) List<DomainRefEntry> catalog,
+
+    @Default({}) Map<String, String> domainNameMap,
   }) = _CatalogLookupState;
 }

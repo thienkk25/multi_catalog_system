@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:multi_catalog_system/core/core.dart';
+import 'package:multi_catalog_system/features/catalog_lookup/domain/entities/domain_ref_entry.dart';
+import 'package:multi_catalog_system/features/catalog_lookup/presentation/presentation.dart';
+import 'package:multi_catalog_system/features/category_group/domain/domain.dart';
+import 'package:multi_catalog_system/features/category_group/presentation/bloc/category_group_bloc.dart';
+import 'package:multi_catalog_system/features/category_group/presentation/bloc/category_group_event.dart';
 
 class CategoryGroupFormPage extends StatefulWidget {
   const CategoryGroupFormPage({super.key});
@@ -10,6 +16,10 @@ class CategoryGroupFormPage extends StatefulWidget {
 
 class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _codeController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+  String? _selectedDomainId;
   final GlobalKey _bottomBarKey = GlobalKey();
   double _bottomBarHeight = 0;
 
@@ -26,6 +36,14 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
         }
       }
     });
+  }
+
+  @override
+  void dispose() {
+    _codeController.dispose();
+    _nameController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
   }
 
   @override
@@ -56,6 +74,7 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
                                 spacing: 20,
                                 children: [
                                   CustomInput(
+                                    controller: _codeController,
                                     lable: _requiredLabel('Mã Nhóm danh mục'),
                                     hintText: 'Nhập mã nhóm danh mục',
                                     validator: (p0) => p0 == null || p0.isEmpty
@@ -63,39 +82,57 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
                                         : null,
                                   ),
                                   CustomInput(
+                                    controller: _nameController,
                                     lable: _requiredLabel('Tên Nhóm danh mục'),
                                     hintText: 'Nhập tên nhóm danh mục',
                                     validator: (p0) => p0 == null || p0.isEmpty
                                         ? 'Vui lòng nhập tên nhóm danh mục'
                                         : null,
                                   ),
-                                  CustomDropdownButton(
-                                    lable: _requiredLabel('Lĩnh vực'),
-                                    hint: '-- Chọn lĩnh vực --',
-                                    items: const [
-                                      DropdownMenuItem(
-                                        value: '1',
-                                        child: Text('Lĩnh vực 1'),
-                                      ),
-                                      DropdownMenuItem(
-                                        value: '2',
-                                        child: Text('Lĩnh vực 2'),
-                                      ),
-                                      DropdownMenuItem(
-                                        value: '3',
-                                        child: Text('Lĩnh vực 3'),
-                                      ),
-                                    ],
-                                    onChanged: (value) {},
-                                    validator: (p0) => p0 == null
-                                        ? 'Vui lòng chọn lĩnh vực'
-                                        : null,
+                                  BlocSelector<
+                                    CatalogLookupBloc,
+                                    CatalogLookupState,
+                                    List<DomainRefEntry>
+                                  >(
+                                    selector: (state) => state.domainsRef,
+                                    builder: (context, domains) {
+                                      return CustomDropdownButton<String>(
+                                        lable: const Text(
+                                          'Lĩnh vực',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        hint: 'Chọn lĩnh vực',
+                                        value: _selectedDomainId,
+                                        items: domains
+                                            .map(
+                                              (e) => DropdownMenuItem<String>(
+                                                value: e.id,
+                                                child: Text(e.name),
+                                              ),
+                                            )
+                                            .toList(),
+                                        onChanged: (value) {
+                                          if (value == null) return;
+
+                                          setState(() {
+                                            _selectedDomainId = value;
+                                          });
+                                        },
+                                        validator: (p0) =>
+                                            p0 == null || p0.isEmpty
+                                            ? 'Vui lòng chọn lĩnh vực'
+                                            : null,
+                                      );
+                                    },
                                   ),
                                 ],
                               ),
                             ),
                             CustomCard(
                               child: CustomInput(
+                                controller: _descriptionController,
                                 lable: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -134,9 +171,7 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
             BottomFormActions(
               key: _bottomBarKey,
               onCancel: () => Navigator.pop(context),
-              onSave: () {
-                if (!_formKey.currentState!.validate()) return;
-              },
+              onSave: () => _onSave(context),
             ),
           ],
         ),
@@ -162,5 +197,30 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
         ],
       ),
     );
+  }
+
+  void _onSave(BuildContext context) {
+    if (!_formKey.currentState!.validate()) return;
+
+    final domainId = _selectedDomainId;
+    if (domainId == null) return;
+
+    final code = _codeController.text;
+    final name = _nameController.text;
+    final description = _descriptionController.text;
+
+    final entry = CategoryGroupEntry(
+      domainId: domainId,
+      code: code,
+      name: name,
+      description: description,
+      createdAt: DateTime.now(),
+    );
+
+    context.read<CategoryGroupBloc>().add(
+      CategoryGroupEvent.create(entry: entry),
+    );
+
+    Navigator.pop(context);
   }
 }

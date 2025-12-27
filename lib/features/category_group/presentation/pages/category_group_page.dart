@@ -27,6 +27,7 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    final bloc = context.read<CategoryGroupBloc>();
     return Stack(
       children: [
         Padding(
@@ -108,7 +109,12 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
           onPressedAdd: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => CategoryGroupFormPage()),
+              MaterialPageRoute(
+                builder: (context) => BlocProvider.value(
+                  value: bloc,
+                  child: CategoryGroupFormPage(),
+                ),
+              ),
             );
           },
         ),

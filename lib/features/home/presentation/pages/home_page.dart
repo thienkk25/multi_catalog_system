@@ -23,12 +23,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _configs = [
-      HomePageConfig(
-        builder: () => BlocProvider(
-          create: (_) => getIt<CatalogLookupBloc>(),
-          child: const CategoryLookupPage(),
-        ),
-      ),
+      HomePageConfig(builder: () => const CategoryLookupPage()),
       HomePageConfig(
         builder: () => BlocProvider(
           create: (_) => getIt<DomainManagementBloc>(),

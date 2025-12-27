@@ -23,21 +23,6 @@ class _CategoryLookupPageState extends State<CategoryLookupPage>
   String? _selectedCategoryGroupId;
 
   @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<CatalogLookupBloc>().add(
-        const CatalogLookupEvent.getDomainsRef(),
-      );
-    });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     super.build(context);
     return BlocBuilder<CatalogLookupBloc, CatalogLookupState>(

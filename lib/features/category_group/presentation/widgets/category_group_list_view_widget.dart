@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:multi_catalog_system/core/core.dart';
+import 'package:multi_catalog_system/features/catalog_lookup/presentation/bloc/catalog_lookup_bloc.dart';
+import 'package:multi_catalog_system/features/catalog_lookup/presentation/bloc/catalog_lookup_extensions.dart';
+import 'package:multi_catalog_system/features/catalog_lookup/presentation/bloc/catalog_lookup_state.dart';
 import 'package:multi_catalog_system/features/category_group/category_group.dart';
 
 class CategoryGroupListViewWidget extends StatelessWidget {
@@ -30,9 +34,15 @@ class CategoryGroupListViewWidget extends StatelessWidget {
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
               SizedBox(height: 5),
-              Text(
-                'Lĩnh vực: ${categoryGroup[index].domainId}',
-                style: TextStyle(color: Colors.grey[600]),
+              BlocSelector<CatalogLookupBloc, CatalogLookupState, String>(
+                selector: (state) =>
+                    state.domainNameOf(categoryGroup[index].domainId),
+                builder: (context, domainName) {
+                  return Text(
+                    'Lĩnh vực: $domainName',
+                    style: TextStyle(color: Colors.grey[600]),
+                  );
+                },
               ),
               SizedBox(height: 5),
               RoleBasedWidget(

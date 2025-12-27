@@ -31,8 +31,13 @@ class CatalogLookupBloc extends Bloc<CatalogLookupEvent, CatalogLookupState> {
 
         result.fold(
           (f) => emit(state.copyWith(isLoading: false, error: _mapFailure(f))),
-          (entities) =>
-              emit(state.copyWith(isLoading: false, domainsRef: entities)),
+          (entities) => emit(
+            state.copyWith(
+              isLoading: false,
+              domainsRef: entities,
+              domainNameMap: {for (final d in entities) d.id: d.name},
+            ),
+          ),
         );
       },
       getCategoryGroupsRef: (v) async {
