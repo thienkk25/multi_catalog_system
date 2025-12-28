@@ -1,0 +1,9 @@
+export 'entries/legal_document_entry.dart';
+export 'repositories/legal_document_repository.dart';
+export 'use_cases/create_legal_document_use_case.dart';
+export 'use_cases/create_many_legal_document_use_case.dart';
+export 'use_cases/delete_legal_document_use_case.dart';
+export 'use_cases/get_all_legal_document_use_case.dart';
+export 'use_cases/get_by_id_legal_document_use_case.dart';
+export 'use_cases/update_legal_document_use_case.dart';
+export 'use_cases/upsert_many_legal_document_use_case.dart';
