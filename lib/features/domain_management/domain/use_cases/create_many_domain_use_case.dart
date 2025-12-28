@@ -11,6 +11,6 @@ class CreateManyDomainUseCase {
   Future<Either<Failure, List<DomainEntry>>> call(
     List<DomainEntry> entries,
   ) async {
-    return await repository.createMany(entries);
+    return repository.createMany(entries);
   }
 }

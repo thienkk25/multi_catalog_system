@@ -11,6 +11,6 @@ class GetAllCategoryGroupUseCase {
   Future<Either<Failure, List<CategoryGroupEntry>>> call({
     String? search,
   }) async {
-    return await repository.getAll(search: search);
+    return repository.getAll(search: search);
   }
 }

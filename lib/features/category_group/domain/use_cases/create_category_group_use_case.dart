@@ -11,6 +11,6 @@ class CreateCategoryGroupUseCase {
   Future<Either<Failure, CategoryGroupEntry>> call(
     CategoryGroupEntry entry,
   ) async {
-    return await repository.create(entry);
+    return repository.create(entry);
   }
 }

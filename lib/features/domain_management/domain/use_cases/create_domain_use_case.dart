@@ -9,6 +9,6 @@ class CreateDomainUseCase {
   CreateDomainUseCase({required this.repository});
 
   Future<Either<Failure, DomainEntry>> call(DomainEntry entry) async {
-    return await repository.create(entry);
+    return repository.create(entry);
   }
 }

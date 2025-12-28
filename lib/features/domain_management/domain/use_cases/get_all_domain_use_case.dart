@@ -9,6 +9,6 @@ class GetAllDomainUseCase {
   GetAllDomainUseCase({required this.repository});
 
   Future<Either<Failure, List<DomainEntry>>> call({String? search}) async {
-    return await repository.getAll(search: search);
+    return repository.getAll(search: search);
   }
 }

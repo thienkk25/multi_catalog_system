@@ -11,6 +11,6 @@ class GetAllLegalDocumentUseCase {
   Future<Either<Failure, List<LegalDocumentEntry>>> call({
     String? search,
   }) async {
-    return await repository.getAll(search: search);
+    return repository.getAll(search: search);
   }
 }

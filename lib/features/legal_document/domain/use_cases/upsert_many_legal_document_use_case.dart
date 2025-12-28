@@ -11,6 +11,6 @@ class UpsertManyLegalDocumentUseCase {
   Future<Either<Failure, List<LegalDocumentEntry>>> call(
     List<LegalDocumentEntry> entries,
   ) async {
-    return await repository.upsertMany(entries);
+    return repository.upsertMany(entries);
   }
 }

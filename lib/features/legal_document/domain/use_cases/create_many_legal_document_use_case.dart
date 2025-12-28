@@ -11,6 +11,6 @@ class CreateManyLegalDocumentUseCase {
   Future<Either<Failure, List<LegalDocumentEntry>>> call(
     List<LegalDocumentEntry> entries,
   ) async {
-    return await repository.createMany(entries);
+    return repository.createMany(entries);
   }
 }

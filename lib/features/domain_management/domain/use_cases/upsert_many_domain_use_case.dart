@@ -11,6 +11,6 @@ class UpsertManyDomainUseCase {
   Future<Either<Failure, List<DomainEntry>>> call(
     List<DomainEntry> entries,
   ) async {
-    return await repository.upsertMany(entries);
+    return repository.upsertMany(entries);
   }
 }

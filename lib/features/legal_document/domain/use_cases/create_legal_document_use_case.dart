@@ -11,6 +11,6 @@ class CreateLegalDocumentUseCase {
   Future<Either<Failure, LegalDocumentEntry>> call(
     LegalDocumentEntry entry,
   ) async {
-    return await repository.create(entry);
+    return repository.create(entry);
   }
 }

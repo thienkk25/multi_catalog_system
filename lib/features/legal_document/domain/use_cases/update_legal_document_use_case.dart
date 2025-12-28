@@ -11,6 +11,6 @@ class UpdateLegalDocumentUseCase {
   Future<Either<Failure, LegalDocumentEntry>> call(
     LegalDocumentEntry entry,
   ) async {
-    return await repository.update(entry);
+    return repository.update(entry);
   }
 }
