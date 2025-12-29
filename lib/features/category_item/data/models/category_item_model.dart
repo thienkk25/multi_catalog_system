@@ -2,6 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_entry.dart';
 
 part 'category_item_model.freezed.dart';
+part 'category_item_model.g.dart';
 
 @freezed
 abstract class CategoryItemModel with _$CategoryItemModel {

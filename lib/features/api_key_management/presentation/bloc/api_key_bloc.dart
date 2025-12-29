@@ -1,8 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:multi_catalog_system/core/error/failures.dart';
 import 'package:multi_catalog_system/features/api_key_management/domain/domain.dart';
-import 'package:multi_catalog_system/features/api_key_management/presentation/bloc/api_key_event.dart';
-import 'package:multi_catalog_system/features/api_key_management/presentation/bloc/api_key_state.dart';
+
+import 'api_key_event.dart';
+import 'api_key_state.dart';
 
 class ApiKeyBloc extends Bloc<ApiKeyEvent, ApiKeyState> {
   final CreateApiKeyUseCase create;
