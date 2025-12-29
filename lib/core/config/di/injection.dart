@@ -7,11 +7,14 @@ import 'package:multi_catalog_system/features/auth/auth.dart';
 import 'package:multi_catalog_system/features/home/presentation/bloc/home_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'api_key_management/api_key_injection.dart';
 import 'auth/auth_injection.dart';
 import 'auth/auth_interceptor.dart';
 import 'catalog_lookup/catalog_lookup_injection.dart';
 import 'category_group/category_group_injection.dart';
+import 'category_item/category_item_injection.dart';
 import 'domain_management/domain_injection.dart';
+import 'legal_document/legal_document_injection.dart';
 
 final getIt = GetIt.instance;
 
@@ -69,6 +72,12 @@ Future<void> init() async {
   initDomainModule();
 
   initCategoryGroupModule();
+
+  initApiKeyModule();
+
+  initCategoryItemModule();
+
+  initLegalDocumentModule();
 
   getIt.registerFactory(() => HomeBloc());
 }
