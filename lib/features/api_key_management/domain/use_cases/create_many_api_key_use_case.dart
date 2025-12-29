@@ -1,0 +1,16 @@
+import 'package:dartz/dartz.dart';
+import 'package:multi_catalog_system/core/error/failures.dart';
+import 'package:multi_catalog_system/features/api_key_management/domain/entries/api_key_entry.dart';
+import 'package:multi_catalog_system/features/api_key_management/domain/repositories/api_key_repository.dart';
+
+class CreateManyApiKeyUseCase {
+  final ApiKeyRepository repository;
+
+  CreateManyApiKeyUseCase({required this.repository});
+
+  Future<Either<Failure, List<ApiKeyEntry>>> call(
+    List<ApiKeyEntry> entries,
+  ) async {
+    return repository.createMany(entries);
+  }
+}
