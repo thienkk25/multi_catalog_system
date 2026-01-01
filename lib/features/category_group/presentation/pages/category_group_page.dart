@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/core.dart';
 import 'package:multi_catalog_system/features/category_group/presentation/presentation.dart';
-import 'package:multi_catalog_system/features/import_file/presentation/pages/import_file_page.dart';
 
 class CategoryGroupPage extends StatefulWidget {
   const CategoryGroupPage({super.key});
@@ -100,11 +100,7 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
         ),
         CustomFloatingActionButton(
           onPressedImport: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => ImportFilePage(typeImport: 2),
-              ),
-            );
+            context.pushNamed(RouterNames.importFile, extra: 2);
           },
           onPressedAdd: () {
             Navigator.push(

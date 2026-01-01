@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/core.dart';
 import 'package:multi_catalog_system/features/catalog_lookup/domain/entities/domain_ref_entry.dart';
 import 'package:multi_catalog_system/features/catalog_lookup/presentation/presentation.dart';
@@ -198,7 +199,7 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
             if (!isView)
               BottomFormActions(
                 key: _bottomBarKey,
-                onCancel: () => Navigator.pop(context),
+                onCancel: () => context.pop(),
                 onSave: () => _onSave(context: context, isEdit: isEdit),
               ),
           ],
@@ -262,6 +263,6 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
         CategoryGroupEvent.create(entry: entry),
       );
     }
-    Navigator.pop(context);
+    context.pop();
   }
 }

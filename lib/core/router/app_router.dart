@@ -1,27 +1,20 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/features/features.dart';
-import 'router_names.dart';
+
+import 'auth/auth_routes.dart';
+import 'domain_management/domain_management_routes.dart';
+import 'home/home_routes.dart';
+import 'import_file/import_file_routes.dart';
+import 'profile/profile_routes.dart';
 
 class AppRouter {
   static final router = GoRouter(
     routes: [
-      GoRoute(path: RouterNames.home, builder: (_, state) => HomePage()),
-      GoRoute(
-        path: RouterNames.login,
-        builder: (_, state) => LoginPage(),
-        redirect: (context, state) {
-          context.read<AuthBloc>().add(const AuthEvent.checkAuthenticated());
-          final authState = context.read<AuthBloc>().state;
-          if (authState.maybeMap(
-            authenticated: (_) => true,
-            orElse: () => false,
-          )) {
-            return RouterNames.home;
-          }
-          return null;
-        },
-      ),
+      ...HomeRoutes.routes,
+      ...AuthRoutes.routes,
+      ...DomainManagementRoutes.routes,
+      ...ImportFileRoutes.routes,
+      ...ProfileRoutes.routes,
     ],
     errorBuilder: (_, state) => const NotFoundPage(),
   );

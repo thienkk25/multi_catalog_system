@@ -38,6 +38,24 @@ class _HomePageState extends State<HomePage> {
       ),
       HomePageConfig(builder: () => const CategoryItemPage()),
       HomePageConfig(builder: () => const LegalDocumentPage()),
+      HomePageConfig(
+        builder: () =>
+            RoleBasedWidget(permission: ['approver'], child: ApproverPage()),
+      ),
+      HomePageConfig(
+        builder: () =>
+            RoleBasedWidget(permission: ['admin'], child: UserManagementPage()),
+      ),
+      HomePageConfig(
+        builder: () => RoleBasedWidget(
+          permission: ['admin'],
+          child: ApiKeyManagementPage(),
+        ),
+      ),
+      HomePageConfig(
+        builder: () =>
+            RoleBasedWidget(permission: ['admin'], child: SystemHistoryPage()),
+      ),
     ];
     _pages = List.filled(_configs.length, null);
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/core.dart';
 import 'package:multi_catalog_system/features/domain_management/domain/domain.dart';
 import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_management_bloc.dart';
@@ -161,7 +162,7 @@ class _DomainManagementFormPageState extends State<DomainManagementFormPage> {
             if (!isView)
               BottomFormActions(
                 key: _bottomBarKey,
-                onCancel: () => Navigator.pop(context),
+                onCancel: () => context.pop(),
                 onSave: () => _onSave(context: context, isEdit: isEdit),
               ),
           ],
@@ -215,6 +216,6 @@ class _DomainManagementFormPageState extends State<DomainManagementFormPage> {
         DomainManagementEvent.create(entry: entry),
       );
     }
-    Navigator.pop(context);
+    context.pop();
   }
 }

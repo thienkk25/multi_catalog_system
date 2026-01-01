@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/core.dart';
 import 'package:multi_catalog_system/features/catalog_lookup/presentation/bloc/catalog_lookup_bloc.dart';
 import 'package:multi_catalog_system/features/catalog_lookup/presentation/bloc/catalog_lookup_extensions.dart';
@@ -171,7 +172,7 @@ class CategoryGroupListViewWidget extends StatelessWidget {
         return CustomAlertDialog(
           onConfirm: () {
             bloc.add(CategoryGroupEvent.delete(id: entry.id!));
-            Navigator.pop(context);
+            context.pop();
           },
         );
       },

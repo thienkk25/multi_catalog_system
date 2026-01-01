@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/core.dart';
 import 'package:multi_catalog_system/features/domain_management/presentation/presentation.dart';
-import 'package:multi_catalog_system/features/import_file/presentation/pages/import_file_page.dart';
 
 class DomainManagementPage extends StatefulWidget {
   const DomainManagementPage({super.key});
@@ -41,7 +41,6 @@ class _DomainManagementPageState extends State<DomainManagementPage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final bloc = context.read<DomainManagementBloc>();
     return Stack(
       children: [
         Padding(
@@ -114,23 +113,10 @@ class _DomainManagementPageState extends State<DomainManagementPage>
         ),
         CustomFloatingActionButton(
           onPressedImport: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => ImportFilePage(typeImport: 1),
-              ),
-            );
+            context.pushNamed(RouterNames.importFile, extra: 1);
           },
           onPressedAdd: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => BlocProvider.value(
-                  value: bloc,
-                  child: const DomainManagementFormPage(
-                    type: DomainFormType.create,
-                  ),
-                ),
-              ),
-            );
+            context.pushNamed(RouterNames.domainCreate);
           },
         ),
       ],

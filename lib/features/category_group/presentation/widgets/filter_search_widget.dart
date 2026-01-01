@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/core.dart';
 
 class FilterSearchWidget extends StatelessWidget {
@@ -24,7 +25,7 @@ class FilterSearchWidget extends StatelessWidget {
                   IconButton(
                     icon: Icon(Icons.close),
                     onPressed: () {
-                      Navigator.pop(context);
+                      context.pop();
                     },
                   ),
                 ],
@@ -82,7 +83,7 @@ class FilterSearchWidget extends StatelessWidget {
                   Expanded(
                     child: CustomButton(
                       onTap: () {
-                        Navigator.pop(context);
+                        context.pop();
                       },
                       colorBackground: Colors.blue,
                       textButton: Text(

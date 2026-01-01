@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class CustomAlertDialog extends StatelessWidget {
   final VoidCallback? onConfirm;
@@ -30,7 +31,7 @@ class CustomAlertDialog extends StatelessWidget {
       actionsPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       actions: [
         OutlinedButton(
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => context.pop(),
           style: OutlinedButton.styleFrom(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),

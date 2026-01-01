@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/core.dart';
 import 'package:multi_catalog_system/features/auth/presentation/presentation.dart';
 import 'package:multi_catalog_system/features/home/presentation/presentation.dart';
-import 'package:multi_catalog_system/features/import_file/presentation/pages/import_file_page.dart';
 
 class DrawerWidget extends StatelessWidget {
   const DrawerWidget({super.key});
@@ -50,7 +49,7 @@ class _HeaderDrawer extends StatelessWidget {
             width: sizeW,
             child: CustomButton(
               onTap: () {
-                context.go(RouterNames.login);
+                context.pushNamed(RouterNames.login);
               },
               colorBackground: Colors.blue,
               textButton: const Text(
@@ -90,7 +89,7 @@ class _HeaderDrawer extends StatelessWidget {
             width: sizeW,
             child: CustomButton(
               onTap: () {
-                context.go(RouterNames.login);
+                context.pushNamed(RouterNames.login);
               },
               colorBackground: Colors.blue,
               textButton: const Text(
@@ -179,12 +178,7 @@ class _MainDrawer extends StatelessWidget {
                 ),
                 title: 'Nhập dữ liệu File',
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ImportFilePage(typeImport: 0),
-                    ),
-                  );
+                  context.go(RouterNames.importFile, extra: 0);
                 },
               ),
             ),
@@ -201,7 +195,7 @@ class _MainDrawer extends StatelessWidget {
                       height: 20,
                     ),
                     title: 'Quản lý người dùng',
-                    pageIndex: 7,
+                    pageIndex: 6,
                   ),
                   _DrawerItem(
                     icon: SvgPicture.asset(
@@ -209,7 +203,7 @@ class _MainDrawer extends StatelessWidget {
                       height: 20,
                     ),
                     title: 'API Key',
-                    pageIndex: 8,
+                    pageIndex: 7,
                   ),
                   _DrawerItem(
                     icon: SvgPicture.asset(
@@ -217,7 +211,7 @@ class _MainDrawer extends StatelessWidget {
                       height: 20,
                     ),
                     title: 'Nhật kí hệ thống',
-                    pageIndex: 9,
+                    pageIndex: 8,
                   ),
                 ],
               ),
@@ -244,7 +238,9 @@ class _FooterDrawer extends StatelessWidget {
                 InkWell(
                   borderRadius: BorderRadius.circular(10),
                   hoverColor: Colors.blue.withValues(alpha: .2),
-                  onTap: () {},
+                  onTap: () {
+                    context.pushNamed(RouterNames.profile);
+                  },
                   child: ListTile(
                     leading: SvgPicture.asset(
                       'assets/icons/profile-circle-svgrepo-com.svg',
@@ -306,7 +302,7 @@ class _DrawerItem extends StatelessWidget {
       onTap: () {
         if (pageIndex != null) {
           context.read<HomeBloc>().add(HomeEvent.changePage(pageIndex!, title));
-          Navigator.pop(context);
+          context.pop();
         } else {
           onTap?.call();
         }

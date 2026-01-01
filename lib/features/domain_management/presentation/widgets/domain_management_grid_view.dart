@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/core.dart';
 import 'package:multi_catalog_system/features/features.dart';
 
@@ -28,17 +29,7 @@ class DomainManagementGridView extends StatelessWidget {
       itemBuilder: (context, index) {
         final domain = domains[index];
         return GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => DomainManagementFormPage(
-                  type: DomainFormType.detail,
-                  entry: domain,
-                ),
-              ),
-            );
-          },
+          onTap: () => _onView(context: context, entry: domain),
           child: CustomCard(
             child: Stack(
               children: [
@@ -106,23 +97,24 @@ class DomainManagementGridView extends StatelessWidget {
     );
   }
 
+  void _onView({required BuildContext context, required DomainEntry entry}) {
+    context.pushNamed(
+      RouterNames.domainDetail,
+      pathParameters: {'id': ?entry.id},
+      extra: entry,
+    );
+  }
+
   void _onEdit({
     required BuildContext context,
     required DomainManagementBloc bloc,
     required DomainEntry entry,
   }) {
-    Navigator.pop(context);
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => BlocProvider.value(
-          value: bloc,
-          child: DomainManagementFormPage(
-            type: DomainFormType.update,
-            entry: entry,
-          ),
-        ),
-      ),
+    context.pop();
+    context.pushNamed(
+      RouterNames.domainUpdate,
+      pathParameters: {'id': ?entry.id},
+      extra: entry,
     );
   }
 
@@ -131,14 +123,14 @@ class DomainManagementGridView extends StatelessWidget {
     required DomainManagementBloc bloc,
     required DomainEntry entry,
   }) {
-    Navigator.pop(context);
+    context.pop();
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) => CustomAlertDialog(
         onConfirm: () {
           bloc.add(DomainManagementEvent.delete(id: entry.id!));
-          Navigator.pop(context);
+          context.pop();
         },
       ),
     );

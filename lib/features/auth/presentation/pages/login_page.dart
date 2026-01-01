@@ -85,7 +85,7 @@ class _LoginPageState extends State<LoginPage> {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('Đăng nhập thành công')),
                         );
-                        context.go(RouterNames.home);
+                        context.go(RouterPaths.home);
                       },
                       error: (state) {
                         ScaffoldMessenger.of(
@@ -147,7 +147,7 @@ class _LoginPageState extends State<LoginPage> {
                         context.pop();
                         return;
                       }
-                      context.go(RouterNames.home);
+                      context.go(RouterPaths.home);
                     },
                     colorBackground: Colors.transparent,
                     colorBorder: Colors.blue,
