@@ -53,8 +53,13 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       HomePageConfig(
-        builder: () =>
-            RoleBasedWidget(permission: ['admin'], child: SystemHistoryPage()),
+        builder: () => RoleBasedWidget(
+          permission: ['admin'],
+          child: BlocProvider(
+            create: (_) => getIt<SystemHistoryBloc>(),
+            child: SystemHistoryPage(),
+          ),
+        ),
       ),
     ];
     _pages = List.filled(_configs.length, null);

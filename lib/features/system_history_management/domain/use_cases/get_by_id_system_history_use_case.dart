@@ -5,7 +5,8 @@ import 'package:multi_catalog_system/features/system_history_management/domain/r
 
 class GetByIdSystemHistoryUseCase {
   final SystemHistoryRepository repository;
-  GetByIdSystemHistoryUseCase(this.repository);
+
+  GetByIdSystemHistoryUseCase({required this.repository});
 
   Future<Either<Failure, SystemHistoryEntry>> call(String id) {
     return repository.getById(id);

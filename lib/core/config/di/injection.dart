@@ -15,6 +15,7 @@ import 'category_group/category_group_injection.dart';
 import 'category_item/category_item_injection.dart';
 import 'domain_management/domain_injection.dart';
 import 'legal_document/legal_document_injection.dart';
+import 'system_history_management/system_history_management_injection.dart';
 
 final getIt = GetIt.instance;
 
@@ -78,6 +79,8 @@ Future<void> init() async {
   initCategoryItemModule();
 
   initLegalDocumentModule();
+
+  initSystemHistoryManagementModule();
 
   getIt.registerFactory(() => HomeBloc());
 }

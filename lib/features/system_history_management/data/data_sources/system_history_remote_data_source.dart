@@ -21,7 +21,7 @@ class SystemHistoryRemoteDataSourceImpl extends BaseRemoteDataSource
       if (search != null) queryParams['search'] = search;
 
       final response = await dio.get(
-        '/active-log',
+        '/activity-log',
         queryParameters: queryParams,
       );
 
@@ -39,7 +39,7 @@ class SystemHistoryRemoteDataSourceImpl extends BaseRemoteDataSource
   @override
   Future<SystemHistoryModel> getById(String id) async {
     try {
-      final response = await dio.get('/active-log/$id');
+      final response = await dio.get('/activity-log/$id');
       return SystemHistoryModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);

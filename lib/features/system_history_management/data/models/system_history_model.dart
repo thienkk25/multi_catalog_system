@@ -8,10 +8,10 @@ part 'system_history_model.g.dart';
 abstract class SystemHistoryModel with _$SystemHistoryModel {
   const factory SystemHistoryModel({
     required int id,
-    String? userId,
+    @JsonKey(name: 'user_id') String? userId,
     required String action,
     required String method,
-    required String enpoint,
+    required String endpoint,
     required Map<String, dynamic> metadata,
     required DateTime timestamp,
   }) = _SystemHistoryModel;
@@ -25,7 +25,7 @@ abstract class SystemHistoryModel with _$SystemHistoryModel {
         userId: domain.userId,
         action: domain.action,
         method: domain.method,
-        enpoint: domain.endpoint,
+        endpoint: domain.endpoint,
         metadata: domain.metadata,
         timestamp: domain.timestamp,
       );
@@ -37,7 +37,7 @@ extension SystemHistoryModelMapper on SystemHistoryModel {
     userId: userId,
     action: action,
     method: method,
-    endpoint: enpoint,
+    endpoint: endpoint,
     metadata: metadata,
     timestamp: timestamp,
   );
