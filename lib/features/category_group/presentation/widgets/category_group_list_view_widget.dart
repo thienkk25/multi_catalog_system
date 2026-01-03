@@ -130,14 +130,10 @@ class CategoryGroupListViewWidget extends StatelessWidget {
     required BuildContext context,
     required CategoryGroupEntry entry,
   }) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => CategoryGroupFormPage(
-          type: CategoryGroupFormType.detail,
-          entry: entry,
-        ),
-      ),
+    context.pushNamed(
+      RouterNames.categoryGroupDetail,
+      pathParameters: {'id': ?entry.id},
+      extra: entry,
     );
   }
 
@@ -146,17 +142,13 @@ class CategoryGroupListViewWidget extends StatelessWidget {
     required CategoryGroupBloc bloc,
     required CategoryGroupEntry entry,
   }) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => BlocProvider.value(
-          value: bloc,
-          child: CategoryGroupFormPage(
-            type: CategoryGroupFormType.update,
-            entry: entry,
-          ),
-        ),
-      ),
+    context.pushNamed(
+      RouterNames.categoryGroupForm,
+      extra: {
+        'bloc': bloc,
+        'type': CategoryGroupFormType.update,
+        'entry': entry,
+      },
     );
   }
 

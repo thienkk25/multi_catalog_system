@@ -8,11 +8,33 @@ import 'package:multi_catalog_system/features/domain_management/presentation/pre
 class DomainManagementRoutes {
   static List<GoRoute> routes = [
     GoRoute(
+      path: RouterPaths.domains,
+      name: RouterNames.domains,
+      builder: (context, state) => BlocProvider(
+        create: (context) => getIt<DomainManagementBloc>(),
+        child: const DomainManagementPage(),
+      ),
+    ),
+    GoRoute(
+      path: RouterPaths.domainForm,
+      name: RouterNames.domainForm,
+      builder: (context, state) {
+        final data = state.extra as Map<String, dynamic>;
+        return BlocProvider.value(
+          value: data['bloc'] as DomainManagementBloc,
+          child: DomainManagementFormPage(
+            type: data['type'] as DomainFormType,
+            entry: data['entry'] as DomainEntry?,
+          ),
+        );
+      },
+    ),
+    GoRoute(
       path: RouterPaths.domainDetail,
       name: RouterNames.domainDetail,
       builder: (context, state) {
         final id = state.pathParameters['id']!;
-        final entry = state.extra as DomainEntry;
+        final entry = state.extra as DomainEntry?;
 
         return BlocProvider(
           create: (_) =>
@@ -20,30 +42,6 @@ class DomainManagementRoutes {
                 ..add(DomainManagementEvent.getById(id: id)),
           child: DomainManagementFormPage(
             type: DomainFormType.detail,
-            entry: entry,
-          ),
-        );
-      },
-    ),
-    GoRoute(
-      path: RouterPaths.domainCreate,
-      name: RouterNames.domainCreate,
-      builder: (context, state) {
-        return BlocProvider(
-          create: (_) => getIt<DomainManagementBloc>(),
-          child: const DomainManagementFormPage(type: DomainFormType.create),
-        );
-      },
-    ),
-    GoRoute(
-      path: RouterPaths.domainUpdate,
-      name: RouterNames.domainUpdate,
-      builder: (context, state) {
-        final entry = state.extra as DomainEntry;
-        return BlocProvider(
-          create: (_) => getIt<DomainManagementBloc>(),
-          child: DomainManagementFormPage(
-            type: DomainFormType.update,
             entry: entry,
           ),
         );

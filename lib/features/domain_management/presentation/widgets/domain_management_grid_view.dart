@@ -112,9 +112,8 @@ class DomainManagementGridView extends StatelessWidget {
   }) {
     context.pop();
     context.pushNamed(
-      RouterNames.domainUpdate,
-      pathParameters: {'id': ?entry.id},
-      extra: entry,
+      RouterNames.domainForm,
+      extra: {'bloc': bloc, 'type': DomainFormType.update, 'entry': entry},
     );
   }
 
@@ -129,7 +128,9 @@ class DomainManagementGridView extends StatelessWidget {
       barrierDismissible: false,
       builder: (context) => CustomAlertDialog(
         onConfirm: () {
-          bloc.add(DomainManagementEvent.delete(id: entry.id!));
+          final id = entry.id;
+          if (id == null) return;
+          bloc.add(DomainManagementEvent.delete(id: id));
           context.pop();
         },
       ),

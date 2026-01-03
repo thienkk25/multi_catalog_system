@@ -9,9 +9,13 @@ class RouterNames {
 
   // Domain
   static const String domains = 'domains';
-  static const String domainCreate = 'domainCreate';
+  static const String domainForm = 'domainForm';
   static const String domainDetail = 'domainDetail';
-  static const String domainUpdate = 'domainEdit';
+
+  // Category-group
+  static const String categoryGroups = 'categoryGroups';
+  static const String categoryGroupForm = 'categoryGroupForm';
+  static const String categoryGroupDetail = 'categoryGroupDetail';
 }
 
 class RouterPaths {
@@ -25,7 +29,11 @@ class RouterPaths {
 
   // Domain
   static const String domains = '/domains';
-  static const String domainCreate = '/domains/create';
+  static const String domainForm = '/domains/form';
   static const String domainDetail = '/domains/:id';
-  static const String domainUpdate = '/domains/:id/update';
+
+  // Category-group
+  static const String categoryGroups = '/category-groups';
+  static const String categoryGroupForm = '/category-groups/form';
+  static const String categoryGroupDetail = '/category-groups/:id';
 }

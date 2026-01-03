@@ -113,7 +113,7 @@ class CategoryGroupRemoteDataSourceImpl extends BaseRemoteDataSource
   @override
   Future<CategoryGroupModel> update(CategoryGroupModel entry) async {
     try {
-      final response = await dio.put(
+      final response = await dio.patch(
         '/category-group/${entry.id}',
         data: entry.toJson(),
       );

@@ -20,14 +20,14 @@ class _DomainManagementPageState extends State<DomainManagementPage>
 
   final TextEditingController _searchController = TextEditingController();
   Timer? _debounce;
+  late DomainManagementBloc bloc;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<DomainManagementBloc>().add(
-        const DomainManagementEvent.getAll(),
-      );
+      bloc = context.read<DomainManagementBloc>();
+      bloc.add(const DomainManagementEvent.getAll());
     });
   }
 
@@ -57,13 +57,9 @@ class _DomainManagementPageState extends State<DomainManagementPage>
                   if (_debounce?.isActive ?? false) _debounce?.cancel();
                   _debounce = Timer(const Duration(milliseconds: 500), () {
                     if (search.isEmpty) {
-                      context.read<DomainManagementBloc>().add(
-                        const DomainManagementEvent.getAll(),
-                      );
+                      bloc.add(const DomainManagementEvent.getAll());
                     } else {
-                      context.read<DomainManagementBloc>().add(
-                        DomainManagementEvent.getAll(search: search),
-                      );
+                      bloc.add(DomainManagementEvent.getAll(search: search));
                     }
                   });
                 },
@@ -97,9 +93,7 @@ class _DomainManagementPageState extends State<DomainManagementPage>
                             return ErrorRetryWidget(
                               error: error,
                               onRetry: () {
-                                context.read<DomainManagementBloc>().add(
-                                  const DomainManagementEvent.getAll(),
-                                );
+                                bloc.add(const DomainManagementEvent.getAll());
                               },
                             );
                           }
@@ -116,7 +110,10 @@ class _DomainManagementPageState extends State<DomainManagementPage>
             context.pushNamed(RouterNames.importFile, extra: 1);
           },
           onPressedAdd: () {
-            context.pushNamed(RouterNames.domainCreate);
+            context.pushNamed(
+              RouterNames.domainForm,
+              extra: {'bloc': bloc, 'type': DomainFormType.create},
+            );
           },
         ),
       ],

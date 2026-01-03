@@ -178,7 +178,7 @@ class _MainDrawer extends StatelessWidget {
                 ),
                 title: 'Nhập dữ liệu File',
                 onTap: () {
-                  context.go(RouterNames.importFile, extra: 0);
+                  context.pushNamed(RouterNames.importFile, extra: 0);
                 },
               ),
             ),

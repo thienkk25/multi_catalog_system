@@ -233,7 +233,7 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
     if (isEdit) {
       final entry = CategoryGroupEntry(
         id: widget.entry!.id,
-        domainId: widget.entry!.domainId,
+        domainId: _selectedDomainId ?? widget.entry!.domainId,
         code: _codeController.text,
         name: _nameController.text,
         description: _descriptionController.text,

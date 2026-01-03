@@ -15,19 +15,20 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
     with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
+  late CategoryGroupBloc bloc;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<CategoryGroupBloc>().add(const CategoryGroupEvent.getAll());
+      bloc = context.read<CategoryGroupBloc>();
+      bloc.add(const CategoryGroupEvent.getAll());
     });
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final bloc = context.read<CategoryGroupBloc>();
     return Stack(
       children: [
         Padding(
@@ -82,9 +83,7 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
                         return ErrorRetryWidget(
                           error: error,
                           onRetry: () {
-                            context.read<CategoryGroupBloc>().add(
-                              const CategoryGroupEvent.getAll(),
-                            );
+                            bloc.add(const CategoryGroupEvent.getAll());
                           },
                         );
                       }
@@ -103,16 +102,9 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
             context.pushNamed(RouterNames.importFile, extra: 2);
           },
           onPressedAdd: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => BlocProvider.value(
-                  value: bloc,
-                  child: CategoryGroupFormPage(
-                    type: CategoryGroupFormType.create,
-                  ),
-                ),
-              ),
+            context.pushNamed(
+              RouterNames.categoryGroupForm,
+              extra: {'bloc': bloc, 'type': CategoryGroupFormType.create},
             );
           },
         ),

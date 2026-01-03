@@ -103,7 +103,7 @@ class DomainRemoteDataSourceImpl extends BaseRemoteDataSource
   @override
   Future<DomainModel> update(DomainModel entry) async {
     try {
-      final response = await dio.put(
+      final response = await dio.patch(
         '/domain/${entry.id}',
         data: entry.toJson(),
       );
