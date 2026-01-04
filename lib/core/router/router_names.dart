@@ -16,6 +16,9 @@ class RouterNames {
   static const String categoryGroups = 'categoryGroups';
   static const String categoryGroupForm = 'categoryGroupForm';
   static const String categoryGroupDetail = 'categoryGroupDetail';
+
+  // system_history_management
+  static const String systemHistoryManagement = 'systemHistoryManagement';
 }
 
 class RouterPaths {
@@ -36,4 +39,7 @@ class RouterPaths {
   static const String categoryGroups = '/category-groups';
   static const String categoryGroupForm = '/category-groups/form';
   static const String categoryGroupDetail = '/category-groups/:id';
+
+  // system_history_management
+  static const String systemHistoryManagement = '/system-history-management';
 }

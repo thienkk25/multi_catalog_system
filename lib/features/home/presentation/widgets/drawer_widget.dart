@@ -211,7 +211,9 @@ class _MainDrawer extends StatelessWidget {
                       height: 20,
                     ),
                     title: 'Nhật kí hệ thống',
-                    pageIndex: 8,
+                    onTap: () {
+                      context.pushNamed(RouterNames.systemHistoryManagement);
+                    },
                   ),
                 ],
               ),

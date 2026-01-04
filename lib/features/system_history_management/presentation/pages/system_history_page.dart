@@ -25,39 +25,58 @@ class _SystemHistoryPageState extends State<SystemHistoryPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: Column(
-        spacing: 10,
-        children: [
-          CustomInput(hintText: 'Tìm kiếm...', suffixIcon: Icon(Icons.search)),
-          Expanded(
-            child: BlocBuilder<SystemHistoryBloc, SystemHistoryState>(
-              builder: (context, state) {
-                return state.when((isLoading, error, entities) {
-                  if (isLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  if (error != null) {
-                    return ErrorRetryWidget(
-                      error: error,
-                      onRetry: () {
-                        bloc.add(const SystemHistoryEvent.getAll());
-                      },
-                    );
-                  }
-                  return ListView.separated(
-                    itemCount: entities.length,
-                    itemBuilder: (context, index) =>
-                        SystemHistoryCard(log: entities[index]),
-                    separatorBuilder: (context, index) =>
-                        const SizedBox(height: 10),
-                  );
-                });
-              },
-            ),
-          ),
-        ],
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'Nhật kí hệ thống',
+          style: TextStyle(fontWeight: FontWeight(600), fontSize: 20),
+        ),
+        centerTitle: true,
+      ),
+      body: SafeArea(
+        child: BlocBuilder<SystemHistoryBloc, SystemHistoryState>(
+          builder: (context, state) {
+            return state.when((isLoading, error, entities) {
+              if (isLoading) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              if (error != null) {
+                return Center(
+                  child: ErrorRetryWidget(
+                    error: error,
+                    onRetry: () {
+                      bloc.add(const SystemHistoryEvent.getAll());
+                    },
+                  ),
+                );
+              }
+
+              return Padding(
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  spacing: 10,
+                  children: [
+                    CustomInput(
+                      hintText: 'Tìm kiếm...',
+                      suffixIcon: const Icon(Icons.search),
+                    ),
+                    Expanded(
+                      child: ListView.separated(
+                        shrinkWrap: true,
+                        itemCount: entities.length,
+                        itemBuilder: (context, index) =>
+                            SystemHistoryCard(log: entities[index]),
+                        separatorBuilder: (context, index) =>
+                            const SizedBox(height: 10),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            });
+          },
+        ),
       ),
     );
   }

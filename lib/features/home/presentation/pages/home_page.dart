@@ -52,15 +52,6 @@ class _HomePageState extends State<HomePage> {
           child: ApiKeyManagementPage(),
         ),
       ),
-      HomePageConfig(
-        builder: () => RoleBasedWidget(
-          permission: ['admin'],
-          child: BlocProvider(
-            create: (_) => getIt<SystemHistoryBloc>(),
-            child: SystemHistoryPage(),
-          ),
-        ),
-      ),
     ];
     _pages = List.filled(_configs.length, null);
   }

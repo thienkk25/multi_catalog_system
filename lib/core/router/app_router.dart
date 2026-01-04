@@ -7,6 +7,7 @@ import 'domain_management/domain_management_routes.dart';
 import 'home/home_routes.dart';
 import 'import_file/import_file_routes.dart';
 import 'profile/profile_routes.dart';
+import 'system_history_management/system_history_management_routes.dart';
 
 class AppRouter {
   static final router = GoRouter(
@@ -17,6 +18,8 @@ class AppRouter {
       ...CategoryGroupRoutes.routes,
       ...ImportFileRoutes.routes,
       ...ProfileRoutes.routes,
+
+      ...SystemHistoryManagementRoutes.routes,
     ],
     errorBuilder: (_, state) => const NotFoundPage(),
   );
