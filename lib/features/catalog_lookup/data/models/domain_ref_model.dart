@@ -6,19 +6,22 @@ part 'domain_ref_model.g.dart';
 
 @freezed
 abstract class DomainRefModel with _$DomainRefModel {
-  const factory DomainRefModel({required String id, required String name}) =
-      _DomainRefModel;
+  const factory DomainRefModel({
+    required String id,
+    required String code,
+    required String name,
+  }) = _DomainRefModel;
 
   factory DomainRefModel.fromJson(Map<String, dynamic> json) =>
       _$DomainRefModelFromJson(json);
 
   factory DomainRefModel.fromEntity(DomainRefEntry entry) {
-    return DomainRefModel(id: entry.id, name: entry.name);
+    return DomainRefModel(id: entry.id, code: entry.id, name: entry.name);
   }
 }
 
 extension DomainRefModelMapper on DomainRefModel {
   DomainRefEntry toEntity() {
-    return DomainRefEntry(id: id, name: name);
+    return DomainRefEntry(id: id, code: code, name: name);
   }
 }

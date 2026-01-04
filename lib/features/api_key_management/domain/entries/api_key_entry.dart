@@ -8,12 +8,12 @@ class ApiKeyEntry {
   final DateTime createdAt;
 
   ApiKeyEntry({
-    required this.id,
+    this.id,
     required this.key,
     required this.systemName,
-    required this.allowedDomains,
+    this.allowedDomains,
     required this.status,
-    required this.createdBy,
+    this.createdBy,
     required this.createdAt,
   });
 }

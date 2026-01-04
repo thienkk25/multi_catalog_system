@@ -103,7 +103,7 @@ class ApiKeyRemoteDataSourceImpl extends BaseRemoteDataSource
   @override
   Future<ApiKeyModel> update(ApiKeyModel entry) async {
     try {
-      final response = await dio.put(
+      final response = await dio.patch(
         '/api-key/${entry.id}',
         data: entry.toJson(),
       );

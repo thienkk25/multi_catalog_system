@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
+import 'package:multi_catalog_system/core/widgets/role_based_widget.dart';
 import 'package:multi_catalog_system/features/api_key_management/domain/entries/api_key_entry.dart';
+import 'package:multi_catalog_system/features/api_key_management/presentation/bloc/api_key_bloc.dart';
+import 'package:multi_catalog_system/features/api_key_management/presentation/bloc/api_key_event.dart';
+import 'package:multi_catalog_system/features/api_key_management/presentation/pages/api_key_management_form_page.dart';
 
 class ApiKeyManagementCard extends StatelessWidget {
   final ApiKeyEntry entry;
@@ -15,46 +22,92 @@ class ApiKeyManagementCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            spacing: 5,
+          Stack(
             children: [
-              Text(
-                _getHintKey(entry.key),
-                style: TextStyle(fontWeight: FontWeight.bold),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    spacing: 5,
+                    children: [
+                      Text(
+                        _getHintKey(entry.key),
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      GestureDetector(
+                        onTap: () => _copyToClipboard(context, entry.key),
+                        child: Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: SvgPicture.asset(
+                            'assets/icons/copy-svgrepo-com.svg',
+                            height: 20,
+                            width: 20,
+                            colorFilter: ColorFilter.mode(
+                              Colors.blueAccent,
+                              BlendMode.srcIn,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  Text('Tên: ${entry.systemName}'),
+                  Text(
+                    'Quyền: ${entry.allowedDomains}',
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                ],
               ),
-              GestureDetector(
-                onTap: () => _copyToClipboard(context, entry.key),
-                child: Padding(
-                  padding: const EdgeInsets.all(5.0),
-                  child: SvgPicture.asset(
-                    'assets/icons/copy-svgrepo-com.svg',
-                    height: 20,
-                    width: 20,
-                    colorFilter: ColorFilter.mode(
-                      Colors.blueAccent,
-                      BlendMode.srcIn,
+              RoleBasedWidget(
+                permission: ['admin', 'domainOfficer'],
+                child: Positioned(
+                  right: 0,
+                  top: 0,
+                  child: PopupMenuButton(
+                    icon: SvgPicture.asset(
+                      'assets/icons/menu-vertical-menu-dots-more-svgrepo-com.svg',
+                      width: 20,
+                      height: 20,
                     ),
+                    itemBuilder: (context) => [
+                      PopupMenuItem(
+                        child: _APIKeyCardMenu(
+                          onEdit: () {
+                            context.pushNamed(
+                              RouterNames.apiKeyForm,
+                              extra: {
+                                'bloc': context.read<ApiKeyBloc>(),
+                                'type': ApiKeyManagementFormPageType.update,
+                                'entry': entry,
+                              },
+                            );
+                          },
+                          onDelete: () {
+                            context.read<ApiKeyBloc>().add(
+                              ApiKeyEvent.delete(id: entry.id!),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
             ],
           ),
-          SizedBox(height: 10),
-          Text('Tên: ${entry.systemName}'),
-          Text(
-            'Quyền: ${entry.allowedDomains}',
-            style: TextStyle(color: Colors.grey),
-          ),
           Divider(),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Tạo bởi: ${entry.createdBy ?? 'System'}'),
-                  Text('Ngày tạo: ${_formatDate(entry.createdAt)}'),
-                ],
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Tạo bởi: ${entry.createdBy ?? 'System'}'),
+                    Text('Ngày tạo: ${_formatDate(entry.createdAt)}'),
+                  ],
+                ),
               ),
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
@@ -106,7 +159,7 @@ class ApiKeyManagementCard extends StatelessWidget {
     switch (action) {
       case 'active':
         return Colors.green;
-      case 'inactive':
+      case 'revoked':
         return Colors.red;
       default:
         return Colors.grey;
@@ -117,10 +170,10 @@ class ApiKeyManagementCard extends StatelessWidget {
     switch (action) {
       case 'active':
         return 'Hoạt động';
-      case 'inactive':
-        return 'Không hoạt động';
+      case 'revoked':
+        return 'Thu hồi';
       default:
-        return 'Không hoạt động';
+        return 'Thu hồi';
     }
   }
 
@@ -128,5 +181,44 @@ class ApiKeyManagementCard extends StatelessWidget {
     final start = key.substring(0, 7);
     final end = key.substring(key.length - 4);
     return '$start...$end';
+  }
+}
+
+class _APIKeyCardMenu extends StatelessWidget {
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
+
+  const _APIKeyCardMenu({required this.onEdit, required this.onDelete});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      spacing: 5,
+      children: [
+        InkWell(
+          borderRadius: BorderRadius.circular(10),
+          onTap: onEdit,
+          child: Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: ListTile(
+              leading: Icon(Icons.edit, color: Colors.blue),
+              title: Text('Chỉnh sửa'),
+            ),
+          ),
+        ),
+        InkWell(
+          borderRadius: BorderRadius.circular(10),
+          onTap: onDelete,
+          child: Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: ListTile(
+              leading: Icon(Icons.delete, color: Colors.red),
+              title: Text('Xóa'),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }

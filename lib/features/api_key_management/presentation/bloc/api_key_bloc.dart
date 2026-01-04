@@ -77,7 +77,7 @@ class ApiKeyBloc extends Bloc<ApiKeyEvent, ApiKeyState> {
             state.copyWith(
               isLoading: false,
               entities: [domain, ...state.entities],
-              successMessage: 'Tạo lĩnh vực thành công',
+              successMessage: 'Tạo thành công',
             ),
           ),
         );
@@ -97,7 +97,7 @@ class ApiKeyBloc extends Bloc<ApiKeyEvent, ApiKeyState> {
             state.copyWith(
               isLoading: false,
               entities: [...entities, ...state.entities],
-              successMessage: 'Tạo lĩnh vực thành công',
+              successMessage: 'Tạo thành công',
             ),
           ),
         );
@@ -122,7 +122,7 @@ class ApiKeyBloc extends Bloc<ApiKeyEvent, ApiKeyState> {
               state.copyWith(
                 isLoading: false,
                 entities: updated,
-                successMessage: 'Cập nhật lĩnh vực thành công',
+                successMessage: 'Cập nhật thành công',
               ),
             );
           },
@@ -166,7 +166,7 @@ class ApiKeyBloc extends Bloc<ApiKeyEvent, ApiKeyState> {
             state.copyWith(
               isLoading: false,
               entities: entities,
-              successMessage: 'Cập nhật hoặc tạo lĩnh vực thành công',
+              successMessage: 'Cập nhật hoặc tạo thành công',
             ),
           ),
         );

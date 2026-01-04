@@ -2,10 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/core.dart';
 import 'package:multi_catalog_system/features/api_key_management/presentation/bloc/api_key_bloc.dart';
 import 'package:multi_catalog_system/features/api_key_management/presentation/bloc/api_key_event.dart';
 import 'package:multi_catalog_system/features/api_key_management/presentation/bloc/api_key_state.dart';
+import 'package:multi_catalog_system/features/api_key_management/presentation/pages/api_key_management_form_page.dart';
 import 'package:multi_catalog_system/features/api_key_management/presentation/widgets/api_key_management_card.dart';
 
 class ApiKeyManagementPage extends StatefulWidget {
@@ -103,7 +105,16 @@ class _ApiKeyManagementPageState extends State<ApiKeyManagementPage>
                             const SizedBox(height: 10),
                         itemBuilder: (context, index) {
                           final entry = entities[index];
-                          return ApiKeyManagementCard(entry: entry);
+                          return GestureDetector(
+                            onTap: () {
+                              context.pushNamed(
+                                RouterNames.apiKeyDetail,
+                                pathParameters: {'id': ?entry.id},
+                                extra: entry,
+                              );
+                            },
+                            child: ApiKeyManagementCard(entry: entry),
+                          );
                         },
                       ),
                     ),
@@ -113,7 +124,18 @@ class _ApiKeyManagementPageState extends State<ApiKeyManagementPage>
             });
           },
         ),
-        CustomFloatingActionButton(onPressedImport: () {}, onPressedAdd: () {}),
+        CustomFloatingActionButton(
+          onPressedImport: () {},
+          onPressedAdd: () {
+            context.pushNamed(
+              RouterNames.apiKeyForm,
+              extra: {
+                'bloc': bloc,
+                'type': ApiKeyManagementFormPageType.create,
+              },
+            );
+          },
+        ),
       ],
     );
   }

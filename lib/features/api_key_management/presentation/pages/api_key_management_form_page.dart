@@ -1,0 +1,247 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:multi_catalog_system/core/core.dart';
+import 'package:multi_catalog_system/features/api_key_management/domain/entries/api_key_entry.dart';
+import 'package:multi_catalog_system/features/api_key_management/presentation/presentation.dart';
+import 'package:multi_catalog_system/features/api_key_management/presentation/widgets/api_key_management_permission_field_widget.dart';
+
+enum ApiKeyManagementFormPageType { detail, create, update }
+
+class ApiKeyManagementFormPage extends StatefulWidget {
+  const ApiKeyManagementFormPage({super.key, required this.type, this.entry});
+
+  final ApiKeyManagementFormPageType type;
+  final ApiKeyEntry? entry;
+
+  @override
+  State<ApiKeyManagementFormPage> createState() =>
+      _ApiKeyManagementFormPageState();
+}
+
+class _ApiKeyManagementFormPageState extends State<ApiKeyManagementFormPage> {
+  final TextEditingController _keyController = TextEditingController();
+  final TextEditingController _systemNameController = TextEditingController();
+  String? _selectedAction;
+  List<String> _allowedDomains = [];
+
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey _bottomBarKey = GlobalKey();
+  double _bottomBarHeight = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.entry != null) {
+      _keyController.text = widget.entry!.key;
+      _systemNameController.text = widget.entry!.systemName;
+      _selectedAction = widget.entry!.status;
+      _allowedDomains = List<String>.from(widget.entry?.allowedDomains ?? []);
+    }
+  }
+
+  @override
+  void dispose() {
+    _keyController.dispose();
+    _systemNameController.dispose();
+    _formKey.currentState?.dispose();
+    _bottomBarKey.currentState?.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final context = _bottomBarKey.currentContext;
+      if (context != null) {
+        final height = context.size?.height ?? 0;
+        if (height != _bottomBarHeight) {
+          setState(() => _bottomBarHeight = height);
+        }
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isEdit = widget.type == ApiKeyManagementFormPageType.update;
+    final isView = widget.type == ApiKeyManagementFormPageType.detail;
+
+    return Scaffold(
+      resizeToAvoidBottomInset: true,
+      appBar: AppBar(
+        title: Text(
+          isView
+              ? 'Chi tiết API Key'
+              : isEdit
+              ? 'Chỉnh sửa API Key'
+              : 'Thêm API Key mới',
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+      ),
+      body: SafeArea(
+        child: Stack(
+          children: [
+            CustomScrollView(
+              slivers: [
+                SliverPadding(
+                  padding: const EdgeInsets.all(10),
+                  sliver: SliverList(
+                    delegate: SliverChildListDelegate([
+                      Form(
+                        key: _formKey,
+                        child: CustomCard(
+                          child: Column(
+                            spacing: 20,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (isView)
+                                CustomInput(
+                                  controller: _keyController,
+                                  enabled: false,
+                                  lable: Text(
+                                    'API Key',
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              CustomInput(
+                                controller: _systemNameController,
+                                enabled: !isView,
+                                lable: _requiredLabel('Tên API Key / Mô tả'),
+                                hintText:
+                                    'Nhập tên hoặc mô tả mục đích sử dụng...',
+                                validator: (p0) => p0 == null || p0.isEmpty
+                                    ? 'Bắt buộc'
+                                    : null,
+                              ),
+                              CustomDropdownButton<String>(
+                                value: _selectedAction,
+                                lable: _requiredLabel('Trạng thái'),
+                                items: [
+                                  DropdownMenuItem(
+                                    value: 'active',
+                                    child: Text('Hoạt động'),
+                                  ),
+                                  DropdownMenuItem(
+                                    value: 'revoked',
+                                    child: Text('Thu hồi'),
+                                  ),
+                                ],
+
+                                onChanged: isView
+                                    ? null
+                                    : (value) {
+                                        setState(() {
+                                          _selectedAction = value;
+                                        });
+                                      },
+                                validator: (p0) =>
+                                    p0 == null ? 'Bắt buộc' : null,
+                              ),
+                              ApiKeyManagementPermissionFieldWidget(
+                                fields: _allowedDomains,
+                                isView: isView,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Container(
+                        height: 50,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.blueAccent),
+                        ),
+                        child: const Row(
+                          spacing: 5,
+                          children: [
+                            Icon(Icons.info, color: Colors.blueAccent),
+                            Text(
+                              'Key sẽ được hệ thống tạo tự động sau khi lưu',
+                              style: TextStyle(
+                                color: Colors.blueAccent,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ]),
+                  ),
+                ),
+
+                if (!isView)
+                  SliverPadding(
+                    padding: EdgeInsets.only(bottom: _bottomBarHeight),
+                  ),
+              ],
+            ),
+
+            if (!isView)
+              BottomFormActions(
+                key: _bottomBarKey,
+                onCancel: () => context.pop(),
+                onSave: () => _onSave(context: context, isEdit: isEdit),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _requiredLabel(String text) {
+    return RichText(
+      text: TextSpan(
+        children: [
+          TextSpan(
+            text: '$text ',
+            style: const TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const TextSpan(
+            text: '*',
+            style: TextStyle(color: Colors.red, fontWeight: FontWeight.w600),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _onSave({required BuildContext context, required bool isEdit}) {
+    if (!_formKey.currentState!.validate()) return;
+    if (isEdit) {
+      final entry = ApiKeyEntry(
+        id: widget.entry!.id,
+        key: _keyController.text,
+        systemName: _systemNameController.text,
+        status: _selectedAction!,
+        allowedDomains: _allowedDomains,
+        createdAt: widget.entry!.createdAt,
+      );
+      context.read<ApiKeyBloc>().add(ApiKeyEvent.update(entry: entry));
+    } else {
+      final entry = ApiKeyEntry(
+        key: _keyController.text,
+        systemName: _systemNameController.text,
+        status: _selectedAction!,
+        allowedDomains: _allowedDomains,
+        createdAt: DateTime.now(),
+      );
+      context.read<ApiKeyBloc>().add(ApiKeyEvent.create(entry: entry));
+    }
+    context.pop();
+  }
+}
