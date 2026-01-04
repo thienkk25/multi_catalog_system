@@ -19,6 +19,8 @@ class RouterNames {
 
   // system_history_management
   static const String systemHistoryManagement = 'systemHistoryManagement';
+  static const String systemHistoryManagementDetail =
+      'systemHistoryManagementDetail';
 }
 
 class RouterPaths {
@@ -42,4 +44,6 @@ class RouterPaths {
 
   // system_history_management
   static const String systemHistoryManagement = '/system-history-management';
+  static const String systemHistoryManagementDetail =
+      '/system-history-management/:id';
 }

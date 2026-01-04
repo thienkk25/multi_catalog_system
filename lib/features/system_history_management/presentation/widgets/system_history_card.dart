@@ -20,10 +20,14 @@ class SystemHistoryCard extends StatelessWidget {
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-              color: Colors.blue.withValues(alpha: .1),
+              color: _actionIconColor(log.action).withValues(alpha: .1),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(_actionIcon(log.action), size: 20, color: Colors.blue),
+            child: Icon(
+              _actionIcon(log.action),
+              size: 20,
+              color: _actionIconColor(log.action),
+            ),
           ),
 
           const SizedBox(width: 12),
@@ -75,6 +79,21 @@ class SystemHistoryCard extends StatelessWidget {
         return Icons.logout;
       default:
         return Icons.settings;
+    }
+  }
+
+  Color _actionIconColor(String action) {
+    switch (action) {
+      case 'UPDATE':
+        return Colors.green;
+      case 'DELETE':
+        return Colors.red;
+      case 'LOGIN':
+        return Colors.green;
+      case 'LOGOUT':
+        return Colors.red;
+      default:
+        return Colors.blue;
     }
   }
 

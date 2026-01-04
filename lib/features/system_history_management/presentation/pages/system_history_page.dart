@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/core/widgets/custom_input.dart';
 import 'package:multi_catalog_system/core/widgets/error_retry_widget.dart';
 import 'package:multi_catalog_system/features/system_history_management/presentation/bloc/system_history_bloc.dart';
@@ -65,8 +67,16 @@ class _SystemHistoryPageState extends State<SystemHistoryPage> {
                       child: ListView.separated(
                         shrinkWrap: true,
                         itemCount: entities.length,
-                        itemBuilder: (context, index) =>
-                            SystemHistoryCard(log: entities[index]),
+                        itemBuilder: (context, index) => GestureDetector(
+                          onTap: () => context.pushNamed(
+                            RouterNames.systemHistoryManagementDetail,
+                            pathParameters: {
+                              'id': entities[index].id.toString(),
+                            },
+                            extra: entities[index],
+                          ),
+                          child: SystemHistoryCard(log: entities[index]),
+                        ),
                         separatorBuilder: (context, index) =>
                             const SizedBox(height: 10),
                       ),
