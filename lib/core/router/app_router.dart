@@ -1,6 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/features/features.dart';
 
+import 'api_key_management/api_key_management_routes.dart';
 import 'auth/auth_routes.dart';
 import 'category_group/category_group_routes.dart';
 import 'domain_management/domain_management_routes.dart';
@@ -18,7 +19,7 @@ class AppRouter {
       ...CategoryGroupRoutes.routes,
       ...ImportFileRoutes.routes,
       ...ProfileRoutes.routes,
-
+      ...ApiKeyManagementRoutes.routes,
       ...SystemHistoryManagementRoutes.routes,
     ],
     errorBuilder: (_, state) => const NotFoundPage(),

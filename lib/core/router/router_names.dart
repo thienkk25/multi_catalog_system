@@ -21,6 +21,11 @@ class RouterNames {
   static const String systemHistoryManagement = 'systemHistoryManagement';
   static const String systemHistoryManagementDetail =
       'systemHistoryManagementDetail';
+
+  // api_key_management
+  static const String apiKeyManagement = 'apiKeyManagement';
+  static const String apiKeyForm = 'apiKeyForm';
+  static const String apiKeyDetail = 'apiKeyDetail';
 }
 
 class RouterPaths {
@@ -46,4 +51,9 @@ class RouterPaths {
   static const String systemHistoryManagement = '/system-history-management';
   static const String systemHistoryManagementDetail =
       '/system-history-management/:id';
+
+  // api_key_management
+  static const String apiKeyManagement = '/api-key-management';
+  static const String apiKeyForm = '/api-key-management/form';
+  static const String apiKeyDetail = '/api-key-management/:id';
 }

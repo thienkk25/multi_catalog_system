@@ -4,7 +4,7 @@ class ApiKeyEntry {
   final String systemName;
   final List<String>? allowedDomains;
   final String status;
-  final String createBy;
+  final String? createdBy;
   final DateTime createdAt;
 
   ApiKeyEntry({
@@ -13,7 +13,7 @@ class ApiKeyEntry {
     required this.systemName,
     required this.allowedDomains,
     required this.status,
-    required this.createBy,
+    required this.createdBy,
     required this.createdAt,
   });
 }

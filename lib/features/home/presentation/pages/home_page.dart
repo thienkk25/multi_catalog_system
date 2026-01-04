@@ -49,7 +49,10 @@ class _HomePageState extends State<HomePage> {
       HomePageConfig(
         builder: () => RoleBasedWidget(
           permission: ['admin'],
-          child: ApiKeyManagementPage(),
+          child: BlocProvider(
+            create: (_) => getIt<ApiKeyBloc>(),
+            child: ApiKeyManagementPage(),
+          ),
         ),
       ),
     ];
