@@ -31,71 +31,68 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
     super.build(context);
     return Stack(
       children: [
-        Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Column(
-            spacing: 10,
-            children: [
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                spacing: 5,
-                children: [
-                  Expanded(
-                    child: CustomInput(
-                      hintText: 'Tìm kiếm theo mã, tên...',
-                      suffixIcon: Icon(Icons.search),
-                    ),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.filter_list),
-                    onPressed: () {
-                      showModalBottomSheet(
-                        context: context,
-                        builder: (context) => FilterSearchWidget(),
-                      );
+        BlocConsumer<CategoryGroupBloc, CategoryGroupState>(
+          listener: (context, state) {
+            if (state.successMessage != null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.successMessage!),
+                  backgroundColor: Colors.green,
+                ),
+              );
+            }
+          },
+          builder: (context, state) {
+            return state.when((isLoading, entities, error, successMessage) {
+              if (isLoading) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (error != null) {
+                return Center(
+                  child: ErrorRetryWidget(
+                    error: error,
+                    onRetry: () {
+                      bloc.add(const CategoryGroupEvent.getAll());
                     },
                   ),
-                ],
-              ),
-              Expanded(
-                child: BlocConsumer<CategoryGroupBloc, CategoryGroupState>(
-                  listener: (context, state) {
-                    if (state.successMessage != null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(state.successMessage!),
-                          backgroundColor: Colors.green,
+                );
+              }
+              return Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Column(
+                  spacing: 10,
+                  children: [
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      spacing: 5,
+                      children: [
+                        Expanded(
+                          child: CustomInput(
+                            hintText: 'Tìm kiếm theo mã, tên...',
+                            suffixIcon: Icon(Icons.search),
+                          ),
                         ),
-                      );
-                    }
-                  },
-                  builder: (context, state) {
-                    return state.when((
-                      isLoading,
-                      entities,
-                      error,
-                      successMessage,
-                    ) {
-                      if (isLoading) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                      if (error != null) {
-                        return ErrorRetryWidget(
-                          error: error,
-                          onRetry: () {
-                            bloc.add(const CategoryGroupEvent.getAll());
+                        IconButton(
+                          icon: Icon(Icons.filter_list),
+                          onPressed: () {
+                            showModalBottomSheet(
+                              context: context,
+                              builder: (context) => FilterSearchWidget(),
+                            );
                           },
-                        );
-                      }
-                      return CategoryGroupListViewWidget(
+                        ),
+                      ],
+                    ),
+                    Expanded(
+                      child: CategoryGroupListViewWidget(
                         categoryGroup: entities,
-                      );
-                    });
-                  },
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
+              );
+            });
+          },
         ),
         CustomFloatingActionButton(
           onPressedImport: () {

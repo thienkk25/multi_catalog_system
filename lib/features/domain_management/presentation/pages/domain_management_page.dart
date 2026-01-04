@@ -43,67 +43,68 @@ class _DomainManagementPageState extends State<DomainManagementPage>
     super.build(context);
     return Stack(
       children: [
-        Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Column(
-            spacing: 10,
-            children: [
-              CustomInput(
-                controller: _searchController,
-                hintText: 'Tìm kiếm lĩnh vực',
-                suffixIcon: Icon(Icons.search),
-                onChanged: (value) {
-                  final search = value.trim();
-                  if (_debounce?.isActive ?? false) _debounce?.cancel();
-                  _debounce = Timer(const Duration(milliseconds: 500), () {
-                    if (search.isEmpty) {
+        BlocConsumer<DomainManagementBloc, DomainManagementState>(
+          listener: (context, state) {
+            if (state.successMessage != null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.successMessage!),
+                  backgroundColor: Colors.green,
+                ),
+              );
+            }
+          },
+          builder: (context, state) {
+            return state.when((isLoading, entities, error, successMessage) {
+              if (isLoading) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (error != null) {
+                return Center(
+                  child: ErrorRetryWidget(
+                    error: error,
+                    onRetry: () {
                       bloc.add(const DomainManagementEvent.getAll());
-                    } else {
-                      bloc.add(DomainManagementEvent.getAll(search: search));
-                    }
-                  });
-                },
-              ),
-              Expanded(
-                child:
-                    BlocConsumer<DomainManagementBloc, DomainManagementState>(
-                      listener: (context, state) {
-                        if (state.successMessage != null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(state.successMessage!),
-                              backgroundColor: Colors.green,
-                            ),
-                          );
+                    },
+                  ),
+                );
+              }
+              return Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Column(
+                  spacing: 10,
+                  children: [
+                    CustomInput(
+                      controller: _searchController,
+                      hintText: 'Tìm kiếm lĩnh vực',
+                      suffixIcon: Icon(Icons.search),
+                      onChanged: (value) {
+                        final search = value.trim();
+                        if (_debounce?.isActive ?? false) {
+                          _debounce?.cancel();
                         }
-                      },
-                      builder: (context, state) {
-                        return state.when((
-                          isLoading,
-                          entities,
-                          error,
-                          successMessage,
-                        ) {
-                          if (isLoading) {
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          }
-                          if (error != null) {
-                            return ErrorRetryWidget(
-                              error: error,
-                              onRetry: () {
-                                bloc.add(const DomainManagementEvent.getAll());
-                              },
-                            );
-                          }
-                          return DomainManagementGridView(domains: entities);
-                        });
+                        _debounce = Timer(
+                          const Duration(milliseconds: 500),
+                          () {
+                            if (search.isEmpty) {
+                              bloc.add(const DomainManagementEvent.getAll());
+                            } else {
+                              bloc.add(
+                                DomainManagementEvent.getAll(search: search),
+                              );
+                            }
+                          },
+                        );
                       },
                     ),
-              ),
-            ],
-          ),
+                    Expanded(
+                      child: DomainManagementGridView(domains: entities),
+                    ),
+                  ],
+                ),
+              );
+            });
+          },
         ),
         CustomFloatingActionButton(
           onPressedImport: () {
