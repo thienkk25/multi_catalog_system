@@ -3,6 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_entry.dart';
 
+import 'category_item_status_chip.dart';
+
 class CategoryItemCard extends StatelessWidget {
   final CategoryItemEntry entry;
   const CategoryItemCard({super.key, required this.entry});
@@ -23,10 +25,11 @@ class CategoryItemCard extends StatelessWidget {
                   entry.name,
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w600,
+                    color: Colors.blue,
                   ),
                 ),
               ),
-              _StatusChip(status: entry.status),
+              CategoryItemStatusChip(status: entry.status),
             ],
           ),
 
@@ -39,7 +42,7 @@ class CategoryItemCard extends StatelessWidget {
           if (entry.description?.isNotEmpty == true) ...[
             const SizedBox(height: 8),
             Text(
-              entry.description!,
+              'Mô tả: ${entry.description!}',
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: Colors.grey.shade700,
               ),
@@ -91,57 +94,5 @@ class _InfoRow extends StatelessWidget {
         ],
       ),
     );
-  }
-}
-
-class _StatusChip extends StatelessWidget {
-  final String status;
-  const _StatusChip({required this.status});
-
-  @override
-  Widget build(BuildContext context) {
-    final color = _statusColor(status);
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.12),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Text(
-        _statusText(status),
-        style: TextStyle(
-          color: color,
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-    );
-  }
-
-  Color _statusColor(String status) {
-    switch (status) {
-      case 'active':
-        return Colors.green;
-      case 'pending':
-        return Colors.orange;
-      case 'rejected':
-        return Colors.red;
-      default:
-        return Colors.grey;
-    }
-  }
-
-  String _statusText(String status) {
-    switch (status) {
-      case 'active':
-        return 'HOẠT ĐỘNG';
-      case 'pending':
-        return 'CHỜ DUYỆT';
-      case 'rejected':
-        return 'TỪ CHỐI';
-      default:
-        return 'KHÔNG RÕ';
-    }
   }
 }

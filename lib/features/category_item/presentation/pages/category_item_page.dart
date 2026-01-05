@@ -5,6 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:multi_catalog_system/core/core.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/presentation.dart';
 
+import 'category_item_detail_page.dart';
+
 class CategoryItemPage extends StatefulWidget {
   const CategoryItemPage({super.key});
 
@@ -97,7 +99,15 @@ class _CategoryItemPageState extends State<CategoryItemPage> {
                         itemBuilder: (context, index) {
                           final entry = entities[index];
                           return GestureDetector(
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      CategoryItemDetailPage(entry: entry),
+                                ),
+                              );
+                            },
                             child: CategoryItemCard(entry: entry),
                           );
                         },
