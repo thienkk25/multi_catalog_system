@@ -4,10 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/core/widgets/custom_input.dart';
 import 'package:multi_catalog_system/core/widgets/error_retry_widget.dart';
-import 'package:multi_catalog_system/features/system_history_management/presentation/bloc/system_history_bloc.dart';
-import 'package:multi_catalog_system/features/system_history_management/presentation/bloc/system_history_event.dart';
-import 'package:multi_catalog_system/features/system_history_management/presentation/bloc/system_history_state.dart';
-import 'package:multi_catalog_system/features/system_history_management/presentation/widgets/system_history_card.dart';
+import 'package:multi_catalog_system/features/system_history_management/presentation/presentation.dart';
 
 class SystemHistoryPage extends StatefulWidget {
   const SystemHistoryPage({super.key});
@@ -36,35 +33,33 @@ class _SystemHistoryPageState extends State<SystemHistoryPage> {
         centerTitle: true,
       ),
       body: SafeArea(
-        child: BlocBuilder<SystemHistoryBloc, SystemHistoryState>(
-          builder: (context, state) {
-            return state.when((isLoading, error, entities) {
-              if (isLoading) {
-                return const Center(child: CircularProgressIndicator());
-              }
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
+            spacing: 10,
+            children: [
+              CustomInput(
+                hintText: 'Tìm kiếm...',
+                suffixIcon: const Icon(Icons.search),
+              ),
+              Expanded(
+                child: BlocBuilder<SystemHistoryBloc, SystemHistoryState>(
+                  builder: (context, state) {
+                    return state.when((isLoading, error, entities) {
+                      if (isLoading) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
 
-              if (error != null) {
-                return Center(
-                  child: ErrorRetryWidget(
-                    error: error,
-                    onRetry: () {
-                      bloc.add(const SystemHistoryEvent.getAll());
-                    },
-                  ),
-                );
-              }
+                      if (error != null) {
+                        return ErrorRetryWidget(
+                          error: error,
+                          onRetry: () {
+                            bloc.add(const SystemHistoryEvent.getAll());
+                          },
+                        );
+                      }
 
-              return Padding(
-                padding: const EdgeInsets.all(10),
-                child: Column(
-                  spacing: 10,
-                  children: [
-                    CustomInput(
-                      hintText: 'Tìm kiếm...',
-                      suffixIcon: const Icon(Icons.search),
-                    ),
-                    Expanded(
-                      child: ListView.separated(
+                      return ListView.separated(
                         shrinkWrap: true,
                         itemCount: entities.length,
                         itemBuilder: (context, index) => GestureDetector(
@@ -79,13 +74,13 @@ class _SystemHistoryPageState extends State<SystemHistoryPage> {
                         ),
                         separatorBuilder: (context, index) =>
                             const SizedBox(height: 10),
-                      ),
-                    ),
-                  ],
+                      );
+                    });
+                  },
                 ),
-              );
-            });
-          },
+              ),
+            ],
+          ),
         ),
       ),
     );

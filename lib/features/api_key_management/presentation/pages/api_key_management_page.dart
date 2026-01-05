@@ -46,60 +46,60 @@ class _ApiKeyManagementPageState extends State<ApiKeyManagementPage>
     super.build(context);
     return Stack(
       children: [
-        BlocConsumer<ApiKeyBloc, ApiKeyState>(
-          listener: (context, state) {
-            if (state.successMessage != null) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.successMessage!),
-                  backgroundColor: Colors.green,
-                ),
-              );
-            }
-          },
-          builder: (context, state) {
-            return state.when((isLoading, entities, error, successMessage) {
-              if (isLoading) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              if (error != null) {
-                return Center(
-                  child: ErrorRetryWidget(
-                    error: error,
-                    onRetry: () {
+        Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
+            spacing: 10,
+            children: [
+              CustomInput(
+                controller: _searchController,
+                hintText: 'Tìm kiếm...',
+                suffixIcon: Icon(Icons.search),
+                onChanged: (value) {
+                  final search = value.trim();
+                  if (_debounce?.isActive ?? false) {
+                    _debounce?.cancel();
+                  }
+                  _debounce = Timer(const Duration(milliseconds: 500), () {
+                    if (search.isEmpty) {
                       bloc.add(const ApiKeyEvent.getAll());
-                    },
-                  ),
-                );
-              }
-              return Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Column(
-                  spacing: 10,
-                  children: [
-                    CustomInput(
-                      controller: _searchController,
-                      hintText: 'Tìm kiếm...',
-                      suffixIcon: Icon(Icons.search),
-                      onChanged: (value) {
-                        final search = value.trim();
-                        if (_debounce?.isActive ?? false) {
-                          _debounce?.cancel();
-                        }
-                        _debounce = Timer(
-                          const Duration(milliseconds: 500),
-                          () {
-                            if (search.isEmpty) {
-                              bloc.add(const ApiKeyEvent.getAll());
-                            } else {
-                              bloc.add(ApiKeyEvent.getAll(search: search));
-                            }
+                    } else {
+                      bloc.add(ApiKeyEvent.getAll(search: search));
+                    }
+                  });
+                },
+              ),
+              Expanded(
+                child: BlocConsumer<ApiKeyBloc, ApiKeyState>(
+                  listener: (context, state) {
+                    if (state.successMessage != null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(state.successMessage!),
+                          backgroundColor: Colors.green,
+                        ),
+                      );
+                    }
+                  },
+                  builder: (context, state) {
+                    return state.when((
+                      isLoading,
+                      entities,
+                      error,
+                      successMessage,
+                    ) {
+                      if (isLoading) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      if (error != null) {
+                        return ErrorRetryWidget(
+                          error: error,
+                          onRetry: () {
+                            bloc.add(const ApiKeyEvent.getAll());
                           },
                         );
-                      },
-                    ),
-                    Expanded(
-                      child: ListView.separated(
+                      }
+                      return ListView.separated(
                         itemCount: entities.length,
                         separatorBuilder: (context, index) =>
                             const SizedBox(height: 10),
@@ -116,13 +116,13 @@ class _ApiKeyManagementPageState extends State<ApiKeyManagementPage>
                             child: ApiKeyManagementCard(entry: entry),
                           );
                         },
-                      ),
-                    ),
-                  ],
+                      );
+                    });
+                  },
                 ),
-              );
-            });
-          },
+              ),
+            ],
+          ),
         ),
         CustomFloatingActionButton(
           onPressedImport: () {},
