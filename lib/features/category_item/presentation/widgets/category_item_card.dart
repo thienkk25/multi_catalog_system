@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
-import 'package:multi_catalog_system/core/widgets/custom_label.dart';
 import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_entry.dart';
 
 class CategoryItemCard extends StatelessWidget {
@@ -10,58 +9,117 @@ class CategoryItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return CustomCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        spacing: 5,
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
                 child: Text(
-                  'Tên: ${entry.name}',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  entry.name,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
-              CustomLabel(
-                color: _actionStatusColor(entry.status),
-                text: _actionStatus(entry.status),
-              ),
+              _StatusChip(status: entry.status),
             ],
           ),
-          Text('Mã: ${entry.code}'),
 
-          Text(
-            'Lĩnh vực: ${entry.group.domainResEntry.name} | Nhóm: ${entry.group.name}',
-          ),
-          Text('Mô tả: ${entry.description}'),
-          Row(
-            children: [
-              Spacer(),
-              Text(
-                'Ngày tạo: ${DateFormat('dd/MM/yyyy').format(entry.createdAt)}',
+          const SizedBox(height: 12),
+
+          _InfoRow(label: 'Mã', value: entry.code),
+          _InfoRow(label: 'Lĩnh vực', value: entry.group.domain.name),
+          _InfoRow(label: 'Nhóm', value: entry.group.name),
+
+          if (entry.description?.isNotEmpty == true) ...[
+            const SizedBox(height: 8),
+            Text(
+              entry.description!,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: Colors.grey.shade700,
               ),
-            ],
+            ),
+          ],
+
+          const SizedBox(height: 12),
+          Align(
+            alignment: Alignment.centerRight,
+            child: Text(
+              'Tạo ngày ${DateFormat('dd/MM/yyyy').format(entry.createdAt)}',
+              style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey),
+            ),
           ),
         ],
       ),
     );
   }
+}
 
-  String _actionStatus(String status) {
-    switch (status) {
-      case 'active':
-        return 'Hoạt động';
-      case 'pending':
-        return 'Chờ duyệt';
-      case 'rejected':
-        return 'Từ chối';
-      default:
-        return 'Không xác định';
-    }
+class _InfoRow extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _InfoRow({required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 90,
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontWeight: FontWeight.w500,
+                color: Colors.grey,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: const TextStyle(fontWeight: FontWeight.w500),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StatusChip extends StatelessWidget {
+  final String status;
+  const _StatusChip({required this.status});
+
+  @override
+  Widget build(BuildContext context) {
+    final color = _statusColor(status);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.12),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Text(
+        _statusText(status),
+        style: TextStyle(
+          color: color,
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
   }
 
-  Color _actionStatusColor(String status) {
+  Color _statusColor(String status) {
     switch (status) {
       case 'active':
         return Colors.green;
@@ -71,6 +129,19 @@ class CategoryItemCard extends StatelessWidget {
         return Colors.red;
       default:
         return Colors.grey;
+    }
+  }
+
+  String _statusText(String status) {
+    switch (status) {
+      case 'active':
+        return 'HOẠT ĐỘNG';
+      case 'pending':
+        return 'CHỜ DUYỆT';
+      case 'rejected':
+        return 'TỪ CHỐI';
+      default:
+        return 'KHÔNG RÕ';
     }
   }
 }

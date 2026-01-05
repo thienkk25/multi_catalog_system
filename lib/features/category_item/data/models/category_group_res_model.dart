@@ -12,7 +12,7 @@ abstract class CategoryGroupResModel with _$CategoryGroupResModel {
     required String id,
     required String code,
     required String name,
-    required DomainResModel domainResModel,
+    required DomainResModel domain,
   }) = _CategoryGroupResModel;
 
   factory CategoryGroupResModel.fromJson(Map<String, dynamic> json) =>
@@ -23,7 +23,7 @@ abstract class CategoryGroupResModel with _$CategoryGroupResModel {
       id: entry.id,
       code: entry.code,
       name: entry.name,
-      domainResModel: DomainResModel.fromEntity(entry.domainResEntry),
+      domain: DomainResModel.fromEntity(entry.domain),
     );
   }
 }
@@ -34,7 +34,7 @@ extension CategoryGroupResModelMapper on CategoryGroupResModel {
       id: id,
       code: code,
       name: name,
-      domainResEntry: domainResModel.toEntity(),
+      domain: domain.toEntity(),
     );
   }
 }

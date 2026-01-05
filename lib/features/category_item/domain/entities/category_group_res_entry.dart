@@ -4,12 +4,12 @@ class CategoryGroupResEntry {
   final String id;
   final String code;
   final String name;
-  final DomainResEntry domainResEntry;
+  final DomainResEntry domain;
 
   CategoryGroupResEntry({
     required this.id,
     required this.code,
     required this.name,
-    required this.domainResEntry,
+    required this.domain,
   });
 }

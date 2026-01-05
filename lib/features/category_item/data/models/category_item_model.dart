@@ -10,7 +10,6 @@ part 'category_item_model.g.dart';
 abstract class CategoryItemModel with _$CategoryItemModel {
   const factory CategoryItemModel({
     String? id,
-    @JsonKey(name: 'group_id') required String groupId,
     required String code,
     required String name,
     String? description,
@@ -28,7 +27,6 @@ abstract class CategoryItemModel with _$CategoryItemModel {
   factory CategoryItemModel.fromEntity(CategoryItemEntry entry) =>
       CategoryItemModel(
         id: entry.id,
-        groupId: entry.groupId,
         code: entry.code,
         name: entry.name,
         description: entry.description,
@@ -44,7 +42,6 @@ abstract class CategoryItemModel with _$CategoryItemModel {
 extension CategoryItemModelMapper on CategoryItemModel {
   CategoryItemEntry toEntity() => CategoryItemEntry(
     id: id,
-    groupId: groupId,
     code: code,
     name: name,
     description: description,

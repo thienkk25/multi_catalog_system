@@ -2,7 +2,6 @@ import 'category_group_res_entry.dart';
 
 class CategoryItemEntry {
   final String? id;
-  final String groupId;
   final String code;
   final String name;
   final String? description;
@@ -15,7 +14,6 @@ class CategoryItemEntry {
 
   CategoryItemEntry({
     this.id,
-    required this.groupId,
     required this.code,
     required this.name,
     this.description,
