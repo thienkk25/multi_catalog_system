@@ -36,7 +36,12 @@ class _HomePageState extends State<HomePage> {
           child: const CategoryGroupPage(),
         ),
       ),
-      HomePageConfig(builder: () => const CategoryItemPage()),
+      HomePageConfig(
+        builder: () => BlocProvider(
+          create: (_) => getIt<CategoryItemBloc>(),
+          child: const CategoryItemPage(),
+        ),
+      ),
       HomePageConfig(builder: () => const LegalDocumentPage()),
       HomePageConfig(
         builder: () =>

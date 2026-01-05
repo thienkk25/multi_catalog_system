@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -14,12 +16,22 @@ class SystemHistoryPage extends StatefulWidget {
 }
 
 class _SystemHistoryPageState extends State<SystemHistoryPage> {
+  final TextEditingController _searchController = TextEditingController();
+  Timer? _debounce;
   late final SystemHistoryBloc bloc;
+
   @override
   void initState() {
     super.initState();
     bloc = context.read<SystemHistoryBloc>();
     bloc.add(const SystemHistoryEvent.getAll());
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _debounce?.cancel();
+    super.dispose();
   }
 
   @override
@@ -41,6 +53,19 @@ class _SystemHistoryPageState extends State<SystemHistoryPage> {
               CustomInput(
                 hintText: 'Tìm kiếm...',
                 suffixIcon: const Icon(Icons.search),
+                onChanged: (value) {
+                  final search = value.trim();
+                  if (_debounce?.isActive ?? false) {
+                    _debounce?.cancel();
+                  }
+                  _debounce = Timer(const Duration(milliseconds: 500), () {
+                    if (search.isEmpty) {
+                      bloc.add(const SystemHistoryEvent.getAll());
+                    } else {
+                      bloc.add(SystemHistoryEvent.getAll(search: search));
+                    }
+                  });
+                },
               ),
               Expanded(
                 child: BlocBuilder<SystemHistoryBloc, SystemHistoryState>(
