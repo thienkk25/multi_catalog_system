@@ -31,7 +31,9 @@ class CategoryItemCard extends StatelessWidget {
           ),
           Text('Mã: ${entry.code}'),
 
-          Text('Lĩnh vực: ${entry.status} | Nhóm: ${entry.groupId}'),
+          Text(
+            'Lĩnh vực: ${entry.group.domainResEntry.name} | Nhóm: ${entry.group.name}',
+          ),
           Text('Mô tả: ${entry.description}'),
           Row(
             children: [

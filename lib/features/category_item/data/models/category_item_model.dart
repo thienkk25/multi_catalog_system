@@ -1,6 +1,8 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_entry.dart';
 
+import 'category_group_res_model.dart';
+
 part 'category_item_model.freezed.dart';
 part 'category_item_model.g.dart';
 
@@ -13,6 +15,7 @@ abstract class CategoryItemModel with _$CategoryItemModel {
     required String name,
     String? description,
     required String status,
+    required CategoryGroupResModel group,
     @JsonKey(name: 'created_by') String? createdBy,
     @JsonKey(name: 'updated_by') String? updatedBy,
     @JsonKey(name: 'created_at') required DateTime createdAt,
@@ -30,6 +33,7 @@ abstract class CategoryItemModel with _$CategoryItemModel {
         name: entry.name,
         description: entry.description,
         status: entry.status,
+        group: CategoryGroupResModel.fromEntity(entry.group),
         createdBy: entry.createdBy,
         updatedBy: entry.updatedBy,
         createdAt: entry.createdAt,
@@ -45,6 +49,7 @@ extension CategoryItemModelMapper on CategoryItemModel {
     name: name,
     description: description,
     status: status,
+    group: group.toEntity(),
     createdBy: createdBy,
     updatedBy: updatedBy,
     createdAt: createdAt,

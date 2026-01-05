@@ -8,6 +8,7 @@ part 'category_group_ref_model.g.dart';
 abstract class CategoryGroupRefModel with _$CategoryGroupRefModel {
   const factory CategoryGroupRefModel({
     required String id,
+    required String code,
     required String name,
   }) = _CategoryGroupRefModel;
 
@@ -15,11 +16,11 @@ abstract class CategoryGroupRefModel with _$CategoryGroupRefModel {
       _$CategoryGroupRefModelFromJson(json);
 
   factory CategoryGroupRefModel.fromEntity(CategoryGroupRefEntry entry) =>
-      CategoryGroupRefModel(id: entry.id, name: entry.name);
+      CategoryGroupRefModel(id: entry.id, code: entry.code, name: entry.name);
 }
 
 extension CategoryGroupRefModelMapper on CategoryGroupRefModel {
   CategoryGroupRefEntry toEntity() {
-    return CategoryGroupRefEntry(id: id, name: name);
+    return CategoryGroupRefEntry(id: id, code: code, name: name);
   }
 }

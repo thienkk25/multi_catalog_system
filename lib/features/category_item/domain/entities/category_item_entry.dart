@@ -1,3 +1,5 @@
+import 'category_group_res_entry.dart';
+
 class CategoryItemEntry {
   final String? id;
   final String groupId;
@@ -5,6 +7,7 @@ class CategoryItemEntry {
   final String name;
   final String? description;
   final String status;
+  final CategoryGroupResEntry group;
   final String? createdBy;
   final String? updatedBy;
   final DateTime createdAt;
@@ -17,6 +20,7 @@ class CategoryItemEntry {
     required this.name,
     this.description,
     required this.status,
+    required this.group,
     this.createdBy,
     this.updatedBy,
     required this.createdAt,
