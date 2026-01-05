@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:multi_catalog_system/core/core.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/presentation.dart';
 
@@ -10,44 +13,29 @@ class CategoryItemPage extends StatefulWidget {
 }
 
 class _CategoryItemPageState extends State<CategoryItemPage> {
-  bool selectionMode = false;
+  final TextEditingController _searchController = TextEditingController();
+  Timer? _debounce;
 
-  final List<CategoryItem> items = List.generate(
-    20,
-    (i) => CategoryItem(id: i, name: 'Sản phẩm $i'),
-  );
+  late CategoryItemBloc bloc;
 
-  void _toggleSelect(CategoryItem item) {
-    setState(() {
-      item.isSelected = !item.isSelected;
-
-      selectionMode = items.any((e) => e.isSelected);
-    });
-  }
-
-  void _toggleSelectAll() {
-    setState(() {
-      final isAllSelected = items.every((e) => e.isSelected);
-
-      for (final item in items) {
-        item.isSelected = !isAllSelected;
-      }
-
-      selectionMode = items.any((e) => e.isSelected);
-    });
-  }
-
-  void _deleteSelected() {
-    setState(() {
-      items.removeWhere((e) => e.isSelected);
-      selectionMode = false;
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      bloc = context.read<CategoryItemBloc>();
+      bloc.add(const CategoryItemEvent.getAll());
     });
   }
 
   @override
-  Widget build(BuildContext context) {
-    final selectedCount = items.where((e) => e.isSelected).length;
+  void dispose() {
+    _searchController.dispose();
+    _debounce?.cancel();
+    super.dispose();
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Stack(
       children: [
         Padding(
@@ -58,37 +46,62 @@ class _CategoryItemPageState extends State<CategoryItemPage> {
               CustomInput(
                 hintText: 'Tìm kiếm theo tên, mã...',
                 suffixIcon: Icon(Icons.search),
+                onChanged: (value) {
+                  final search = value.trim();
+                  if (_debounce?.isActive ?? false) {
+                    _debounce?.cancel();
+                  }
+                  _debounce = Timer(const Duration(milliseconds: 500), () {
+                    if (search.isEmpty) {
+                      bloc.add(const CategoryItemEvent.getAll());
+                    } else {
+                      bloc.add(CategoryItemEvent.getAll(search: search));
+                    }
+                  });
+                },
               ),
-              if (selectionMode)
-                Row(
-                  children: [
-                    IconButton(
-                      icon: Icon(
-                        items.every((e) => e.isSelected)
-                            ? Icons.check_circle
-                            : Icons.radio_button_unchecked,
-                        color: Colors.blue,
-                      ),
-                      tooltip: items.every((e) => e.isSelected)
-                          ? 'Bỏ chọn tất cả'
-                          : 'Chọn tất cả',
-                      onPressed: _toggleSelectAll,
-                    ),
-                    Text(
-                      'Đã chọn $selectedCount',
-                      style: TextStyle(fontWeight: FontWeight(600)),
-                    ),
-                  ],
-                ),
               Expanded(
-                child: CategoryItemListViewWidget(
-                  items: items,
-                  selectionMode: selectionMode,
-                  onTap: _toggleSelect,
-                  onLongPress: (item) {
-                    setState(() {
-                      selectionMode = true;
-                      item.isSelected = true;
+                child: BlocConsumer<CategoryItemBloc, CategoryItemState>(
+                  listener: (context, state) {
+                    if (state.successMessage != null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(state.successMessage!),
+                          backgroundColor: Colors.green,
+                        ),
+                      );
+                    }
+                  },
+                  builder: (context, state) {
+                    return state.when((
+                      isLoading,
+                      entities,
+                      error,
+                      successMessage,
+                    ) {
+                      if (isLoading) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      if (error != null) {
+                        return ErrorRetryWidget(
+                          error: error,
+                          onRetry: () {
+                            bloc.add(const CategoryItemEvent.getAll());
+                          },
+                        );
+                      }
+                      return ListView.separated(
+                        itemCount: entities.length,
+                        separatorBuilder: (context, index) =>
+                            const SizedBox(height: 10),
+                        itemBuilder: (context, index) {
+                          final entry = entities[index];
+                          return GestureDetector(
+                            onTap: () {},
+                            child: CategoryItemCard(entry: entry),
+                          );
+                        },
+                      );
                     });
                   },
                 ),
@@ -96,48 +109,8 @@ class _CategoryItemPageState extends State<CategoryItemPage> {
             ],
           ),
         ),
-        if (!selectionMode)
-          CustomFloatingActionButton(
-            onPressedImport: () {},
-            onPressedAdd: () {},
-          )
-        else
-          Positioned(
-            right: 20,
-            bottom: 50,
-            child: Row(
-              spacing: 10,
-              children: [
-                if (selectionMode && selectedCount == 1)
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    child: IconButton(
-                      icon: Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: Icon(Icons.edit, color: Colors.white, size: 30),
-                      ),
-                      onPressed: _deleteSelected,
-                    ),
-                  ),
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.red,
-                    borderRadius: BorderRadius.circular(50),
-                  ),
-                  child: IconButton(
-                    icon: Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: Icon(Icons.delete, color: Colors.white, size: 30),
-                    ),
-                    onPressed: _deleteSelected,
-                  ),
-                ),
-              ],
-            ),
-          ),
+
+        CustomFloatingActionButton(onPressedImport: () {}, onPressedAdd: () {}),
       ],
     );
   }

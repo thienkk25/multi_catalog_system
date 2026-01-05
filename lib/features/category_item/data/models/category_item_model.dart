@@ -13,7 +13,7 @@ abstract class CategoryItemModel with _$CategoryItemModel {
     required String name,
     String? description,
     required String status,
-    @JsonKey(name: 'created_by') required String createdBy,
+    @JsonKey(name: 'created_by') String? createdBy,
     @JsonKey(name: 'updated_by') String? updatedBy,
     @JsonKey(name: 'created_at') required DateTime createdAt,
     @JsonKey(name: 'updated_at') DateTime? updatedAt,
