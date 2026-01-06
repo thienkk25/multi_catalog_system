@@ -119,7 +119,12 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
             ],
           ),
         ),
-        CustomFloatingActionButton(onPressedImport: () {}, onPressedAdd: () {}),
+        CustomFloatingActionButton(
+          onPressedImport: () {},
+          onPressedAdd: () {
+            context.pushNamed(RouterNames.legalDocumentForm);
+          },
+        ),
       ],
     );
   }
