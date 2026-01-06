@@ -18,7 +18,7 @@ class _CategoryItemPageState extends State<CategoryItemPage> {
   final TextEditingController _searchController = TextEditingController();
   Timer? _debounce;
 
-  late CategoryItemBloc bloc;
+  late final CategoryItemBloc bloc;
 
   @override
   void initState() {

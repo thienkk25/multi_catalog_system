@@ -15,7 +15,7 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
     with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
-  late CategoryGroupBloc bloc;
+  late final CategoryGroupBloc bloc;
 
   @override
   void initState() {

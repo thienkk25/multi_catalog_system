@@ -21,9 +21,11 @@ class _ApiKeyManagementPageState extends State<ApiKeyManagementPage>
     with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
+
   final TextEditingController _searchController = TextEditingController();
   Timer? _debounce;
-  late ApiKeyBloc bloc;
+
+  late final ApiKeyBloc bloc;
 
   @override
   void initState() {

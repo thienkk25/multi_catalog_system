@@ -20,7 +20,7 @@ class _DomainManagementPageState extends State<DomainManagementPage>
 
   final TextEditingController _searchController = TextEditingController();
   Timer? _debounce;
-  late DomainManagementBloc bloc;
+  late final DomainManagementBloc bloc;
 
   @override
   void initState() {
