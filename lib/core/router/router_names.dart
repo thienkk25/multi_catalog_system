@@ -26,6 +26,11 @@ class RouterNames {
   static const String apiKeyManagement = 'apiKeyManagement';
   static const String apiKeyForm = 'apiKeyForm';
   static const String apiKeyDetail = 'apiKeyDetail';
+
+  // legal_document
+  static const String legalDocument = 'legalDocument';
+  static const String legalDocumentForm = 'legalDocumentForm';
+  static const String legalDocumentDetail = 'legalDocumentDetail';
 }
 
 class RouterPaths {
@@ -56,4 +61,9 @@ class RouterPaths {
   static const String apiKeyManagement = '/api-key-management';
   static const String apiKeyForm = '/api-key-management/form';
   static const String apiKeyDetail = '/api-key-management/:id';
+
+  // legal_document
+  static const String legalDocument = '/legal-document';
+  static const String legalDocumentForm = '/legal-document/form';
+  static const String legalDocumentDetail = '/legal-document/:id';
 }

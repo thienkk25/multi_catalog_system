@@ -42,7 +42,12 @@ class _HomePageState extends State<HomePage> {
           child: const CategoryItemPage(),
         ),
       ),
-      HomePageConfig(builder: () => const LegalDocumentPage()),
+      HomePageConfig(
+        builder: () => BlocProvider(
+          create: (_) => getIt<LegalDocumentBloc>(),
+          child: const LegalDocumentPage(),
+        ),
+      ),
       HomePageConfig(
         builder: () =>
             RoleBasedWidget(permission: ['approver'], child: ApproverPage()),

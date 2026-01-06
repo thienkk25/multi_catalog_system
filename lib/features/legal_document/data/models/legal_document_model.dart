@@ -11,15 +11,15 @@ abstract class LegalDocumentModel with _$LegalDocumentModel {
     required String code,
     required String title,
     required String type,
-    @JsonKey(name: 'issue_by') String? issueBy,
+    @JsonKey(name: 'issued_by') String? issuedBy,
     @JsonKey(name: 'issue_date') DateTime? issueDate,
     @JsonKey(name: 'effective_date') DateTime? effectiveDate,
     @JsonKey(name: 'expiry_date') DateTime? expiryDate,
     String? description,
     @JsonKey(name: 'file_url') String? fileUrl,
     String? status,
-    @JsonKey(name: 'created_date') required DateTime createdDate,
-    @JsonKey(name: 'updated_date') DateTime? updatedDate,
+    @JsonKey(name: 'created_at') required DateTime createdAt,
+    @JsonKey(name: 'updated_at') DateTime? updatedAt,
   }) = _LegalDocumentModel;
 
   factory LegalDocumentModel.fromJson(Map<String, dynamic> json) =>
@@ -31,15 +31,15 @@ abstract class LegalDocumentModel with _$LegalDocumentModel {
       code: entry.code,
       title: entry.title,
       type: entry.type,
-      issueBy: entry.issueBy,
+      issuedBy: entry.issuedBy,
       issueDate: entry.issueDate,
       effectiveDate: entry.effectiveDate,
       expiryDate: entry.expiryDate,
       description: entry.description,
       fileUrl: entry.fileUrl,
       status: entry.status,
-      createdDate: entry.createdDate,
-      updatedDate: entry.updatedDate,
+      createdAt: entry.createdAt,
+      updatedAt: entry.updatedAt,
     );
   }
 }
@@ -51,15 +51,15 @@ extension LegalDocumentModelMapper on LegalDocumentModel {
       code: code,
       title: title,
       type: type,
-      issueBy: issueBy,
+      issuedBy: issuedBy,
       issueDate: issueDate,
       effectiveDate: effectiveDate,
       expiryDate: expiryDate,
       description: description,
       fileUrl: fileUrl,
       status: status,
-      createdDate: createdDate,
-      updatedDate: updatedDate,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
     );
   }
 }
