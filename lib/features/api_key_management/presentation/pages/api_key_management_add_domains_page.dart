@@ -1,0 +1,228 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:multi_catalog_system/core/widgets/custom_button.dart';
+import 'package:multi_catalog_system/core/widgets/custom_card.dart';
+import 'package:multi_catalog_system/core/widgets/custom_input.dart';
+import 'package:multi_catalog_system/core/widgets/error_retry_widget.dart';
+import 'package:multi_catalog_system/features/catalog_lookup/presentation/bloc/catalog_lookup_bloc.dart';
+import 'package:multi_catalog_system/features/catalog_lookup/presentation/bloc/catalog_lookup_event.dart';
+import 'package:multi_catalog_system/features/catalog_lookup/presentation/bloc/catalog_lookup_state.dart';
+
+class ApiKeyManagementAddDomainsPage extends StatefulWidget {
+  final List<String> fields;
+
+  const ApiKeyManagementAddDomainsPage({super.key, required this.fields});
+
+  @override
+  State<ApiKeyManagementAddDomainsPage> createState() =>
+      _ApiKeyManagementAddDomainsPageState();
+}
+
+class _ApiKeyManagementAddDomainsPageState
+    extends State<ApiKeyManagementAddDomainsPage> {
+  final TextEditingController _searchController = TextEditingController();
+
+  late List<String> _selected;
+  String _keyword = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _selected = List.from(widget.fields);
+  }
+
+  bool _isAllSelected(List<String> allCodes) {
+    return _selected.length == allCodes.length && allCodes.isNotEmpty;
+  }
+
+  void _toggleSelectAll(List<String> allCodes) {
+    setState(() {
+      if (_isAllSelected(allCodes)) {
+        _selected.clear();
+      } else {
+        _selected = List.from(allCodes);
+      }
+    });
+  }
+
+  void _toggle(String code) {
+    setState(() {
+      _selected.contains(code) ? _selected.remove(code) : _selected.add(code);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF7F8FA),
+      appBar: AppBar(
+        title: const Text('Chọn lĩnh vực'),
+        centerTitle: true,
+        actions: [
+          BlocBuilder<CatalogLookupBloc, CatalogLookupState>(
+            builder: (context, state) {
+              final allCodes = state.domainsRef.map((e) => e.code).toList();
+              final isAll = _isAllSelected(allCodes);
+
+              return TextButton(
+                onPressed: () => _toggleSelectAll(allCodes),
+                child: Text(
+                  isAll ? 'Bỏ chọn tất cả' : 'Chọn tất cả',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildSearch(),
+              SizedBox(height: 8),
+              _buildSelectedChips(),
+              SizedBox(height: 3),
+              _buildLabel(),
+              SizedBox(height: 8),
+              Expanded(child: _buildList()),
+              _buildFooter(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSearch() {
+    return CustomInput(
+      controller: _searchController,
+      hintText: 'Tìm kiếm lĩnh vực...',
+      onChanged: (v) => setState(() => _keyword = v.toLowerCase()),
+      suffixIcon: Icon(Icons.search),
+    );
+  }
+
+  Widget _buildSelectedChips() {
+    if (_selected.isEmpty) return const SizedBox();
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: _selected.map((code) {
+          return Chip(
+            label: Text(
+              code,
+              style: const TextStyle(
+                color: Colors.blue,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            deleteIcon: const Icon(Icons.close, size: 18, color: Colors.blue),
+            onDeleted: () {
+              setState(() => _selected.remove(code));
+            },
+            backgroundColor: Colors.blue.shade50,
+            side: BorderSide(color: Colors.blue.shade200),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildLabel() {
+    return const Padding(
+      padding: EdgeInsets.fromLTRB(12, 16, 12, 8),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Text(
+          'DANH SÁCH LĨNH VỰC',
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: Colors.grey,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildList() {
+    return CustomCard(
+      child: BlocBuilder<CatalogLookupBloc, CatalogLookupState>(
+        builder: (context, state) {
+          if (state.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (state.error != null) {
+            return ErrorRetryWidget(
+              error: state.error!,
+              onRetry: () {
+                context.read<CatalogLookupBloc>().add(
+                  const CatalogLookupEvent.getDomainsRef(),
+                );
+              },
+            );
+          }
+
+          final items = state.domainsRef.where((e) {
+            return e.name.toLowerCase().contains(_keyword) ||
+                e.code.toLowerCase().contains(_keyword);
+          }).toList();
+
+          return ListView.separated(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            itemCount: items.length,
+            separatorBuilder: (_, _) => const SizedBox(height: 8),
+            itemBuilder: (context, index) {
+              final domain = items[index];
+              final checked = _selected.contains(domain.code);
+
+              return ListTile(
+                contentPadding: const EdgeInsets.symmetric(vertical: 6),
+                title: Text(
+                  domain.name,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+                subtitle: Text(domain.code),
+                trailing: Icon(
+                  checked ? Icons.check_circle : Icons.radio_button_unchecked,
+                  color: checked ? Colors.blue : Colors.grey,
+                ),
+                onTap: () => _toggle(domain.code),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildFooter() {
+    return SafeArea(
+      child: CustomButton(
+        colorBackground: Colors.blue,
+        onTap: () {
+          if (_selected == widget.fields) {
+            context.pop();
+          } else {
+            context.pop(_selected);
+          }
+        },
+        textButton: Text(
+          'Xác nhận (${_selected.length})',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+        ),
+      ),
+    );
+  }
+}

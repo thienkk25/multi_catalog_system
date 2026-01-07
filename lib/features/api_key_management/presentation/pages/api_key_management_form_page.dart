@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/core.dart';
@@ -153,30 +154,49 @@ class _ApiKeyManagementFormPageState extends State<ApiKeyManagementFormPage> {
                         ),
                       ),
                       const SizedBox(height: 20),
-                      Container(
-                        height: 50,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.blueAccent),
-                        ),
-                        child: const Row(
-                          spacing: 5,
-                          children: [
-                            Icon(Icons.info, color: Colors.blueAccent),
-                            Text(
-                              'Key sẽ được hệ thống tạo tự động sau khi lưu',
-                              style: TextStyle(
-                                color: Colors.blueAccent,
-                                fontWeight: FontWeight.w600,
+                      if (!isView)
+                        Container(
+                          height: 50,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: Colors.blueAccent),
+                          ),
+                          child: const Row(
+                            spacing: 5,
+                            children: [
+                              Icon(Icons.info, color: Colors.blueAccent),
+                              Text(
+                                'Key sẽ được hệ thống tạo tự động sau khi tạo',
+                                style: TextStyle(
+                                  color: Colors.blueAccent,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      else
+                        GestureDetector(
+                          onTap: () =>
+                              _copyToClipboard(context, _keyController.text),
+                          child: Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: CustomButton(
+                              colorBackground: Colors.blue,
+                              textButton: Text(
+                                'Sao chép API Key',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ),
-                          ],
+                          ),
                         ),
-                      ),
                     ]),
                   ),
                 ),
@@ -196,6 +216,17 @@ class _ApiKeyManagementFormPageState extends State<ApiKeyManagementFormPage> {
               ),
           ],
         ),
+      ),
+    );
+  }
+
+  Future<void> _copyToClipboard(BuildContext context, String text) async {
+    await Clipboard.setData(ClipboardData(text: text));
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Sao chép thành công'),
+        backgroundColor: Colors.green,
       ),
     );
   }

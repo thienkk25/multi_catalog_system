@@ -27,7 +27,14 @@ class ApiKeyManagementRoutes {
         );
       },
     ),
-
+    GoRoute(
+      path: RouterPaths.apiKeyAddDomains,
+      name: RouterNames.apiKeyAddDomains,
+      builder: (context, state) {
+        final fields = state.extra as List<String>;
+        return ApiKeyManagementAddDomainsPage(fields: fields);
+      },
+    ),
     GoRoute(
       path: RouterPaths.apiKeyDetail,
       name: RouterNames.apiKeyDetail,
