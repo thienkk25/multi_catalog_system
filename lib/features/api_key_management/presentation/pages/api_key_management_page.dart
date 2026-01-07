@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/core.dart';
@@ -74,6 +75,9 @@ class _ApiKeyManagementPageState extends State<ApiKeyManagementPage>
               Expanded(
                 child: BlocConsumer<ApiKeyBloc, ApiKeyState>(
                   listener: (context, state) {
+                    if (state.createdEntry != null) {
+                      _showSuccessDialog(context, state.createdEntry!.key);
+                    }
                     if (state.successMessage != null) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
@@ -89,6 +93,7 @@ class _ApiKeyManagementPageState extends State<ApiKeyManagementPage>
                       entities,
                       error,
                       successMessage,
+                      createdEntry,
                     ) {
                       if (isLoading) {
                         return const Center(child: CircularProgressIndicator());
@@ -139,6 +144,110 @@ class _ApiKeyManagementPageState extends State<ApiKeyManagementPage>
           },
         ),
       ],
+    );
+  }
+
+  Future<void> _copyToClipboard(BuildContext context, String text) async {
+    await Clipboard.setData(ClipboardData(text: text));
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Sao chép thành công'),
+        backgroundColor: Colors.green,
+      ),
+    );
+  }
+
+  void _showSuccessDialog(BuildContext context, String apiKey) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 56,
+                  height: 56,
+                  decoration: BoxDecoration(
+                    color: Colors.green.withValues(alpha: .1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.check_circle,
+                    color: Colors.green,
+                    size: 36,
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                const Text(
+                  'Tạo API Key thành công',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                ),
+
+                const SizedBox(height: 8),
+
+                const Text(
+                  'Vui lòng sao chép và lưu trữ API Key.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.grey),
+                ),
+
+                const SizedBox(height: 16),
+
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF3F4F6),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: SelectableText(
+                    apiKey,
+                    style: const TextStyle(
+                      fontFamily: 'monospace',
+                      fontSize: 13,
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                Row(
+                  spacing: 12,
+                  children: [
+                    Expanded(
+                      child: CustomButton(
+                        colorBackground: Colors.white,
+                        textButton: Text('Đóng'),
+                        onTap: () => context.pop(),
+                      ),
+                    ),
+                    Expanded(
+                      child: CustomButton(
+                        colorBackground: Colors.blue,
+                        textButton: const Text(
+                          'Sao chép',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        onTap: () => _copyToClipboard(context, apiKey),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

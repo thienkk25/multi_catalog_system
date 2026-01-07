@@ -10,5 +10,6 @@ abstract class ApiKeyState with _$ApiKeyState {
     @Default([]) List<ApiKeyEntry> entities,
     String? error,
     String? successMessage,
+    ApiKeyEntry? createdEntry,
   }) = _ApiKeyState;
 }

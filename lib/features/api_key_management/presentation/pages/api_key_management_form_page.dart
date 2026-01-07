@@ -99,18 +99,6 @@ class _ApiKeyManagementFormPageState extends State<ApiKeyManagementFormPage> {
                             spacing: 20,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              if (isView)
-                                CustomInput(
-                                  controller: _keyController,
-                                  enabled: false,
-                                  lable: Text(
-                                    'API Key',
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
                               CustomInput(
                                 controller: _systemNameController,
                                 enabled: !isView,

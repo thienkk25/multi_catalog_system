@@ -74,6 +74,7 @@ class ApiKeyManagementCard extends StatelessWidget {
                       PopupMenuItem(
                         child: _APIKeyCardMenu(
                           onEdit: () {
+                            context.pop();
                             context.pushNamed(
                               RouterNames.apiKeyForm,
                               extra: {
@@ -84,6 +85,7 @@ class ApiKeyManagementCard extends StatelessWidget {
                             );
                           },
                           onDelete: () {
+                            context.pop();
                             context.read<ApiKeyBloc>().add(
                               ApiKeyEvent.delete(id: entry.id!),
                             );

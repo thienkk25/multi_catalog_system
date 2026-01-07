@@ -30,7 +30,12 @@ class ApiKeyBloc extends Bloc<ApiKeyEvent, ApiKeyState> {
     await event.map(
       getAll: (v) async {
         emit(
-          state.copyWith(isLoading: true, error: null, successMessage: null),
+          state.copyWith(
+            isLoading: true,
+            error: null,
+            successMessage: null,
+            createdEntry: null,
+          ),
         );
 
         final result = await getAll(search: v.search);
@@ -45,7 +50,12 @@ class ApiKeyBloc extends Bloc<ApiKeyEvent, ApiKeyState> {
 
       getById: (e) async {
         emit(
-          state.copyWith(isLoading: true, error: null, successMessage: null),
+          state.copyWith(
+            isLoading: true,
+            error: null,
+            successMessage: null,
+            createdEntry: null,
+          ),
         );
 
         final result = await getById(e.id);
@@ -65,7 +75,12 @@ class ApiKeyBloc extends Bloc<ApiKeyEvent, ApiKeyState> {
 
       create: (e) async {
         emit(
-          state.copyWith(isLoading: true, error: null, successMessage: null),
+          state.copyWith(
+            isLoading: true,
+            error: null,
+            successMessage: null,
+            createdEntry: null,
+          ),
         );
 
         final result = await create(e.entry);
@@ -78,6 +93,7 @@ class ApiKeyBloc extends Bloc<ApiKeyEvent, ApiKeyState> {
               isLoading: false,
               entities: [domain, ...state.entities],
               successMessage: 'Tạo thành công',
+              createdEntry: domain,
             ),
           ),
         );
@@ -85,7 +101,12 @@ class ApiKeyBloc extends Bloc<ApiKeyEvent, ApiKeyState> {
 
       createMany: (e) async {
         emit(
-          state.copyWith(isLoading: true, error: null, successMessage: null),
+          state.copyWith(
+            isLoading: true,
+            error: null,
+            successMessage: null,
+            createdEntry: null,
+          ),
         );
 
         final result = await createMany(e.entities);
@@ -105,7 +126,12 @@ class ApiKeyBloc extends Bloc<ApiKeyEvent, ApiKeyState> {
 
       update: (e) async {
         emit(
-          state.copyWith(isLoading: true, error: null, successMessage: null),
+          state.copyWith(
+            isLoading: true,
+            error: null,
+            successMessage: null,
+            createdEntry: null,
+          ),
         );
 
         final result = await update(e.entry);
@@ -137,6 +163,7 @@ class ApiKeyBloc extends Bloc<ApiKeyEvent, ApiKeyState> {
             entities: state.entities.where((d) => d.id != e.id).toList(),
             successMessage: null,
             error: null,
+            createdEntry: null,
           ),
         );
 
@@ -154,7 +181,12 @@ class ApiKeyBloc extends Bloc<ApiKeyEvent, ApiKeyState> {
 
       upsertMany: (e) async {
         emit(
-          state.copyWith(isLoading: true, error: null, successMessage: null),
+          state.copyWith(
+            isLoading: true,
+            error: null,
+            successMessage: null,
+            createdEntry: null,
+          ),
         );
 
         final result = await upsertMany(e.entities);
