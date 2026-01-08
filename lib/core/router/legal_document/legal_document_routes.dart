@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/config/di/injection.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
+import 'package:multi_catalog_system/features/legal_document/domain/entries/legal_document_entry.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/presentation.dart';
 
 class LegalDocumentRoutes {
@@ -17,7 +18,13 @@ class LegalDocumentRoutes {
     GoRoute(
       path: RouterPaths.legalDocumentForm,
       name: RouterNames.legalDocumentForm,
-      builder: (context, state) => const LegalDocumentFormPage(),
+      builder: (context, state) {
+        final data = state.extra as Map<String, dynamic>;
+        return LegalDocumentFormPage(
+          type: data['type'] as LegalDocumentFormPageType,
+          entry: data['entry'] as LegalDocumentEntry?,
+        );
+      },
     ),
     GoRoute(
       path: RouterPaths.legalDocumentDetail,

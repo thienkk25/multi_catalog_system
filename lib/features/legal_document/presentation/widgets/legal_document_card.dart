@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/core/widgets/custom_label.dart';
 import 'package:multi_catalog_system/core/widgets/role_based_widget.dart';
 import 'package:multi_catalog_system/features/legal_document/domain/entries/legal_document_entry.dart';
+import 'package:multi_catalog_system/features/legal_document/presentation/pages/legal_document_form_page.dart';
 
 class LegalDocumentCard extends StatelessWidget {
   final LegalDocumentEntry entry;
@@ -118,7 +121,15 @@ class LegalDocumentCard extends StatelessWidget {
                   icon: Icons.edit_outlined,
                   label: 'Sửa',
                   color: const Color(0xFF2563EB),
-                  onPressed: () {},
+                  onPressed: () {
+                    context.pushNamed(
+                      RouterNames.legalDocumentForm,
+                      extra: {
+                        'type': LegalDocumentFormPageType.update,
+                        'entry': entry,
+                      },
+                    );
+                  },
                 ),
                 _ActionButton(
                   icon: Icons.delete_outline,

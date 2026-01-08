@@ -1,284 +1,241 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:go_router/go_router.dart';
+import 'package:multi_catalog_system/core/core.dart';
 import 'package:multi_catalog_system/features/legal_document/domain/entries/legal_document_entry.dart';
 
-class LegalDocumentFormPage extends StatefulWidget {
-  final LegalDocumentEntry? initialData;
+enum LegalDocumentFormPageType { create, update }
 
-  const LegalDocumentFormPage({super.key, this.initialData});
+class LegalDocumentFormPage extends StatefulWidget {
+  final LegalDocumentEntry? entry;
+  final LegalDocumentFormPageType type;
+  const LegalDocumentFormPage({super.key, this.entry, required this.type});
 
   @override
   State<LegalDocumentFormPage> createState() => _LegalDocumentFormPageState();
 }
 
 class _LegalDocumentFormPageState extends State<LegalDocumentFormPage> {
-  final _formKey = GlobalKey<FormState>();
-
-  late final TextEditingController _codeCtrl;
-  late final TextEditingController _titleCtrl;
-  late final TextEditingController _issuedByCtrl;
-  late final TextEditingController _descriptionCtrl;
-
-  String _type = 'Thông tư';
-  String _status = 'active';
-
-  DateTime? _issueDate;
+  final GlobalKey<FormState> _formKey = GlobalKey();
+  final TextEditingController _codeController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  String? _type;
+  final TextEditingController _descriptionController = TextEditingController();
   DateTime? _effectiveDate;
   DateTime? _expiryDate;
+  final GlobalKey _bottomBarKey = GlobalKey();
+  double _bottomBarHeight = 0;
+
+  late bool _isEdit;
 
   @override
   void initState() {
     super.initState();
-    final e = widget.initialData;
+    _isEdit = widget.type == LegalDocumentFormPageType.update;
+    if (widget.entry != null) {
+      _codeController.text = widget.entry!.code;
+      _nameController.text = widget.entry!.title;
+      _type = widget.entry!.type;
+      _descriptionController.text = widget.entry!.description!;
+      _effectiveDate = widget.entry!.effectiveDate;
+      _expiryDate = widget.entry!.expiryDate;
+    }
+  }
 
-    _codeCtrl = TextEditingController(text: e?.code ?? '');
-    _titleCtrl = TextEditingController(text: e?.title ?? '');
-    _issuedByCtrl = TextEditingController(text: e?.issuedBy ?? '');
-    _descriptionCtrl = TextEditingController(text: e?.description ?? '');
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
 
-    _type = e?.type ?? 'Thông tư';
-    _status = e?.status ?? 'active';
-
-    _issueDate = e?.issueDate;
-    _effectiveDate = e?.effectiveDate;
-    _expiryDate = e?.expiryDate;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final context = _bottomBarKey.currentContext;
+      if (context != null) {
+        final height = context.size?.height ?? 0;
+        if (height != _bottomBarHeight) {
+          setState(() => _bottomBarHeight = height);
+        }
+      }
+    });
   }
 
   @override
   void dispose() {
-    _codeCtrl.dispose();
-    _titleCtrl.dispose();
-    _issuedByCtrl.dispose();
-    _descriptionCtrl.dispose();
+    _codeController.dispose();
+    _nameController.dispose();
+    _descriptionController.dispose();
     super.dispose();
   }
-
-  bool get _isUpdate => widget.initialData != null;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          _isUpdate ? 'Cập nhật văn bản pháp lý' : 'Tạo văn bản pháp lý',
-        ),
+        title: _isEdit
+            ? const Text('Chỉnh sửa văn bản pháp lý')
+            : const Text('Tạo văn bản pháp lý'),
+        centerTitle: true,
       ),
-      body: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 900),
-          child: Form(
-            key: _formKey,
-            child: ListView(
-              padding: const EdgeInsets.all(24),
-              children: [
-                _sectionTitle('Thông tin chung'),
-                _twoColumn(
-                  _textField(
-                    controller: _codeCtrl,
-                    label: 'Mã văn bản',
-                    required: true,
+      body: SafeArea(
+        child: Stack(
+          children: [
+            CustomScrollView(
+              slivers: [
+                SliverPadding(
+                  padding: const EdgeInsets.all(10),
+                  sliver: SliverList(
+                    delegate: SliverChildListDelegate([
+                      Form(
+                        key: _formKey,
+                        child: Column(
+                          spacing: 10,
+                          children: [
+                            CustomCard(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                spacing: 10,
+                                children: [
+                                  const Text(
+                                    'Thông tin chung',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w700,
+                                      color: Color(0xFF111827),
+                                    ),
+                                  ),
+                                  CustomInput(
+                                    controller: _codeController,
+                                    lable: Text('Mã văn bản'),
+                                    hintText: 'Ví dụ: VBN-1,...',
+                                    validator: (p0) => p0 == null || p0.isEmpty
+                                        ? 'Vui lòng nhập mã văn bản'
+                                        : null,
+                                  ),
+                                  CustomInput(
+                                    controller: _nameController,
+                                    lable: Text('Tên văn bản'),
+                                    hintText: 'Ví dụ: Văn bản...',
+                                    validator: (p0) => p0 == null || p0.isEmpty
+                                        ? 'Vui lòng nhập tên văn bản'
+                                        : null,
+                                  ),
+                                  CustomDropdownButton(
+                                    value: _type,
+                                    lable: Text('Loại văn bản'),
+                                    hint: '---',
+                                    items: [
+                                      DropdownMenuItem(
+                                        value: 'Luật',
+                                        child: Text('Luật'),
+                                      ),
+                                      DropdownMenuItem(
+                                        value: 'Nghị định',
+                                        child: Text('Nghị định'),
+                                      ),
+                                      DropdownMenuItem(
+                                        value: 'Thông tư',
+                                        child: Text('Thông tư'),
+                                      ),
+                                      DropdownMenuItem(
+                                        value: 'Khác',
+                                        child: Text('Khác'),
+                                      ),
+                                    ],
+                                    onChanged: (value) {
+                                      setState(() => _type = value);
+                                    },
+                                    validator: (p0) => p0 == null || p0.isEmpty
+                                        ? 'Vui lòng chọn loại văn bản'
+                                        : null,
+                                  ),
+                                  CustomInput(
+                                    controller: _descriptionController,
+                                    lable: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        const Text('Mô tả văn bản'),
+                                        Text(
+                                          'Tùy chọn',
+                                          style: TextStyle(color: Colors.grey),
+                                        ),
+                                      ],
+                                    ),
+                                    hintText: 'Nhập mô tả về văn bản này...',
+                                    minLines: 5,
+                                    maxLines: 5,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            CustomCard(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                spacing: 10,
+                                children: [
+                                  const Text(
+                                    'Thời gian',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w700,
+                                      color: Color(0xFF111827),
+                                    ),
+                                  ),
+                                  Row(
+                                    spacing: 10,
+                                    children: [
+                                      Expanded(
+                                        child: CustomDatePicker(
+                                          label: 'Ngày hiệu lực',
+                                          initialDate: _effectiveDate,
+                                          onChanged: (value) => setState(
+                                            () => _effectiveDate = value,
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: CustomDatePicker(
+                                          label: 'Ngày hết hiệu lực',
+                                          initialDate: _expiryDate,
+                                          onChanged: (value) => setState(
+                                            () => _expiryDate = value,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ]),
                   ),
-                  _dropdown(
-                    label: 'Loại văn bản',
-                    value: _type,
-                    items: const ['Luật', 'Nghị định', 'Thông tư'],
-                    onChanged: (v) => setState(() => _type = v!),
-                  ),
                 ),
-                _textField(
-                  controller: _titleCtrl,
-                  label: 'Tên văn bản',
-                  required: true,
+                SliverPadding(
+                  padding: EdgeInsets.only(bottom: _bottomBarHeight),
                 ),
-                _dropdown(
-                  label: 'Trạng thái',
-                  value: _status,
-                  items: const ['active', 'inactive'],
-                  onChanged: (v) => setState(() => _status = v!),
-                ),
-
-                const SizedBox(height: 24),
-                _sectionTitle('Thời gian'),
-                _twoColumn(
-                  _dateField(
-                    label: 'Ngày ban hành',
-                    value: _issueDate,
-                    onPick: (v) => setState(() => _issueDate = v),
-                  ),
-                  _dateField(
-                    label: 'Ngày hiệu lực',
-                    value: _effectiveDate,
-                    onPick: (v) => setState(() => _effectiveDate = v),
-                  ),
-                ),
-                _dateField(
-                  label: 'Ngày hết hiệu lực',
-                  value: _expiryDate,
-                  onPick: (v) => setState(() => _expiryDate = v),
-                  optional: true,
-                ),
-
-                const SizedBox(height: 24),
-                _sectionTitle('Thông tin khác'),
-                _textField(
-                  controller: _issuedByCtrl,
-                  label: 'Cơ quan ban hành',
-                ),
-                _textField(
-                  controller: _descriptionCtrl,
-                  label: 'Mô tả',
-                  maxLines: 4,
-                ),
-
-                const SizedBox(height: 24),
-                _sectionTitle('Tệp đính kèm'),
-                _filePicker(),
-
-                const SizedBox(height: 32),
-                _actions(context),
               ],
             ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  // ===== UI PARTS =====
-
-  Widget _sectionTitle(String text) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Text(
-        text,
-        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-      ),
-    );
-  }
-
-  Widget _twoColumn(Widget left, Widget right) {
-    return LayoutBuilder(
-      builder: (context, c) {
-        if (c.maxWidth < 600) {
-          return Column(children: [left, const SizedBox(height: 12), right]);
-        }
-        return Row(
-          children: [
-            Expanded(child: left),
-            const SizedBox(width: 16),
-            Expanded(child: right),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _textField({
-    required TextEditingController controller,
-    required String label,
-    bool required = false,
-    int maxLines = 1,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: TextFormField(
-        controller: controller,
-        maxLines: maxLines,
-        decoration: InputDecoration(
-          labelText: label,
-          border: const OutlineInputBorder(),
-        ),
-        validator: required
-            ? (v) => v == null || v.isEmpty ? 'Không được để trống' : null
-            : null,
-      ),
-    );
-  }
-
-  Widget _dropdown({
-    required String label,
-    required String value,
-    required List<String> items,
-    required ValueChanged<String?> onChanged,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: DropdownButtonFormField<String>(
-        value: value,
-        decoration: InputDecoration(
-          labelText: label,
-          border: const OutlineInputBorder(),
-        ),
-        items: items
-            .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-            .toList(),
-        onChanged: onChanged,
-      ),
-    );
-  }
-
-  Widget _dateField({
-    required String label,
-    required DateTime? value,
-    required ValueChanged<DateTime?> onPick,
-    bool optional = false,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: InkWell(
-        onTap: () async {
-          final picked = await showDatePicker(
-            context: context,
-            initialDate: value ?? DateTime.now(),
-            firstDate: DateTime(1900),
-            lastDate: DateTime(2100),
-          );
-          if (picked != null) onPick(picked);
-        },
-        child: InputDecorator(
-          decoration: InputDecoration(
-            labelText: label,
-            border: const OutlineInputBorder(),
-          ),
-          child: Text(
-            value != null
-                ? DateFormat('dd/MM/yyyy').format(value)
-                : (optional ? 'Vĩnh viễn' : 'Chọn ngày'),
-            style: TextStyle(
-              color: value != null ? Colors.black : Colors.grey.shade600,
+            BottomFormActions(
+              key: _bottomBarKey,
+              onCancel: () => context.pop(),
+              onSave: () => _onSave(context),
             ),
-          ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _filePicker() {
-    return OutlinedButton.icon(
-      onPressed: () {},
-      icon: const Icon(Icons.attach_file),
-      label: const Text('Chọn tệp (PDF)'),
-    );
-  }
-
-  Widget _actions(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Hủy'),
+  Future<void> _onSave(BuildContext context) async {
+    if (!_formKey.currentState!.validate()) return;
+    if (_expiryDate != null &&
+        _expiryDate!.isBefore(_effectiveDate!.add(const Duration(days: 1)))) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Ngày hết hiệu lực phải sau ngày hiệu lực'),
         ),
-        const SizedBox(width: 12),
-        ElevatedButton(
-          onPressed: () {
-            if (_formKey.currentState!.validate()) {
-              // TODO: submit
-            }
-          },
-          child: Text(_isUpdate ? 'Lưu thay đổi' : 'Tạo mới'),
-        ),
-      ],
-    );
+      );
+      return;
+    }
   }
 }
