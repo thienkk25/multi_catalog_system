@@ -143,29 +143,10 @@ class _ApiKeyManagementFormPageState extends State<ApiKeyManagementFormPage> {
                       ),
                       const SizedBox(height: 20),
                       if (!isView)
-                        Container(
-                          height: 50,
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: Colors.blueAccent),
-                          ),
-                          child: const Row(
-                            spacing: 5,
-                            children: [
-                              Icon(Icons.info, color: Colors.blueAccent),
-                              Text(
-                                'Key sẽ được hệ thống tạo tự động sau khi tạo',
-                                style: TextStyle(
-                                  color: Colors.blueAccent,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
+                        NoteWidget(
+                          icon: Icons.info,
+                          note: 'Key sẽ được hệ thống tạo tự động sau khi tạo',
+                          color: Colors.blueAccent,
                         )
                       else
                         GestureDetector(

@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/config/di/injection.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/features/legal_document/domain/entries/legal_document_entry.dart';
+import 'package:multi_catalog_system/features/legal_document/presentation/bloc/document_file_cubit.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/presentation.dart';
 
 class LegalDocumentRoutes {
@@ -20,12 +21,19 @@ class LegalDocumentRoutes {
       name: RouterNames.legalDocumentForm,
       builder: (context, state) {
         final data = state.extra as Map<String, dynamic>;
-        return LegalDocumentFormPage(
-          type: data['type'] as LegalDocumentFormPageType,
-          entry: data['entry'] as LegalDocumentEntry?,
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider.value(value: data['bloc'] as LegalDocumentBloc),
+            BlocProvider(create: (_) => DocumentFileCubit()),
+          ],
+          child: LegalDocumentFormPage(
+            type: data['type'] as LegalDocumentFormPageType,
+            entry: data['entry'] as LegalDocumentEntry?,
+          ),
         );
       },
     ),
+
     GoRoute(
       path: RouterPaths.legalDocumentDetail,
       name: RouterNames.legalDocumentDetail,

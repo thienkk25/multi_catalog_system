@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
@@ -6,6 +7,8 @@ import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/core/widgets/custom_label.dart';
 import 'package:multi_catalog_system/core/widgets/role_based_widget.dart';
 import 'package:multi_catalog_system/features/legal_document/domain/entries/legal_document_entry.dart';
+import 'package:multi_catalog_system/features/legal_document/presentation/bloc/legal_document_bloc.dart';
+import 'package:multi_catalog_system/features/legal_document/presentation/bloc/legal_document_event.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/pages/legal_document_form_page.dart';
 
 class LegalDocumentCard extends StatelessWidget {
@@ -125,6 +128,7 @@ class LegalDocumentCard extends StatelessWidget {
                     context.pushNamed(
                       RouterNames.legalDocumentForm,
                       extra: {
+                        'bloc': context.read<LegalDocumentBloc>(),
                         'type': LegalDocumentFormPageType.update,
                         'entry': entry,
                       },
@@ -135,7 +139,11 @@ class LegalDocumentCard extends StatelessWidget {
                   icon: Icons.delete_outline,
                   label: 'Xóa',
                   color: const Color(0xFFDC2626),
-                  onPressed: () {},
+                  onPressed: () {
+                    context.read<LegalDocumentBloc>().add(
+                      LegalDocumentEvent.delete(id: entry.id!),
+                    );
+                  },
                 ),
               ],
             ),

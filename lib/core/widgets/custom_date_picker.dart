@@ -39,7 +39,7 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
     final date = await showDatePicker(
       context: context,
       initialDate: _selectedDate ?? now,
-      firstDate: now,
+      firstDate: DateTime(now.year - 5),
       lastDate: DateTime(now.year + 10),
     );
 

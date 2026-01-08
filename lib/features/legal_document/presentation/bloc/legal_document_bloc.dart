@@ -71,7 +71,7 @@ class LegalDocumentBloc extends Bloc<LegalDocumentEvent, LegalDocumentState> {
           state.copyWith(isLoading: true, error: null, successMessage: null),
         );
 
-        final result = await create(e.entry);
+        final result = await create(entry: e.entry, file: e.file);
         if (emit.isDone) return;
 
         result.fold(
@@ -111,7 +111,7 @@ class LegalDocumentBloc extends Bloc<LegalDocumentEvent, LegalDocumentState> {
           state.copyWith(isLoading: true, error: null, successMessage: null),
         );
 
-        final result = await update(e.entry);
+        final result = await update(entry: e.entry, file: e.file);
         if (emit.isDone) return;
 
         result.fold(

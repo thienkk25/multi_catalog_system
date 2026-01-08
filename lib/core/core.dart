@@ -15,3 +15,4 @@ export 'widgets/error_retry_widget.dart';
 export 'widgets/bottom_form_actions.dart';
 export 'widgets/custom_alert_dialog.dart';
 export 'widgets/custom_date_picker.dart';
+export 'widgets/note_widget.dart';

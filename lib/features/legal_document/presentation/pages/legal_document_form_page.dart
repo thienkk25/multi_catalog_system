@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/core.dart';
 import 'package:multi_catalog_system/features/legal_document/domain/entries/legal_document_entry.dart';
+import 'package:multi_catalog_system/features/legal_document/presentation/bloc/document_file_cubit.dart';
+import 'package:multi_catalog_system/features/legal_document/presentation/bloc/legal_document_bloc.dart';
+import 'package:multi_catalog_system/features/legal_document/presentation/bloc/legal_document_event.dart';
+import 'package:multi_catalog_system/features/legal_document/presentation/widgets/legal_document_import_file.dart';
 
 enum LegalDocumentFormPageType { create, update }
 
@@ -20,6 +25,8 @@ class _LegalDocumentFormPageState extends State<LegalDocumentFormPage> {
   final TextEditingController _nameController = TextEditingController();
   String? _type;
   final TextEditingController _descriptionController = TextEditingController();
+  String? _status;
+  DateTime? _issueDate;
   DateTime? _effectiveDate;
   DateTime? _expiryDate;
   final GlobalKey _bottomBarKey = GlobalKey();
@@ -36,6 +43,8 @@ class _LegalDocumentFormPageState extends State<LegalDocumentFormPage> {
       _nameController.text = widget.entry!.title;
       _type = widget.entry!.type;
       _descriptionController.text = widget.entry!.description!;
+      _status = widget.entry!.status;
+      _issueDate = widget.entry!.issueDate;
       _effectiveDate = widget.entry!.effectiveDate;
       _expiryDate = widget.entry!.expiryDate;
     }
@@ -66,168 +75,229 @@ class _LegalDocumentFormPageState extends State<LegalDocumentFormPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: _isEdit
-            ? const Text('Chỉnh sửa văn bản pháp lý')
-            : const Text('Tạo văn bản pháp lý'),
-        centerTitle: true,
-      ),
-      body: SafeArea(
-        child: Stack(
-          children: [
-            CustomScrollView(
-              slivers: [
-                SliverPadding(
-                  padding: const EdgeInsets.all(10),
-                  sliver: SliverList(
-                    delegate: SliverChildListDelegate([
-                      Form(
-                        key: _formKey,
-                        child: Column(
-                          spacing: 10,
-                          children: [
-                            CustomCard(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                spacing: 10,
-                                children: [
-                                  const Text(
-                                    'Thông tin chung',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w700,
-                                      color: Color(0xFF111827),
-                                    ),
-                                  ),
-                                  CustomInput(
-                                    controller: _codeController,
-                                    lable: Text('Mã văn bản'),
-                                    hintText: 'Ví dụ: VBN-1,...',
-                                    validator: (p0) => p0 == null || p0.isEmpty
-                                        ? 'Vui lòng nhập mã văn bản'
-                                        : null,
-                                  ),
-                                  CustomInput(
-                                    controller: _nameController,
-                                    lable: Text('Tên văn bản'),
-                                    hintText: 'Ví dụ: Văn bản...',
-                                    validator: (p0) => p0 == null || p0.isEmpty
-                                        ? 'Vui lòng nhập tên văn bản'
-                                        : null,
-                                  ),
-                                  CustomDropdownButton(
-                                    value: _type,
-                                    lable: Text('Loại văn bản'),
-                                    hint: '---',
-                                    items: [
-                                      DropdownMenuItem(
-                                        value: 'Luật',
-                                        child: Text('Luật'),
-                                      ),
-                                      DropdownMenuItem(
-                                        value: 'Nghị định',
-                                        child: Text('Nghị định'),
-                                      ),
-                                      DropdownMenuItem(
-                                        value: 'Thông tư',
-                                        child: Text('Thông tư'),
-                                      ),
-                                      DropdownMenuItem(
-                                        value: 'Khác',
-                                        child: Text('Khác'),
-                                      ),
-                                    ],
-                                    onChanged: (value) {
-                                      setState(() => _type = value);
-                                    },
-                                    validator: (p0) => p0 == null || p0.isEmpty
-                                        ? 'Vui lòng chọn loại văn bản'
-                                        : null,
-                                  ),
-                                  CustomInput(
-                                    controller: _descriptionController,
-                                    lable: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        const Text('Mô tả văn bản'),
-                                        Text(
-                                          'Tùy chọn',
-                                          style: TextStyle(color: Colors.grey),
-                                        ),
-                                      ],
-                                    ),
-                                    hintText: 'Nhập mô tả về văn bản này...',
-                                    minLines: 5,
-                                    maxLines: 5,
-                                  ),
-                                ],
+    return BlocProvider(
+      create: (_) => DocumentFileCubit(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: _isEdit
+              ? const Text('Chỉnh sửa văn bản pháp lý')
+              : const Text('Tạo văn bản pháp lý'),
+          centerTitle: true,
+        ),
+        body: SafeArea(
+          child: Stack(
+            children: [
+              CustomScrollView(
+                slivers: [
+                  SliverPadding(
+                    padding: const EdgeInsets.all(10),
+                    sliver: SliverList(
+                      delegate: SliverChildListDelegate([
+                        Form(
+                          key: _formKey,
+                          child: Column(
+                            spacing: 10,
+                            children: [
+                              _generalInformation(),
+                              _timeInformation(),
+                              NoteWidget(
+                                icon: Icons.warning_amber_outlined,
+                                note:
+                                    'Ngày ban hành bắt buộc. Ngày hiệu lực bắt buộc và >= ngày ban hành. Ngày hết hiệu lực không chọn là ngày hiệu lực vĩnh viễn',
+                                color: Colors.deepOrangeAccent,
                               ),
-                            ),
-                            CustomCard(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                spacing: 10,
-                                children: [
-                                  const Text(
-                                    'Thời gian',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w700,
-                                      color: Color(0xFF111827),
-                                    ),
-                                  ),
-                                  Row(
-                                    spacing: 10,
-                                    children: [
-                                      Expanded(
-                                        child: CustomDatePicker(
-                                          label: 'Ngày hiệu lực',
-                                          initialDate: _effectiveDate,
-                                          onChanged: (value) => setState(
-                                            () => _effectiveDate = value,
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: CustomDatePicker(
-                                          label: 'Ngày hết hiệu lực',
-                                          initialDate: _expiryDate,
-                                          onChanged: (value) => setState(
-                                            () => _expiryDate = value,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
+                              LegalDocumentImportFile(),
+                            ],
+                          ),
                         ),
-                      ),
-                    ]),
+                      ]),
+                    ),
                   ),
+                  SliverPadding(
+                    padding: EdgeInsets.only(bottom: _bottomBarHeight),
+                  ),
+                ],
+              ),
+              BottomFormActions(
+                key: _bottomBarKey,
+                onCancel: () => context.pop(),
+                onSave: () => _onSave(context),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _generalInformation() {
+    return CustomCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 10,
+        children: [
+          Row(
+            spacing: 5,
+            children: [
+              const Icon(
+                Icons.info_outlined,
+                size: 20,
+                color: Color(0xFF2563EB),
+              ),
+              const Text(
+                'Thông tin chung',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF111827),
                 ),
-                SliverPadding(
-                  padding: EdgeInsets.only(bottom: _bottomBarHeight),
-                ),
+              ),
+            ],
+          ),
+          CustomInput(
+            controller: _codeController,
+            lable: Text('Mã văn bản'),
+            hintText: 'Ví dụ: VBN-1,...',
+            validator: (p0) =>
+                p0 == null || p0.isEmpty ? 'Vui lòng nhập mã văn bản' : null,
+          ),
+          CustomInput(
+            controller: _nameController,
+            lable: Text('Tên văn bản'),
+            hintText: 'Ví dụ: Văn bản...',
+            validator: (p0) =>
+                p0 == null || p0.isEmpty ? 'Vui lòng nhập tên văn bản' : null,
+          ),
+          CustomDropdownButton(
+            value: _type,
+            lable: Text('Loại văn bản'),
+            hint: '---',
+            items: [
+              DropdownMenuItem(value: 'Luật', child: Text('Luật')),
+              DropdownMenuItem(value: 'Nghị định', child: Text('Nghị định')),
+              DropdownMenuItem(value: 'Thông tư', child: Text('Thông tư')),
+              DropdownMenuItem(value: 'Khác', child: Text('Khác')),
+            ],
+            onChanged: (value) {
+              setState(() => _type = value);
+            },
+            validator: (p0) =>
+                p0 == null || p0.isEmpty ? 'Vui lòng chọn loại văn bản' : null,
+          ),
+          CustomDropdownButton(
+            value: _status,
+            lable: Text('Trạng thái'),
+            hint: '---',
+            items: [
+              DropdownMenuItem(value: 'active', child: Text('Hiệu lực')),
+              DropdownMenuItem(value: 'expired', child: Text('Hết hiệu lực')),
+              DropdownMenuItem(
+                value: 'replaced',
+                child: Text('Đã được thay thế'),
+              ),
+              DropdownMenuItem(value: 'revoked', child: Text('Bị thu hồi')),
+            ],
+            onChanged: (value) {
+              setState(() => _status = value);
+            },
+            validator: (p0) =>
+                p0 == null || p0.isEmpty ? 'Vui lòng chọn trạng thái' : null,
+          ),
+          CustomInput(
+            controller: _descriptionController,
+            lable: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('Mô tả văn bản'),
+                Text('Tùy chọn', style: TextStyle(color: Colors.grey)),
               ],
             ),
-            BottomFormActions(
-              key: _bottomBarKey,
-              onCancel: () => context.pop(),
-              onSave: () => _onSave(context),
-            ),
-          ],
-        ),
+            hintText: 'Nhập mô tả về văn bản này...',
+            minLines: 5,
+            maxLines: 5,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _timeInformation() {
+    return CustomCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 10,
+        children: [
+          Row(
+            spacing: 5,
+            children: [
+              const Icon(
+                Icons.timer_outlined,
+                size: 20,
+                color: Color(0xFF2563EB),
+              ),
+              const Text(
+                'Thời gian',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF111827),
+                ),
+              ),
+            ],
+          ),
+          CustomDatePicker(
+            label: 'Ngày ban hành',
+            initialDate: _issueDate,
+            onChanged: (value) => setState(() => _issueDate = value),
+          ),
+          Row(
+            spacing: 10,
+            children: [
+              Expanded(
+                child: CustomDatePicker(
+                  label: 'Ngày hiệu lực',
+                  initialDate: _effectiveDate,
+                  onChanged: (value) => setState(() => _effectiveDate = value),
+                ),
+              ),
+              Expanded(
+                child: CustomDatePicker(
+                  label: 'Ngày hết hiệu lực',
+                  initialDate: _expiryDate,
+                  onChanged: (value) => setState(() => _expiryDate = value),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
 
   Future<void> _onSave(BuildContext context) async {
     if (!_formKey.currentState!.validate()) return;
+    if (_issueDate == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Vui lọc nhập ngày phát hành')),
+      );
+      return;
+    }
+    if (_effectiveDate == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Vui lọc nhập ngày hiệu lực')),
+      );
+      return;
+    }
+    if (_effectiveDate != null && _effectiveDate!.isBefore(_issueDate!)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Ngày hết hiệu lực phải lớn hơn hoặc bằng ngày phát hành',
+          ),
+        ),
+      );
+      return;
+    }
     if (_expiryDate != null &&
         _expiryDate!.isBefore(_effectiveDate!.add(const Duration(days: 1)))) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -237,5 +307,45 @@ class _LegalDocumentFormPageState extends State<LegalDocumentFormPage> {
       );
       return;
     }
+    if (_isEdit) {
+      final data = LegalDocumentEntry(
+        id: widget.entry!.id,
+        code: _codeController.text,
+        title: _nameController.text,
+        type: _type ?? widget.entry!.type,
+        issueDate: _issueDate ?? widget.entry!.issueDate,
+        effectiveDate: _effectiveDate ?? widget.entry!.effectiveDate,
+        expiryDate: _expiryDate ?? widget.entry!.expiryDate,
+        description: _descriptionController.text,
+        status: _status ?? widget.entry!.status,
+        createdAt: widget.entry!.createdAt,
+        updatedAt: DateTime.now(),
+      );
+      context.read<LegalDocumentBloc>().add(
+        LegalDocumentEvent.update(
+          entry: data,
+          file: context.read<DocumentFileCubit>().state.file,
+        ),
+      );
+    } else {
+      final data = LegalDocumentEntry(
+        code: _codeController.text,
+        title: _nameController.text,
+        type: _type!,
+        status: _status,
+        issueDate: _issueDate,
+        effectiveDate: _effectiveDate,
+        expiryDate: _expiryDate,
+        description: _descriptionController.text,
+        createdAt: DateTime.now(),
+      );
+      context.read<LegalDocumentBloc>().add(
+        LegalDocumentEvent.create(
+          entry: data,
+          file: context.read<DocumentFileCubit>().state.file,
+        ),
+      );
+    }
+    context.pop();
   }
 }

@@ -1,15 +1,23 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:multi_catalog_system/core/config/networks/base_remote_data_source.dart';
 import 'package:multi_catalog_system/core/error/exceptions.dart';
 import 'package:multi_catalog_system/features/legal_document/data/models/legal_document_model.dart';
+import 'package:multi_catalog_system/features/legal_document/data/models/picked_document_file.dart';
 
 abstract class LegalDocumentRemoteDataSource {
   Future<List<LegalDocumentModel>> getAll({String? search});
   Future<LegalDocumentModel> getById(String id);
-  Future<LegalDocumentModel> create(LegalDocumentModel entry);
+  Future<LegalDocumentModel> create({
+    required LegalDocumentModel entry,
+    PickedDocumentFile? file,
+  });
   Future<List<LegalDocumentModel>> createMany(List<LegalDocumentModel> entries);
   Future<List<LegalDocumentModel>> upsertMany(List<LegalDocumentModel> entries);
-  Future<LegalDocumentModel> update(LegalDocumentModel entry);
+  Future<LegalDocumentModel> update({
+    required LegalDocumentModel entry,
+    PickedDocumentFile? file,
+  });
   Future<void> delete(String id);
 }
 
@@ -57,10 +65,29 @@ class LegalDocumentRemoteDataSourceImpl extends BaseRemoteDataSource
   }
 
   @override
-  Future<LegalDocumentModel> create(LegalDocumentModel entry) async {
+  Future<LegalDocumentModel> create({
+    required LegalDocumentModel entry,
+    PickedDocumentFile? file,
+  }) async {
     try {
+      final formData = FormData();
+
       final data = entry.toJson()..remove('id');
-      final response = await dio.post('/legal-document', data: data);
+      data.forEach((key, value) {
+        if (value != null) {
+          formData.fields.add(MapEntry(key, value.toString()));
+        }
+      });
+
+      if (file != null) {
+        formData.files.add(MapEntry('file', await _mapToMultipartFile(file)));
+      }
+
+      final response = await dio.post(
+        '/legal-document',
+        data: formData,
+        options: Options(contentType: 'multipart/form-data'),
+      );
       return LegalDocumentModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);
@@ -111,9 +138,12 @@ class LegalDocumentRemoteDataSourceImpl extends BaseRemoteDataSource
   }
 
   @override
-  Future<LegalDocumentModel> update(LegalDocumentModel entry) async {
+  Future<LegalDocumentModel> update({
+    required LegalDocumentModel entry,
+    PickedDocumentFile? file,
+  }) async {
     try {
-      final response = await dio.put(
+      final response = await dio.patch(
         '/legal-document/${entry.id}',
         data: entry.toJson(),
       );
@@ -133,6 +163,14 @@ class LegalDocumentRemoteDataSourceImpl extends BaseRemoteDataSource
       await dio.delete('/legal-document/$id');
     } catch (e) {
       throw UnexpectedException(e.toString());
+    }
+  }
+
+  Future<MultipartFile> _mapToMultipartFile(PickedDocumentFile file) async {
+    if (kIsWeb) {
+      return MultipartFile.fromBytes(file.bytes!, filename: file.name);
+    } else {
+      return await MultipartFile.fromFile(file.file!.path, filename: file.name);
     }
   }
 }

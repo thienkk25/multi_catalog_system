@@ -3,6 +3,7 @@ import 'package:multi_catalog_system/core/error/exceptions.dart';
 import 'package:multi_catalog_system/core/error/failures.dart';
 import 'package:multi_catalog_system/features/legal_document/data/data_sources/legal_document_remote_data_source.dart';
 import 'package:multi_catalog_system/features/legal_document/data/models/legal_document_model.dart';
+import 'package:multi_catalog_system/features/legal_document/data/models/picked_document_file.dart';
 import 'package:multi_catalog_system/features/legal_document/domain/domain.dart';
 
 class LegalDocumentRepositoryImpl implements LegalDocumentRepository {
@@ -11,12 +12,14 @@ class LegalDocumentRepositoryImpl implements LegalDocumentRepository {
   LegalDocumentRepositoryImpl({required this.remoteDataSource});
 
   @override
-  Future<Either<Failure, LegalDocumentEntry>> create(
-    LegalDocumentEntry entry,
-  ) async {
+  Future<Either<Failure, LegalDocumentEntry>> create({
+    required LegalDocumentEntry entry,
+    PickedDocumentFile? file,
+  }) async {
     try {
       final model = await remoteDataSource.create(
-        LegalDocumentModel.fromEntity(entry),
+        entry: LegalDocumentModel.fromEntity(entry),
+        file: file,
       );
       return Right(model.toEntity());
     } on ServerException catch (e) {
@@ -69,12 +72,14 @@ class LegalDocumentRepositoryImpl implements LegalDocumentRepository {
   }
 
   @override
-  Future<Either<Failure, LegalDocumentEntry>> update(
-    LegalDocumentEntry entry,
-  ) async {
+  Future<Either<Failure, LegalDocumentEntry>> update({
+    required LegalDocumentEntry entry,
+    PickedDocumentFile? file,
+  }) async {
     try {
       final model = await remoteDataSource.update(
-        LegalDocumentModel.fromEntity(entry),
+        entry: LegalDocumentModel.fromEntity(entry),
+        file: file,
       );
       return Right(model.toEntity());
     } on ServerException catch (e) {
