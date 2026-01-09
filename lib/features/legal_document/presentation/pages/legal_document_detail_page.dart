@@ -1,12 +1,9 @@
-import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/core/widgets/custom_label.dart';
 import 'package:multi_catalog_system/features/legal_document/domain/entries/legal_document_entry.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LegalDocumentDetailPage extends StatelessWidget {
   final LegalDocumentEntry entry;
@@ -69,7 +66,10 @@ class LegalDocumentDetailPage extends StatelessWidget {
                   icon: Icons.attach_file,
                   child: InkWell(
                     borderRadius: BorderRadius.circular(10),
-                    onTap: () {},
+                    onTap: () async {
+                      final uri = Uri.parse(entry.fileUrl!);
+                      await launchUrl(uri);
+                    },
                     child: Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
@@ -91,25 +91,6 @@ class LegalDocumentDetailPage extends StatelessWidget {
                               ),
                             ),
                           ),
-                          if (!kIsWeb)
-                            InkWell(
-                              borderRadius: BorderRadius.circular(10),
-                              onTap: () async {
-                                final dir =
-                                    await getApplicationDocumentsDirectory();
-                                final filePath =
-                                    '${dir.path}/${entry.fileName}';
-                                await Dio().download(entry.fileUrl!, filePath);
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: SvgPicture.asset(
-                                  'assets/icons/download-alt-svgrepo-com.svg',
-                                  height: 30,
-                                  width: 30,
-                                ),
-                              ),
-                            ),
                         ],
                       ),
                     ),
@@ -226,7 +207,7 @@ class _InfoGrid extends StatelessWidget {
               crossAxisCount: 2,
               mainAxisSpacing: 12,
               crossAxisSpacing: 12,
-              childAspectRatio: 3.2,
+              childAspectRatio: 2,
             ),
             itemBuilder: (_, i) => _InfoItem(items[i]),
           ),
