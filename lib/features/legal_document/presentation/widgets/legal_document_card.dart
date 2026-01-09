@@ -63,9 +63,9 @@ class LegalDocumentCard extends StatelessWidget {
           const Divider(height: 24, thickness: 1, color: Color(0xFFD1D5DB)),
 
           _InfoRow(
-            icon: Icons.account_balance_outlined,
-            label: 'Cơ quan ban hành',
-            value: entry.issuedBy ?? '—',
+            icon: Icons.person_2_outlined,
+            label: 'Người ban hành',
+            value: entry.issuedByName ?? '—',
           ),
           _InfoRow(
             icon: Icons.event_note_outlined,

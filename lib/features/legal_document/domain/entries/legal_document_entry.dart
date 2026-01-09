@@ -3,7 +3,7 @@ class LegalDocumentEntry {
   final String code;
   final String title;
   final String type;
-  final String? issuedBy;
+  final String? issuedByName;
   final DateTime? issueDate;
   final DateTime? effectiveDate;
   final DateTime? expiryDate;
@@ -19,7 +19,7 @@ class LegalDocumentEntry {
     required this.code,
     required this.title,
     required this.type,
-    this.issuedBy,
+    this.issuedByName,
     this.issueDate,
     this.effectiveDate,
     this.expiryDate,
