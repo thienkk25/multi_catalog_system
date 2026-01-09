@@ -36,7 +36,16 @@ class LegalDocumentRoutes {
     GoRoute(
       path: RouterPaths.legalDocumentDetail,
       name: RouterNames.legalDocumentDetail,
-      builder: (context, state) => const LegalDocumentDetailPage(),
+      builder: (context, state) {
+        final id = state.pathParameters['id']!;
+        final entry = state.extra as LegalDocumentEntry;
+        return BlocProvider(
+          create: (_) =>
+              getIt<LegalDocumentBloc>()
+                ..add(LegalDocumentEvent.getById(id: id)),
+          child: LegalDocumentDetailPage(entry: entry),
+        );
+      },
     ),
   ];
 }

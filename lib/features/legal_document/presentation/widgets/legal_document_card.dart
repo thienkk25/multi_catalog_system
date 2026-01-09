@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
@@ -90,28 +91,44 @@ class LegalDocumentCard extends StatelessWidget {
           const SizedBox(height: 16),
 
           if (entry.fileUrl != null && entry.fileName != null)
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF1F5F9),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.picture_as_pdf_outlined,
-                    color: Color(0xFFDC2626),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      entry.fileName!,
-                      style: const TextStyle(fontWeight: FontWeight.w600),
+            InkWell(
+              borderRadius: BorderRadius.circular(10),
+              onTap: () {
+                print('open file');
+              },
+              child: Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.grey.withValues(alpha: .15),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Colors.blue.withValues(alpha: .5)),
+                ),
+                child: Row(
+                  spacing: 8,
+                  children: [
+                    _getFileIcon(entry.fileName!),
+                    Expanded(
+                      child: Text(
+                        entry.fileName!,
+                        style: const TextStyle(fontWeight: FontWeight.w600),
+                      ),
                     ),
-                  ),
-                  TextButton(onPressed: () {}, child: const Text('Xem')),
-                  TextButton(onPressed: () {}, child: const Text('Tải')),
-                ],
+                    InkWell(
+                      borderRadius: BorderRadius.circular(10),
+                      onTap: () {
+                        print('download');
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: SvgPicture.asset(
+                          'assets/icons/download-alt-svgrepo-com.svg',
+                          height: 30,
+                          width: 30,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           const SizedBox(height: 10),
@@ -194,6 +211,40 @@ class LegalDocumentCard extends StatelessWidget {
       default:
         return const Color(0xFF6B7280);
     }
+  }
+
+  Widget _getFileIcon(String fileName) {
+    final ext = fileName.split('.').last.toLowerCase();
+
+    late IconData icon;
+    late Color color;
+    Widget? iconCustom;
+
+    switch (ext) {
+      case 'pdf':
+        icon = Icons.picture_as_pdf;
+        color = Colors.red;
+        break;
+
+      case 'doc':
+      case 'docx':
+        icon = Icons.description;
+        color = Colors.blue;
+        break;
+
+      default:
+        icon = Icons.insert_drive_file;
+        color = Colors.grey;
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(50),
+        color: color.withValues(alpha: .15),
+      ),
+      child: iconCustom ?? Icon(icon, color: color),
+    );
   }
 }
 
