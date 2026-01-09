@@ -1,3 +1,5 @@
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -12,6 +14,8 @@ import 'package:multi_catalog_system/features/legal_document/domain/entries/lega
 import 'package:multi_catalog_system/features/legal_document/presentation/bloc/legal_document_bloc.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/bloc/legal_document_event.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/pages/legal_document_form_page.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LegalDocumentCard extends StatelessWidget {
   final LegalDocumentEntry entry;
@@ -93,8 +97,9 @@ class LegalDocumentCard extends StatelessWidget {
           if (entry.fileUrl != null && entry.fileName != null)
             InkWell(
               borderRadius: BorderRadius.circular(10),
-              onTap: () {
-                print('open file');
+              onTap: () async {
+                final uri = Uri.parse(entry.fileUrl!);
+                await launchUrl(uri);
               },
               child: Container(
                 padding: const EdgeInsets.all(10),
@@ -113,20 +118,23 @@ class LegalDocumentCard extends StatelessWidget {
                         style: const TextStyle(fontWeight: FontWeight.w600),
                       ),
                     ),
-                    InkWell(
-                      borderRadius: BorderRadius.circular(10),
-                      onTap: () {
-                        print('download');
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: SvgPicture.asset(
-                          'assets/icons/download-alt-svgrepo-com.svg',
-                          height: 30,
-                          width: 30,
+                    if (!kIsWeb)
+                      InkWell(
+                        borderRadius: BorderRadius.circular(10),
+                        onTap: () async {
+                          final dir = await getApplicationDocumentsDirectory();
+                          final filePath = '${dir.path}/${entry.fileName}';
+                          await Dio().download(entry.fileUrl!, filePath);
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: SvgPicture.asset(
+                            'assets/icons/download-alt-svgrepo-com.svg',
+                            height: 30,
+                            width: 30,
+                          ),
                         ),
                       ),
-                    ),
                   ],
                 ),
               ),
