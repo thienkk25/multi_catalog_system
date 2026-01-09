@@ -10,8 +10,19 @@ import 'document_file_state.dart';
 class DocumentFileCubit extends Cubit<DocumentFileState> {
   DocumentFileCubit() : super(const DocumentFileState());
 
+  void setRemoteFile(String? fileName) {
+    emit(state.copyWith(remoteFileName: fileName));
+  }
+
   Future<void> pickFile() async {
-    emit(state.copyWith(isLoading: true, error: null));
+    emit(
+      state.copyWith(
+        isLoading: true,
+        error: null,
+        clearFile: true,
+        clearRemote: true,
+      ),
+    );
 
     try {
       final result = await FilePicker.platform.pickFiles(
@@ -36,7 +47,7 @@ class DocumentFileCubit extends Cubit<DocumentFileState> {
       );
 
       emit(state.copyWith(isLoading: false, file: file));
-    } catch (e) {
+    } catch (_) {
       emit(state.copyWith(isLoading: false, error: 'Không thể chọn tệp'));
     }
   }

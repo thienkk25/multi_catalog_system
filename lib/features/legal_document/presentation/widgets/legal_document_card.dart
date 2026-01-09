@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
+import 'package:multi_catalog_system/core/widgets/custom_alert_dialog.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/core/widgets/custom_label.dart';
 import 'package:multi_catalog_system/core/widgets/role_based_widget.dart';
@@ -88,7 +89,7 @@ class LegalDocumentCard extends StatelessWidget {
 
           const SizedBox(height: 16),
 
-          if (entry.fileUrl != null)
+          if (entry.fileUrl != null && entry.fileName != null)
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
@@ -104,7 +105,7 @@ class LegalDocumentCard extends StatelessWidget {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      _fileName(entry.fileUrl!),
+                      entry.fileName!,
                       style: const TextStyle(fontWeight: FontWeight.w600),
                     ),
                   ),
@@ -140,8 +141,15 @@ class LegalDocumentCard extends StatelessWidget {
                   label: 'Xóa',
                   color: const Color(0xFFDC2626),
                   onPressed: () {
-                    context.read<LegalDocumentBloc>().add(
-                      LegalDocumentEvent.delete(id: entry.id!),
+                    final bloc = context.read<LegalDocumentBloc>();
+                    showDialog(
+                      context: context,
+                      builder: (context) => CustomAlertDialog(
+                        onConfirm: () {
+                          context.pop();
+                          bloc.add(LegalDocumentEvent.delete(id: entry.id!));
+                        },
+                      ),
                     );
                   },
                 ),
@@ -156,10 +164,6 @@ class LegalDocumentCard extends StatelessWidget {
   String _formatDate(DateTime? date) {
     if (date == null) return 'Vĩnh viễn';
     return DateFormat('dd/MM/yyyy').format(date);
-  }
-
-  String _fileName(String url) {
-    return Uri.parse(url).pathSegments.last;
   }
 
   String _statusText(String? status) {

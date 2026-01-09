@@ -8,6 +8,7 @@ class LegalDocumentEntry {
   final DateTime? effectiveDate;
   final DateTime? expiryDate;
   final String? description;
+  final String? fileName;
   final String? fileUrl;
   final String? status;
   final DateTime createdAt;
@@ -23,6 +24,7 @@ class LegalDocumentEntry {
     this.effectiveDate,
     this.expiryDate,
     this.description,
+    this.fileName,
     this.fileUrl,
     this.status,
     required this.createdAt,

@@ -72,22 +72,30 @@ class LegalDocumentRemoteDataSourceImpl extends BaseRemoteDataSource
     try {
       final formData = FormData();
 
-      final data = entry.toJson()..remove('id');
-      data.forEach((key, value) {
-        if (value != null) {
+      entry.toJson()
+        ..remove('id')
+        ..removeWhere((key, value) => value == null || value == '')
+        ..forEach((key, value) {
           formData.fields.add(MapEntry(key, value.toString()));
-        }
-      });
+        });
 
       if (file != null) {
-        formData.files.add(MapEntry('file', await _mapToMultipartFile(file)));
+        final multipartFile = kIsWeb
+            ? MultipartFile.fromBytes(file.bytes!, filename: file.name)
+            : await MultipartFile.fromFile(
+                file.file!.path,
+                filename: file.name,
+              );
+
+        formData.files.add(MapEntry('file', multipartFile));
       }
 
       final response = await dio.post(
         '/legal-document',
         data: formData,
-        options: Options(contentType: 'multipart/form-data'),
+        options: Options(contentType: Headers.multipartFormDataContentType),
       );
+
       return LegalDocumentModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);
@@ -143,9 +151,29 @@ class LegalDocumentRemoteDataSourceImpl extends BaseRemoteDataSource
     PickedDocumentFile? file,
   }) async {
     try {
+      final formData = FormData();
+
+      entry.toJson()
+        ..removeWhere((key, value) => value == null || value == '')
+        ..forEach((key, value) {
+          formData.fields.add(MapEntry(key, value.toString()));
+        });
+
+      if (file != null) {
+        final multipartFile = kIsWeb
+            ? MultipartFile.fromBytes(file.bytes!, filename: file.name)
+            : await MultipartFile.fromFile(
+                file.file!.path,
+                filename: file.name,
+              );
+
+        formData.files.add(MapEntry('file', multipartFile));
+      }
+
       final response = await dio.patch(
         '/legal-document/${entry.id}',
-        data: entry.toJson(),
+        data: formData,
+        options: Options(contentType: Headers.multipartFormDataContentType),
       );
       return LegalDocumentModel.fromJson(response.data['data']);
     } on DioException catch (e) {
@@ -163,14 +191,6 @@ class LegalDocumentRemoteDataSourceImpl extends BaseRemoteDataSource
       await dio.delete('/legal-document/$id');
     } catch (e) {
       throw UnexpectedException(e.toString());
-    }
-  }
-
-  Future<MultipartFile> _mapToMultipartFile(PickedDocumentFile file) async {
-    if (kIsWeb) {
-      return MultipartFile.fromBytes(file.bytes!, filename: file.name);
-    } else {
-      return await MultipartFile.fromFile(file.file!.path, filename: file.name);
     }
   }
 }

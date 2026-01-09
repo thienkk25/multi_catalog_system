@@ -36,7 +36,7 @@ class LegalDocumentImportFile extends StatelessWidget {
               if (state.error != null)
                 Text(state.error!, style: const TextStyle(color: Colors.red)),
               const SizedBox(height: 12),
-              state.file == null
+              state.file == null && state.remoteFileName == null
                   ? InkWell(
                       borderRadius: BorderRadius.circular(12),
                       onTap: state.isLoading
@@ -104,7 +104,9 @@ class LegalDocumentImportFile extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         spacing: 10,
                         children: [
-                          _getFileIcon(state.file!.name),
+                          _getFileIcon(
+                            state.remoteFileName ?? state.file!.name,
+                          ),
 
                           Expanded(
                             child: Column(
@@ -112,16 +114,17 @@ class LegalDocumentImportFile extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  state.file!.name,
+                                  state.remoteFileName ?? state.file!.name,
                                   style: TextStyle(
                                     fontWeight: FontWeight(600),
                                     fontSize: 16,
                                   ),
                                 ),
-                                Text(
-                                  _formatFileSize(state.file!.size),
-                                  style: TextStyle(color: Colors.grey),
-                                ),
+                                if (state.remoteFileName == null)
+                                  Text(
+                                    _formatFileSize(state.file!.size),
+                                    style: TextStyle(color: Colors.grey),
+                                  ),
                               ],
                             ),
                           ),

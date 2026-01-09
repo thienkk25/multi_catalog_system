@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'package:multi_catalog_system/features/legal_document/data/data.dart';
 import 'package:multi_catalog_system/features/legal_document/domain/domain.dart';
+import 'package:multi_catalog_system/features/legal_document/presentation/bloc/document_file_cubit.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/bloc/legal_document_bloc.dart';
 
 void initLegalDocumentModule() {
@@ -46,4 +47,6 @@ void initLegalDocumentModule() {
       upsertMany: getIt<UpsertManyLegalDocumentUseCase>(),
     ),
   );
+
+  getIt.registerFactory(() => DocumentFileCubit());
 }

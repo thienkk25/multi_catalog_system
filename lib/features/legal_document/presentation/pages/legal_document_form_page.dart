@@ -42,12 +42,15 @@ class _LegalDocumentFormPageState extends State<LegalDocumentFormPage> {
       _codeController.text = widget.entry!.code;
       _nameController.text = widget.entry!.title;
       _type = widget.entry!.type;
-      _descriptionController.text = widget.entry!.description!;
+      _descriptionController.text = widget.entry!.description ?? '';
       _status = widget.entry!.status;
       _issueDate = widget.entry!.issueDate;
       _effectiveDate = widget.entry!.effectiveDate;
       _expiryDate = widget.entry!.expiryDate;
     }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<DocumentFileCubit>().setRemoteFile(widget.entry?.fileName);
+    });
   }
 
   @override
@@ -75,56 +78,53 @@ class _LegalDocumentFormPageState extends State<LegalDocumentFormPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => DocumentFileCubit(),
-      child: Scaffold(
-        appBar: AppBar(
-          title: _isEdit
-              ? const Text('Chỉnh sửa văn bản pháp lý')
-              : const Text('Tạo văn bản pháp lý'),
-          centerTitle: true,
-        ),
-        body: SafeArea(
-          child: Stack(
-            children: [
-              CustomScrollView(
-                slivers: [
-                  SliverPadding(
-                    padding: const EdgeInsets.all(10),
-                    sliver: SliverList(
-                      delegate: SliverChildListDelegate([
-                        Form(
-                          key: _formKey,
-                          child: Column(
-                            spacing: 10,
-                            children: [
-                              _generalInformation(),
-                              _timeInformation(),
-                              NoteWidget(
-                                icon: Icons.warning_amber_outlined,
-                                note:
-                                    'Ngày ban hành bắt buộc. Ngày hiệu lực bắt buộc và >= ngày ban hành. Ngày hết hiệu lực không chọn là ngày hiệu lực vĩnh viễn',
-                                color: Colors.deepOrangeAccent,
-                              ),
-                              LegalDocumentImportFile(),
-                            ],
-                          ),
+    return Scaffold(
+      appBar: AppBar(
+        title: _isEdit
+            ? const Text('Chỉnh sửa văn bản pháp lý')
+            : const Text('Tạo văn bản pháp lý'),
+        centerTitle: true,
+      ),
+      body: SafeArea(
+        child: Stack(
+          children: [
+            CustomScrollView(
+              slivers: [
+                SliverPadding(
+                  padding: const EdgeInsets.all(10),
+                  sliver: SliverList(
+                    delegate: SliverChildListDelegate([
+                      Form(
+                        key: _formKey,
+                        child: Column(
+                          spacing: 10,
+                          children: [
+                            _generalInformation(),
+                            _timeInformation(),
+                            NoteWidget(
+                              icon: Icons.warning_amber_outlined,
+                              note:
+                                  'Ngày ban hành bắt buộc. Ngày hiệu lực bắt buộc và >= ngày ban hành. Ngày hết hiệu lực không chọn là ngày hiệu lực vĩnh viễn',
+                              color: Colors.deepOrangeAccent,
+                            ),
+                            LegalDocumentImportFile(),
+                          ],
                         ),
-                      ]),
-                    ),
+                      ),
+                    ]),
                   ),
-                  SliverPadding(
-                    padding: EdgeInsets.only(bottom: _bottomBarHeight),
-                  ),
-                ],
-              ),
-              BottomFormActions(
-                key: _bottomBarKey,
-                onCancel: () => context.pop(),
-                onSave: () => _onSave(context),
-              ),
-            ],
-          ),
+                ),
+                SliverPadding(
+                  padding: EdgeInsets.only(bottom: _bottomBarHeight),
+                ),
+              ],
+            ),
+            BottomFormActions(
+              key: _bottomBarKey,
+              onCancel: () => context.pop(),
+              onSave: () => _onSave(context),
+            ),
+          ],
         ),
       ),
     );
@@ -318,6 +318,8 @@ class _LegalDocumentFormPageState extends State<LegalDocumentFormPage> {
         expiryDate: _expiryDate ?? widget.entry!.expiryDate,
         description: _descriptionController.text,
         status: _status ?? widget.entry!.status,
+        fileName: widget.entry?.fileName,
+        fileUrl: widget.entry?.fileUrl,
         createdAt: widget.entry!.createdAt,
         updatedAt: DateTime.now(),
       );

@@ -105,6 +105,7 @@ class AuthRepositoryImpl implements AuthRepository {
     } on CacheException catch (e) {
       return Left(CacheFailure(message: e.message));
     } on UnexpectedException catch (e) {
+      await authLocalDataSource.clearAuthToken();
       return Left(UnexpectedFailure(e.message));
     }
   }

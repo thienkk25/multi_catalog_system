@@ -24,7 +24,7 @@ class LegalDocumentRoutes {
         return MultiBlocProvider(
           providers: [
             BlocProvider.value(value: data['bloc'] as LegalDocumentBloc),
-            BlocProvider(create: (_) => DocumentFileCubit()),
+            BlocProvider(create: (_) => getIt<DocumentFileCubit>()),
           ],
           child: LegalDocumentFormPage(
             type: data['type'] as LegalDocumentFormPageType,
