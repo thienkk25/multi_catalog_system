@@ -20,30 +20,43 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (_) => getIt<HomeBloc>()),
-        BlocProvider(
-          create: (_) =>
-              getIt<CatalogLookupBloc>()
-                ..add(const CatalogLookupEvent.getDomainsRef()),
-        ),
-        BlocProvider(
-          create: (_) =>
-              getIt<AuthBloc>()..add(const AuthEvent.checkAuthenticated()),
-        ),
-      ],
-      child: MaterialApp.router(
-        title: '',
-        theme: ThemeData(
-          scaffoldBackgroundColor: Color(0xFFF5F7FA),
-          appBarTheme: AppBarTheme(
-            backgroundColor: Colors.blue,
-            foregroundColor: Colors.white,
-          ),
-        ),
-        routerConfig: AppRouter.router,
-        debugShowCheckedModeBanner: false,
+    return BlocProvider(
+      create: (_) =>
+          getIt<AuthBloc>()..add(const AuthEvent.checkAuthenticated()),
+      child: BlocBuilder<AuthBloc, AuthState>(
+        builder: (context, authState) {
+          final authKey = authState.maybeMap(
+            authenticated: (_) =>
+                'auth_${DateTime.now().millisecondsSinceEpoch}',
+            unauthenticated: (_) =>
+                'unauth_${DateTime.now().millisecondsSinceEpoch}',
+            orElse: () => 'initial',
+          );
+
+          return MultiBlocProvider(
+            key: ValueKey(authKey),
+            providers: [
+              BlocProvider(create: (_) => getIt<HomeBloc>()),
+              BlocProvider(
+                create: (_) =>
+                    getIt<CatalogLookupBloc>()
+                      ..add(const CatalogLookupEvent.getDomainsRef()),
+              ),
+            ],
+            child: MaterialApp.router(
+              title: '',
+              theme: ThemeData(
+                scaffoldBackgroundColor: Color(0xFFF5F7FA),
+                appBarTheme: AppBarTheme(
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.white,
+                ),
+              ),
+              routerConfig: AppRouter.router,
+              debugShowCheckedModeBanner: false,
+            ),
+          );
+        },
       ),
     );
   }

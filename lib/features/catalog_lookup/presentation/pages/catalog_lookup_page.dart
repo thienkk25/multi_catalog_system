@@ -88,6 +88,9 @@ class _CategoryLookupPageState extends State<CategoryLookupPage>
                               ),
                             );
                           },
+                          validator: (v) => v == null || v.isEmpty
+                              ? 'Vui nhập chọn lĩnh vực'
+                              : null,
                         ),
                         CustomDropdownButton<String>(
                           lable: const Text(
@@ -109,6 +112,9 @@ class _CategoryLookupPageState extends State<CategoryLookupPage>
                               _selectedCategoryGroupId = value;
                             });
                           },
+                          validator: (v) => v == null || v.isEmpty
+                              ? 'Vui nhập chọn nhóm danh mục'
+                              : null,
                         ),
                         CustomButton(
                           colorBackground: Colors.blue,

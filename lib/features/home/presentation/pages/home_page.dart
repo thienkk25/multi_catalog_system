@@ -83,7 +83,10 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
-        state.mapOrNull(unauthenticated: (_) => _clearCache());
+        state.mapOrNull(
+          authenticated: (_) => _clearCache(),
+          unauthenticated: (_) => _clearCache(),
+        );
       },
       child: BlocBuilder<HomeBloc, HomeState>(
         builder: (context, state) {
