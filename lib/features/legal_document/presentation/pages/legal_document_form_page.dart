@@ -25,7 +25,6 @@ class _LegalDocumentFormPageState extends State<LegalDocumentFormPage> {
   final TextEditingController _nameController = TextEditingController();
   String? _type;
   final TextEditingController _descriptionController = TextEditingController();
-  String? _status;
   DateTime? _issueDate;
   DateTime? _effectiveDate;
   DateTime? _expiryDate;
@@ -43,7 +42,6 @@ class _LegalDocumentFormPageState extends State<LegalDocumentFormPage> {
       _nameController.text = widget.entry!.title;
       _type = widget.entry!.type;
       _descriptionController.text = widget.entry!.description ?? '';
-      _status = widget.entry!.status;
       _issueDate = widget.entry!.issueDate;
       _effectiveDate = widget.entry!.effectiveDate;
       _expiryDate = widget.entry!.expiryDate;
@@ -184,25 +182,6 @@ class _LegalDocumentFormPageState extends State<LegalDocumentFormPage> {
             validator: (p0) =>
                 p0 == null || p0.isEmpty ? 'Vui lòng chọn loại văn bản' : null,
           ),
-          CustomDropdownButton(
-            value: _status,
-            lable: Text('Trạng thái'),
-            hint: '---',
-            items: [
-              DropdownMenuItem(value: 'active', child: Text('Hiệu lực')),
-              DropdownMenuItem(value: 'expired', child: Text('Hết hiệu lực')),
-              DropdownMenuItem(
-                value: 'replaced',
-                child: Text('Đã được thay thế'),
-              ),
-              DropdownMenuItem(value: 'revoked', child: Text('Bị thu hồi')),
-            ],
-            onChanged: (value) {
-              setState(() => _status = value);
-            },
-            validator: (p0) =>
-                p0 == null || p0.isEmpty ? 'Vui lòng chọn trạng thái' : null,
-          ),
           CustomInput(
             controller: _descriptionController,
             lable: Row(
@@ -255,6 +234,7 @@ class _LegalDocumentFormPageState extends State<LegalDocumentFormPage> {
             children: [
               Expanded(
                 child: CustomDatePicker(
+                  icon: Icons.event_available,
                   label: 'Ngày hiệu lực',
                   initialDate: _effectiveDate,
                   onChanged: (value) => setState(() => _effectiveDate = value),
@@ -262,6 +242,7 @@ class _LegalDocumentFormPageState extends State<LegalDocumentFormPage> {
               ),
               Expanded(
                 child: CustomDatePicker(
+                  icon: Icons.event_busy,
                   label: 'Ngày hết hiệu lực',
                   initialDate: _expiryDate,
                   onChanged: (value) => setState(() => _expiryDate = value),
@@ -317,7 +298,6 @@ class _LegalDocumentFormPageState extends State<LegalDocumentFormPage> {
         effectiveDate: _effectiveDate ?? widget.entry!.effectiveDate,
         expiryDate: _expiryDate ?? widget.entry!.expiryDate,
         description: _descriptionController.text,
-        status: _status ?? widget.entry!.status,
         fileName: widget.entry?.fileName,
         fileUrl: widget.entry?.fileUrl,
         createdAt: widget.entry!.createdAt,
@@ -334,7 +314,6 @@ class _LegalDocumentFormPageState extends State<LegalDocumentFormPage> {
         code: _codeController.text,
         title: _nameController.text,
         type: _type!,
-        status: _status,
         issueDate: _issueDate,
         effectiveDate: _effectiveDate,
         expiryDate: _expiryDate,

@@ -105,7 +105,6 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
                               context.pushNamed(
                                 RouterNames.legalDocumentDetail,
                                 pathParameters: {'id': ?entry.id},
-                                extra: entry,
                               );
                             },
                             child: LegalDocumentCard(entry: entry),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class CustomDatePicker extends StatefulWidget {
+  final IconData? icon;
   final String label;
   final DateTime? initialDate;
   final ValueChanged<DateTime>? onChanged;
@@ -11,6 +12,7 @@ class CustomDatePicker extends StatefulWidget {
     required this.label,
     this.initialDate,
     this.onChanged,
+    this.icon,
   });
 
   @override
@@ -71,7 +73,10 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
         child: Row(
           spacing: 12,
           children: [
-            const Icon(Icons.calendar_today_outlined),
+            Icon(
+              widget.icon ?? Icons.calendar_today_outlined,
+              color: Colors.blue,
+            ),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

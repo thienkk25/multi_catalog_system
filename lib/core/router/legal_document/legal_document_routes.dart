@@ -38,12 +38,11 @@ class LegalDocumentRoutes {
       name: RouterNames.legalDocumentDetail,
       builder: (context, state) {
         final id = state.pathParameters['id']!;
-        final entry = state.extra as LegalDocumentEntry;
         return BlocProvider(
           create: (_) =>
               getIt<LegalDocumentBloc>()
                 ..add(LegalDocumentEvent.getById(id: id)),
-          child: LegalDocumentDetailPage(entry: entry),
+          child: LegalDocumentDetailPage(),
         );
       },
     ),

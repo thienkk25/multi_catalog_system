@@ -66,7 +66,7 @@ class LegalDocumentCard extends StatelessWidget {
           _InfoRow(
             icon: Icons.person_2_outlined,
             label: 'Người ban hành',
-            value: entry.issuedByName ?? '—',
+            value: entry.issuedByName ?? 'Đang cập nhật...',
           ),
           _InfoRow(
             icon: Icons.event_note_outlined,
@@ -176,10 +176,10 @@ class LegalDocumentCard extends StatelessWidget {
         return 'Hiệu lực';
       case 'expired':
         return 'Hết hiệu lực';
-      case 'replaced':
-        return 'Đã được thay thế';
+      case 'issued':
+        return 'Ban hành';
       case 'revoked':
-        return 'Bị thu hồi';
+        return 'Thu hồi';
       default:
         return '—';
     }

@@ -56,11 +56,8 @@ class LegalDocumentBloc extends Bloc<LegalDocumentEvent, LegalDocumentState> {
 
         result.fold(
           (f) => emit(state.copyWith(isLoading: false, error: _mapFailure(f))),
-          (domain) {
-            final updated = [
-              for (final d in state.entities)
-                if (d.id == domain.id) domain else d,
-            ];
+          (entry) {
+            final updated = [entry];
             emit(state.copyWith(isLoading: false, entities: updated));
           },
         );
