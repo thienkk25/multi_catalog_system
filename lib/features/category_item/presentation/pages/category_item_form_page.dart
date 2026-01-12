@@ -10,6 +10,8 @@ import 'package:multi_catalog_system/core/widgets/file_icon.dart';
 import 'package:multi_catalog_system/features/catalog_lookup/presentation/bloc/catalog_lookup_bloc.dart';
 import 'package:multi_catalog_system/features/catalog_lookup/presentation/bloc/catalog_lookup_event.dart';
 import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_entry.dart';
+import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_bloc.dart';
+import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_event.dart';
 import 'package:multi_catalog_system/features/legal_document/domain/entries/legal_document_entry.dart';
 
 enum CategoryItemFormType { create, update }
@@ -25,6 +27,9 @@ class CategoryItemFormPage extends StatefulWidget {
 
 class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _codeController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
   List _domains = [];
   List _categoryGroups = [];
   List<LegalDocumentEntry> _legalDocuments = [];
@@ -34,6 +39,8 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
   final GlobalKey _bottomBarKey = GlobalKey();
   double _bottomBarHeight = 0;
 
+  late bool _isEdit;
+
   @override
   void initState() {
     super.initState();
@@ -41,6 +48,14 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
       const CatalogLookupEvent.getDomainsRef(),
     );
     _domains = context.read<CatalogLookupBloc>().state.domainsRef;
+    _isEdit = widget.type == CategoryItemFormType.update;
+    if (widget.entry != null) {
+      _codeController.text = widget.entry!.code;
+      _nameController.text = widget.entry!.name;
+      _descriptionController.text = widget.entry!.description ?? '';
+      _selectedDomainId = widget.entry!.group?.domain.id ?? '';
+      _selectedCategoryGroupId = widget.entry!.group?.id ?? '';
+    }
   }
 
   @override
@@ -61,13 +76,19 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
   @override
   void dispose() {
     _formKey.currentState?.dispose();
+    _codeController.dispose();
+    _nameController.dispose();
+    _descriptionController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Tạo Mục danh mục'), centerTitle: true),
+      appBar: AppBar(
+        title: Text(_isEdit ? 'Cập nhật Mục danh mục' : 'Tạo Mục danh mục'),
+        centerTitle: true,
+      ),
       body: SafeArea(
         child: Stack(
           children: [
@@ -110,6 +131,7 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
         spacing: 10,
         children: [
           CustomInput(
+            controller: _codeController,
             lable: const Text(
               'Mã Mục danh mục',
               style: TextStyle(fontWeight: FontWeight.w600),
@@ -119,6 +141,7 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
                 v == null || v.isEmpty ? 'Vui nhập mã danh mục' : null,
           ),
           CustomInput(
+            controller: _nameController,
             lable: const Text(
               'Tên Mục danh mục',
               style: TextStyle(fontWeight: FontWeight.w600),
@@ -148,14 +171,14 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
               setState(() {
                 _selectedDomainId = value;
                 _selectedCategoryGroupId = null;
-                context.read<CatalogLookupBloc>().add(
-                  CatalogLookupEvent.getCategoryGroupsRef(domainId: value),
-                );
-                _categoryGroups = context
-                    .read<CatalogLookupBloc>()
-                    .state
-                    .categoryGroupRef;
               });
+              context.read<CatalogLookupBloc>().add(
+                CatalogLookupEvent.getCategoryGroupsRef(domainId: value),
+              );
+              _categoryGroups = context
+                  .read<CatalogLookupBloc>()
+                  .state
+                  .categoryGroupRef;
             },
             validator: (v) =>
                 v == null || v.isEmpty ? 'Vui nhập chọn lĩnh vực' : null,
@@ -184,6 +207,7 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
                 v == null || v.isEmpty ? 'Vui nhập chọn nhóm danh mục' : null,
           ),
           CustomInput(
+            controller: _descriptionController,
             lable: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -285,7 +309,32 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
 
   void _onSave({required BuildContext context, required bool isEdit}) {
     if (!_formKey.currentState!.validate()) return;
-
+    if (_isEdit) {
+      final entry = CategoryItemEntry(
+        id: widget.entry!.id,
+        name: _nameController.text,
+        code: _codeController.text,
+        description: _descriptionController.text,
+        status: 'active',
+        groupId: _selectedCategoryGroupId,
+        createdAt: widget.entry!.createdAt,
+      );
+      context.read<CategoryItemBloc>().add(
+        CategoryItemEvent.update(entry: entry),
+      );
+    } else {
+      final entry = CategoryItemEntry(
+        name: _nameController.text,
+        code: _codeController.text,
+        description: _descriptionController.text,
+        status: 'active',
+        groupId: _selectedCategoryGroupId,
+        createdAt: DateTime.now(),
+      );
+      context.read<CategoryItemBloc>().add(
+        CategoryItemEvent.create(entry: entry),
+      );
+    }
     context.pop();
   }
 }

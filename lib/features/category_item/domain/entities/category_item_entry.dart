@@ -5,8 +5,9 @@ class CategoryItemEntry {
   final String code;
   final String name;
   final String? description;
-  final String status;
-  final CategoryGroupResEntry group;
+  final String? status;
+  final String? groupId;
+  final CategoryGroupResEntry? group;
   final String? createdBy;
   final String? updatedBy;
   final DateTime createdAt;
@@ -17,8 +18,9 @@ class CategoryItemEntry {
     required this.code,
     required this.name,
     this.description,
-    required this.status,
-    required this.group,
+    this.status,
+    this.groupId,
+    this.group,
     this.createdBy,
     this.updatedBy,
     required this.createdAt,

@@ -76,11 +76,11 @@ class CategoryItemBloc extends Bloc<CategoryItemEvent, CategoryItemState> {
 
         result.fold(
           (f) => emit(state.copyWith(isLoading: false, error: _mapFailure(f))),
-          (domain) => emit(
+          (entry) => emit(
             state.copyWith(
               isLoading: false,
-              entities: [domain, ...state.entities],
-              successMessage: 'Tạo lĩnh vực thành công',
+              entities: [entry, ...state.entities],
+              successMessage: 'Tạo thành công',
             ),
           ),
         );

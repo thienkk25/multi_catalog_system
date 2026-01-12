@@ -29,15 +29,21 @@ class CategoryItemCard extends StatelessWidget {
                   ),
                 ),
               ),
-              CategoryItemStatusChip(status: entry.status),
+              CategoryItemStatusChip(status: entry.status!),
             ],
           ),
 
           const SizedBox(height: 12),
 
           _InfoRow(label: 'Mã', value: entry.code),
-          _InfoRow(label: 'Lĩnh vực', value: entry.group.domain.name),
-          _InfoRow(label: 'Nhóm', value: entry.group.name),
+          _InfoRow(
+            label: 'Lĩnh vực',
+            value: entry.group?.domain.name ?? 'Đang cập nhật...',
+          ),
+          _InfoRow(
+            label: 'Nhóm',
+            value: entry.group?.name ?? 'Đang cập nhật...',
+          ),
 
           if (entry.description?.isNotEmpty == true) ...[
             const SizedBox(height: 8),

@@ -59,7 +59,9 @@ class CategoryItemRemoteDataSourceImpl extends BaseRemoteDataSource
   @override
   Future<CategoryItemModel> create(CategoryItemModel entry) async {
     try {
-      final data = entry.toJson()..remove('id');
+      final data = entry.toJson()
+        ..remove('id')
+        ..remove('group');
       final response = await dio.post('/category-item', data: data);
       return CategoryItemModel.fromJson(response.data['data']);
     } on DioException catch (e) {
@@ -110,7 +112,7 @@ class CategoryItemRemoteDataSourceImpl extends BaseRemoteDataSource
   @override
   Future<CategoryItemModel> update(CategoryItemModel entry) async {
     try {
-      final response = await dio.put(
+      final response = await dio.patch(
         '/category-item/${entry.id}',
         data: entry.toJson(),
       );
