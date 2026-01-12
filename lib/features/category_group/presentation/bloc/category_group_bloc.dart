@@ -51,7 +51,7 @@ class CategoryGroupBloc extends Bloc<CategoryGroupEvent, CategoryGroupState> {
           state.copyWith(isLoading: true, error: null, successMessage: null),
         );
 
-        final result = await getById(e.id);
+        final result = await getById(id: e.id);
         if (emit.isDone) return;
 
         result.fold(
@@ -71,7 +71,7 @@ class CategoryGroupBloc extends Bloc<CategoryGroupEvent, CategoryGroupState> {
           state.copyWith(isLoading: true, error: null, successMessage: null),
         );
 
-        final result = await create(e.entry);
+        final result = await create(entry: e.entry);
         if (emit.isDone) return;
 
         result.fold(
@@ -91,7 +91,7 @@ class CategoryGroupBloc extends Bloc<CategoryGroupEvent, CategoryGroupState> {
           state.copyWith(isLoading: true, error: null, successMessage: null),
         );
 
-        final result = await createMany(e.entities);
+        final result = await createMany(entries: e.entities);
         if (emit.isDone) return;
 
         result.fold(
@@ -111,7 +111,7 @@ class CategoryGroupBloc extends Bloc<CategoryGroupEvent, CategoryGroupState> {
           state.copyWith(isLoading: true, error: null, successMessage: null),
         );
 
-        final result = await update(e.entry);
+        final result = await update(entry: e.entry);
         if (emit.isDone) return;
 
         result.fold(
@@ -143,7 +143,7 @@ class CategoryGroupBloc extends Bloc<CategoryGroupEvent, CategoryGroupState> {
           ),
         );
 
-        final result = await delete(e.id);
+        final result = await delete(id: e.id);
         if (emit.isDone) return;
 
         result.fold(
@@ -160,7 +160,7 @@ class CategoryGroupBloc extends Bloc<CategoryGroupEvent, CategoryGroupState> {
           state.copyWith(isLoading: true, error: null, successMessage: null),
         );
 
-        final result = await upsertMany(e.entities);
+        final result = await upsertMany(entries: e.entities);
         if (emit.isDone) return;
 
         result.fold(

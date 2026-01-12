@@ -32,9 +32,9 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
   void initState() {
     super.initState();
     if (widget.entry != null) {
-      _codeController.text = widget.entry!.code;
-      _nameController.text = widget.entry!.name;
-      _descriptionController.text = widget.entry!.description;
+      _codeController.text = widget.entry!.code!;
+      _nameController.text = widget.entry!.name!;
+      _descriptionController.text = widget.entry!.description!;
       _selectedDomainId = widget.entry!.domainId;
     }
   }
@@ -233,12 +233,10 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
     if (isEdit) {
       final entry = CategoryGroupEntry(
         id: widget.entry!.id,
-        domainId: _selectedDomainId ?? widget.entry!.domainId,
+        domainId: _selectedDomainId,
         code: _codeController.text,
         name: _nameController.text,
         description: _descriptionController.text,
-        createdAt: widget.entry!.createdAt,
-        updatedAt: DateTime.now(),
       );
       context.read<CategoryGroupBloc>().add(
         CategoryGroupEvent.update(entry: entry),
@@ -256,7 +254,6 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
         code: code,
         name: name,
         description: description,
-        createdAt: DateTime.now(),
       );
 
       context.read<CategoryGroupBloc>().add(

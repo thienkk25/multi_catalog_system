@@ -4,14 +4,18 @@ import 'package:multi_catalog_system/features/category_group/domain/entities/cat
 
 abstract class CategoryGroupRepository {
   Future<Either<Failure, List<CategoryGroupEntry>>> getAll({String? search});
-  Future<Either<Failure, CategoryGroupEntry>> getById(String id);
-  Future<Either<Failure, CategoryGroupEntry>> create(CategoryGroupEntry entry);
-  Future<Either<Failure, List<CategoryGroupEntry>>> createMany(
-    List<CategoryGroupEntry> entries,
-  );
-  Future<Either<Failure, List<CategoryGroupEntry>>> upsertMany(
-    List<CategoryGroupEntry> entries,
-  );
-  Future<Either<Failure, CategoryGroupEntry>> update(CategoryGroupEntry entry);
-  Future<Either<Failure, void>> delete(String id);
+  Future<Either<Failure, CategoryGroupEntry>> getById({required String id});
+  Future<Either<Failure, CategoryGroupEntry>> create({
+    required CategoryGroupEntry entry,
+  });
+  Future<Either<Failure, List<CategoryGroupEntry>>> createMany({
+    required List<CategoryGroupEntry> entries,
+  });
+  Future<Either<Failure, List<CategoryGroupEntry>>> upsertMany({
+    required List<CategoryGroupEntry> entries,
+  });
+  Future<Either<Failure, CategoryGroupEntry>> update({
+    required CategoryGroupEntry entry,
+  });
+  Future<Either<Failure, void>> delete({required String id});
 }
