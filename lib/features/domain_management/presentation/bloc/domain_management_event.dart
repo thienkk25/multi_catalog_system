@@ -11,10 +11,10 @@ class DomainManagementEvent with _$DomainManagementEvent {
   const factory DomainManagementEvent.create({required DomainEntry entry}) =
       _Create;
   const factory DomainManagementEvent.createMany({
-    required List<DomainEntry> entities,
+    required List<DomainEntry> entries,
   }) = _CreateMany;
   const factory DomainManagementEvent.upsertMany({
-    required List<DomainEntry> entities,
+    required List<DomainEntry> entries,
   }) = _UpsertMany;
 
   const factory DomainManagementEvent.update({required DomainEntry entry}) =

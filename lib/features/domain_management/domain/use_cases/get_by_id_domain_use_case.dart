@@ -8,7 +8,7 @@ class GetByIdDomainUseCase {
 
   GetByIdDomainUseCase({required this.repository});
 
-  Future<Either<Failure, DomainEntry>> call(String id) async {
-    return repository.getById(id);
+  Future<Either<Failure, DomainEntry>> call({required String id}) async {
+    return repository.getById(id: id);
   }
 }

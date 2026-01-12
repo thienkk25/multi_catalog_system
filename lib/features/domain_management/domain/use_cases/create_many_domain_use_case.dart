@@ -8,9 +8,9 @@ class CreateManyDomainUseCase {
 
   CreateManyDomainUseCase({required this.repository});
 
-  Future<Either<Failure, List<DomainEntry>>> call(
-    List<DomainEntry> entries,
-  ) async {
-    return repository.createMany(entries);
+  Future<Either<Failure, List<DomainEntry>>> call({
+    required List<DomainEntry> entries,
+  }) async {
+    return repository.createMany(entries: entries);
   }
 }

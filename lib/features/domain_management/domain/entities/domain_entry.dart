@@ -1,17 +1,17 @@
 class DomainEntry {
   final String? id;
-  final String code;
-  final String name;
-  final String description;
-  final DateTime createdAt;
+  final String? code;
+  final String? name;
+  final String? description;
+  final DateTime? createdAt;
   final DateTime? updatedAt;
 
   DomainEntry({
     this.id,
-    required this.code,
-    required this.name,
-    required this.description,
-    required this.createdAt,
+    this.code,
+    this.name,
+    this.description,
+    this.createdAt,
     this.updatedAt,
   });
 }
