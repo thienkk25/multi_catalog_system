@@ -1,6 +1,4 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_entry.dart';
-
 import 'category_group_res_model.dart';
 
 part 'category_item_model.freezed.dart';
@@ -9,13 +7,13 @@ part 'category_item_model.g.dart';
 @freezed
 abstract class CategoryItemModel with _$CategoryItemModel {
   const factory CategoryItemModel({
-    String? id,
+    required String id,
     required String code,
     required String name,
     String? description,
     String? status,
     @JsonKey(name: 'group_id') String? groupId,
-    CategoryGroupResModel? group,
+    required CategoryGroupResModel group,
     @JsonKey(name: 'created_by') String? createdBy,
     @JsonKey(name: 'updated_by') String? updatedBy,
     @JsonKey(name: 'created_at') required DateTime createdAt,
@@ -24,37 +22,4 @@ abstract class CategoryItemModel with _$CategoryItemModel {
 
   factory CategoryItemModel.fromJson(Map<String, dynamic> json) =>
       _$CategoryItemModelFromJson(json);
-
-  factory CategoryItemModel.fromEntity(CategoryItemEntry entry) =>
-      CategoryItemModel(
-        id: entry.id,
-        code: entry.code,
-        name: entry.name,
-        description: entry.description,
-        status: entry.status,
-        groupId: entry.groupId,
-        group: entry.group == null
-            ? null
-            : CategoryGroupResModel.fromEntity(entry.group!),
-        createdBy: entry.createdBy,
-        updatedBy: entry.updatedBy,
-        createdAt: entry.createdAt,
-        updatedAt: entry.updatedAt,
-      );
-}
-
-extension CategoryItemModelMapper on CategoryItemModel {
-  CategoryItemEntry toEntity() => CategoryItemEntry(
-    id: id,
-    code: code,
-    name: name,
-    description: description,
-    status: status,
-    groupId: groupId,
-    group: group?.toEntity(),
-    createdBy: createdBy,
-    updatedBy: updatedBy,
-    createdAt: createdAt,
-    updatedAt: updatedAt,
-  );
 }

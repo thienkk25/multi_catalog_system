@@ -7,7 +7,7 @@ part 'api_key_state.freezed.dart';
 abstract class ApiKeyState with _$ApiKeyState {
   const factory ApiKeyState({
     @Default(false) bool isLoading,
-    @Default([]) List<ApiKeyEntry> entities,
+    @Default([]) List<ApiKeyEntry> entries,
     String? error,
     String? successMessage,
     ApiKeyEntry? createdEntry,

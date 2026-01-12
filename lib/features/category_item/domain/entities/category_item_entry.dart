@@ -1,29 +1,25 @@
-import 'category_group_res_entry.dart';
-
 class CategoryItemEntry {
   final String? id;
-  final String code;
-  final String name;
+  final String? code;
+  final String? name;
   final String? description;
   final String? status;
   final String? groupId;
-  final CategoryGroupResEntry? group;
-  final String? createdBy;
-  final String? updatedBy;
-  final DateTime createdAt;
+  final String? groupName;
+  final String? domainName;
+  final DateTime? createdAt;
   final DateTime? updatedAt;
 
   CategoryItemEntry({
     this.id,
-    required this.code,
-    required this.name,
+    this.code,
+    this.name,
     this.description,
     this.status,
     this.groupId,
-    this.group,
-    this.createdBy,
-    this.updatedBy,
-    required this.createdAt,
+    this.groupName,
+    this.domainName,
+    this.createdAt,
     this.updatedAt,
   });
 }

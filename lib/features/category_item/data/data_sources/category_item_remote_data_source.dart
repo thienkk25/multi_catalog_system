@@ -5,12 +5,19 @@ import 'package:multi_catalog_system/features/category_item/data/models/category
 
 abstract class CategoryItemRemoteDataSource {
   Future<List<CategoryItemModel>> getAll({String? search});
-  Future<CategoryItemModel> getById(String id);
-  Future<CategoryItemModel> create(CategoryItemModel entry);
-  Future<List<CategoryItemModel>> createMany(List<CategoryItemModel> entries);
-  Future<List<CategoryItemModel>> upsertMany(List<CategoryItemModel> entries);
-  Future<CategoryItemModel> update(CategoryItemModel entry);
-  Future<void> delete(String id);
+  Future<CategoryItemModel> getById({required String id});
+  Future<CategoryItemModel> create({required Map<String, dynamic> data});
+  Future<List<CategoryItemModel>> createMany({
+    required List<Map<String, dynamic>> data,
+  });
+  Future<List<CategoryItemModel>> upsertMany({
+    required List<Map<String, dynamic>> data,
+  });
+  Future<CategoryItemModel> update({
+    required String id,
+    required Map<String, dynamic> data,
+  });
+  Future<void> delete({required String id});
 }
 
 class CategoryItemRemoteDataSourceImpl extends BaseRemoteDataSource
@@ -43,7 +50,7 @@ class CategoryItemRemoteDataSourceImpl extends BaseRemoteDataSource
   }
 
   @override
-  Future<CategoryItemModel> getById(String id) async {
+  Future<CategoryItemModel> getById({required String id}) async {
     try {
       final response = await dio.get('/category-item/$id');
       return CategoryItemModel.fromJson(response.data['data']);
@@ -57,11 +64,8 @@ class CategoryItemRemoteDataSourceImpl extends BaseRemoteDataSource
   }
 
   @override
-  Future<CategoryItemModel> create(CategoryItemModel entry) async {
+  Future<CategoryItemModel> create({required Map<String, dynamic> data}) async {
     try {
-      final data = entry.toJson()
-        ..remove('id')
-        ..remove('group');
       final response = await dio.post('/category-item', data: data);
       return CategoryItemModel.fromJson(response.data['data']);
     } on DioException catch (e) {
@@ -74,11 +78,10 @@ class CategoryItemRemoteDataSourceImpl extends BaseRemoteDataSource
   }
 
   @override
-  Future<List<CategoryItemModel>> createMany(
-    List<CategoryItemModel> entries,
-  ) async {
+  Future<List<CategoryItemModel>> createMany({
+    required List<Map<String, dynamic>> data,
+  }) async {
     try {
-      final data = entries.map((e) => e.toJson()).toList();
       final response = await dio.post('/category-item/bulk', data: data);
       final List<dynamic> jsonList = response.data;
       return jsonList.map((json) => CategoryItemModel.fromJson(json)).toList();
@@ -92,11 +95,10 @@ class CategoryItemRemoteDataSourceImpl extends BaseRemoteDataSource
   }
 
   @override
-  Future<List<CategoryItemModel>> upsertMany(
-    List<CategoryItemModel> entries,
-  ) async {
+  Future<List<CategoryItemModel>> upsertMany({
+    required List<Map<String, dynamic>> data,
+  }) async {
     try {
-      final data = entries.map((e) => e.toJson()).toList();
       final response = await dio.post('/category-item/bulk/upsert', data: data);
       final List<dynamic> jsonList = response.data;
       return jsonList.map((json) => CategoryItemModel.fromJson(json)).toList();
@@ -110,12 +112,12 @@ class CategoryItemRemoteDataSourceImpl extends BaseRemoteDataSource
   }
 
   @override
-  Future<CategoryItemModel> update(CategoryItemModel entry) async {
+  Future<CategoryItemModel> update({
+    required String id,
+    required Map<String, dynamic> data,
+  }) async {
     try {
-      final response = await dio.patch(
-        '/category-item/${entry.id}',
-        data: entry.toJson(),
-      );
+      final response = await dio.patch('/category-item/$id', data: data);
       return CategoryItemModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);
@@ -127,7 +129,7 @@ class CategoryItemRemoteDataSourceImpl extends BaseRemoteDataSource
   }
 
   @override
-  Future<void> delete(String id) async {
+  Future<void> delete({required String id}) async {
     try {
       await dio.delete('/category-item/$id');
     } catch (e) {

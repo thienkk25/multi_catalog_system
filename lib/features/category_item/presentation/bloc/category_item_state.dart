@@ -7,7 +7,7 @@ part 'category_item_state.freezed.dart';
 abstract class CategoryItemState with _$CategoryItemState {
   const factory CategoryItemState({
     @Default(false) bool isLoading,
-    @Default([]) List<CategoryItemEntry> entities,
+    @Default([]) List<CategoryItemEntry> entries,
     String? error,
     String? successMessage,
   }) = _CategoryItemState;

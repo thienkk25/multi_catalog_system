@@ -10,15 +10,40 @@ class CategoryItemRepositoryImpl implements CategoryItemRepository {
 
   CategoryItemRepositoryImpl({required this.remoteDataSource});
 
+  CategoryItemEntry _toEntity(CategoryItemModel model) => CategoryItemEntry(
+    id: model.id,
+    code: model.code,
+    name: model.name,
+    description: model.description,
+    status: model.status,
+    groupId: model.groupId,
+    createdAt: model.createdAt,
+    updatedAt: model.updatedAt,
+  );
+
+  Map<String, dynamic> _createPayload(CategoryItemEntry entry) => {
+    'code': entry.code,
+    'name': entry.name,
+    'description': entry.description,
+    'status': entry.status,
+    'groupId': entry.groupId,
+  };
+
+  Map<String, dynamic> _updatePayload(CategoryItemEntry entry) => {
+    'code': entry.code,
+    'name': entry.name,
+    'description': entry.description,
+    'status': entry.status,
+    'groupId': entry.groupId,
+  };
+
   @override
-  Future<Either<Failure, CategoryItemEntry>> create(
-    CategoryItemEntry entry,
-  ) async {
+  Future<Either<Failure, CategoryItemEntry>> create({
+    required CategoryItemEntry entry,
+  }) async {
     try {
-      final model = await remoteDataSource.create(
-        CategoryItemModel.fromEntity(entry),
-      );
-      return Right(model.toEntity());
+      final model = await remoteDataSource.create(data: _createPayload(entry));
+      return Right(_toEntity(model));
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
     } on UnexpectedException catch (e) {
@@ -27,14 +52,14 @@ class CategoryItemRepositoryImpl implements CategoryItemRepository {
   }
 
   @override
-  Future<Either<Failure, List<CategoryItemEntry>>> createMany(
-    List<CategoryItemEntry> entries,
-  ) async {
+  Future<Either<Failure, List<CategoryItemEntry>>> createMany({
+    required List<CategoryItemEntry> entries,
+  }) async {
     try {
       final models = await remoteDataSource.createMany(
-        entries.map((e) => CategoryItemModel.fromEntity(e)).toList(),
+        data: entries.map((e) => _createPayload(e)).toList(),
       );
-      return Right(models.map((m) => m.toEntity()).toList());
+      return Right(models.map((m) => _toEntity(m)).toList());
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
     } on UnexpectedException catch (e) {
@@ -43,10 +68,12 @@ class CategoryItemRepositoryImpl implements CategoryItemRepository {
   }
 
   @override
-  Future<Either<Failure, CategoryItemEntry>> getById(String id) async {
+  Future<Either<Failure, CategoryItemEntry>> getById({
+    required String id,
+  }) async {
     try {
-      final model = await remoteDataSource.getById(id);
-      return Right(model.toEntity());
+      final model = await remoteDataSource.getById(id: id);
+      return Right(_toEntity(model));
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
     } on UnexpectedException catch (e) {
@@ -60,7 +87,7 @@ class CategoryItemRepositoryImpl implements CategoryItemRepository {
   }) async {
     try {
       final models = await remoteDataSource.getAll(search: search);
-      return Right(models.map((m) => m.toEntity()).toList());
+      return Right(models.map((m) => _toEntity(m)).toList());
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
     } on UnexpectedException catch (e) {
@@ -69,14 +96,15 @@ class CategoryItemRepositoryImpl implements CategoryItemRepository {
   }
 
   @override
-  Future<Either<Failure, CategoryItemEntry>> update(
-    CategoryItemEntry entry,
-  ) async {
+  Future<Either<Failure, CategoryItemEntry>> update({
+    required CategoryItemEntry entry,
+  }) async {
     try {
       final model = await remoteDataSource.update(
-        CategoryItemModel.fromEntity(entry),
+        id: entry.id!,
+        data: _updatePayload(entry),
       );
-      return Right(model.toEntity());
+      return Right(_toEntity(model));
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
     } on UnexpectedException catch (e) {
@@ -85,14 +113,14 @@ class CategoryItemRepositoryImpl implements CategoryItemRepository {
   }
 
   @override
-  Future<Either<Failure, List<CategoryItemEntry>>> upsertMany(
-    List<CategoryItemEntry> entries,
-  ) async {
+  Future<Either<Failure, List<CategoryItemEntry>>> upsertMany({
+    required List<CategoryItemEntry> entries,
+  }) async {
     try {
       final models = await remoteDataSource.upsertMany(
-        entries.map((e) => CategoryItemModel.fromEntity(e)).toList(),
+        data: entries.map((e) => _updatePayload(e)).toList(),
       );
-      return Right(models.map((m) => m.toEntity()).toList());
+      return Right(models.map((m) => _toEntity(m)).toList());
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
     } on UnexpectedException catch (e) {
@@ -101,9 +129,9 @@ class CategoryItemRepositoryImpl implements CategoryItemRepository {
   }
 
   @override
-  Future<Either<Failure, Unit>> delete(String id) async {
+  Future<Either<Failure, Unit>> delete({required String id}) async {
     try {
-      await remoteDataSource.delete(id);
+      await remoteDataSource.delete(id: id);
       return const Right(unit);
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message, statusCode: e.statusCode));

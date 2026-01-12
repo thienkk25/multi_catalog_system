@@ -34,7 +34,7 @@ class _CategoryItemDetailPageState extends State<CategoryItemDetailPage>
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(entry.name),
+        title: Text(entry.name ?? 'Thông tin danh mục'),
         centerTitle: true,
         bottom: TabBar(
           controller: _tabController,
@@ -99,19 +99,31 @@ class _InfoTab extends StatelessWidget {
         CustomCard(
           child: Column(
             children: [
-              _InfoRow(label: 'Mã danh mục', value: entry.code),
-              _InfoRow(label: 'Tên danh mục', value: entry.name),
+              _InfoRow(
+                label: 'Mã danh mục',
+                value: entry.code ?? 'Đang cập nhật...',
+              ),
+              _InfoRow(
+                label: 'Tên danh mục',
+                value: entry.name ?? 'Đang cập nhật...',
+              ),
               if (entry.description?.isNotEmpty == true)
                 _InfoRow(
                   label: 'Mô tả',
                   value: entry.description!,
                   multiline: true,
                 ),
-              _InfoRow(label: 'Lĩnh vực', value: entry.group!.domain.name),
-              _InfoRow(label: 'Nhóm danh mục', value: entry.group!.name),
+              _InfoRow(
+                label: 'Lĩnh vực',
+                value: entry.domainName ?? 'Đang cập nhật...',
+              ),
+              _InfoRow(
+                label: 'Nhóm danh mục',
+                value: entry.groupName ?? 'Đang cập nhật...',
+              ),
               _InfoRow(
                 label: 'Ngày tạo',
-                value: DateFormat('dd/MM/yyyy').format(entry.createdAt),
+                value: DateFormat('dd/MM/yyyy').format(entry.createdAt!),
               ),
             ],
           ),

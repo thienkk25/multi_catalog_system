@@ -8,7 +8,7 @@ class GetByIdCategoryItemUseCase {
 
   GetByIdCategoryItemUseCase({required this.repository});
 
-  Future<Either<Failure, CategoryItemEntry>> call(String id) async {
-    return repository.getById(id);
+  Future<Either<Failure, CategoryItemEntry>> call({required String id}) async {
+    return repository.getById(id: id);
   }
 }

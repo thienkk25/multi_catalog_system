@@ -50,11 +50,11 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
     _domains = context.read<CatalogLookupBloc>().state.domainsRef;
     _isEdit = widget.type == CategoryItemFormType.update;
     if (widget.entry != null) {
-      _codeController.text = widget.entry!.code;
-      _nameController.text = widget.entry!.name;
+      _codeController.text = widget.entry!.code!;
+      _nameController.text = widget.entry!.name!;
       _descriptionController.text = widget.entry!.description ?? '';
-      _selectedDomainId = widget.entry!.group?.domain.id ?? '';
-      _selectedCategoryGroupId = widget.entry!.group?.id ?? '';
+      // _selectedDomainId = widget.entry!.group?.domain.id ?? '';
+      _selectedCategoryGroupId = widget.entry!.groupId ?? '';
     }
   }
 
@@ -317,7 +317,6 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
         description: _descriptionController.text,
         status: 'active',
         groupId: _selectedCategoryGroupId,
-        createdAt: widget.entry!.createdAt,
       );
       context.read<CategoryItemBloc>().add(
         CategoryItemEvent.update(entry: entry),
@@ -329,7 +328,6 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
         description: _descriptionController.text,
         status: 'active',
         groupId: _selectedCategoryGroupId,
-        createdAt: DateTime.now(),
       );
       context.read<CategoryItemBloc>().add(
         CategoryItemEvent.create(entry: entry),

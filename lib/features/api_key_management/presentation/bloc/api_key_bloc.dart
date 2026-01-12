@@ -42,9 +42,8 @@ class ApiKeyBloc extends Bloc<ApiKeyEvent, ApiKeyState> {
         if (emit.isDone) return;
 
         result.fold(
-          (f) => emit(state.copyWith(isLoading: false, error: _mapFailure(f))),
-          (entities) =>
-              emit(state.copyWith(isLoading: false, entities: entities)),
+          (l) => emit(state.copyWith(isLoading: false, error: _mapFailure(l))),
+          (r) => emit(state.copyWith(isLoading: false, entries: r)),
         );
       },
 
@@ -62,13 +61,13 @@ class ApiKeyBloc extends Bloc<ApiKeyEvent, ApiKeyState> {
         if (emit.isDone) return;
 
         result.fold(
-          (f) => emit(state.copyWith(isLoading: false, error: _mapFailure(f))),
-          (domain) {
+          (l) => emit(state.copyWith(isLoading: false, error: _mapFailure(l))),
+          (r) {
             final updated = [
-              for (final d in state.entities)
-                if (d.id == domain.id) domain else d,
+              for (final d in state.entries)
+                if (d.id == r.id) r else d,
             ];
-            emit(state.copyWith(isLoading: false, entities: updated));
+            emit(state.copyWith(isLoading: false, entries: updated));
           },
         );
       },
@@ -87,13 +86,13 @@ class ApiKeyBloc extends Bloc<ApiKeyEvent, ApiKeyState> {
         if (emit.isDone) return;
 
         result.fold(
-          (f) => emit(state.copyWith(isLoading: false, error: _mapFailure(f))),
-          (domain) => emit(
+          (l) => emit(state.copyWith(isLoading: false, error: _mapFailure(l))),
+          (r) => emit(
             state.copyWith(
               isLoading: false,
-              entities: [domain, ...state.entities],
+              entries: [r, ...state.entries],
               successMessage: 'Tạo thành công',
-              createdEntry: domain,
+              createdEntry: r,
             ),
           ),
         );
@@ -109,15 +108,15 @@ class ApiKeyBloc extends Bloc<ApiKeyEvent, ApiKeyState> {
           ),
         );
 
-        final result = await createMany(entries: e.entities);
+        final result = await createMany(entries: e.entries);
         if (emit.isDone) return;
 
         result.fold(
-          (f) => emit(state.copyWith(isLoading: false, error: _mapFailure(f))),
-          (entities) => emit(
+          (l) => emit(state.copyWith(isLoading: false, error: _mapFailure(l))),
+          (r) => emit(
             state.copyWith(
               isLoading: false,
-              entities: [...entities, ...state.entities],
+              entries: [...r, ...state.entries],
               successMessage: 'Tạo thành công',
             ),
           ),
@@ -138,16 +137,16 @@ class ApiKeyBloc extends Bloc<ApiKeyEvent, ApiKeyState> {
         if (emit.isDone) return;
 
         result.fold(
-          (f) => emit(state.copyWith(isLoading: false, error: _mapFailure(f))),
-          (domain) {
+          (l) => emit(state.copyWith(isLoading: false, error: _mapFailure(l))),
+          (r) {
             final updated = [
-              for (final d in state.entities)
-                if (d.id == domain.id) domain else d,
+              for (final d in state.entries)
+                if (d.id == r.id) r else d,
             ];
             emit(
               state.copyWith(
                 isLoading: false,
-                entities: updated,
+                entries: updated,
                 successMessage: 'Cập nhật thành công',
               ),
             );
@@ -156,11 +155,11 @@ class ApiKeyBloc extends Bloc<ApiKeyEvent, ApiKeyState> {
       },
 
       delete: (e) async {
-        final previous = List<ApiKeyEntry>.from(state.entities);
+        final previous = List<ApiKeyEntry>.from(state.entries);
 
         emit(
           state.copyWith(
-            entities: state.entities.where((d) => d.id != e.id).toList(),
+            entries: state.entries.where((d) => d.id != e.id).toList(),
             successMessage: null,
             error: null,
             createdEntry: null,
@@ -171,8 +170,7 @@ class ApiKeyBloc extends Bloc<ApiKeyEvent, ApiKeyState> {
         if (emit.isDone) return;
 
         result.fold(
-          (f) =>
-              emit(state.copyWith(entities: previous, error: _mapFailure(f))),
+          (l) => emit(state.copyWith(entries: previous, error: _mapFailure(l))),
           (_) {
             emit(state.copyWith(successMessage: 'Xóa thành công'));
           },
@@ -189,15 +187,15 @@ class ApiKeyBloc extends Bloc<ApiKeyEvent, ApiKeyState> {
           ),
         );
 
-        final result = await upsertMany(entries: e.entities);
+        final result = await upsertMany(entries: e.entries);
         if (emit.isDone) return;
 
         result.fold(
-          (f) => emit(state.copyWith(isLoading: false, error: _mapFailure(f))),
-          (entities) => emit(
+          (l) => emit(state.copyWith(isLoading: false, error: _mapFailure(l))),
+          (r) => emit(
             state.copyWith(
               isLoading: false,
-              entities: entities,
+              entries: r,
               successMessage: 'Cập nhật hoặc tạo thành công',
             ),
           ),

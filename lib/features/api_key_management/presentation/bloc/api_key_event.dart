@@ -9,9 +9,9 @@ class ApiKeyEvent with _$ApiKeyEvent {
   const factory ApiKeyEvent.getById({required String id}) = _GetById;
 
   const factory ApiKeyEvent.create({required ApiKeyEntry entry}) = _Create;
-  const factory ApiKeyEvent.createMany({required List<ApiKeyEntry> entities}) =
+  const factory ApiKeyEvent.createMany({required List<ApiKeyEntry> entries}) =
       _CreateMany;
-  const factory ApiKeyEvent.upsertMany({required List<ApiKeyEntry> entities}) =
+  const factory ApiKeyEvent.upsertMany({required List<ApiKeyEntry> entries}) =
       _UpsertMany;
 
   const factory ApiKeyEvent.update({required ApiKeyEntry entry}) = _Update;

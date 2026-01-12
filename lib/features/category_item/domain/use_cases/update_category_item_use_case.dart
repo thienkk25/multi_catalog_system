@@ -8,9 +8,9 @@ class UpdateCategoryItemUseCase {
 
   UpdateCategoryItemUseCase({required this.repository});
 
-  Future<Either<Failure, CategoryItemEntry>> call(
-    CategoryItemEntry entry,
-  ) async {
-    return repository.update(entry);
+  Future<Either<Failure, CategoryItemEntry>> call({
+    required CategoryItemEntry entry,
+  }) async {
+    return repository.update(entry: entry);
   }
 }

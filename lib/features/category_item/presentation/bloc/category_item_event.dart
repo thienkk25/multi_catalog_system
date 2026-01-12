@@ -11,10 +11,10 @@ class CategoryItemEvent with _$CategoryItemEvent {
   const factory CategoryItemEvent.create({required CategoryItemEntry entry}) =
       _Create;
   const factory CategoryItemEvent.createMany({
-    required List<CategoryItemEntry> entities,
+    required List<CategoryItemEntry> entries,
   }) = _CreateMany;
   const factory CategoryItemEvent.upsertMany({
-    required List<CategoryItemEntry> entities,
+    required List<CategoryItemEntry> entries,
   }) = _UpsertMany;
 
   const factory CategoryItemEvent.update({required CategoryItemEntry entry}) =

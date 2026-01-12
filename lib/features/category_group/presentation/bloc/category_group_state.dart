@@ -7,7 +7,7 @@ part 'category_group_state.freezed.dart';
 abstract class CategoryGroupState with _$CategoryGroupState {
   const factory CategoryGroupState({
     @Default(false) bool isLoading,
-    @Default([]) List<CategoryGroupEntry> entities,
+    @Default([]) List<CategoryGroupEntry> entries,
     String? error,
     String? successMessage,
   }) = _CategoryGroupState;
