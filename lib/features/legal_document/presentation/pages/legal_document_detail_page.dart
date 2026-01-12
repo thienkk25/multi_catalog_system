@@ -43,7 +43,7 @@ class LegalDocumentDetailPage extends StatelessWidget {
                       _InfoData(
                         Icons.person_2_outlined,
                         'Người ban hành',
-                        entry.issuedByName ?? 'Đang cập nhật...',
+                        entry.issuedByName ?? '-',
                       ),
                       _InfoData(
                         Icons.calendar_today,

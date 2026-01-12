@@ -67,7 +67,7 @@ class LegalDocumentCard extends StatelessWidget {
           _InfoRow(
             icon: Icons.person_2_outlined,
             label: 'Người ban hành',
-            value: entry.issuedByName ?? 'Đang cập nhật...',
+            value: entry.issuedByName ?? '-',
           ),
           _InfoRow(
             icon: Icons.event_note_outlined,

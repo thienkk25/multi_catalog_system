@@ -22,7 +22,7 @@ class CategoryItemCard extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  entry.name ?? 'Đang cập nhật...',
+                  entry.name!,
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w600,
                     color: Colors.blue,
@@ -35,12 +35,9 @@ class CategoryItemCard extends StatelessWidget {
 
           const SizedBox(height: 12),
 
-          _InfoRow(label: 'Mã', value: entry.code ?? 'Đang cập nhật...'),
-          _InfoRow(
-            label: 'Lĩnh vực',
-            value: entry.domainName ?? 'Đang cập nhật...',
-          ),
-          _InfoRow(label: 'Nhóm', value: entry.groupName ?? 'Đang cập nhật...'),
+          _InfoRow(label: 'Mã', value: entry.code!),
+          _InfoRow(label: 'Lĩnh vực', value: entry.domainName!),
+          _InfoRow(label: 'Nhóm', value: entry.groupName!),
 
           if (entry.description?.isNotEmpty == true) ...[
             const SizedBox(height: 8),

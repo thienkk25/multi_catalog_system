@@ -107,9 +107,7 @@ class ApiKeyManagementCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('Tạo bởi: ${entry.createdBy ?? 'System'}'),
-                    Text(
-                      'Ngày tạo: ${entry.createdAt != null ? _formatDate(entry.createdAt!) : '-'}',
-                    ),
+                    Text('Ngày tạo: ${_formatDate(entry.createdAt!)}'),
                   ],
                 ),
               ),
