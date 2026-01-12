@@ -1,18 +1,18 @@
 class UserEntry {
-  String id;
-  String email;
-  String? fullName;
-  String? phone;
-  String status;
-  DateTime createdAt;
-  DateTime? updatedAt;
+  final String? id;
+  final String? email;
+  final String? fullName;
+  final String? phone;
+  final String? status;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
   UserEntry({
-    required this.id,
-    required this.email,
+    this.id,
+    this.email,
     this.fullName,
     this.phone,
-    required this.status,
-    required this.createdAt,
+    this.status,
+    this.createdAt,
     this.updatedAt,
   });
 }

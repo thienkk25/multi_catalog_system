@@ -1,5 +1,4 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:multi_catalog_system/features/auth/domain/entities/user_entry.dart';
 
 part 'user_model.freezed.dart';
 part 'user_model.g.dart';
@@ -18,26 +17,4 @@ abstract class UserModel with _$UserModel {
 
   factory UserModel.fromJson(Map<String, dynamic> json) =>
       _$UserModelFromJson(json);
-
-  factory UserModel.fromEntry(UserEntry entry) => UserModel(
-    id: entry.id,
-    email: entry.email,
-    fullName: entry.fullName,
-    phone: entry.phone,
-    status: entry.status,
-    createdAt: entry.createdAt,
-    updatedAt: entry.updatedAt,
-  );
-}
-
-extension UserModelMapper on UserModel {
-  UserEntry toEntry() => UserEntry(
-    id: id,
-    email: email,
-    fullName: fullName,
-    phone: phone,
-    status: status,
-    createdAt: createdAt,
-    updatedAt: updatedAt,
-  );
 }

@@ -17,7 +17,7 @@ abstract class AuthRemoteDataSource {
 
   Future<void> logout();
 
-  Future<UserRoleModel> getRole(String accessToken);
+  Future<UserRoleModel> getRole({required String accessToken});
 }
 
 class AuthRemoteDataSourceImpl extends BaseRemoteDataSource
@@ -151,7 +151,7 @@ class AuthRemoteDataSourceImpl extends BaseRemoteDataSource
   }
 
   @override
-  Future<UserRoleModel> getRole(String accessToken) async {
+  Future<UserRoleModel> getRole({required String accessToken}) async {
     try {
       final response = await dio.get(
         '/user/role',

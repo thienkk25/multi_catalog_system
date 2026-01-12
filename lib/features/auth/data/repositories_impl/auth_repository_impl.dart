@@ -16,12 +16,22 @@ class AuthRepositoryImpl implements AuthRepository {
     required this.authLocalDataSource,
   });
 
+  UserEntry _toEntity(UserModel model) => UserEntry(
+    id: model.id,
+    email: model.email,
+    fullName: model.fullName,
+    phone: model.phone,
+    status: model.status,
+    createdAt: model.createdAt,
+    updatedAt: model.updatedAt,
+  );
+
   /// Ưu tiên local → fallback remote
   @override
   Future<Either<Failure, UserEntry>> getCurrentUser() async {
     try {
       final cachedUser = await authLocalDataSource.getCachedUser();
-      if (cachedUser != null) return Right(cachedUser.toEntry());
+      if (cachedUser != null) return Right(_toEntity(cachedUser));
 
       final token = await authLocalDataSource.getCachedAuthToken();
       if (token == null) return Left(CacheFailure(message: "Token not found"));
@@ -29,7 +39,7 @@ class AuthRepositoryImpl implements AuthRepository {
       final remoteUser = await authRemoteDataSource.getCurrentUser();
       await authLocalDataSource.cacheUser(remoteUser);
 
-      return Right(remoteUser.toEntry());
+      return Right(_toEntity(remoteUser));
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
     } on CacheException catch (e) {
@@ -47,7 +57,9 @@ class AuthRepositoryImpl implements AuthRepository {
   }) async {
     try {
       final result = await authRemoteDataSource.login(email: email, pass: pass);
-      final role = await authRemoteDataSource.getRole(result.accessToken);
+      final role = await authRemoteDataSource.getRole(
+        accessToken: result.accessToken,
+      );
 
       await authLocalDataSource.cacheAuthToken(result.accessToken);
       await authLocalDataSource.cacheRefreshToken(result.refreshToken);
@@ -55,7 +67,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
       await authLocalDataSource.cacheUserRole(role);
 
-      return Right(result.user.toEntry());
+      return Right(_toEntity(result.user));
     } on InvalidCredentialsException {
       return Left(InvalidCredentialsFailure());
     } on ServerException catch (e) {
