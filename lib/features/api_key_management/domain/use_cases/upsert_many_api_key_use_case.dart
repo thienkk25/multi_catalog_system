@@ -8,9 +8,9 @@ class UpsertManyApiKeyUseCase {
 
   UpsertManyApiKeyUseCase({required this.repository});
 
-  Future<Either<Failure, List<ApiKeyEntry>>> call(
-    List<ApiKeyEntry> entries,
-  ) async {
-    return repository.upsertMany(entries);
+  Future<Either<Failure, List<ApiKeyEntry>>> call({
+    required List<ApiKeyEntry> entries,
+  }) async {
+    return repository.upsertMany(entries: entries);
   }
 }

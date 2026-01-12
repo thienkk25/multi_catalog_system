@@ -12,7 +12,7 @@ abstract class CategoryGroupModel with _$CategoryGroupModel {
     required String code,
     required String name,
     required String description,
-    @JsonKey(name: 'created_at') required DateTime createdAt,
+    @JsonKey(name: 'created_at') DateTime? createdAt,
     @JsonKey(name: 'updated_at') DateTime? updatedAt,
   }) = _CategoryGroupModel;
 

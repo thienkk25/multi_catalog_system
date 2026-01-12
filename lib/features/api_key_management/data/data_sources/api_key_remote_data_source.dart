@@ -5,12 +5,22 @@ import 'package:multi_catalog_system/features/api_key_management/data/models/api
 
 abstract class ApiKeyRemoteDataSource {
   Future<List<ApiKeyModel>> getAll({String? search});
-  Future<ApiKeyModel> getById(String id);
-  Future<ApiKeyModel> create(ApiKeyModel entry);
-  Future<List<ApiKeyModel>> createMany(List<ApiKeyModel> entries);
-  Future<List<ApiKeyModel>> upsertMany(List<ApiKeyModel> entries);
-  Future<ApiKeyModel> update(ApiKeyModel entry);
-  Future<void> delete(String id);
+  Future<ApiKeyModel> getById({required String id});
+
+  Future<ApiKeyModel> create({required Map<String, dynamic> data});
+  Future<List<ApiKeyModel>> createMany({
+    required List<Map<String, dynamic>> data,
+  });
+
+  Future<ApiKeyModel> update({
+    required String id,
+    required Map<String, dynamic> data,
+  });
+
+  Future<List<ApiKeyModel>> upsertMany({
+    required List<Map<String, dynamic>> data,
+  });
+  Future<void> delete({required String id});
 }
 
 class ApiKeyRemoteDataSourceImpl extends BaseRemoteDataSource
@@ -40,7 +50,7 @@ class ApiKeyRemoteDataSourceImpl extends BaseRemoteDataSource
   }
 
   @override
-  Future<ApiKeyModel> getById(String id) async {
+  Future<ApiKeyModel> getById({required String id}) async {
     try {
       final response = await dio.get('/api-key/$id');
       return ApiKeyModel.fromJson(response.data['data']);
@@ -54,9 +64,8 @@ class ApiKeyRemoteDataSourceImpl extends BaseRemoteDataSource
   }
 
   @override
-  Future<ApiKeyModel> create(ApiKeyModel entry) async {
+  Future<ApiKeyModel> create({required Map<String, dynamic> data}) async {
     try {
-      final data = entry.toJson()..remove('id');
       final response = await dio.post('/api-key', data: data);
       return ApiKeyModel.fromJson(response.data['data']);
     } on DioException catch (e) {
@@ -69,12 +78,14 @@ class ApiKeyRemoteDataSourceImpl extends BaseRemoteDataSource
   }
 
   @override
-  Future<List<ApiKeyModel>> createMany(List<ApiKeyModel> entries) async {
+  Future<List<ApiKeyModel>> createMany({
+    required List<Map<String, dynamic>> data,
+  }) async {
     try {
-      final data = entries.map((e) => e.toJson()).toList();
       final response = await dio.post('/api-key/bulk', data: data);
-      final List<dynamic> jsonList = response.data;
-      return jsonList.map((json) => ApiKeyModel.fromJson(json)).toList();
+      return (response.data as List)
+          .map((e) => ApiKeyModel.fromJson(e))
+          .toList();
     } on DioException catch (e) {
       handleDioError(e);
     } on AppException {
@@ -85,12 +96,14 @@ class ApiKeyRemoteDataSourceImpl extends BaseRemoteDataSource
   }
 
   @override
-  Future<List<ApiKeyModel>> upsertMany(List<ApiKeyModel> entries) async {
+  Future<List<ApiKeyModel>> upsertMany({
+    required List<Map<String, dynamic>> data,
+  }) async {
     try {
-      final data = entries.map((e) => e.toJson()).toList();
       final response = await dio.post('/api-key/bulk/upsert', data: data);
-      final List<dynamic> jsonList = response.data;
-      return jsonList.map((json) => ApiKeyModel.fromJson(json)).toList();
+      return (response.data as List)
+          .map((e) => ApiKeyModel.fromJson(e))
+          .toList();
     } on DioException catch (e) {
       handleDioError(e);
     } on AppException {
@@ -101,12 +114,12 @@ class ApiKeyRemoteDataSourceImpl extends BaseRemoteDataSource
   }
 
   @override
-  Future<ApiKeyModel> update(ApiKeyModel entry) async {
+  Future<ApiKeyModel> update({
+    required String id,
+    required Map<String, dynamic> data,
+  }) async {
     try {
-      final response = await dio.patch(
-        '/api-key/${entry.id}',
-        data: entry.toJson(),
-      );
+      final response = await dio.patch('/api-key/$id', data: data);
       return ApiKeyModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);
@@ -118,7 +131,7 @@ class ApiKeyRemoteDataSourceImpl extends BaseRemoteDataSource
   }
 
   @override
-  Future<void> delete(String id) async {
+  Future<void> delete({required String id}) async {
     try {
       await dio.delete('/api-key/$id');
     } catch (e) {

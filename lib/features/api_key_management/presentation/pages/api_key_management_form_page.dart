@@ -34,8 +34,8 @@ class _ApiKeyManagementFormPageState extends State<ApiKeyManagementFormPage> {
   void initState() {
     super.initState();
     if (widget.entry != null) {
-      _keyController.text = widget.entry!.key;
-      _systemNameController.text = widget.entry!.systemName;
+      _keyController.text = widget.entry!.key!;
+      _systemNameController.text = widget.entry!.systemName!;
       _selectedAction = widget.entry!.status;
       _allowedDomains = List<String>.from(widget.entry?.allowedDomains ?? []);
     }
@@ -225,20 +225,16 @@ class _ApiKeyManagementFormPageState extends State<ApiKeyManagementFormPage> {
     if (isEdit) {
       final entry = ApiKeyEntry(
         id: widget.entry!.id,
-        key: _keyController.text,
         systemName: _systemNameController.text,
         status: _selectedAction!,
         allowedDomains: _allowedDomains,
-        createdAt: widget.entry!.createdAt,
       );
       context.read<ApiKeyBloc>().add(ApiKeyEvent.update(entry: entry));
     } else {
       final entry = ApiKeyEntry(
-        key: _keyController.text,
         systemName: _systemNameController.text,
         status: _selectedAction!,
         allowedDomains: _allowedDomains,
-        createdAt: DateTime.now(),
       );
       context.read<ApiKeyBloc>().add(ApiKeyEvent.create(entry: entry));
     }

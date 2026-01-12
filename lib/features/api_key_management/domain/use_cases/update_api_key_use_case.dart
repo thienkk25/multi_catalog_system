@@ -8,7 +8,9 @@ class UpdateApiKeyUseCase {
 
   UpdateApiKeyUseCase({required this.repository});
 
-  Future<Either<Failure, ApiKeyEntry>> call(ApiKeyEntry entry) async {
-    return repository.update(entry);
+  Future<Either<Failure, ApiKeyEntry>> call({
+    required ApiKeyEntry entry,
+  }) async {
+    return repository.update(entry: entry);
   }
 }

@@ -10,13 +10,36 @@ class ApiKeyRepositoryImpl implements ApiKeyRepository {
 
   ApiKeyRepositoryImpl({required this.remoteDataSource});
 
+  ApiKeyEntry _toEntity(ApiKeyModel m) {
+    return ApiKeyEntry(
+      id: m.id,
+      key: m.key,
+      systemName: m.systemName,
+      allowedDomains: m.allowedDomains,
+      status: m.status,
+      createdBy: m.createdBy,
+      createdAt: m.createdAt,
+    );
+  }
+
+  Map<String, dynamic> _createPayload(ApiKeyEntry e) => {
+    'system_name': e.systemName,
+    if (e.allowedDomains != null) 'allowed_domains': e.allowedDomains,
+  };
+
+  Map<String, dynamic> _updatePayload(ApiKeyEntry e) => {
+    if (e.systemName != null) 'system_name': e.systemName,
+    if (e.allowedDomains != null) 'allowed_domains': e.allowedDomains,
+    if (e.status != null) 'status': e.status,
+  };
+
   @override
-  Future<Either<Failure, ApiKeyEntry>> create(ApiKeyEntry entry) async {
+  Future<Either<Failure, ApiKeyEntry>> create({
+    required ApiKeyEntry entry,
+  }) async {
     try {
-      final model = await remoteDataSource.create(
-        ApiKeyModel.fromEntity(entry),
-      );
-      return Right(model.toEntity());
+      final model = await remoteDataSource.create(data: _createPayload(entry));
+      return Right(_toEntity(model));
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
     } on UnexpectedException catch (e) {
@@ -25,14 +48,14 @@ class ApiKeyRepositoryImpl implements ApiKeyRepository {
   }
 
   @override
-  Future<Either<Failure, List<ApiKeyEntry>>> createMany(
-    List<ApiKeyEntry> entries,
-  ) async {
+  Future<Either<Failure, List<ApiKeyEntry>>> createMany({
+    required List<ApiKeyEntry> entries,
+  }) async {
     try {
       final models = await remoteDataSource.createMany(
-        entries.map((e) => ApiKeyModel.fromEntity(e)).toList(),
+        data: entries.map((e) => _createPayload(e)).toList(),
       );
-      return Right(models.map((m) => m.toEntity()).toList());
+      return Right(models.map((m) => _toEntity(m)).toList());
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
     } on UnexpectedException catch (e) {
@@ -41,10 +64,10 @@ class ApiKeyRepositoryImpl implements ApiKeyRepository {
   }
 
   @override
-  Future<Either<Failure, ApiKeyEntry>> getById(String id) async {
+  Future<Either<Failure, ApiKeyEntry>> getById({required String id}) async {
     try {
-      final model = await remoteDataSource.getById(id);
-      return Right(model.toEntity());
+      final model = await remoteDataSource.getById(id: id);
+      return Right(_toEntity(model));
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
     } on UnexpectedException catch (e) {
@@ -56,7 +79,7 @@ class ApiKeyRepositoryImpl implements ApiKeyRepository {
   Future<Either<Failure, List<ApiKeyEntry>>> getAll({String? search}) async {
     try {
       final models = await remoteDataSource.getAll(search: search);
-      return Right(models.map((m) => m.toEntity()).toList());
+      return Right(models.map((m) => _toEntity(m)).toList());
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
     } on UnexpectedException catch (e) {
@@ -65,12 +88,15 @@ class ApiKeyRepositoryImpl implements ApiKeyRepository {
   }
 
   @override
-  Future<Either<Failure, ApiKeyEntry>> update(ApiKeyEntry entry) async {
+  Future<Either<Failure, ApiKeyEntry>> update({
+    required ApiKeyEntry entry,
+  }) async {
     try {
       final model = await remoteDataSource.update(
-        ApiKeyModel.fromEntity(entry),
+        data: _updatePayload(entry),
+        id: entry.id!,
       );
-      return Right(model.toEntity());
+      return Right(_toEntity(model));
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
     } on UnexpectedException catch (e) {
@@ -79,14 +105,14 @@ class ApiKeyRepositoryImpl implements ApiKeyRepository {
   }
 
   @override
-  Future<Either<Failure, List<ApiKeyEntry>>> upsertMany(
-    List<ApiKeyEntry> entries,
-  ) async {
+  Future<Either<Failure, List<ApiKeyEntry>>> upsertMany({
+    required List<ApiKeyEntry> entries,
+  }) async {
     try {
       final models = await remoteDataSource.upsertMany(
-        entries.map((e) => ApiKeyModel.fromEntity(e)).toList(),
+        data: entries.map((e) => _updatePayload(e)).toList(),
       );
-      return Right(models.map((m) => m.toEntity()).toList());
+      return Right(models.map((m) => _toEntity(m)).toList());
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
     } on UnexpectedException catch (e) {
@@ -95,9 +121,9 @@ class ApiKeyRepositoryImpl implements ApiKeyRepository {
   }
 
   @override
-  Future<Either<Failure, Unit>> delete(String id) async {
+  Future<Either<Failure, Unit>> delete({required String id}) async {
     try {
-      await remoteDataSource.delete(id);
+      await remoteDataSource.delete(id: id);
       return const Right(unit);
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message, statusCode: e.statusCode));

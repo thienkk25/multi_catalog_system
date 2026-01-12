@@ -76,7 +76,7 @@ class _ApiKeyManagementPageState extends State<ApiKeyManagementPage>
                 child: BlocConsumer<ApiKeyBloc, ApiKeyState>(
                   listener: (context, state) {
                     if (state.createdEntry != null) {
-                      _showSuccessDialog(context, state.createdEntry!.key);
+                      _showSuccessDialog(context, state.createdEntry!.key!);
                     }
                     if (state.successMessage != null) {
                       ScaffoldMessenger.of(context).showSnackBar(

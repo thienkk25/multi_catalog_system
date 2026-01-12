@@ -31,11 +31,11 @@ class ApiKeyManagementCard extends StatelessWidget {
                     spacing: 5,
                     children: [
                       Text(
-                        _getHintKey(entry.key),
+                        _getHintKey(entry.key!),
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       GestureDetector(
-                        onTap: () => _copyToClipboard(context, entry.key),
+                        onTap: () => _copyToClipboard(context, entry.key!),
                         child: Padding(
                           padding: const EdgeInsets.all(5.0),
                           child: SvgPicture.asset(
@@ -107,14 +107,16 @@ class ApiKeyManagementCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('Tạo bởi: ${entry.createdBy ?? 'System'}'),
-                    Text('Ngày tạo: ${_formatDate(entry.createdAt)}'),
+                    Text(
+                      'Ngày tạo: ${entry.createdAt != null ? _formatDate(entry.createdAt!) : '-'}',
+                    ),
                   ],
                 ),
               ),
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
                 decoration: BoxDecoration(
-                  color: _actionColor(entry.status).withValues(alpha: .2),
+                  color: _actionColor(entry.status!).withValues(alpha: .2),
                   borderRadius: BorderRadius.circular(50),
                 ),
                 child: Row(
@@ -122,12 +124,12 @@ class ApiKeyManagementCard extends StatelessWidget {
                   children: [
                     CircleAvatar(
                       radius: 5,
-                      backgroundColor: _actionColor(entry.status),
+                      backgroundColor: _actionColor(entry.status!),
                     ),
                     Text(
-                      _actionText(entry.status),
+                      _actionText(entry.status!),
                       style: TextStyle(
-                        color: _actionColor(entry.status),
+                        color: _actionColor(entry.status!),
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),

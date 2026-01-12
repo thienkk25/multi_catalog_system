@@ -4,14 +4,14 @@ import 'package:multi_catalog_system/features/api_key_management/domain/entries/
 
 abstract class ApiKeyRepository {
   Future<Either<Failure, List<ApiKeyEntry>>> getAll({String? search});
-  Future<Either<Failure, ApiKeyEntry>> getById(String id);
-  Future<Either<Failure, ApiKeyEntry>> create(ApiKeyEntry entry);
-  Future<Either<Failure, List<ApiKeyEntry>>> createMany(
-    List<ApiKeyEntry> entries,
-  );
-  Future<Either<Failure, List<ApiKeyEntry>>> upsertMany(
-    List<ApiKeyEntry> entries,
-  );
-  Future<Either<Failure, ApiKeyEntry>> update(ApiKeyEntry entry);
-  Future<Either<Failure, void>> delete(String id);
+  Future<Either<Failure, ApiKeyEntry>> getById({required String id});
+  Future<Either<Failure, ApiKeyEntry>> create({required ApiKeyEntry entry});
+  Future<Either<Failure, List<ApiKeyEntry>>> createMany({
+    required List<ApiKeyEntry> entries,
+  });
+  Future<Either<Failure, List<ApiKeyEntry>>> upsertMany({
+    required List<ApiKeyEntry> entries,
+  });
+  Future<Either<Failure, ApiKeyEntry>> update({required ApiKeyEntry entry});
+  Future<Either<Failure, void>> delete({required String id});
 }
