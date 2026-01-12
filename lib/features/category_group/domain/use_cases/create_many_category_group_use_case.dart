@@ -8,9 +8,9 @@ class CreateManyCategoryGroupUseCase {
 
   CreateManyCategoryGroupUseCase({required this.repository});
 
-  Future<Either<Failure, List<CategoryGroupEntry>>> call(
-    List<CategoryGroupEntry> entries,
-  ) async {
-    return repository.createMany(entries);
+  Future<Either<Failure, List<CategoryGroupEntry>>> call({
+    required List<CategoryGroupEntry> entries,
+  }) async {
+    return repository.createMany(entries: entries);
   }
 }

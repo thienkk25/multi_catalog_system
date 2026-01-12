@@ -40,7 +40,7 @@ class CategoryGroupListViewWidget extends StatelessWidget {
                 SizedBox(height: 5),
                 BlocSelector<CatalogLookupBloc, CatalogLookupState, String>(
                   selector: (state) =>
-                      state.domainNameOf(categoryGroup[index].domainId),
+                      state.domainNameOf(categoryGroup[index].domainId!),
                   builder: (context, domainName) {
                     return Text(
                       'Lĩnh vực: $domainName',

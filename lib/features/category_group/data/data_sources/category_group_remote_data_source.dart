@@ -5,12 +5,19 @@ import 'package:multi_catalog_system/features/category_group/data/models/categor
 
 abstract class CategoryGroupRemoteDataSource {
   Future<List<CategoryGroupModel>> getAll({String? search});
-  Future<CategoryGroupModel> getById(String id);
-  Future<CategoryGroupModel> create(CategoryGroupModel entry);
-  Future<List<CategoryGroupModel>> createMany(List<CategoryGroupModel> entries);
-  Future<List<CategoryGroupModel>> upsertMany(List<CategoryGroupModel> entries);
-  Future<CategoryGroupModel> update(CategoryGroupModel entry);
-  Future<void> delete(String id);
+  Future<CategoryGroupModel> getById({required String id});
+  Future<CategoryGroupModel> create({required Map<String, dynamic> data});
+  Future<List<CategoryGroupModel>> createMany({
+    required List<Map<String, dynamic>> data,
+  });
+  Future<List<CategoryGroupModel>> upsertMany({
+    required List<Map<String, dynamic>> data,
+  });
+  Future<CategoryGroupModel> update({
+    required String id,
+    required Map<String, dynamic> data,
+  });
+  Future<void> delete({required String id});
 }
 
 class CategoryGroupRemoteDataSourceImpl extends BaseRemoteDataSource
@@ -43,7 +50,7 @@ class CategoryGroupRemoteDataSourceImpl extends BaseRemoteDataSource
   }
 
   @override
-  Future<CategoryGroupModel> getById(String id) async {
+  Future<CategoryGroupModel> getById({required String id}) async {
     try {
       final response = await dio.get('/category-group/$id');
       return CategoryGroupModel.fromJson(response.data['data']);
@@ -57,9 +64,10 @@ class CategoryGroupRemoteDataSourceImpl extends BaseRemoteDataSource
   }
 
   @override
-  Future<CategoryGroupModel> create(CategoryGroupModel entry) async {
+  Future<CategoryGroupModel> create({
+    required Map<String, dynamic> data,
+  }) async {
     try {
-      final data = entry.toJson()..remove('id');
       final response = await dio.post('/category-group', data: data);
       return CategoryGroupModel.fromJson(response.data['data']);
     } on DioException catch (e) {
@@ -72,11 +80,10 @@ class CategoryGroupRemoteDataSourceImpl extends BaseRemoteDataSource
   }
 
   @override
-  Future<List<CategoryGroupModel>> createMany(
-    List<CategoryGroupModel> entries,
-  ) async {
+  Future<List<CategoryGroupModel>> createMany({
+    required List<Map<String, dynamic>> data,
+  }) async {
     try {
-      final data = entries.map((e) => e.toJson()).toList();
       final response = await dio.post('/category-group/bulk', data: data);
       final List<dynamic> jsonList = response.data;
       return jsonList.map((json) => CategoryGroupModel.fromJson(json)).toList();
@@ -90,11 +97,10 @@ class CategoryGroupRemoteDataSourceImpl extends BaseRemoteDataSource
   }
 
   @override
-  Future<List<CategoryGroupModel>> upsertMany(
-    List<CategoryGroupModel> entries,
-  ) async {
+  Future<List<CategoryGroupModel>> upsertMany({
+    required List<Map<String, dynamic>> data,
+  }) async {
     try {
-      final data = entries.map((e) => e.toJson()).toList();
       final response = await dio.post(
         '/category-group/bulk/upsert',
         data: data,
@@ -111,12 +117,12 @@ class CategoryGroupRemoteDataSourceImpl extends BaseRemoteDataSource
   }
 
   @override
-  Future<CategoryGroupModel> update(CategoryGroupModel entry) async {
+  Future<CategoryGroupModel> update({
+    required String id,
+    required Map<String, dynamic> data,
+  }) async {
     try {
-      final response = await dio.patch(
-        '/category-group/${entry.id}',
-        data: entry.toJson(),
-      );
+      final response = await dio.patch('/category-group/$id', data: data);
       return CategoryGroupModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);
@@ -128,7 +134,7 @@ class CategoryGroupRemoteDataSourceImpl extends BaseRemoteDataSource
   }
 
   @override
-  Future<void> delete(String id) async {
+  Future<void> delete({required String id}) async {
     try {
       await dio.delete('/category-group/$id');
     } catch (e) {
