@@ -12,6 +12,7 @@ class LegalDocumentBloc extends Bloc<LegalDocumentEvent, LegalDocumentState> {
   final DeleteLegalDocumentUseCase delete;
   final GetByIdLegalDocumentUseCase getById;
   final GetAllLegalDocumentUseCase getAll;
+  final GetAllLegalDocumentHasFileUseCase getAllHasFile;
   final UpsertManyLegalDocumentUseCase upsertMany;
 
   LegalDocumentBloc({
@@ -21,6 +22,7 @@ class LegalDocumentBloc extends Bloc<LegalDocumentEvent, LegalDocumentState> {
     required this.delete,
     required this.getById,
     required this.getAll,
+    required this.getAllHasFile,
     required this.upsertMany,
   }) : super(const LegalDocumentState()) {
     on<LegalDocumentEvent>(_onEvent);
@@ -37,6 +39,20 @@ class LegalDocumentBloc extends Bloc<LegalDocumentEvent, LegalDocumentState> {
         );
 
         final result = await getAll(search: v.search);
+        if (emit.isDone) return;
+
+        result.fold(
+          (f) => emit(state.copyWith(isLoading: false, error: _mapFailure(f))),
+          (entities) =>
+              emit(state.copyWith(isLoading: false, entities: entities)),
+        );
+      },
+      getAllHasFile: (v) async {
+        emit(
+          state.copyWith(isLoading: true, error: null, successMessage: null),
+        );
+
+        final result = await getAllHasFile(search: v.search);
         if (emit.isDone) return;
 
         result.fold(
@@ -170,6 +186,14 @@ class LegalDocumentBloc extends Bloc<LegalDocumentEvent, LegalDocumentState> {
             ),
           ),
         );
+      },
+
+      toggleSelect: (e) {
+        final selected = Set<String>.from(state.selectedIds);
+
+        selected.contains(e.id) ? selected.remove(e.id) : selected.add(e.id);
+
+        emit(state.copyWith(selectedIds: selected));
       },
     );
   }

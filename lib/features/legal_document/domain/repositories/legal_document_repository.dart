@@ -5,6 +5,9 @@ import 'package:multi_catalog_system/features/legal_document/domain/entries/lega
 
 abstract class LegalDocumentRepository {
   Future<Either<Failure, List<LegalDocumentEntry>>> getAll({String? search});
+  Future<Either<Failure, List<LegalDocumentEntry>>> getAllHasFile({
+    String? search,
+  });
   Future<Either<Failure, LegalDocumentEntry>> getById(String id);
   Future<Either<Failure, LegalDocumentEntry>> create({
     required LegalDocumentEntry entry,

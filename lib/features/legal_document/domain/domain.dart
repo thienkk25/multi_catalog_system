@@ -7,3 +7,4 @@ export 'use_cases/get_all_legal_document_use_case.dart';
 export 'use_cases/get_by_id_legal_document_use_case.dart';
 export 'use_cases/update_legal_document_use_case.dart';
 export 'use_cases/upsert_many_legal_document_use_case.dart';
+export 'use_cases/get_all_legal_document_has_file_use_case.dart';

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/core.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/presentation.dart';
 
@@ -120,7 +121,15 @@ class _CategoryItemPageState extends State<CategoryItemPage> {
           ),
         ),
 
-        CustomFloatingActionButton(onPressedImport: () {}, onPressedAdd: () {}),
+        CustomFloatingActionButton(
+          onPressedImport: () {},
+          onPressedAdd: () {
+            context.pushNamed(
+              RouterNames.categoryItemForm,
+              extra: {'bloc': bloc, 'type': CategoryItemFormType.create},
+            );
+          },
+        ),
       ],
     );
   }

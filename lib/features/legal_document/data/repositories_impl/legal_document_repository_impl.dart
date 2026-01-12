@@ -72,6 +72,20 @@ class LegalDocumentRepositoryImpl implements LegalDocumentRepository {
   }
 
   @override
+  Future<Either<Failure, List<LegalDocumentEntry>>> getAllHasFile({
+    String? search,
+  }) async {
+    try {
+      final models = await remoteDataSource.getAllHasFile(search: search);
+      return Right(models.map((m) => m.toEntity()).toList());
+    } on ServerException catch (e) {
+      return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
+    } on UnexpectedException catch (e) {
+      return Left(UnexpectedFailure(e.message));
+    }
+  }
+
+  @override
   Future<Either<Failure, LegalDocumentEntry>> update({
     required LegalDocumentEntry entry,
     PickedDocumentFile? file,

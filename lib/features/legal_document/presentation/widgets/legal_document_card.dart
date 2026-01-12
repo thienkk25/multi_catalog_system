@@ -6,6 +6,7 @@ import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/core/widgets/custom_alert_dialog.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/core/widgets/custom_label.dart';
+import 'package:multi_catalog_system/core/widgets/file_icon.dart';
 import 'package:multi_catalog_system/core/widgets/role_based_widget.dart';
 import 'package:multi_catalog_system/features/legal_document/domain/entries/legal_document_entry.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/bloc/legal_document_bloc.dart';
@@ -107,7 +108,7 @@ class LegalDocumentCard extends StatelessWidget {
                 child: Row(
                   spacing: 8,
                   children: [
-                    _getFileIcon(entry.fileName!),
+                    FileIcon(fileName: entry.fileName!),
                     Expanded(
                       child: Text(
                         entry.fileName!,
@@ -198,40 +199,6 @@ class LegalDocumentCard extends StatelessWidget {
       default:
         return const Color(0xFF6B7280);
     }
-  }
-
-  Widget _getFileIcon(String fileName) {
-    final ext = fileName.split('.').last.toLowerCase();
-
-    late IconData icon;
-    late Color color;
-    Widget? iconCustom;
-
-    switch (ext) {
-      case 'pdf':
-        icon = Icons.picture_as_pdf;
-        color = Colors.red;
-        break;
-
-      case 'doc':
-      case 'docx':
-        icon = Icons.description;
-        color = Colors.blue;
-        break;
-
-      default:
-        icon = Icons.insert_drive_file;
-        color = Colors.grey;
-    }
-
-    return Container(
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(50),
-        color: color.withValues(alpha: .15),
-      ),
-      child: iconCustom ?? Icon(icon, color: color),
-    );
   }
 }
 

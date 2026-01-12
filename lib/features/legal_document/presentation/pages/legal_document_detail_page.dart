@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/core/widgets/custom_label.dart';
+import 'package:multi_catalog_system/core/widgets/file_icon.dart';
 import 'package:multi_catalog_system/features/legal_document/domain/entries/legal_document_entry.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/bloc/legal_document_bloc.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/bloc/legal_document_state.dart';
@@ -95,7 +96,7 @@ class LegalDocumentDetailPage extends StatelessWidget {
                           child: Row(
                             spacing: 8,
                             children: [
-                              _getFileIcon(entry.fileName!),
+                              FileIcon(fileName: entry.fileName!),
                               Expanded(
                                 child: Text(
                                   entry.fileName!,
@@ -121,40 +122,6 @@ class LegalDocumentDetailPage extends StatelessWidget {
   String _formatDate(DateTime? date) {
     if (date == null) return 'Vĩnh viễn';
     return DateFormat('dd/MM/yyyy').format(date);
-  }
-
-  Widget _getFileIcon(String fileName) {
-    final ext = fileName.split('.').last.toLowerCase();
-
-    late IconData icon;
-    late Color color;
-    Widget? iconCustom;
-
-    switch (ext) {
-      case 'pdf':
-        icon = Icons.picture_as_pdf;
-        color = Colors.red;
-        break;
-
-      case 'doc':
-      case 'docx':
-        icon = Icons.description;
-        color = Colors.blue;
-        break;
-
-      default:
-        icon = Icons.insert_drive_file;
-        color = Colors.grey;
-    }
-
-    return Container(
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(50),
-        color: color.withValues(alpha: .15),
-      ),
-      child: iconCustom ?? Icon(icon, color: color),
-    );
   }
 }
 

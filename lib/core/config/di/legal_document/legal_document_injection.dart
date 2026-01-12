@@ -33,6 +33,9 @@ void initLegalDocumentModule() {
     () => GetAllLegalDocumentUseCase(repository: getIt()),
   );
   getIt.registerLazySingleton(
+    () => GetAllLegalDocumentHasFileUseCase(repository: getIt()),
+  );
+  getIt.registerLazySingleton(
     () => UpsertManyLegalDocumentUseCase(repository: getIt()),
   );
 
@@ -44,6 +47,7 @@ void initLegalDocumentModule() {
       delete: getIt<DeleteLegalDocumentUseCase>(),
       getById: getIt<GetByIdLegalDocumentUseCase>(),
       getAll: getIt<GetAllLegalDocumentUseCase>(),
+      getAllHasFile: getIt<GetAllLegalDocumentHasFileUseCase>(),
       upsertMany: getIt<UpsertManyLegalDocumentUseCase>(),
     ),
   );

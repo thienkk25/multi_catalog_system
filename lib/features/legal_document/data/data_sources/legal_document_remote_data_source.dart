@@ -7,6 +7,7 @@ import 'package:multi_catalog_system/features/legal_document/data/models/picked_
 
 abstract class LegalDocumentRemoteDataSource {
   Future<List<LegalDocumentModel>> getAll({String? search});
+  Future<List<LegalDocumentModel>> getAllHasFile({String? search});
   Future<LegalDocumentModel> getById(String id);
   Future<LegalDocumentModel> create({
     required LegalDocumentModel entry,
@@ -36,6 +37,29 @@ class LegalDocumentRemoteDataSourceImpl extends BaseRemoteDataSource
 
       final response = await dio.get(
         '/legal-document',
+        queryParameters: queryParams,
+      );
+
+      final List<dynamic> jsonList = response.data['data']['data'];
+      return jsonList.map((json) => LegalDocumentModel.fromJson(json)).toList();
+    } on DioException catch (e) {
+      handleDioError(e);
+    } on AppException {
+      rethrow;
+    } catch (e) {
+      throw UnexpectedException(e.toString());
+    }
+  }
+
+  @override
+  Future<List<LegalDocumentModel>> getAllHasFile({String? search}) async {
+    try {
+      final queryParams = <String, dynamic>{};
+
+      if (search != null) queryParams['search'] = search;
+
+      final response = await dio.get(
+        '/legal-document/documents/with-file',
         queryParameters: queryParams,
       );
 

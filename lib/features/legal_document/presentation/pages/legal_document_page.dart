@@ -80,6 +80,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
                     return state.when((
                       isLoading,
                       entities,
+                      selectedIds,
                       error,
                       successMessage,
                     ) {

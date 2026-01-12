@@ -4,6 +4,7 @@ import 'package:multi_catalog_system/features/features.dart';
 import 'api_key_management/api_key_management_routes.dart';
 import 'auth/auth_routes.dart';
 import 'category_group/category_group_routes.dart';
+import 'category_item/category_item_routes.dart';
 import 'domain_management/domain_management_routes.dart';
 import 'home/home_routes.dart';
 import 'import_file/import_file_routes.dart';
@@ -18,6 +19,7 @@ class AppRouter {
       ...AuthRoutes.routes,
       ...DomainManagementRoutes.routes,
       ...CategoryGroupRoutes.routes,
+      ...CategoryItemRoutes.routes,
       ...LegalDocumentRoutes.routes,
       ...ImportFileRoutes.routes,
       ...ProfileRoutes.routes,

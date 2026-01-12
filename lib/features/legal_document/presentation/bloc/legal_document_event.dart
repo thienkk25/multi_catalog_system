@@ -7,6 +7,8 @@ part 'legal_document_event.freezed.dart';
 @freezed
 class LegalDocumentEvent with _$LegalDocumentEvent {
   const factory LegalDocumentEvent.getAll({String? search}) = _GetAll;
+  const factory LegalDocumentEvent.getAllHasFile({String? search}) =
+      _GetAllHasFile;
   const factory LegalDocumentEvent.getById({required String id}) = _GetById;
 
   const factory LegalDocumentEvent.create({
@@ -26,4 +28,6 @@ class LegalDocumentEvent with _$LegalDocumentEvent {
   }) = _Update;
 
   const factory LegalDocumentEvent.delete({required String id}) = _Delete;
+
+  const factory LegalDocumentEvent.toggleSelect(String id) = _ToggleSelect;
 }

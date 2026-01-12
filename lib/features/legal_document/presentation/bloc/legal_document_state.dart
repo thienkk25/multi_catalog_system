@@ -8,6 +8,7 @@ abstract class LegalDocumentState with _$LegalDocumentState {
   const factory LegalDocumentState({
     @Default(false) bool isLoading,
     @Default([]) List<LegalDocumentEntry> entities,
+    @Default({}) Set<String> selectedIds,
     String? error,
     String? successMessage,
   }) = _LegalDocumentState;

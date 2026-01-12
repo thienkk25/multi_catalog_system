@@ -32,7 +32,6 @@ class LegalDocumentRoutes {
         );
       },
     ),
-
     GoRoute(
       path: RouterPaths.legalDocumentDetail,
       name: RouterNames.legalDocumentDetail,

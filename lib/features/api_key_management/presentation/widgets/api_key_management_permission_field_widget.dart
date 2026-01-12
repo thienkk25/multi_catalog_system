@@ -89,13 +89,13 @@ class _ApiKeyManagementPermissionFieldWidgetState
                                 )
                                 as List<String>?;
 
-                        if (result != null) {
-                          setState(
-                            () => widget.fields
-                              ..clear()
-                              ..addAll(result),
-                          );
-                        }
+                        if (result == null) return;
+
+                        setState(
+                          () => widget.fields
+                            ..clear()
+                            ..addAll(result),
+                        );
                       },
                     ),
                     if (widget.fields.isNotEmpty)

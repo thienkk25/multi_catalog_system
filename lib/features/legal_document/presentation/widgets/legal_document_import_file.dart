@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:multi_catalog_system/core/utils/formatter/file_size_formatter.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
+import 'package:multi_catalog_system/core/widgets/file_icon.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/bloc/document_file_cubit.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/bloc/document_file_state.dart';
 
@@ -104,8 +106,8 @@ class LegalDocumentImportFile extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         spacing: 10,
                         children: [
-                          _getFileIcon(
-                            state.remoteFileName ?? state.file!.name,
+                          FileIcon(
+                            fileName: state.remoteFileName ?? state.file!.name,
                           ),
 
                           Expanded(
@@ -122,7 +124,7 @@ class LegalDocumentImportFile extends StatelessWidget {
                                 ),
                                 if (state.remoteFileName == null)
                                   Text(
-                                    _formatFileSize(state.file!.size),
+                                    formatFileSize(state.file!.size),
                                     style: TextStyle(color: Colors.grey),
                                   ),
                               ],
@@ -141,55 +143,6 @@ class LegalDocumentImportFile extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-
-  String _formatFileSize(int bytes, {int decimals = 2}) {
-    if (bytes <= 0) return '0 B';
-
-    const suffixes = ['B', 'KB', 'MB', 'GB', 'TB'];
-    int i = 0;
-    double size = bytes.toDouble();
-
-    while (size >= 1024 && i < suffixes.length - 1) {
-      size /= 1024;
-      i++;
-    }
-
-    return '${size.toStringAsFixed(decimals)} ${suffixes[i]}';
-  }
-
-  Widget _getFileIcon(String fileName) {
-    final ext = fileName.split('.').last.toLowerCase();
-
-    late IconData icon;
-    late Color color;
-    Widget? iconCustom;
-
-    switch (ext) {
-      case 'pdf':
-        icon = Icons.picture_as_pdf;
-        color = Colors.red;
-        break;
-
-      case 'doc':
-      case 'docx':
-        icon = Icons.description;
-        color = Colors.blue;
-        break;
-
-      default:
-        icon = Icons.insert_drive_file;
-        color = Colors.grey;
-    }
-
-    return Container(
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(50),
-        color: color.withValues(alpha: .15),
-      ),
-      child: iconCustom ?? Icon(icon, color: color),
     );
   }
 }
