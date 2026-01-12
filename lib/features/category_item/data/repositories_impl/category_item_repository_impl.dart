@@ -24,17 +24,15 @@ class CategoryItemRepositoryImpl implements CategoryItemRepository {
   Map<String, dynamic> _createPayload(CategoryItemEntry entry) => {
     'code': entry.code,
     'name': entry.name,
-    'description': entry.description,
-    'status': entry.status,
+    if (entry.description != null) 'description': entry.description,
     'groupId': entry.groupId,
   };
 
   Map<String, dynamic> _updatePayload(CategoryItemEntry entry) => {
-    'code': entry.code,
-    'name': entry.name,
-    'description': entry.description,
-    'status': entry.status,
-    'groupId': entry.groupId,
+    if (entry.code != null) 'code': entry.code,
+    if (entry.name != null) 'name': entry.name,
+    if (entry.description != null) 'description': entry.description,
+    if (entry.groupId != null) 'groupId': entry.groupId,
   };
 
   @override

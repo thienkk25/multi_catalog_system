@@ -47,14 +47,14 @@ class DomainManagementGridView extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      domain.name,
+                      domain.name!,
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     Text(
-                      domain.description,
+                      domain.description ?? '',
                       style: const TextStyle(fontSize: 12, color: Colors.grey),
                     ),
                   ],

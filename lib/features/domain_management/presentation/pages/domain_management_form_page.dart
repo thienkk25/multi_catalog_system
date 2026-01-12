@@ -32,9 +32,9 @@ class _DomainManagementFormPageState extends State<DomainManagementFormPage> {
   void initState() {
     super.initState();
     if (widget.entry != null) {
-      _nameController.text = widget.entry!.name;
-      _codeController.text = widget.entry!.code;
-      _descriptionController.text = widget.entry!.description;
+      _nameController.text = widget.entry!.name!;
+      _codeController.text = widget.entry!.code!;
+      _descriptionController.text = widget.entry!.description ?? '';
     }
   }
 

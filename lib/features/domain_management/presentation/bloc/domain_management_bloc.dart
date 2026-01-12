@@ -41,9 +41,8 @@ class DomainManagementBloc
         if (emit.isDone) return;
 
         result.fold(
-          (f) => emit(state.copyWith(isLoading: false, error: _mapFailure(f))),
-          (entities) =>
-              emit(state.copyWith(isLoading: false, entities: entities)),
+          (l) => emit(state.copyWith(isLoading: false, error: _mapFailure(l))),
+          (r) => emit(state.copyWith(isLoading: false, entries: r)),
         );
       },
 
@@ -52,17 +51,17 @@ class DomainManagementBloc
           state.copyWith(isLoading: true, error: null, successMessage: null),
         );
 
-        final result = await getById(e.id);
+        final result = await getById(id: e.id);
         if (emit.isDone) return;
 
         result.fold(
-          (f) => emit(state.copyWith(isLoading: false, error: _mapFailure(f))),
-          (domain) {
+          (l) => emit(state.copyWith(isLoading: false, error: _mapFailure(l))),
+          (r) {
             final updated = [
-              for (final d in state.entities)
-                if (d.id == domain.id) domain else d,
+              for (final d in state.entries)
+                if (d.id == r.id) r else d,
             ];
-            emit(state.copyWith(isLoading: false, entities: updated));
+            emit(state.copyWith(isLoading: false, entries: updated));
           },
         );
       },
@@ -72,16 +71,16 @@ class DomainManagementBloc
           state.copyWith(isLoading: true, error: null, successMessage: null),
         );
 
-        final result = await create(e.entry);
+        final result = await create(entry: e.entry);
         if (emit.isDone) return;
 
         result.fold(
-          (f) => emit(state.copyWith(isLoading: false, error: _mapFailure(f))),
-          (domain) => emit(
+          (l) => emit(state.copyWith(isLoading: false, error: _mapFailure(l))),
+          (r) => emit(
             state.copyWith(
               isLoading: false,
-              entities: [domain, ...state.entities],
-              successMessage: 'Tạo lĩnh vực thành công',
+              entries: [r, ...state.entries],
+              successMessage: 'Tạo thành công',
             ),
           ),
         );
@@ -92,16 +91,16 @@ class DomainManagementBloc
           state.copyWith(isLoading: true, error: null, successMessage: null),
         );
 
-        final result = await createMany(e.entities);
+        final result = await createMany(entries: e.entries);
         if (emit.isDone) return;
 
         result.fold(
-          (f) => emit(state.copyWith(isLoading: false, error: _mapFailure(f))),
-          (entities) => emit(
+          (l) => emit(state.copyWith(isLoading: false, error: _mapFailure(l))),
+          (r) => emit(
             state.copyWith(
               isLoading: false,
-              entities: [...entities, ...state.entities],
-              successMessage: 'Tạo lĩnh vực thành công',
+              entries: [...r, ...state.entries],
+              successMessage: 'Tạo thành công',
             ),
           ),
         );
@@ -112,21 +111,21 @@ class DomainManagementBloc
           state.copyWith(isLoading: true, error: null, successMessage: null),
         );
 
-        final result = await update(e.entry);
+        final result = await update(entry: e.entry);
         if (emit.isDone) return;
 
         result.fold(
-          (f) => emit(state.copyWith(isLoading: false, error: _mapFailure(f))),
-          (domain) {
+          (l) => emit(state.copyWith(isLoading: false, error: _mapFailure(l))),
+          (r) {
             final updated = [
-              for (final d in state.entities)
-                if (d.id == domain.id) domain else d,
+              for (final d in state.entries)
+                if (d.id == r.id) r else d,
             ];
             emit(
               state.copyWith(
                 isLoading: false,
-                entities: updated,
-                successMessage: 'Cập nhật lĩnh vực thành công',
+                entries: updated,
+                successMessage: 'Cập nhật thành công',
               ),
             );
           },
@@ -134,22 +133,21 @@ class DomainManagementBloc
       },
 
       delete: (e) async {
-        final previous = List<DomainEntry>.from(state.entities);
+        final previous = List<DomainEntry>.from(state.entries);
 
         emit(
           state.copyWith(
-            entities: state.entities.where((d) => d.id != e.id).toList(),
+            entries: state.entries.where((d) => d.id != e.id).toList(),
             successMessage: null,
             error: null,
           ),
         );
 
-        final result = await delete(e.id);
+        final result = await delete(id: e.id);
         if (emit.isDone) return;
 
         result.fold(
-          (f) =>
-              emit(state.copyWith(entities: previous, error: _mapFailure(f))),
+          (l) => emit(state.copyWith(entries: previous, error: _mapFailure(l))),
           (_) {
             emit(state.copyWith(successMessage: 'Xóa thành công'));
           },
@@ -161,16 +159,16 @@ class DomainManagementBloc
           state.copyWith(isLoading: true, error: null, successMessage: null),
         );
 
-        final result = await upsertMany(e.entities);
+        final result = await upsertMany(entries: e.entries);
         if (emit.isDone) return;
 
         result.fold(
-          (f) => emit(state.copyWith(isLoading: false, error: _mapFailure(f))),
-          (entities) => emit(
+          (l) => emit(state.copyWith(isLoading: false, error: _mapFailure(l))),
+          (r) => emit(
             state.copyWith(
               isLoading: false,
-              entities: entities,
-              successMessage: 'Cập nhật hoặc tạo lĩnh vực thành công',
+              entries: r,
+              successMessage: 'Cập nhật hoặc tạo thành công',
             ),
           ),
         );
