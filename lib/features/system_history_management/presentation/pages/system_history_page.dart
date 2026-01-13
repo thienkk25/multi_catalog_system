@@ -70,7 +70,7 @@ class _SystemHistoryPageState extends State<SystemHistoryPage> {
               Expanded(
                 child: BlocBuilder<SystemHistoryBloc, SystemHistoryState>(
                   builder: (context, state) {
-                    return state.when((isLoading, error, entities) {
+                    return state.when((isLoading, error, entries) {
                       if (isLoading) {
                         return const Center(child: CircularProgressIndicator());
                       }
@@ -86,16 +86,16 @@ class _SystemHistoryPageState extends State<SystemHistoryPage> {
 
                       return ListView.separated(
                         shrinkWrap: true,
-                        itemCount: entities.length,
+                        itemCount: entries.length,
                         itemBuilder: (context, index) => GestureDetector(
                           onTap: () => context.pushNamed(
                             RouterNames.systemHistoryManagementDetail,
                             pathParameters: {
-                              'id': entities[index].id.toString(),
+                              'id': entries[index].id.toString(),
                             },
-                            extra: entities[index],
+                            extra: entries[index],
                           ),
-                          child: SystemHistoryCard(log: entities[index]),
+                          child: SystemHistoryCard(log: entries[index]),
                         ),
                         separatorBuilder: (context, index) =>
                             const SizedBox(height: 10),
