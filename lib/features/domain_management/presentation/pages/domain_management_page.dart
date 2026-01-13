@@ -82,7 +82,7 @@ class _DomainManagementPageState extends State<DomainManagementPage>
                       builder: (context, state) {
                         return state.when((
                           isLoading,
-                          entities,
+                          entries,
                           error,
                           successMessage,
                         ) {
@@ -99,7 +99,7 @@ class _DomainManagementPageState extends State<DomainManagementPage>
                               },
                             );
                           }
-                          return DomainManagementGridView(domains: entities);
+                          return DomainManagementGridView(domains: entries);
                         });
                       },
                     ),

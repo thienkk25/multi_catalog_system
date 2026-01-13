@@ -16,10 +16,10 @@ class LegalDocumentEvent with _$LegalDocumentEvent {
     PickedDocumentFile? file,
   }) = _Create;
   const factory LegalDocumentEvent.createMany({
-    required List<LegalDocumentEntry> entities,
+    required List<LegalDocumentEntry> entries,
   }) = _CreateMany;
   const factory LegalDocumentEvent.upsertMany({
-    required List<LegalDocumentEntry> entities,
+    required List<LegalDocumentEntry> entries,
   }) = _UpsertMany;
 
   const factory LegalDocumentEvent.update({

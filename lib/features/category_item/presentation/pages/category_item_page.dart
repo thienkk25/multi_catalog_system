@@ -78,7 +78,7 @@ class _CategoryItemPageState extends State<CategoryItemPage> {
                   builder: (context, state) {
                     return state.when((
                       isLoading,
-                      entities,
+                      entries,
                       error,
                       successMessage,
                     ) {
@@ -94,11 +94,11 @@ class _CategoryItemPageState extends State<CategoryItemPage> {
                         );
                       }
                       return ListView.separated(
-                        itemCount: entities.length,
+                        itemCount: entries.length,
                         separatorBuilder: (context, index) =>
                             const SizedBox(height: 10),
                         itemBuilder: (context, index) {
-                          final entry = entities[index];
+                          final entry = entries[index];
                           return GestureDetector(
                             onTap: () {
                               Navigator.push(

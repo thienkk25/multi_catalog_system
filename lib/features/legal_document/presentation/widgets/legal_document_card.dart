@@ -31,7 +31,7 @@ class LegalDocumentCard extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  entry.title,
+                  entry.title!,
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
@@ -50,10 +50,10 @@ class LegalDocumentCard extends StatelessWidget {
 
           Row(
             children: [
-              _TypeChip(type: entry.type),
+              _TypeChip(type: entry.type!),
               const SizedBox(width: 8),
               Text(
-                entry.code,
+                entry.code!,
                 style: const TextStyle(
                   color: Color(0xFF2563EB),
                   fontWeight: FontWeight.w600,

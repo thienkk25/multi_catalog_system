@@ -81,7 +81,7 @@ class _CategoryItemAddLegalDocumentsPageState
                     child: BlocBuilder<LegalDocumentBloc, LegalDocumentState>(
                       builder: (context, state) => state.when((
                         isLoading,
-                        entities,
+                        entries,
                         selectedIds,
                         error,
                         successMessage,
@@ -102,11 +102,11 @@ class _CategoryItemAddLegalDocumentsPageState
                           );
                         }
                         return ListView.separated(
-                          itemCount: entities.length,
+                          itemCount: entries.length,
                           separatorBuilder: (_, _) =>
                               const SizedBox(height: 10),
                           itemBuilder: (_, index) {
-                            final entry = entities[index];
+                            final entry = entries[index];
 
                             return BlocSelector<
                               LegalDocumentBloc,
@@ -185,7 +185,7 @@ class _LegalDocumentCard extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  entry.title,
+                  entry.title!,
                   style: const TextStyle(fontWeight: FontWeight.w600),
                 ),
               ),
@@ -196,7 +196,7 @@ class _LegalDocumentCard extends StatelessWidget {
               ),
             ],
           ),
-          Text(entry.code, style: const TextStyle(color: Colors.grey)),
+          Text(entry.code!, style: const TextStyle(color: Colors.grey)),
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(

@@ -28,25 +28,24 @@ class SystemHistoryBloc extends Bloc<SystemHistoryEvent, SystemHistoryState> {
         if (emit.isDone) return;
 
         result.fold(
-          (f) => emit(state.copyWith(isLoading: false, error: _mapFailure(f))),
-          (entities) =>
-              emit(state.copyWith(isLoading: false, entities: entities)),
+          (l) => emit(state.copyWith(isLoading: false, error: _mapFailure(l))),
+          (r) => emit(state.copyWith(isLoading: false, entries: r)),
         );
       },
       getById: (e) async {
         emit(state.copyWith(isLoading: true, error: null));
 
-        final result = await getById(e.id);
+        final result = await getById(id: e.id);
         if (emit.isDone) return;
 
         result.fold(
-          (f) => emit(state.copyWith(isLoading: false, error: _mapFailure(f))),
-          (domain) {
+          (l) => emit(state.copyWith(isLoading: false, error: _mapFailure(l))),
+          (r) {
             final updated = [
-              for (final d in state.entities)
-                if (d.id == domain.id) domain else d,
+              for (final d in state.entries)
+                if (d.id == r.id) r else d,
             ];
-            emit(state.copyWith(isLoading: false, entities: updated));
+            emit(state.copyWith(isLoading: false, entries: updated));
           },
         );
       },

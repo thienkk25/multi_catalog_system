@@ -5,7 +5,7 @@ import 'package:multi_catalog_system/features/system_history_management/data/mod
 
 abstract class SystemHistoryRemoteDataSource {
   Future<List<SystemHistoryModel>> getAll({String? search});
-  Future<SystemHistoryModel> getById(String id);
+  Future<SystemHistoryModel> getById({required String id});
 }
 
 class SystemHistoryRemoteDataSourceImpl extends BaseRemoteDataSource
@@ -37,7 +37,7 @@ class SystemHistoryRemoteDataSourceImpl extends BaseRemoteDataSource
   }
 
   @override
-  Future<SystemHistoryModel> getById(String id) async {
+  Future<SystemHistoryModel> getById({required String id}) async {
     try {
       final response = await dio.get('/activity-log/$id');
       return SystemHistoryModel.fromJson(response.data['data']);

@@ -8,7 +8,7 @@ class GetByIdLegalDocumentUseCase {
 
   GetByIdLegalDocumentUseCase({required this.repository});
 
-  Future<Either<Failure, LegalDocumentEntry>> call(String id) async {
-    return repository.getById(id);
+  Future<Either<Failure, LegalDocumentEntry>> call({required String id}) async {
+    return repository.getById(id: id);
   }
 }

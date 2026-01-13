@@ -24,7 +24,7 @@ class LegalDocumentDetailPage extends StatelessWidget {
           if (state.error != null) {
             return const Center(child: Text('Xảy ra lỗi'));
           }
-          final entry = state.entities.firstOrNull;
+          final entry = state.entries.firstOrNull;
           if (entry == null) {
             return const Center(child: Text('Không tìm thấy dữ liệu'));
           }
@@ -39,7 +39,7 @@ class LegalDocumentDetailPage extends StatelessWidget {
                   _InfoGrid(
                     title: 'Thông tin chung',
                     items: [
-                      _InfoData(Icons.article, 'Loại văn bản', entry.type),
+                      _InfoData(Icons.article, 'Loại văn bản', entry.type!),
                       _InfoData(
                         Icons.person_2_outlined,
                         'Người ban hành',
@@ -155,7 +155,7 @@ class _HeaderCard extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            entry.title,
+            entry.title!,
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
           ),
         ],

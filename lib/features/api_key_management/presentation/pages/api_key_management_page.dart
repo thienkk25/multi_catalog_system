@@ -90,7 +90,7 @@ class _ApiKeyManagementPageState extends State<ApiKeyManagementPage>
                   builder: (context, state) {
                     return state.when((
                       isLoading,
-                      entities,
+                      entries,
                       error,
                       successMessage,
                       createdEntry,
@@ -107,11 +107,11 @@ class _ApiKeyManagementPageState extends State<ApiKeyManagementPage>
                         );
                       }
                       return ListView.separated(
-                        itemCount: entities.length,
+                        itemCount: entries.length,
                         separatorBuilder: (context, index) =>
                             const SizedBox(height: 10),
                         itemBuilder: (context, index) {
-                          final entry = entities[index];
+                          final entry = entries[index];
                           return GestureDetector(
                             onTap: () {
                               context.pushNamed(

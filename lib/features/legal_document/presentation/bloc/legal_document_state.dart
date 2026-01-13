@@ -7,7 +7,7 @@ part 'legal_document_state.freezed.dart';
 abstract class LegalDocumentState with _$LegalDocumentState {
   const factory LegalDocumentState({
     @Default(false) bool isLoading,
-    @Default([]) List<LegalDocumentEntry> entities,
+    @Default([]) List<LegalDocumentEntry> entries,
     @Default({}) Set<String> selectedIds,
     String? error,
     String? successMessage,

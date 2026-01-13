@@ -8,6 +8,6 @@ abstract class SystemHistoryState with _$SystemHistoryState {
   const factory SystemHistoryState({
     @Default(false) bool isLoading,
     String? error,
-    @Default([]) List<SystemHistoryEntry> entities,
+    @Default([]) List<SystemHistoryEntry> entries,
   }) = _SystemHistoryState;
 }

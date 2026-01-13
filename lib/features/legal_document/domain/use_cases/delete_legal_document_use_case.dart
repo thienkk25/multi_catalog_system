@@ -7,7 +7,7 @@ class DeleteLegalDocumentUseCase {
 
   DeleteLegalDocumentUseCase({required this.repository});
 
-  Future<Either<Failure, void>> call(String id) async {
-    return repository.delete(id);
+  Future<Either<Failure, void>> call({required String id}) async {
+    return repository.delete(id: id);
   }
 }

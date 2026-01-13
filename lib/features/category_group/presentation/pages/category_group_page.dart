@@ -72,7 +72,7 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
                   builder: (context, state) {
                     return state.when((
                       isLoading,
-                      entities,
+                      entries,
                       error,
                       successMessage,
                     ) {
@@ -88,7 +88,7 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
                         );
                       }
                       return CategoryGroupListViewWidget(
-                        categoryGroup: entities,
+                        categoryGroup: entries,
                       );
                     });
                   },

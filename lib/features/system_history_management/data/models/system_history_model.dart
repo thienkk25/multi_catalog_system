@@ -1,5 +1,4 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:multi_catalog_system/features/system_history_management/domain/entries/system_history_entry.dart';
 
 part 'system_history_model.freezed.dart';
 part 'system_history_model.g.dart';
@@ -18,27 +17,4 @@ abstract class SystemHistoryModel with _$SystemHistoryModel {
 
   factory SystemHistoryModel.fromJson(Map<String, dynamic> json) =>
       _$SystemHistoryModelFromJson(json);
-
-  factory SystemHistoryModel.fromEntity(SystemHistoryEntry domain) =>
-      SystemHistoryModel(
-        id: domain.id,
-        userId: domain.userId,
-        action: domain.action,
-        method: domain.method,
-        endpoint: domain.endpoint,
-        metadata: domain.metadata,
-        timestamp: domain.timestamp,
-      );
-}
-
-extension SystemHistoryModelMapper on SystemHistoryModel {
-  SystemHistoryEntry toEntity() => SystemHistoryEntry(
-    id: id,
-    userId: userId,
-    action: action,
-    method: method,
-    endpoint: endpoint,
-    metadata: metadata,
-    timestamp: timestamp,
-  );
 }

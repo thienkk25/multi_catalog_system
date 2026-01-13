@@ -8,7 +8,7 @@ class GetByIdSystemHistoryUseCase {
 
   GetByIdSystemHistoryUseCase({required this.repository});
 
-  Future<Either<Failure, SystemHistoryEntry>> call(String id) {
-    return repository.getById(id);
+  Future<Either<Failure, SystemHistoryEntry>> call({required String id}) {
+    return repository.getById(id: id);
   }
 }

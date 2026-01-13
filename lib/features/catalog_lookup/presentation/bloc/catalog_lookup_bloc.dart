@@ -30,12 +30,12 @@ class CatalogLookupBloc extends Bloc<CatalogLookupEvent, CatalogLookupState> {
         if (emit.isDone) return;
 
         result.fold(
-          (f) => emit(state.copyWith(isLoading: false, error: _mapFailure(f))),
-          (entities) => emit(
+          (l) => emit(state.copyWith(isLoading: false, error: _mapFailure(l))),
+          (r) => emit(
             state.copyWith(
               isLoading: false,
-              domainsRef: entities,
-              domainNameMap: {for (final d in entities) d.id: d.name},
+              domainsRef: r,
+              domainNameMap: {for (final d in r) d.id: d.name},
             ),
           ),
         );
@@ -47,10 +47,8 @@ class CatalogLookupBloc extends Bloc<CatalogLookupEvent, CatalogLookupState> {
         if (emit.isDone) return;
 
         result.fold(
-          (f) => emit(state.copyWith(isLoading: false, error: _mapFailure(f))),
-          (entities) => emit(
-            state.copyWith(isLoading: false, categoryGroupRef: entities),
-          ),
+          (l) => emit(state.copyWith(isLoading: false, error: _mapFailure(l))),
+          (r) => emit(state.copyWith(isLoading: false, categoryGroupRef: r)),
         );
       },
       searchCatalog: (v) async {
@@ -65,9 +63,8 @@ class CatalogLookupBloc extends Bloc<CatalogLookupEvent, CatalogLookupState> {
         if (emit.isDone) return;
 
         result.fold(
-          (f) => emit(state.copyWith(isLoading: false, error: _mapFailure(f))),
-          (entities) =>
-              emit(state.copyWith(isLoading: false, catalog: entities)),
+          (l) => emit(state.copyWith(isLoading: false, error: _mapFailure(l))),
+          (r) => emit(state.copyWith(isLoading: false, catalog: r)),
         );
       },
     );

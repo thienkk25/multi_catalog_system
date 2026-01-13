@@ -38,8 +38,8 @@ class _LegalDocumentFormPageState extends State<LegalDocumentFormPage> {
     super.initState();
     _isEdit = widget.type == LegalDocumentFormPageType.update;
     if (widget.entry != null) {
-      _codeController.text = widget.entry!.code;
-      _nameController.text = widget.entry!.title;
+      _codeController.text = widget.entry!.code ?? '';
+      _nameController.text = widget.entry!.title ?? '';
       _type = widget.entry!.type;
       _descriptionController.text = widget.entry!.description ?? '';
       _issueDate = widget.entry!.issueDate;

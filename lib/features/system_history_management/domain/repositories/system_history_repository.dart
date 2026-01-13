@@ -4,5 +4,5 @@ import 'package:multi_catalog_system/features/system_history_management/domain/e
 
 abstract class SystemHistoryRepository {
   Future<Either<Failure, List<SystemHistoryEntry>>> getAll({String? search});
-  Future<Either<Failure, SystemHistoryEntry>> getById(String id);
+  Future<Either<Failure, SystemHistoryEntry>> getById({required String id});
 }

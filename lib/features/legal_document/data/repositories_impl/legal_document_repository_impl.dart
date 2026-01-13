@@ -1,4 +1,6 @@
 import 'package:dartz/dartz.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:multi_catalog_system/core/error/exceptions.dart';
 import 'package:multi_catalog_system/core/error/failures.dart';
 import 'package:multi_catalog_system/features/legal_document/data/data_sources/legal_document_remote_data_source.dart';
@@ -11,17 +13,64 @@ class LegalDocumentRepositoryImpl implements LegalDocumentRepository {
 
   LegalDocumentRepositoryImpl({required this.remoteDataSource});
 
+  LegalDocumentEntry _toEntity(LegalDocumentModel model) => LegalDocumentEntry(
+    id: model.id,
+    code: model.code,
+    title: model.title,
+    description: model.description,
+    type: model.type,
+    status: model.status,
+    issuedByName: model.issuedByName,
+    issueDate: model.issueDate,
+    effectiveDate: model.effectiveDate,
+    expiryDate: model.expiryDate,
+    fileName: model.fileName,
+    fileUrl: model.fileUrl,
+    createdAt: model.createdAt,
+    updatedAt: model.updatedAt,
+  );
+
+  Map<String, dynamic> _createPayload(LegalDocumentEntry entry) => {
+    'code': entry.code,
+    'title': entry.title,
+    if (entry.description != null) 'description': entry.description,
+    'type': entry.type,
+    'issueDate': entry.issueDate,
+    'effectiveDate': entry.effectiveDate,
+    'expiryDate': entry.expiryDate,
+  };
+
+  Map<String, dynamic> _updatePayload(LegalDocumentEntry entry) => {
+    if (entry.code != null) 'code': entry.code,
+    if (entry.title != null) 'title': entry.title,
+    if (entry.description != null) 'description': entry.description,
+    if (entry.type != null) 'type': entry.type,
+    if (entry.issueDate != null) 'issueDate': entry.issueDate,
+    if (entry.effectiveDate != null) 'effectiveDate': entry.effectiveDate,
+    if (entry.expiryDate != null) 'expiryDate': entry.expiryDate,
+  };
+
   @override
   Future<Either<Failure, LegalDocumentEntry>> create({
     required LegalDocumentEntry entry,
     PickedDocumentFile? file,
   }) async {
     try {
-      final model = await remoteDataSource.create(
-        entry: LegalDocumentModel.fromEntity(entry),
-        file: file,
-      );
-      return Right(model.toEntity());
+      final formData = FormData.fromMap(_createPayload(entry));
+
+      if (file != null) {
+        final multipartFile = kIsWeb
+            ? MultipartFile.fromBytes(file.bytes!, filename: file.name)
+            : await MultipartFile.fromFile(
+                file.file!.path,
+                filename: file.name,
+              );
+
+        formData.files.add(MapEntry('file', multipartFile));
+      }
+
+      final model = await remoteDataSource.create(data: formData);
+      return Right(_toEntity(model));
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
     } on UnexpectedException catch (e) {
@@ -30,14 +79,14 @@ class LegalDocumentRepositoryImpl implements LegalDocumentRepository {
   }
 
   @override
-  Future<Either<Failure, List<LegalDocumentEntry>>> createMany(
-    List<LegalDocumentEntry> entries,
-  ) async {
+  Future<Either<Failure, List<LegalDocumentEntry>>> createMany({
+    required List<LegalDocumentEntry> entries,
+  }) async {
     try {
       final models = await remoteDataSource.createMany(
-        entries.map((e) => LegalDocumentModel.fromEntity(e)).toList(),
+        data: entries.map((e) => _createPayload(e)).toList(),
       );
-      return Right(models.map((m) => m.toEntity()).toList());
+      return Right(models.map((m) => _toEntity(m)).toList());
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
     } on UnexpectedException catch (e) {
@@ -46,10 +95,12 @@ class LegalDocumentRepositoryImpl implements LegalDocumentRepository {
   }
 
   @override
-  Future<Either<Failure, LegalDocumentEntry>> getById(String id) async {
+  Future<Either<Failure, LegalDocumentEntry>> getById({
+    required String id,
+  }) async {
     try {
-      final model = await remoteDataSource.getById(id);
-      return Right(model.toEntity());
+      final model = await remoteDataSource.getById(id: id);
+      return Right(_toEntity(model));
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
     } on UnexpectedException catch (e) {
@@ -63,7 +114,7 @@ class LegalDocumentRepositoryImpl implements LegalDocumentRepository {
   }) async {
     try {
       final models = await remoteDataSource.getAll(search: search);
-      return Right(models.map((m) => m.toEntity()).toList());
+      return Right(models.map((m) => _toEntity(m)).toList());
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
     } on UnexpectedException catch (e) {
@@ -77,7 +128,7 @@ class LegalDocumentRepositoryImpl implements LegalDocumentRepository {
   }) async {
     try {
       final models = await remoteDataSource.getAllHasFile(search: search);
-      return Right(models.map((m) => m.toEntity()).toList());
+      return Right(models.map((m) => _toEntity(m)).toList());
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
     } on UnexpectedException catch (e) {
@@ -91,11 +142,24 @@ class LegalDocumentRepositoryImpl implements LegalDocumentRepository {
     PickedDocumentFile? file,
   }) async {
     try {
+      final formData = FormData.fromMap(_updatePayload(entry));
+
+      if (file != null) {
+        final multipartFile = kIsWeb
+            ? MultipartFile.fromBytes(file.bytes!, filename: file.name)
+            : await MultipartFile.fromFile(
+                file.file!.path,
+                filename: file.name,
+              );
+
+        formData.files.add(MapEntry('file', multipartFile));
+      }
+
       final model = await remoteDataSource.update(
-        entry: LegalDocumentModel.fromEntity(entry),
-        file: file,
+        id: entry.id!,
+        data: formData,
       );
-      return Right(model.toEntity());
+      return Right(_toEntity(model));
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
     } on UnexpectedException catch (e) {
@@ -104,14 +168,14 @@ class LegalDocumentRepositoryImpl implements LegalDocumentRepository {
   }
 
   @override
-  Future<Either<Failure, List<LegalDocumentEntry>>> upsertMany(
-    List<LegalDocumentEntry> entries,
-  ) async {
+  Future<Either<Failure, List<LegalDocumentEntry>>> upsertMany({
+    required List<LegalDocumentEntry> entries,
+  }) async {
     try {
       final models = await remoteDataSource.upsertMany(
-        entries.map((e) => LegalDocumentModel.fromEntity(e)).toList(),
+        data: entries.map((e) => _updatePayload(e)).toList(),
       );
-      return Right(models.map((m) => m.toEntity()).toList());
+      return Right(models.map((m) => _toEntity(m)).toList());
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
     } on UnexpectedException catch (e) {
@@ -120,9 +184,9 @@ class LegalDocumentRepositoryImpl implements LegalDocumentRepository {
   }
 
   @override
-  Future<Either<Failure, Unit>> delete(String id) async {
+  Future<Either<Failure, Unit>> delete({required String id}) async {
     try {
-      await remoteDataSource.delete(id);
+      await remoteDataSource.delete(id: id);
       return const Right(unit);
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
