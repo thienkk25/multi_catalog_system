@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
-import 'package:multi_catalog_system/features/system_history_management/domain/entries/system_history_entry.dart';
+import 'package:multi_catalog_system/features/system_history_management/domain/entities/system_history_entry.dart';
 
 class SystemHistoryCard extends StatelessWidget {
   final SystemHistoryEntry log;

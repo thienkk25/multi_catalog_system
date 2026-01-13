@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:multi_catalog_system/core/config/networks/base_remote_data_source.dart';
 import 'package:multi_catalog_system/core/error/exceptions.dart';
-import 'package:multi_catalog_system/features/auth/data/models/user_model.dart';
+import 'package:multi_catalog_system/features/profile/data/models/user_model.dart';
 import 'package:multi_catalog_system/features/auth/data/models/auth_response_model.dart';
 import 'package:multi_catalog_system/features/auth/data/models/user_role_model.dart';
 

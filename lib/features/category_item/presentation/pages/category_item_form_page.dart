@@ -12,7 +12,7 @@ import 'package:multi_catalog_system/features/catalog_lookup/presentation/bloc/c
 import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_entry.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_bloc.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_event.dart';
-import 'package:multi_catalog_system/features/legal_document/domain/entries/legal_document_entry.dart';
+import 'package:multi_catalog_system/features/legal_document/domain/entities/legal_document_entry.dart';
 
 enum CategoryItemFormType { create, update }
 

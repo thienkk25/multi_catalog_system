@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:multi_catalog_system/features/auth/data/models/user_model.dart';
+import 'package:multi_catalog_system/features/profile/data/models/user_model.dart';
 import 'package:multi_catalog_system/features/auth/data/models/user_role_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

@@ -1,4 +1,4 @@
-export 'entries/legal_document_entry.dart';
+export 'entities/legal_document_entry.dart';
 export 'repositories/legal_document_repository.dart';
 export 'use_cases/create_legal_document_use_case.dart';
 export 'use_cases/create_many_legal_document_use_case.dart';

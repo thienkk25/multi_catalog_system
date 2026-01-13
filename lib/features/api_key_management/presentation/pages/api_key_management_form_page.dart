@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/core.dart';
-import 'package:multi_catalog_system/features/api_key_management/domain/entries/api_key_entry.dart';
+import 'package:multi_catalog_system/features/api_key_management/domain/entities/api_key_entry.dart';
 import 'package:multi_catalog_system/features/api_key_management/presentation/presentation.dart';
 import 'package:multi_catalog_system/features/api_key_management/presentation/widgets/api_key_management_permission_field_widget.dart';
 

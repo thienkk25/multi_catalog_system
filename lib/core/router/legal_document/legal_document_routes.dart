@@ -2,7 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/config/di/injection.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
-import 'package:multi_catalog_system/features/legal_document/domain/entries/legal_document_entry.dart';
+import 'package:multi_catalog_system/features/legal_document/domain/entities/legal_document_entry.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/presentation.dart';
 
 class LegalDocumentRoutes {

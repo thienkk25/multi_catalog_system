@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/core.dart';
-import 'package:multi_catalog_system/features/legal_document/domain/entries/legal_document_entry.dart';
+import 'package:multi_catalog_system/features/legal_document/domain/entities/legal_document_entry.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/bloc/document_file_cubit.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/bloc/legal_document_bloc.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/bloc/legal_document_event.dart';

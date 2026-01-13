@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:multi_catalog_system/features/api_key_management/domain/entries/api_key_entry.dart';
+import 'package:multi_catalog_system/features/api_key_management/domain/entities/api_key_entry.dart';
 
 part 'api_key_state.freezed.dart';
 

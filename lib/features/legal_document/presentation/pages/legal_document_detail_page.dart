@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/core/widgets/custom_label.dart';
 import 'package:multi_catalog_system/core/widgets/file_icon.dart';
-import 'package:multi_catalog_system/features/legal_document/domain/entries/legal_document_entry.dart';
+import 'package:multi_catalog_system/features/legal_document/domain/entities/legal_document_entry.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/bloc/legal_document_bloc.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/bloc/legal_document_state.dart';
 import 'package:url_launcher/url_launcher.dart';

@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:multi_catalog_system/features/system_history_management/domain/entries/system_history_entry.dart';
+import 'package:multi_catalog_system/features/system_history_management/domain/entities/system_history_entry.dart';
 
 part 'system_history_state.freezed.dart';
 

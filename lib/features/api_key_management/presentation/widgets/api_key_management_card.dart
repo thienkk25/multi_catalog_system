@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/core/widgets/role_based_widget.dart';
-import 'package:multi_catalog_system/features/api_key_management/domain/entries/api_key_entry.dart';
+import 'package:multi_catalog_system/features/api_key_management/domain/entities/api_key_entry.dart';
 import 'package:multi_catalog_system/features/api_key_management/presentation/bloc/api_key_bloc.dart';
 import 'package:multi_catalog_system/features/api_key_management/presentation/bloc/api_key_event.dart';
 import 'package:multi_catalog_system/features/api_key_management/presentation/pages/api_key_management_form_page.dart';

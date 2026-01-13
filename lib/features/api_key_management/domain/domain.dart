@@ -1,4 +1,4 @@
-export 'entries/api_key_entry.dart';
+export 'entities/api_key_entry.dart';
 export 'repositories/api_key_repository.dart';
 export 'use_cases/create_api_key_use_case.dart';
 export 'use_cases/create_many_api_key_use_case.dart';

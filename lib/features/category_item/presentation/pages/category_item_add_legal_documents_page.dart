@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/core.dart';
-import 'package:multi_catalog_system/features/legal_document/domain/entries/legal_document_entry.dart';
+import 'package:multi_catalog_system/features/legal_document/domain/entities/legal_document_entry.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/bloc/legal_document_bloc.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/bloc/legal_document_event.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/bloc/legal_document_state.dart';
@@ -174,54 +174,58 @@ class _LegalDocumentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomCard(
-      color: isSelected ? Colors.blue.withValues(alpha: .1) : null,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        spacing: 5,
-        children: [
-          Row(
-            spacing: 5,
-            children: [
-              Expanded(
-                child: Text(
-                  entry.title!,
-                  style: const TextStyle(fontWeight: FontWeight.w600),
-                ),
-              ),
-              Checkbox(
-                shape: const CircleBorder(),
-                value: isSelected,
-                onChanged: (value) => onChanged(value ?? false),
-              ),
-            ],
-          ),
-          Text(entry.code!, style: const TextStyle(color: Colors.grey)),
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.grey.withValues(alpha: .15),
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(
-                color: isSelected
-                    ? Colors.blue
-                    : Colors.blue.withValues(alpha: .3),
-              ),
-            ),
-            child: Row(
-              spacing: 8,
+    return InkWell(
+      borderRadius: BorderRadius.circular(10),
+      onTap: () => onChanged(!isSelected),
+      child: CustomCard(
+        color: isSelected ? Colors.blue.withValues(alpha: .1) : null,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: 5,
+          children: [
+            Row(
+              spacing: 5,
               children: [
-                FileIcon(fileName: entry.fileName!),
                 Expanded(
                   child: Text(
-                    entry.fileName!,
+                    entry.title!,
                     style: const TextStyle(fontWeight: FontWeight.w600),
                   ),
                 ),
+                Checkbox(
+                  shape: const CircleBorder(),
+                  value: isSelected,
+                  onChanged: (value) => onChanged(value ?? false),
+                ),
               ],
             ),
-          ),
-        ],
+            Text(entry.code!, style: const TextStyle(color: Colors.grey)),
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.grey.withValues(alpha: .15),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: isSelected
+                      ? Colors.blue
+                      : Colors.blue.withValues(alpha: .3),
+                ),
+              ),
+              child: Row(
+                spacing: 8,
+                children: [
+                  FileIcon(fileName: entry.fileName!),
+                  Expanded(
+                    child: Text(
+                      entry.fileName!,
+                      style: const TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

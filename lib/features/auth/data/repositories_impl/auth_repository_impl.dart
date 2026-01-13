@@ -3,8 +3,8 @@ import 'package:multi_catalog_system/core/error/exceptions.dart';
 import 'package:multi_catalog_system/core/error/failures.dart';
 import 'package:multi_catalog_system/features/auth/data/data_sources/auth_local_data_source.dart';
 import 'package:multi_catalog_system/features/auth/data/data_sources/auth_remote_data_source.dart';
-import 'package:multi_catalog_system/features/auth/data/models/user_model.dart';
-import 'package:multi_catalog_system/features/auth/domain/entities/user_entry.dart';
+import 'package:multi_catalog_system/features/profile/data/models/user_model.dart';
+import 'package:multi_catalog_system/features/profile/domain/entities/user_entry.dart';
 import 'package:multi_catalog_system/features/auth/domain/repositories/auth_repository.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
