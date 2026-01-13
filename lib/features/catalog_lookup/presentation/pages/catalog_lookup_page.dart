@@ -153,7 +153,7 @@ class _CategoryLookupPageState extends State<CategoryLookupPage>
                             physics: const NeverScrollableScrollPhysics(),
                             itemCount: state.catalog.length,
                             itemBuilder: (context, index) {
-                              final catalog = state.catalog[index];
+                              // TODO: implement   final catalog = state.catalog[index];
                               return InforCardWidget(
                                 subDomain: '',
                                 title: '',

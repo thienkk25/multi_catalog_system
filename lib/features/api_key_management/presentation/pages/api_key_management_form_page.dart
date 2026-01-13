@@ -1,4 +1,4 @@
-import 'dart:nativewrappers/_internal/vm/lib/math_patch.dart';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -238,7 +238,7 @@ class _ApiKeyManagementFormPageState extends State<ApiKeyManagementFormPage> {
       final entry = ApiKeyEntry(
         systemName: _systemNameController.text.isNotEmpty
             ? _systemNameController.text
-            : Random(10000000.toSigned(100)).toString(),
+            : 'SYS_${Random().nextInt(9999999)}',
         status: _selectedAction,
         allowedDomains: _allowedDomains,
       );

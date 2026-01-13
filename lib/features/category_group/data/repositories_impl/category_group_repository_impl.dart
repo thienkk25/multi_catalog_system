@@ -22,14 +22,14 @@ class CategoryGroupRepositoryImpl implements CategoryGroupRepository {
   );
 
   Map<String, dynamic> _createPayload(CategoryGroupEntry entry) => {
-    'domainId': entry.domainId,
+    'domain_id': entry.domainId,
     'code': entry.code,
     'name': entry.name,
     if (entry.description != null) 'description': entry.description,
   };
 
   Map<String, dynamic> _updatePayload(CategoryGroupEntry entry) => {
-    if (entry.domainId != null) 'domainId': entry.domainId,
+    if (entry.domainId != null) 'domain_id': entry.domainId,
     if (entry.code != null) 'code': entry.code,
     if (entry.name != null) 'name': entry.name,
     if (entry.description != null) 'description': entry.description,

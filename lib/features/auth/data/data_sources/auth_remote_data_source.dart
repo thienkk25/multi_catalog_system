@@ -87,7 +87,7 @@ class AuthRemoteDataSourceImpl extends BaseRemoteDataSource
   @override
   Future<UserModel> getCurrentUser() async {
     try {
-      final response = await dio.get('/user');
+      final response = await dio.get('/user/');
 
       final data = response.data;
       if (data is! Map<String, dynamic>) {

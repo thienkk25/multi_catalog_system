@@ -35,9 +35,9 @@ class LegalDocumentRepositoryImpl implements LegalDocumentRepository {
     'title': entry.title,
     if (entry.description != null) 'description': entry.description,
     'type': entry.type,
-    'issueDate': entry.issueDate,
-    'effectiveDate': entry.effectiveDate,
-    'expiryDate': entry.expiryDate,
+    'issue_date': entry.issueDate,
+    'effective_date': entry.effectiveDate,
+    if (entry.expiryDate != null) 'expiry_date': entry.expiryDate,
   };
 
   Map<String, dynamic> _updatePayload(LegalDocumentEntry entry) => {
@@ -45,9 +45,9 @@ class LegalDocumentRepositoryImpl implements LegalDocumentRepository {
     if (entry.title != null) 'title': entry.title,
     if (entry.description != null) 'description': entry.description,
     if (entry.type != null) 'type': entry.type,
-    if (entry.issueDate != null) 'issueDate': entry.issueDate,
-    if (entry.effectiveDate != null) 'effectiveDate': entry.effectiveDate,
-    if (entry.expiryDate != null) 'expiryDate': entry.expiryDate,
+    if (entry.issueDate != null) 'issue_date': entry.issueDate,
+    if (entry.effectiveDate != null) 'effective_date': entry.effectiveDate,
+    if (entry.expiryDate != null) 'expiry_date': entry.expiryDate,
   };
 
   @override

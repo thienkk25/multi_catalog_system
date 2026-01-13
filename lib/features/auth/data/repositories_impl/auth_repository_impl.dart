@@ -26,7 +26,6 @@ class AuthRepositoryImpl implements AuthRepository {
     updatedAt: model.updatedAt,
   );
 
-  /// Ưu tiên local → fallback remote
   @override
   Future<Either<Failure, UserEntry>> getCurrentUser() async {
     try {
@@ -49,7 +48,6 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
-  /// Login → cache token + refresh token + user
   @override
   Future<Either<Failure, UserEntry>> login({
     required String email,
@@ -79,7 +77,6 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
-  /// Refresh token → cập nhật token mới
   @override
   Future<Either<Failure, Unit>> refreshToken({
     required String refreshToken,
@@ -105,19 +102,17 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
-  /// Logout → clear local + gọi API
   @override
   Future<Either<Failure, Unit>> logout() async {
     try {
-      await authRemoteDataSource.logout();
       await authLocalDataSource.clearAuthToken();
+      await authRemoteDataSource.logout();
       return const Right(unit);
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
     } on CacheException catch (e) {
       return Left(CacheFailure(message: e.message));
     } on UnexpectedException catch (e) {
-      await authLocalDataSource.clearAuthToken();
       return Left(UnexpectedFailure(e.message));
     }
   }

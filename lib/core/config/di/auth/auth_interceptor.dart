@@ -76,6 +76,7 @@ class AuthInterceptor extends Interceptor {
     try {
       final refreshToken = await authLocal.getCachedRefreshToken();
       if (refreshToken == null || refreshToken.isEmpty) {
+        await authLocal.clearAuthToken();
         _refreshCompleter!.complete(false);
         return false;
       }
@@ -83,10 +84,17 @@ class AuthInterceptor extends Interceptor {
       final result = await authRepository.refreshToken(
         refreshToken: refreshToken,
       );
+
       final success = result.isRight();
+
+      if (!success) {
+        await authLocal.clearAuthToken();
+      }
+
       _refreshCompleter!.complete(success);
       return success;
     } catch (_) {
+      await authLocal.clearAuthToken();
       _refreshCompleter!.complete(false);
       return false;
     } finally {
