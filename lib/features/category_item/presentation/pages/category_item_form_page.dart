@@ -312,9 +312,15 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
     if (_isEdit) {
       final entry = CategoryItemEntry(
         id: widget.entry!.id,
-        name: _nameController.text,
-        code: _codeController.text,
-        description: _descriptionController.text,
+        name: _nameController.text.isNotEmpty
+            ? _nameController.text
+            : widget.entry?.name,
+        code: _codeController.text.isNotEmpty
+            ? _codeController.text
+            : widget.entry?.code,
+        description: _descriptionController.text.isNotEmpty
+            ? _descriptionController.text
+            : widget.entry?.description,
         status: 'active',
         groupId: _selectedCategoryGroupId,
       );
@@ -325,7 +331,9 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
       final entry = CategoryItemEntry(
         name: _nameController.text,
         code: _codeController.text,
-        description: _descriptionController.text,
+        description: _descriptionController.text.isNotEmpty
+            ? _descriptionController.text
+            : null,
         status: 'active',
         groupId: _selectedCategoryGroupId,
       );

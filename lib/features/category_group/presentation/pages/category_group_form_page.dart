@@ -234,28 +234,28 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
       final entry = CategoryGroupEntry(
         id: widget.entry!.id,
         domainId: _selectedDomainId,
-        code: _codeController.text,
-        name: _nameController.text,
-        description: _descriptionController.text,
+        code: _codeController.text.isNotEmpty
+            ? _codeController.text
+            : widget.entry?.code,
+        name: _nameController.text.isNotEmpty
+            ? _nameController.text
+            : widget.entry?.name,
+        description: _descriptionController.text.isNotEmpty
+            ? _descriptionController.text
+            : widget.entry?.description,
       );
       context.read<CategoryGroupBloc>().add(
         CategoryGroupEvent.update(entry: entry),
       );
     } else {
-      final domainId = _selectedDomainId;
-      if (domainId == null) return;
-
-      final code = _codeController.text;
-      final name = _nameController.text;
-      final description = _descriptionController.text;
-
       final entry = CategoryGroupEntry(
-        domainId: domainId,
-        code: code,
-        name: name,
-        description: description,
+        domainId: _selectedDomainId,
+        code: _codeController.text,
+        name: _nameController.text,
+        description: _descriptionController.text.isNotEmpty
+            ? _descriptionController.text
+            : null,
       );
-
       context.read<CategoryGroupBloc>().add(
         CategoryGroupEvent.create(entry: entry),
       );

@@ -1,3 +1,5 @@
+import 'dart:nativewrappers/_internal/vm/lib/math_patch.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -225,15 +227,19 @@ class _ApiKeyManagementFormPageState extends State<ApiKeyManagementFormPage> {
     if (isEdit) {
       final entry = ApiKeyEntry(
         id: widget.entry!.id,
-        systemName: _systemNameController.text,
-        status: _selectedAction!,
+        systemName: _systemNameController.text.isNotEmpty
+            ? _systemNameController.text
+            : widget.entry?.systemName,
+        status: _selectedAction,
         allowedDomains: _allowedDomains,
       );
       context.read<ApiKeyBloc>().add(ApiKeyEvent.update(entry: entry));
     } else {
       final entry = ApiKeyEntry(
-        systemName: _systemNameController.text,
-        status: _selectedAction!,
+        systemName: _systemNameController.text.isNotEmpty
+            ? _systemNameController.text
+            : Random(10000000.toSigned(100)).toString(),
+        status: _selectedAction,
         allowedDomains: _allowedDomains,
       );
       context.read<ApiKeyBloc>().add(ApiKeyEvent.create(entry: entry));

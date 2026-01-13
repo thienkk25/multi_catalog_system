@@ -17,6 +17,8 @@ class CategoryItemRepositoryImpl implements CategoryItemRepository {
     description: model.description,
     status: model.status,
     groupId: model.groupId,
+    groupName: model.group.name,
+    domainName: model.group.domain.name,
     createdAt: model.createdAt,
     updatedAt: model.updatedAt,
   );

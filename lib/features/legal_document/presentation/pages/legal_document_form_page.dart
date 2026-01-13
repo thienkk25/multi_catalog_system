@@ -291,17 +291,21 @@ class _LegalDocumentFormPageState extends State<LegalDocumentFormPage> {
     if (_isEdit) {
       final data = LegalDocumentEntry(
         id: widget.entry!.id,
-        code: _codeController.text,
-        title: _nameController.text,
-        type: _type ?? widget.entry!.type,
-        issueDate: _issueDate ?? widget.entry!.issueDate,
-        effectiveDate: _effectiveDate ?? widget.entry!.effectiveDate,
-        expiryDate: _expiryDate ?? widget.entry!.expiryDate,
-        description: _descriptionController.text,
+        code: _codeController.text.isNotEmpty
+            ? _codeController.text
+            : widget.entry?.code,
+        title: _nameController.text.isNotEmpty
+            ? _nameController.text
+            : widget.entry?.title,
+        type: _type ?? widget.entry?.type,
+        issueDate: _issueDate ?? widget.entry?.issueDate,
+        effectiveDate: _effectiveDate ?? widget.entry?.effectiveDate,
+        expiryDate: _expiryDate ?? widget.entry?.expiryDate,
+        description: _descriptionController.text.isNotEmpty
+            ? _descriptionController.text
+            : widget.entry?.description,
         fileName: widget.entry?.fileName,
         fileUrl: widget.entry?.fileUrl,
-        createdAt: widget.entry!.createdAt,
-        updatedAt: DateTime.now(),
       );
       context.read<LegalDocumentBloc>().add(
         LegalDocumentEvent.update(
@@ -317,8 +321,9 @@ class _LegalDocumentFormPageState extends State<LegalDocumentFormPage> {
         issueDate: _issueDate,
         effectiveDate: _effectiveDate,
         expiryDate: _expiryDate,
-        description: _descriptionController.text,
-        createdAt: DateTime.now(),
+        description: _descriptionController.text.isNotEmpty
+            ? _descriptionController.text
+            : null,
       );
       context.read<LegalDocumentBloc>().add(
         LegalDocumentEvent.create(

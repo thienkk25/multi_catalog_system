@@ -42,7 +42,7 @@ class CategoryItemCard extends StatelessWidget {
           if (entry.description?.isNotEmpty == true) ...[
             const SizedBox(height: 8),
             Text(
-              'Mô tả: ${entry.description!}',
+              'Mô tả: ${entry.description}',
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: Colors.grey.shade700,
               ),

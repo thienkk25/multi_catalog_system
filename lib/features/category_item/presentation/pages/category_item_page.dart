@@ -6,8 +6,6 @@ import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/core.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/presentation.dart';
 
-import 'category_item_detail_page.dart';
-
 class CategoryItemPage extends StatefulWidget {
   const CategoryItemPage({super.key});
 

@@ -196,11 +196,15 @@ class _DomainManagementFormPageState extends State<DomainManagementFormPage> {
     if (isEdit) {
       final entry = DomainEntry(
         id: widget.entry!.id,
-        code: _codeController.text,
-        name: _nameController.text,
-        description: _descriptionController.text,
-        createdAt: widget.entry!.createdAt,
-        updatedAt: DateTime.now(),
+        code: _codeController.text.isNotEmpty
+            ? _codeController.text
+            : widget.entry?.code,
+        name: _nameController.text.isNotEmpty
+            ? _nameController.text
+            : widget.entry?.name,
+        description: _descriptionController.text.isNotEmpty
+            ? _descriptionController.text
+            : widget.entry?.description,
       );
       context.read<DomainManagementBloc>().add(
         DomainManagementEvent.update(entry: entry),
@@ -209,8 +213,9 @@ class _DomainManagementFormPageState extends State<DomainManagementFormPage> {
       final entry = DomainEntry(
         code: _codeController.text,
         name: _nameController.text,
-        description: _descriptionController.text,
-        createdAt: DateTime.now(),
+        description: _descriptionController.text.isNotEmpty
+            ? _descriptionController.text
+            : null,
       );
       context.read<DomainManagementBloc>().add(
         DomainManagementEvent.create(entry: entry),
