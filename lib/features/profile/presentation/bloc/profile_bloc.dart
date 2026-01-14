@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:multi_catalog_system/core/error/failures.dart';
+import 'package:multi_catalog_system/core/utils/formatter/map_failure_formatter.dart';
 import 'package:multi_catalog_system/features/profile/domain/domain.dart';
 
 import 'profile_event.dart';
@@ -32,7 +32,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
             emit(
               state.copyWith(
                 isLoading: false,
-                error: _mapFailure(l),
+                error: mapFailure(l),
                 successMessage: null,
               ),
             );
@@ -59,7 +59,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
             emit(
               state.copyWith(
                 isLoading: false,
-                error: _mapFailure(l),
+                error: mapFailure(l),
                 successMessage: null,
               ),
             );
@@ -86,7 +86,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
             emit(
               state.copyWith(
                 isLoading: false,
-                error: _mapFailure(l),
+                error: mapFailure(l),
                 successMessage: null,
               ),
             );
@@ -113,7 +113,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
             emit(
               state.copyWith(
                 isLoading: false,
-                error: _mapFailure(l),
+                error: mapFailure(l),
                 successMessage: null,
               ),
             );
@@ -131,12 +131,5 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         );
       },
     );
-  }
-
-  String _mapFailure(Failure failure) {
-    if (failure is ServerFailure) return failure.message;
-    if (failure is CacheFailure) return failure.message;
-    if (failure is UnexpectedFailure) return failure.message;
-    return 'Unknown error';
   }
 }

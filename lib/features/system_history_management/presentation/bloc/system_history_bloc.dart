@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:multi_catalog_system/core/error/failures.dart';
+import 'package:multi_catalog_system/core/utils/formatter/map_failure_formatter.dart';
 import 'package:multi_catalog_system/features/system_history_management/domain/domain.dart';
 
 import 'system_history_event.dart';
@@ -28,7 +28,7 @@ class SystemHistoryBloc extends Bloc<SystemHistoryEvent, SystemHistoryState> {
         if (emit.isDone) return;
 
         result.fold(
-          (l) => emit(state.copyWith(isLoading: false, error: _mapFailure(l))),
+          (l) => emit(state.copyWith(isLoading: false, error: mapFailure(l))),
           (r) => emit(state.copyWith(isLoading: false, entries: r)),
         );
       },
@@ -39,7 +39,7 @@ class SystemHistoryBloc extends Bloc<SystemHistoryEvent, SystemHistoryState> {
         if (emit.isDone) return;
 
         result.fold(
-          (l) => emit(state.copyWith(isLoading: false, error: _mapFailure(l))),
+          (l) => emit(state.copyWith(isLoading: false, error: mapFailure(l))),
           (r) {
             final updated = [
               for (final d in state.entries)
@@ -50,12 +50,5 @@ class SystemHistoryBloc extends Bloc<SystemHistoryEvent, SystemHistoryState> {
         );
       },
     );
-  }
-
-  String _mapFailure(Failure failure) {
-    if (failure is ServerFailure) return failure.message;
-    if (failure is CacheFailure) return failure.message;
-    if (failure is UnexpectedFailure) return failure.message;
-    return 'Unknown error';
   }
 }

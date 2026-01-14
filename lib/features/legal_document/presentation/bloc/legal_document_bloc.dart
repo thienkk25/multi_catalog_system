@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:multi_catalog_system/core/error/failures.dart';
+import 'package:multi_catalog_system/core/utils/formatter/map_failure_formatter.dart';
 import 'package:multi_catalog_system/features/legal_document/domain/domain.dart';
 
 import 'legal_document_event.dart';
@@ -42,7 +42,7 @@ class LegalDocumentBloc extends Bloc<LegalDocumentEvent, LegalDocumentState> {
         if (emit.isDone) return;
 
         result.fold(
-          (l) => emit(state.copyWith(isLoading: false, error: _mapFailure(l))),
+          (l) => emit(state.copyWith(isLoading: false, error: mapFailure(l))),
           (r) => emit(state.copyWith(isLoading: false, entries: r)),
         );
       },
@@ -55,7 +55,7 @@ class LegalDocumentBloc extends Bloc<LegalDocumentEvent, LegalDocumentState> {
         if (emit.isDone) return;
 
         result.fold(
-          (l) => emit(state.copyWith(isLoading: false, error: _mapFailure(l))),
+          (l) => emit(state.copyWith(isLoading: false, error: mapFailure(l))),
           (r) => emit(state.copyWith(isLoading: false, entries: r)),
         );
       },
@@ -69,7 +69,7 @@ class LegalDocumentBloc extends Bloc<LegalDocumentEvent, LegalDocumentState> {
         if (emit.isDone) return;
 
         result.fold(
-          (l) => emit(state.copyWith(isLoading: false, error: _mapFailure(l))),
+          (l) => emit(state.copyWith(isLoading: false, error: mapFailure(l))),
           (r) {
             final updated = [r];
             emit(state.copyWith(isLoading: false, entries: updated));
@@ -86,7 +86,7 @@ class LegalDocumentBloc extends Bloc<LegalDocumentEvent, LegalDocumentState> {
         if (emit.isDone) return;
 
         result.fold(
-          (l) => emit(state.copyWith(isLoading: false, error: _mapFailure(l))),
+          (l) => emit(state.copyWith(isLoading: false, error: mapFailure(l))),
           (r) => emit(
             state.copyWith(
               isLoading: false,
@@ -106,7 +106,7 @@ class LegalDocumentBloc extends Bloc<LegalDocumentEvent, LegalDocumentState> {
         if (emit.isDone) return;
 
         result.fold(
-          (l) => emit(state.copyWith(isLoading: false, error: _mapFailure(l))),
+          (l) => emit(state.copyWith(isLoading: false, error: mapFailure(l))),
           (r) => emit(
             state.copyWith(
               isLoading: false,
@@ -126,7 +126,7 @@ class LegalDocumentBloc extends Bloc<LegalDocumentEvent, LegalDocumentState> {
         if (emit.isDone) return;
 
         result.fold(
-          (l) => emit(state.copyWith(isLoading: false, error: _mapFailure(l))),
+          (l) => emit(state.copyWith(isLoading: false, error: mapFailure(l))),
           (r) {
             final updated = [
               for (final d in state.entries)
@@ -158,7 +158,7 @@ class LegalDocumentBloc extends Bloc<LegalDocumentEvent, LegalDocumentState> {
         if (emit.isDone) return;
 
         result.fold(
-          (l) => emit(state.copyWith(entries: previous, error: _mapFailure(l))),
+          (l) => emit(state.copyWith(entries: previous, error: mapFailure(l))),
           (_) {
             emit(state.copyWith(successMessage: 'Xóa thành công'));
           },
@@ -174,7 +174,7 @@ class LegalDocumentBloc extends Bloc<LegalDocumentEvent, LegalDocumentState> {
         if (emit.isDone) return;
 
         result.fold(
-          (l) => emit(state.copyWith(isLoading: false, error: _mapFailure(l))),
+          (l) => emit(state.copyWith(isLoading: false, error: mapFailure(l))),
           (r) => emit(
             state.copyWith(
               isLoading: false,
@@ -193,12 +193,5 @@ class LegalDocumentBloc extends Bloc<LegalDocumentEvent, LegalDocumentState> {
         emit(state.copyWith(selectedIds: selected));
       },
     );
-  }
-
-  String _mapFailure(Failure failure) {
-    if (failure is ServerFailure) return failure.message;
-    if (failure is CacheFailure) return failure.message;
-    if (failure is UnexpectedFailure) return failure.message;
-    return 'Unknown error';
   }
 }
