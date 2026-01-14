@@ -67,25 +67,11 @@ class UserRepositoryIml implements UserRepository {
   }
 
   @override
-  Future<Either<Failure, UserEntry>> updateFullName({
+  Future<Either<Failure, UserEntry>> updateProfile({
     required UserEntry entry,
   }) async {
     try {
-      final model = await remoteDataSource.updateFullName(data: _toJson(entry));
-      return Right(_toEntity(model));
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on UnexpectedException catch (e) {
-      return Left(UnexpectedFailure(e.message));
-    }
-  }
-
-  @override
-  Future<Either<Failure, UserEntry>> updatePhone({
-    required UserEntry entry,
-  }) async {
-    try {
-      final model = await remoteDataSource.updatePhone(data: _toJson(entry));
+      final model = await remoteDataSource.updateProfile(data: _toJson(entry));
       return Right(_toEntity(model));
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message, statusCode: e.statusCode));

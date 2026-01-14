@@ -8,6 +8,5 @@ abstract class UserRepository {
   Future<Either<Failure, UserEntry>> changePassword({
     required String newPassword,
   });
-  Future<Either<Failure, UserEntry>> updatePhone({required UserEntry entry});
-  Future<Either<Failure, UserEntry>> updateFullName({required UserEntry entry});
+  Future<Either<Failure, UserEntry>> updateProfile({required UserEntry entry});
 }

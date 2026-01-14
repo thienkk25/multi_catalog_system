@@ -7,8 +7,7 @@ abstract class UserRemoteDataSource {
   Future<UserModel> getMe();
   Future<UserModel> getUser();
   Future<UserModel> changePassword({required Map<String, dynamic> data});
-  Future<UserModel> updatePhone({required Map<String, dynamic> data});
-  Future<UserModel> updateFullName({required Map<String, dynamic> data});
+  Future<UserModel> updateProfile({required Map<String, dynamic> data});
 }
 
 class UserRemoteDataSourceImpl extends BaseRemoteDataSource
@@ -79,23 +78,9 @@ class UserRemoteDataSourceImpl extends BaseRemoteDataSource
   }
 
   @override
-  Future<UserModel> updateFullName({required Map<String, dynamic> data}) async {
+  Future<UserModel> updateProfile({required Map<String, dynamic> data}) async {
     try {
-      final response = await dio.patch('/user/update-fullname', data: data);
-      return UserModel.fromJson(_fromResponse(response));
-    } on DioException catch (e) {
-      handleDioError(e);
-    } on AppException {
-      rethrow;
-    } catch (e) {
-      throw UnexpectedException(e.toString());
-    }
-  }
-
-  @override
-  Future<UserModel> updatePhone({required Map<String, dynamic> data}) async {
-    try {
-      final response = await dio.patch('/user/update-phone', data: data);
+      final response = await dio.patch('/user/update-profile', data: data);
       return UserModel.fromJson(_fromResponse(response));
     } on DioException catch (e) {
       handleDioError(e);
