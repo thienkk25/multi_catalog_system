@@ -11,7 +11,8 @@ class SystemHistoryManagementRoutes {
       path: RouterPaths.systemHistoryManagement,
       name: RouterNames.systemHistoryManagement,
       builder: (context, state) => BlocProvider(
-        create: (_) => getIt<SystemHistoryBloc>(),
+        create: (_) =>
+            getIt<SystemHistoryBloc>()..add(const SystemHistoryEvent.getAll()),
         child: const SystemHistoryPage(),
       ),
     ),

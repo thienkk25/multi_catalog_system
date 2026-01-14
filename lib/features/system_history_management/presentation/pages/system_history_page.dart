@@ -24,7 +24,6 @@ class _SystemHistoryPageState extends State<SystemHistoryPage> {
   void initState() {
     super.initState();
     bloc = context.read<SystemHistoryBloc>();
-    bloc.add(const SystemHistoryEvent.getAll());
   }
 
   @override
