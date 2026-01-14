@@ -24,17 +24,29 @@ class MainApp extends StatelessWidget {
       create: (_) =>
           getIt<AuthBloc>()..add(const AuthEvent.checkAuthenticated()),
       child: BlocBuilder<AuthBloc, AuthState>(
+        buildWhen: (previous, current) {
+          final prevAuth = previous.maybeMap(
+            authenticated: (_) => true,
+            unauthenticated: (_) => false,
+            orElse: () => null,
+          );
+
+          final currAuth = current.maybeMap(
+            authenticated: (_) => true,
+            unauthenticated: (_) => false,
+            orElse: () => null,
+          );
+
+          return prevAuth != currAuth;
+        },
         builder: (context, authState) {
-          final authKey = authState.maybeMap(
-            authenticated: (_) =>
-                'auth_${DateTime.now().millisecondsSinceEpoch}',
-            unauthenticated: (_) =>
-                'unauth_${DateTime.now().millisecondsSinceEpoch}',
-            orElse: () => 'initial',
+          final isAuthenticated = authState.maybeMap(
+            authenticated: (_) => true,
+            orElse: () => false,
           );
 
           return MultiBlocProvider(
-            key: ValueKey(authKey),
+            key: ValueKey(isAuthenticated),
             providers: [
               BlocProvider(create: (_) => getIt<HomeBloc>()),
               BlocProvider(
@@ -44,7 +56,7 @@ class MainApp extends StatelessWidget {
               ),
             ],
             child: MaterialApp.router(
-              title: '',
+              title: 'Multi Catalog System',
               theme: ThemeData(
                 scaffoldBackgroundColor: Color(0xFFF5F7FA),
                 appBarTheme: AppBarTheme(

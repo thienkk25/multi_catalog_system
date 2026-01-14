@@ -40,15 +40,39 @@ class AuthInterceptor extends Interceptor {
 
       if (!refreshed) {
         // Nếu refresh token thất bại → logout
-        await authRepository.logout();
-        return handler.reject(err);
+        await authLocal.clearAuthToken();
+        authRepository.notifyUnauthenticated();
+
+        // NUỐT 401 – không cho rơi xuống data layer
+        return handler.resolve(
+          Response(
+            requestOptions: err.requestOptions,
+            statusCode: 401,
+            data: {
+              'success': false,
+              'error': 'unauthorized',
+              'message': 'Phiên đăng nhập đã hết hạn',
+            },
+          ),
+        );
       }
 
       // Lấy token mới
       final newToken = await authLocal.getCachedAuthToken();
       if (newToken == null || newToken.isEmpty) {
         await authRepository.logout();
-        return handler.reject(err);
+
+        return handler.resolve(
+          Response(
+            requestOptions: err.requestOptions,
+            statusCode: 401,
+            data: {
+              'success': false,
+              'error': 'unauthorized',
+              'message': 'Phiên đăng nhập đã hết hạn',
+            },
+          ),
+        );
       }
 
       try {

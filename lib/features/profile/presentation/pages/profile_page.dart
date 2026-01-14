@@ -65,11 +65,13 @@ class _ProfilePageState extends State<ProfilePage> {
             }
 
             if (error != null) {
-              return ErrorRetryWidget(
-                error: error,
-                onRetry: () {
-                  bloc.add(const ProfileEvent.getUser());
-                },
+              return Center(
+                child: ErrorRetryWidget(
+                  error: error,
+                  onRetry: () {
+                    bloc.add(const ProfileEvent.getUser());
+                  },
+                ),
               );
             }
             return Stack(

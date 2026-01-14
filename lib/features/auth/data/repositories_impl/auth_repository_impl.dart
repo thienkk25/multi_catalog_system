@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dartz/dartz.dart';
 import 'package:multi_catalog_system/core/error/exceptions.dart';
 import 'package:multi_catalog_system/core/error/failures.dart';
@@ -25,6 +27,16 @@ class AuthRepositoryImpl implements AuthRepository {
     createdAt: model.createdAt,
     updatedAt: model.updatedAt,
   );
+
+  final _controller = StreamController<AuthStatus>.broadcast();
+
+  @override
+  Stream<AuthStatus> get authStatus => _controller.stream;
+
+  @override
+  void notifyUnauthenticated() {
+    _controller.add(AuthStatus.unauthenticated);
+  }
 
   @override
   Future<Either<Failure, UserEntry>> getCurrentUser() async {
