@@ -17,13 +17,15 @@ class UserRepositoryImpl implements UserRepository {
     fullName: model.fullName,
     phone: model.phone,
     status: model.status,
+    roleCode: model.roleCode,
+    roleName: model.roleName,
     createdAt: model.createdAt,
     updatedAt: model.updatedAt,
   );
 
   Map<String, dynamic> _toJson(UserEntry entry) => {
     if (entry.fullName != null) 'full_name': entry.fullName,
-    if (entry.phone != null) 'new_phone': entry.phone,
+    if (entry.phone != null) 'phone': entry.phone,
   };
 
   @override

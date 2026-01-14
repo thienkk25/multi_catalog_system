@@ -4,6 +4,8 @@ class UserEntry {
   final String? fullName;
   final String? phone;
   final String? status;
+  final String? roleCode;
+  final String? roleName;
   final DateTime? createdAt;
   final DateTime? updatedAt;
   UserEntry({
@@ -14,5 +16,7 @@ class UserEntry {
     this.status,
     this.createdAt,
     this.updatedAt,
+    this.roleCode,
+    this.roleName,
   });
 }

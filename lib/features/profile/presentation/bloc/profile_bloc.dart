@@ -38,13 +38,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
             );
           },
           (r) {
+            add(ProfileEvent.getUser());
             emit(
-              state.copyWith(
-                isLoading: false,
-                entry: r,
-                error: null,
-                successMessage: "Thay đổi mật khẩu thành công",
-              ),
+              state.copyWith(successMessage: "Thay đổi mật khẩu thành công"),
             );
           },
         );
@@ -119,13 +115,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
             );
           },
           (r) {
+            add(ProfileEvent.getUser());
             emit(
-              state.copyWith(
-                isLoading: false,
-                entry: r,
-                error: null,
-                successMessage: "Cập nhật thông tin thành công",
-              ),
+              state.copyWith(successMessage: "Cập nhật thông tin thành công"),
             );
           },
         );

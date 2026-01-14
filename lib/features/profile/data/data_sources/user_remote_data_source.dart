@@ -31,7 +31,10 @@ class UserRemoteDataSourceImpl extends BaseRemoteDataSource
       'phone': data['user']['user_metadata']['phone'] ?? '',
       'email': data['user']['email'],
       'created_at': data['user']['created_at'],
-      'updated_at': data['user']['updated_at'],
+      'updated_at': data['user']['updated_at'] ?? '',
+      'role_name': '',
+      'role_code': '',
+      'status': '',
     };
   }
 

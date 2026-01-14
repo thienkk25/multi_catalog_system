@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/config/di/injection.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
+import 'package:multi_catalog_system/features/profile/domain/entities/user_entry.dart';
 import 'package:multi_catalog_system/features/profile/presentation/presentation.dart';
 
 class ProfileRoutes {
@@ -21,7 +22,7 @@ class ProfileRoutes {
         final data = state.extra as Map<String, dynamic>;
         return BlocProvider.value(
           value: data['bloc'] as ProfileBloc,
-          child: ProfileFormPage(),
+          child: ProfileFormPage(entry: data['entry'] as UserEntry),
         );
       },
     ),

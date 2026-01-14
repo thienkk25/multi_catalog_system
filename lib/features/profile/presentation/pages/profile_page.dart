@@ -120,6 +120,17 @@ class _ProfilePageState extends State<ProfilePage> {
                               ),
                             ],
                           ),
+                          const SizedBox(height: 16),
+                          _InfoCard(
+                            title: 'Bảo mật',
+                            children: [
+                              _ActionRow(
+                                icon: Icons.lock_outline,
+                                label: 'Đổi mật khẩu',
+                                onTap: () {},
+                              ),
+                            ],
+                          ),
                         ]),
                       ),
                     ),
@@ -142,7 +153,10 @@ class _ProfilePageState extends State<ProfilePage> {
                         style: TextStyle(color: Colors.white),
                       ),
                       onTap: () {
-                        context.pushNamed(RouterNames.profileForm);
+                        context.pushNamed(
+                          RouterNames.profileForm,
+                          extra: {'bloc': bloc, 'entry': entry},
+                        );
                       },
                     ),
                   ),
@@ -190,26 +204,89 @@ class _AvatarSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    final initials = entry?.fullName != null && entry!.fullName!.isNotEmpty
+        ? entry!.fullName![0].toUpperCase()
+        : '?';
+
     return Column(
-      spacing: 10,
+      mainAxisSize: MainAxisSize.min,
       children: [
-        CircleAvatar(
-          radius: 60,
-          backgroundColor: Colors.grey.shade300,
+        Container(
+          width: 130,
+          height: 130,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: LinearGradient(
+              colors: [Color(0xff16d9e3), Color(0xff30c7ec), Color(0xff46aef7)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.blue.withValues(alpha: .3),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          alignment: Alignment.center,
           child: Text(
-            entry?.fullName != null && entry!.fullName!.isNotEmpty
-                ? entry!.fullName![0].toUpperCase()
-                : '?',
-            style: const TextStyle(fontSize: 40),
+            initials,
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 48,
+            ),
           ),
         ),
+
+        const SizedBox(height: 16),
+
         if (entry?.fullName != null)
           Text(
-            entry?.fullName ?? '',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            entry!.fullName!,
+            style: theme.textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
           ),
-        if (entry?.email != null) Text(entry?.email ?? ''),
+
+        const SizedBox(height: 8),
+
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          alignment: WrapAlignment.center,
+          children: [
+            if (entry?.email != null)
+              _InfoChip(icon: Icons.email_outlined, label: entry!.email!),
+            if (entry?.roleName != null)
+              _InfoChip(
+                icon: Icons.verified_user_outlined,
+                label: entry!.roleName!,
+              ),
+          ],
+        ),
       ],
+    );
+  }
+}
+
+class _InfoChip extends StatelessWidget {
+  final IconData icon;
+  final String label;
+
+  const _InfoChip({required this.icon, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Chip(
+      avatar: Icon(icon, size: 18, color: Colors.blue),
+      label: Text(label),
+      backgroundColor: Color(0xff16d9e3).withValues(alpha: 0.2),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     );
   }
 }
@@ -223,7 +300,6 @@ class _InfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomCard(
-      color: Colors.blue.shade50,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -270,6 +346,41 @@ class _InfoRow extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _ActionRow extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  const _ActionRow({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(8),
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        child: Row(
+          children: [
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                label,
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              ),
+            ),
+            Icon(Icons.chevron_right),
+          ],
+        ),
       ),
     );
   }
