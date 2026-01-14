@@ -3,6 +3,7 @@ class RouterNames {
   static const String home = 'home';
   static const String login = 'login';
   static const String profile = 'profile';
+  static const String profileForm = 'profileForm';
 
   // Import
   static const String importFile = 'importFile';
@@ -46,6 +47,7 @@ class RouterPaths {
   static const String home = '/';
   static const String login = '/login';
   static const String profile = '/profile';
+  static const String profileForm = '/profile/form';
 
   // Import
   static const String importFile = '/import-file';

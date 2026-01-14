@@ -260,7 +260,7 @@ class _FooterDrawer extends StatelessWidget {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Đăng xuất thành công')),
                     );
-                    context.read<AuthBloc>().add(AuthEvent.logout());
+                    context.read<AuthBloc>().add(const AuthEvent.logout());
                   },
                   child: ListTile(
                     leading: Icon(Icons.exit_to_app_outlined, size: 20),

@@ -1,13 +1,29 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:multi_catalog_system/core/config/di/injection.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
-import 'package:multi_catalog_system/features/profile/presentation/pages/profile_page.dart';
+import 'package:multi_catalog_system/features/profile/presentation/presentation.dart';
 
 class ProfileRoutes {
   static List<GoRoute> routes = [
     GoRoute(
       path: RouterPaths.profile,
       name: RouterNames.profile,
-      builder: (_, state) => ProfilePage(),
+      builder: (context, state) => BlocProvider(
+        create: (_) => getIt<ProfileBloc>()..add(const ProfileEvent.getUser()),
+        child: ProfilePage(),
+      ),
+    ),
+    GoRoute(
+      path: RouterPaths.profileForm,
+      name: RouterNames.profileForm,
+      builder: (context, state) {
+        final data = state.extra as Map<String, dynamic>;
+        return BlocProvider.value(
+          value: data['bloc'] as ProfileBloc,
+          child: ProfileFormPage(),
+        );
+      },
     ),
   ];
 }

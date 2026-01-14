@@ -6,10 +6,10 @@ import 'package:multi_catalog_system/features/profile/data/models/user_model.dar
 import 'package:multi_catalog_system/features/profile/domain/entities/user_entry.dart';
 import 'package:multi_catalog_system/features/profile/domain/repositories/user_repository.dart';
 
-class UserRepositoryIml implements UserRepository {
+class UserRepositoryImpl implements UserRepository {
   final UserRemoteDataSource remoteDataSource;
 
-  UserRepositoryIml({required this.remoteDataSource});
+  UserRepositoryImpl({required this.remoteDataSource});
 
   UserEntry _toEntity(UserModel model) => UserEntry(
     id: model.id,
