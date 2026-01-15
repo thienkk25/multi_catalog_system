@@ -4,7 +4,7 @@ import 'package:multi_catalog_system/core/core.dart';
 import 'package:multi_catalog_system/features/catalog_lookup/presentation/bloc/catalog_lookup_bloc.dart';
 import 'package:multi_catalog_system/features/catalog_lookup/presentation/bloc/catalog_lookup_event.dart';
 import 'package:multi_catalog_system/features/catalog_lookup/presentation/bloc/catalog_lookup_state.dart';
-import 'package:multi_catalog_system/features/catalog_lookup/presentation/widgets/infor_card_widget.dart';
+import 'package:multi_catalog_system/features/catalog_lookup/presentation/widgets/catalog_lookup_infor_card_widget.dart';
 
 class CategoryLookupPage extends StatefulWidget {
   const CategoryLookupPage({super.key});
@@ -154,7 +154,7 @@ class _CategoryLookupPageState extends State<CategoryLookupPage>
                             itemCount: state.catalog.length,
                             itemBuilder: (context, index) {
                               // TODO: implement   final catalog = state.catalog[index];
-                              return InforCardWidget(
+                              return CatalogLookupInforCardWidget(
                                 subDomain: '',
                                 title: '',
                                 subGroup: '',

@@ -107,7 +107,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-            drawer: const DrawerWidget(),
+            drawer: const HomeDrawerWidget(),
             body: SafeArea(
               child: IndexedStack(
                 index: index,

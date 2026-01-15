@@ -6,8 +6,8 @@ import 'package:multi_catalog_system/core/core.dart';
 import 'package:multi_catalog_system/features/auth/presentation/presentation.dart';
 import 'package:multi_catalog_system/features/home/presentation/presentation.dart';
 
-class DrawerWidget extends StatelessWidget {
-  const DrawerWidget({super.key});
+class HomeDrawerWidget extends StatelessWidget {
+  const HomeDrawerWidget({super.key});
 
   @override
   Widget build(BuildContext context) {

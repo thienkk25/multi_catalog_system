@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_catalog_system/core/core.dart';
 
-class InforCardWidget extends StatelessWidget {
-  const InforCardWidget({
+class CatalogLookupInforCardWidget extends StatelessWidget {
+  const CatalogLookupInforCardWidget({
     super.key,
     required this.dateTime,
     required this.title,

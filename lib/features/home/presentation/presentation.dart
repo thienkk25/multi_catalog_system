@@ -2,4 +2,4 @@ export 'pages/home_page.dart';
 export 'bloc/home_bloc.dart';
 export 'bloc/home_event.dart';
 export 'bloc/home_state.dart';
-export 'widgets/drawer_widget.dart';
+export 'widgets/home_drawer_widget.dart';

@@ -5,8 +5,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:multi_catalog_system/core/core.dart';
-import 'package:multi_catalog_system/features/import_file/presentation/widgets/dashed_boder_widget.dart';
-import 'package:multi_catalog_system/features/import_file/presentation/widgets/list_file_card_widget.dart';
+import 'package:multi_catalog_system/features/import_file/presentation/widgets/import_file_dashed_boder_widget.dart';
+import 'package:multi_catalog_system/features/import_file/presentation/widgets/import_file_list_file_card_widget.dart';
 
 class ImportFilePage extends StatefulWidget {
   const ImportFilePage({
@@ -85,7 +85,7 @@ class _ImportFilePageState extends State<ImportFilePage> {
                   style: TextStyle(color: Colors.grey[500]),
                 ),
                 SizedBox(height: 20),
-                DashedBorder(
+                ImportFileDashedBoderWidget(
                   color: Colors.grey,
                   strokeWidth: 2,
                   child: Container(
@@ -130,7 +130,7 @@ class _ImportFilePageState extends State<ImportFilePage> {
                   ),
                 ),
                 SizedBox(height: 20),
-                ListFileCardWidget(data: data),
+                ImportFileListFileCardWidget(data: data),
                 SizedBox(height: 20),
                 CustomDropdownButton(
                   lable: Text(

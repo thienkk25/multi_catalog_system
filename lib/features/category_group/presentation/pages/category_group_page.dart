@@ -51,7 +51,7 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
                     onPressed: () {
                       showModalBottomSheet(
                         context: context,
-                        builder: (context) => FilterSearchWidget(),
+                        builder: (context) => CategoryGroupFilterSearchWidget(),
                       );
                     },
                   ),

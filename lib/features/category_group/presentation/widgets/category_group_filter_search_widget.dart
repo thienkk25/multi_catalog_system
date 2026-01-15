@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/core.dart';
 
-class FilterSearchWidget extends StatelessWidget {
-  const FilterSearchWidget({super.key});
+class CategoryGroupFilterSearchWidget extends StatelessWidget {
+  const CategoryGroupFilterSearchWidget({super.key});
 
   @override
   Widget build(BuildContext context) {

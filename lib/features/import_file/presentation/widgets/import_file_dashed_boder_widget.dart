@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class DashedBorder extends StatelessWidget {
+class ImportFileDashedBoderWidget extends StatelessWidget {
   final Widget child;
   final Color color;
   final double strokeWidth;
@@ -8,7 +8,7 @@ class DashedBorder extends StatelessWidget {
   final double dashSpace;
   final double borderRadius;
 
-  const DashedBorder({
+  const ImportFileDashedBoderWidget({
     super.key,
     required this.child,
     this.color = Colors.grey,

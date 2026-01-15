@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:multi_catalog_system/core/utils/formatter/file_size_formatter.dart';
+import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/core/widgets/file_icon.dart';
 
-import '../../../../core/widgets/custom_card.dart';
-
-class ListFileCardWidget extends StatefulWidget {
-  const ListFileCardWidget({super.key, required this.data, this.icon});
+class ImportFileListFileCardWidget extends StatefulWidget {
+  const ImportFileListFileCardWidget({
+    super.key,
+    required this.data,
+    this.icon,
+  });
   final List<Map> data;
   final Widget? icon;
 
   @override
-  State<ListFileCardWidget> createState() => _ListFileCardWidgetState();
+  State<ImportFileListFileCardWidget> createState() =>
+      _ImportFileListFileCardWidgetState();
 }
 
-class _ListFileCardWidgetState extends State<ListFileCardWidget> {
+class _ImportFileListFileCardWidgetState
+    extends State<ImportFileListFileCardWidget> {
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
