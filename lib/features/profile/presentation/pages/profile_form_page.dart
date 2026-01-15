@@ -127,7 +127,6 @@ class _ProfileFormPageState extends State<ProfileFormPage> {
                     controller: _emailController,
                     lable: Text('Email'),
                     prefixIcon: Icon(Icons.email_outlined),
-                    enabled: false,
                     readOnly: true,
                   ),
                   CustomInput(
@@ -160,31 +159,7 @@ class _ProfileFormPageState extends State<ProfileFormPage> {
                       'Lưu thay đổi',
                       style: TextStyle(color: Colors.white),
                     ),
-                    onTap: () {
-                      if (!_formKey.currentState!.validate()) return;
-
-                      final updated = UserEntry(
-                        fullName: _fullNameController.text.isNotEmpty
-                            ? _fullNameController.text
-                            : null,
-                        phone: _phoneController.text.isNotEmpty
-                            ? _phoneController.text
-                            : null,
-                      );
-                      showDialog(
-                        context: context,
-                        barrierDismissible: false,
-                        builder: (context) =>
-                            Center(child: const CircularProgressIndicator()),
-                      );
-                      context.read<ProfileBloc>().add(
-                        ProfileEvent.updateProfile(entry: updated),
-                      );
-                      Future.delayed(const Duration(seconds: 1), () {
-                        if (!context.mounted) return;
-                        context.pop();
-                      });
-                    },
+                    onTap: () => _onSave(context),
                     colorBackground: Colors.blue,
                   ),
                 ],
@@ -194,5 +169,26 @@ class _ProfileFormPageState extends State<ProfileFormPage> {
         ),
       ),
     );
+  }
+
+  void _onSave(BuildContext context) {
+    if (!_formKey.currentState!.validate()) return;
+
+    final updated = UserEntry(
+      fullName: _fullNameController.text.isNotEmpty
+          ? _fullNameController.text
+          : null,
+      phone: _phoneController.text.isNotEmpty ? _phoneController.text : null,
+    );
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Center(child: const CircularProgressIndicator()),
+    );
+    context.read<ProfileBloc>().add(ProfileEvent.updateProfile(entry: updated));
+    Future.delayed(const Duration(seconds: 1), () {
+      if (!context.mounted) return;
+      context.pop();
+    });
   }
 }

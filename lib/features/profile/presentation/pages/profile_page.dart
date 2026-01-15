@@ -6,7 +6,6 @@ import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/core/widgets/custom_button.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/core/widgets/error_retry_widget.dart';
-import 'package:multi_catalog_system/features/profile/domain/entities/user_entry.dart';
 import 'package:multi_catalog_system/features/profile/presentation/presentation.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -82,7 +81,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       padding: const EdgeInsets.all(10),
                       sliver: SliverList(
                         delegate: SliverChildListDelegate([
-                          _AvatarSection(entry: entry),
+                          ProfileAvatarSectionWidget(entry: entry),
                           const SizedBox(height: 24),
                           _InfoCard(
                             title: 'Thông tin tài khoản',
@@ -199,100 +198,6 @@ class _ProfilePageState extends State<ProfilePage> {
       default:
         return Colors.grey;
     }
-  }
-}
-
-class _AvatarSection extends StatelessWidget {
-  final UserEntry? entry;
-
-  const _AvatarSection({this.entry});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    final initials = entry?.fullName != null && entry!.fullName!.isNotEmpty
-        ? entry!.fullName![0].toUpperCase()
-        : '?';
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: 130,
-          height: 130,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: LinearGradient(
-              colors: [Color(0xff16d9e3), Color(0xff30c7ec), Color(0xff46aef7)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.blue.withValues(alpha: .3),
-                blurRadius: 20,
-                offset: const Offset(0, 8),
-              ),
-            ],
-          ),
-          alignment: Alignment.center,
-          child: Text(
-            initials,
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 48,
-            ),
-          ),
-        ),
-
-        const SizedBox(height: 16),
-
-        if (entry?.fullName != null)
-          Text(
-            entry!.fullName!,
-            style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-            textAlign: TextAlign.center,
-          ),
-
-        const SizedBox(height: 8),
-
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          alignment: WrapAlignment.center,
-          children: [
-            if (entry?.email != null)
-              _InfoChip(icon: Icons.email_outlined, label: entry!.email!),
-            if (entry?.roleName != null)
-              _InfoChip(
-                icon: Icons.verified_user_outlined,
-                label: entry!.roleName!,
-              ),
-          ],
-        ),
-      ],
-    );
-  }
-}
-
-class _InfoChip extends StatelessWidget {
-  final IconData icon;
-  final String label;
-
-  const _InfoChip({required this.icon, required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return Chip(
-      avatar: Icon(icon, size: 18, color: Colors.blue),
-      label: Text(label),
-      backgroundColor: Color(0xff16d9e3).withValues(alpha: 0.2),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-    );
   }
 }
 

@@ -48,11 +48,7 @@ class AuthInterceptor extends Interceptor {
           Response(
             requestOptions: err.requestOptions,
             statusCode: 401,
-            data: {
-              'success': false,
-              'error': 'unauthorized',
-              'message': 'Phiên đăng nhập đã hết hạn',
-            },
+            data: {'success': false, 'message': 'Phiên đăng nhập đã hết hạn'},
           ),
         );
       }
@@ -66,11 +62,7 @@ class AuthInterceptor extends Interceptor {
           Response(
             requestOptions: err.requestOptions,
             statusCode: 401,
-            data: {
-              'success': false,
-              'error': 'unauthorized',
-              'message': 'Phiên đăng nhập đã hết hạn',
-            },
+            data: {'success': false, 'message': 'Phiên đăng nhập đã hết hạn'},
           ),
         );
       }
