@@ -17,3 +17,4 @@ export 'widgets/custom_alert_dialog.dart';
 export 'widgets/custom_date_picker.dart';
 export 'widgets/note_widget.dart';
 export 'widgets/file_icon.dart';
+export 'widgets/password_field_widget.dart';

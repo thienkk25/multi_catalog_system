@@ -127,7 +127,12 @@ class _ProfilePageState extends State<ProfilePage> {
                               _ActionRow(
                                 icon: Icons.lock_outline,
                                 label: 'Đổi mật khẩu',
-                                onTap: () {},
+                                onTap: () {
+                                  context.pushNamed(
+                                    RouterNames.changePassword,
+                                    extra: bloc,
+                                  );
+                                },
                               ),
                             ],
                           ),

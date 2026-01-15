@@ -26,5 +26,16 @@ class ProfileRoutes {
         );
       },
     ),
+    GoRoute(
+      path: RouterPaths.changePassword,
+      name: RouterNames.changePassword,
+      builder: (context, state) {
+        final bloc = state.extra as ProfileBloc;
+        return BlocProvider.value(
+          value: bloc,
+          child: ProfileChangePasswordPage(),
+        );
+      },
+    ),
   ];
 }

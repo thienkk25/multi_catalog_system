@@ -41,7 +41,7 @@ class UserRemoteDataSourceImpl extends BaseRemoteDataSource
   @override
   Future<UserModel> changePassword({required Map<String, dynamic> data}) async {
     try {
-      final response = await dio.post('/user/change-password', data: data);
+      final response = await dio.patch('/user/change-password', data: data);
       return UserModel.fromJson(_fromResponse(response));
     } on DioException catch (e) {
       handleDioError(e);

@@ -2,8 +2,11 @@ class RouterNames {
   // Core
   static const String home = 'home';
   static const String login = 'login';
+
+  // Profile
   static const String profile = 'profile';
   static const String profileForm = 'profileForm';
+  static const String changePassword = 'changePassword';
 
   // Import
   static const String importFile = 'importFile';
@@ -46,8 +49,11 @@ class RouterPaths {
   // Core
   static const String home = '/';
   static const String login = '/login';
+
+  // Profile
   static const String profile = '/profile';
   static const String profileForm = '/profile/form';
+  static const String changePassword = '/profile/change-password';
 
   // Import
   static const String importFile = '/import-file';
