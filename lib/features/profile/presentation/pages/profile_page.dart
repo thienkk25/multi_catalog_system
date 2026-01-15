@@ -275,7 +275,8 @@ class _ActionRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(10),
+      hoverColor: Colors.blue.withValues(alpha: .2),
       onTap: onTap,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12),

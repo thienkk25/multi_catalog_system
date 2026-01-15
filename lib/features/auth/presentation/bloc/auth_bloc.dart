@@ -79,13 +79,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   @override
   Future<void> close() {
-    _authSub.cancel(); // ✅ BẮT BUỘC
+    _authSub.cancel();
     return super.close();
   }
 
   AuthState _mapFailureToState(Failure failure) {
     if (failure is InvalidCredentialsFailure) {
-      return const AuthState.error(message: 'Sai email hoặc mật khẩu');
+      return const AuthState.error(
+        message: 'Tài khoản email hoặc mật khẩu không chính xác',
+      );
     }
     if (failure is ServerFailure) {
       return const AuthState.error(message: 'Lỗi máy chủ');

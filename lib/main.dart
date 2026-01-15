@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:multi_catalog_system/core/config/app/url_strategy.dart'
     if (dart.library.html) 'package:multi_catalog_system/core/config/app/url_strategy_web.dart';
-
 import 'core/core.dart';
 import 'features/auth/presentation/presentation.dart';
 import 'features/catalog_lookup/presentation/presentation.dart';
@@ -25,25 +24,21 @@ class MainApp extends StatelessWidget {
           getIt<AuthBloc>()..add(const AuthEvent.checkAuthenticated()),
       child: BlocBuilder<AuthBloc, AuthState>(
         buildWhen: (previous, current) {
-          final prevAuth = previous.maybeMap(
+          final prevAuth = previous.mapOrNull(
             authenticated: (_) => true,
             unauthenticated: (_) => false,
-            orElse: () => null,
           );
 
-          final currAuth = current.maybeMap(
+          final currAuth = current.mapOrNull(
             authenticated: (_) => true,
             unauthenticated: (_) => false,
-            orElse: () => null,
           );
 
           return prevAuth != currAuth;
         },
         builder: (context, authState) {
-          final isAuthenticated = authState.maybeMap(
-            authenticated: (_) => true,
-            orElse: () => false,
-          );
+          final isAuthenticated =
+              authState.mapOrNull(authenticated: (_) => true) ?? false;
 
           return MultiBlocProvider(
             key: ValueKey(isAuthenticated),

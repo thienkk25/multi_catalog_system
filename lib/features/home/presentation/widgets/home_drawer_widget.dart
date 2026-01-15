@@ -23,6 +23,7 @@ class HomeDrawerWidget extends StatelessWidget {
             spacing: 10,
             children: [
               _HeaderDrawer(drawerWidth: drawerWidth),
+              Divider(),
               _MainDrawer(),
               _FooterDrawer(),
             ],
@@ -118,7 +119,6 @@ class _MainDrawer extends StatelessWidget {
         child: Column(
           spacing: 10,
           children: [
-            Divider(),
             _DrawerItem(
               icon: Icon(Icons.search, size: 20),
               title: 'Tra cứu danh mục',
@@ -236,7 +236,9 @@ class _FooterDrawer extends StatelessWidget {
           orElse: () => SizedBox.shrink(),
           authenticated: (value) {
             return Column(
+              spacing: 5,
               children: [
+                Divider(),
                 InkWell(
                   borderRadius: BorderRadius.circular(10),
                   hoverColor: Colors.blue.withValues(alpha: .2),
@@ -257,9 +259,6 @@ class _FooterDrawer extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                   hoverColor: Colors.blue.withValues(alpha: .2),
                   onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Đăng xuất thành công')),
-                    );
                     context.read<AuthBloc>().add(const AuthEvent.logout());
                   },
                   child: ListTile(
