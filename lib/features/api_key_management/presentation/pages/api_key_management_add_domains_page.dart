@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -22,7 +23,7 @@ class ApiKeyManagementAddDomainsPage extends StatefulWidget {
 class _ApiKeyManagementAddDomainsPageState
     extends State<ApiKeyManagementAddDomainsPage> {
   final TextEditingController _searchController = TextEditingController();
-
+  final ScrollController _chipScrollController = ScrollController();
   late List<String> _selected;
   String _keyword = '';
 
@@ -50,6 +51,13 @@ class _ApiKeyManagementAddDomainsPageState
     setState(() {
       _selected.contains(code) ? _selected.remove(code) : _selected.add(code);
     });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _chipScrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -88,7 +96,6 @@ class _ApiKeyManagementAddDomainsPageState
               _buildSearch(),
               SizedBox(height: 8),
               _buildSelectedChips(),
-              SizedBox(height: 3),
               _buildLabel(),
               SizedBox(height: 8),
               Expanded(child: _buildList()),
@@ -112,28 +119,65 @@ class _ApiKeyManagementAddDomainsPageState
   Widget _buildSelectedChips() {
     if (_selected.isEmpty) return const SizedBox();
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      child: Wrap(
-        spacing: 8,
-        runSpacing: 8,
-        children: _selected.map((code) {
-          return Chip(
-            label: Text(
-              code,
-              style: const TextStyle(
-                color: Colors.blue,
-                fontWeight: FontWeight.w500,
+    return SizedBox(
+      height: 50,
+      child: Listener(
+        onPointerSignal: (event) {
+          if (event is PointerScrollEvent) {
+            final newOffset =
+                _chipScrollController.offset + event.scrollDelta.dy;
+
+            _chipScrollController.jumpTo(
+              newOffset.clamp(
+                0.0,
+                _chipScrollController.position.maxScrollExtent,
               ),
-            ),
-            deleteIcon: const Icon(Icons.close, size: 18, color: Colors.blue),
-            onDeleted: () {
-              setState(() => _selected.remove(code));
+            );
+          }
+        },
+        child: GestureDetector(
+          onHorizontalDragUpdate: (details) {
+            final newOffset = _chipScrollController.offset - details.delta.dx;
+
+            _chipScrollController.jumpTo(
+              newOffset.clamp(
+                0.0,
+                _chipScrollController.position.maxScrollExtent,
+              ),
+            );
+          },
+          child: ListView.builder(
+            controller: _chipScrollController,
+            scrollDirection: Axis.horizontal,
+            shrinkWrap: true,
+            itemCount: _selected.length,
+            itemBuilder: (context, index) {
+              final code = _selected[index];
+              return Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: Chip(
+                  label: Text(
+                    code,
+                    style: const TextStyle(
+                      color: Colors.blue,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  deleteIcon: const Icon(
+                    Icons.close,
+                    size: 18,
+                    color: Colors.blue,
+                  ),
+                  onDeleted: () {
+                    setState(() => _selected.remove(code));
+                  },
+                  backgroundColor: Colors.blue.shade50,
+                  side: BorderSide(color: Colors.blue.shade200),
+                ),
+              );
             },
-            backgroundColor: Colors.blue.shade50,
-            side: BorderSide(color: Colors.blue.shade200),
-          );
-        }).toList(),
+          ),
+        ),
       ),
     );
   }

@@ -22,6 +22,15 @@ class _LoginPageState extends State<LoginPage> {
   final FocusNode passFocusNode = FocusNode();
 
   @override
+  void dispose() {
+    formKey.currentState?.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    passFocusNode.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(

@@ -23,6 +23,12 @@ class _CategoryLookupPageState extends State<CategoryLookupPage>
   String? _selectedCategoryGroupId;
 
   @override
+  void dispose() {
+    _formKey.currentState?.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     super.build(context);
     return BlocBuilder<CatalogLookupBloc, CatalogLookupState>(

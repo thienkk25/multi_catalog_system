@@ -80,6 +80,7 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
     _codeController.dispose();
     _nameController.dispose();
     _descriptionController.dispose();
+    _bottomBarKey.currentState?.dispose();
     super.dispose();
   }
 

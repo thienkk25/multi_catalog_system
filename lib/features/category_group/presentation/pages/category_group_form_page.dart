@@ -57,9 +57,11 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
 
   @override
   void dispose() {
+    _formKey.currentState?.dispose();
     _codeController.dispose();
     _nameController.dispose();
     _descriptionController.dispose();
+    _bottomBarKey.currentState?.dispose();
     super.dispose();
   }
 

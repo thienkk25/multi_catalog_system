@@ -33,6 +33,15 @@ class _ProfileChangePasswordPageState extends State<ProfileChangePasswordPage> {
   }
 
   @override
+  void dispose() {
+    _formKey.currentState?.dispose();
+    _newPasswordController.dispose();
+    _confirmPasswordController.dispose();
+    _focusNodeConfirmPassword.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Đổi mật khẩu'), centerTitle: true),

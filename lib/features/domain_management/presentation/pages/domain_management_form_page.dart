@@ -41,9 +41,11 @@ class _DomainManagementFormPageState extends State<DomainManagementFormPage> {
 
   @override
   void dispose() {
+    _formKey.currentState?.dispose();
     _nameController.dispose();
     _codeController.dispose();
     _descriptionController.dispose();
+    _bottomBarKey.currentState?.dispose();
     super.dispose();
   }
 

@@ -29,6 +29,12 @@ class _CategoryItemDetailPageState extends State<CategoryItemDetailPage>
   }
 
   @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final entry = widget.entry;
 
