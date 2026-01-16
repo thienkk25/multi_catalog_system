@@ -145,13 +145,25 @@ class _ProfileFormPageState extends State<ProfileFormPage> {
 
                   const SizedBox(height: 10),
 
-                  CustomButton(
-                    textButton: Text(
-                      'Lưu thay đổi',
-                      style: TextStyle(color: Colors.white),
+                  BlocSelector<ProfileBloc, ProfileState, bool>(
+                    selector: (state) => state.isLoading,
+                    builder: (context, isLoading) => CustomButton(
+                      textButton: isLoading
+                          ? SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: const CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : const Text(
+                              'Lưu thay đổi',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                      onTap: isLoading ? null : () => _onSave(context),
+                      colorBackground: isLoading ? Colors.grey : Colors.blue,
                     ),
-                    onTap: () => _onSave(context),
-                    colorBackground: Colors.blue,
                   ),
                 ],
               ),

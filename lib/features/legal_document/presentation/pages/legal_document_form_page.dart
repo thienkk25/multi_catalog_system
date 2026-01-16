@@ -6,6 +6,7 @@ import 'package:multi_catalog_system/features/legal_document/domain/entities/leg
 import 'package:multi_catalog_system/features/legal_document/presentation/bloc/document_file_cubit.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/bloc/legal_document_bloc.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/bloc/legal_document_event.dart';
+import 'package:multi_catalog_system/features/legal_document/presentation/bloc/legal_document_state.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/widgets/legal_document_import_file.dart';
 
 enum LegalDocumentFormPageType { create, update }
@@ -117,10 +118,14 @@ class _LegalDocumentFormPageState extends State<LegalDocumentFormPage> {
                 ),
               ],
             ),
-            BottomFormActions(
-              key: _bottomBarKey,
-              onCancel: () => context.pop(),
-              onSave: () => _onSave(context),
+            BlocSelector<LegalDocumentBloc, LegalDocumentState, bool>(
+              selector: (state) => state.isLoading,
+              builder: (context, isLoading) => BottomFormActions(
+                isLoading: isLoading,
+                key: _bottomBarKey,
+                onCancel: () => context.pop(),
+                onSave: () => _onSave(context),
+              ),
             ),
           ],
         ),

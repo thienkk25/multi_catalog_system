@@ -180,10 +180,14 @@ class _ApiKeyManagementFormPageState extends State<ApiKeyManagementFormPage> {
             ),
 
             if (!isView)
-              BottomFormActions(
-                key: _bottomBarKey,
-                onCancel: () => context.pop(),
-                onSave: () => _onSave(context: context, isEdit: isEdit),
+              BlocSelector<ApiKeyBloc, ApiKeyState, bool>(
+                selector: (state) => state.isLoading,
+                builder: (context, isLoading) => BottomFormActions(
+                  isLoading: isLoading,
+                  key: _bottomBarKey,
+                  onCancel: () => context.pop(),
+                  onSave: () => _onSave(context: context, isEdit: isEdit),
+                ),
               ),
           ],
         ),

@@ -5,11 +5,13 @@ import 'custom_button.dart';
 class BottomFormActions extends StatelessWidget {
   final VoidCallback onCancel;
   final VoidCallback onSave;
+  final bool isLoading;
 
   const BottomFormActions({
     super.key,
     required this.onCancel,
     required this.onSave,
+    this.isLoading = false,
   });
 
   @override
@@ -34,34 +36,45 @@ class BottomFormActions extends StatelessWidget {
           children: [
             Expanded(
               child: CustomButton(
-                onTap: onCancel,
+                onTap: isLoading ? null : onCancel,
                 colorBackground: Colors.white,
                 colorBorder: Colors.blue.withValues(alpha: .5),
                 textButton: const Text(
                   'Hủy',
-                  style: TextStyle(fontWeight: FontWeight(600)),
+                  style: TextStyle(fontWeight: FontWeight.w600),
                 ),
               ),
             ),
             const SizedBox(width: 20),
             Expanded(
               child: CustomButton(
-                onTap: onSave,
-                colorBackground: Colors.blue,
-                textButton: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: const [
-                    Icon(Icons.save, size: 20, color: Colors.white),
-                    SizedBox(width: 5),
-                    Text(
-                      'Lưu',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight(600),
+                onTap: isLoading ? null : onSave,
+                colorBackground: isLoading
+                    ? Colors.blue.withValues(alpha: .5)
+                    : Colors.blue,
+                textButton: isLoading
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: const [
+                          Icon(Icons.save, size: 20, color: Colors.white),
+                          SizedBox(width: 5),
+                          Text(
+                            'Lưu',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
-                ),
               ),
             ),
           ],

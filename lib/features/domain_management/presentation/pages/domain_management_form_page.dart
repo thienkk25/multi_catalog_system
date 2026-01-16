@@ -5,6 +5,7 @@ import 'package:multi_catalog_system/core/core.dart';
 import 'package:multi_catalog_system/features/domain_management/domain/domain.dart';
 import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_management_bloc.dart';
 import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_management_event.dart';
+import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_management_state.dart';
 
 enum DomainFormType { detail, create, update }
 
@@ -160,10 +161,14 @@ class _DomainManagementFormPageState extends State<DomainManagementFormPage> {
             ),
 
             if (!isView)
-              BottomFormActions(
-                key: _bottomBarKey,
-                onCancel: () => context.pop(),
-                onSave: () => _onSave(context: context, isEdit: isEdit),
+              BlocSelector<DomainManagementBloc, DomainManagementState, bool>(
+                selector: (state) => state.isLoading,
+                builder: (context, isLoading) => BottomFormActions(
+                  isLoading: isLoading,
+                  key: _bottomBarKey,
+                  onCancel: () => context.pop(),
+                  onSave: () => _onSave(context: context, isEdit: isEdit),
+                ),
               ),
           ],
         ),

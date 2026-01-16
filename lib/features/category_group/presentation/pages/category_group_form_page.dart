@@ -7,6 +7,7 @@ import 'package:multi_catalog_system/features/catalog_lookup/presentation/presen
 import 'package:multi_catalog_system/features/category_group/domain/domain.dart';
 import 'package:multi_catalog_system/features/category_group/presentation/bloc/category_group_bloc.dart';
 import 'package:multi_catalog_system/features/category_group/presentation/bloc/category_group_event.dart';
+import 'package:multi_catalog_system/features/category_group/presentation/bloc/category_group_state.dart';
 
 enum CategoryGroupFormType { detail, create, update }
 
@@ -197,10 +198,14 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
               ],
             ),
             if (!isView)
-              BottomFormActions(
-                key: _bottomBarKey,
-                onCancel: () => context.pop(),
-                onSave: () => _onSave(context: context, isEdit: isEdit),
+              BlocSelector<CategoryGroupBloc, CategoryGroupState, bool>(
+                selector: (state) => state.isLoading,
+                builder: (context, isLoading) => BottomFormActions(
+                  isLoading: isLoading,
+                  key: _bottomBarKey,
+                  onCancel: () => context.pop(),
+                  onSave: () => _onSave(context: context, isEdit: isEdit),
+                ),
               ),
           ],
         ),

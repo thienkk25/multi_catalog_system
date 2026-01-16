@@ -12,6 +12,7 @@ import 'package:multi_catalog_system/features/catalog_lookup/presentation/bloc/c
 import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_entry.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_bloc.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_event.dart';
+import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_state.dart';
 import 'package:multi_catalog_system/features/legal_document/domain/entities/legal_document_entry.dart';
 
 enum CategoryItemFormType { create, update }
@@ -113,10 +114,14 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
                 ),
               ],
             ),
-            BottomFormActions(
-              key: _bottomBarKey,
-              onCancel: () => context.pop(),
-              onSave: () => _onSave(context: context, isEdit: true),
+            BlocSelector<CategoryItemBloc, CategoryItemState, bool>(
+              selector: (state) => state.isLoading,
+              builder: (context, isLoading) => BottomFormActions(
+                isLoading: isLoading,
+                key: _bottomBarKey,
+                onCancel: () => context.pop(),
+                onSave: () => _onSave(context: context, isEdit: true),
+              ),
             ),
           ],
         ),

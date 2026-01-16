@@ -113,8 +113,8 @@ class _ProfileChangePasswordPageState extends State<ProfileChangePasswordPage> {
 
                     BlocSelector<ProfileBloc, ProfileState, bool>(
                       selector: (state) => state.isLoading,
-                      builder: (context, state) => CustomButton(
-                        onTap: context.read<ProfileBloc>().state.isLoading
+                      builder: (context, isLoading) => CustomButton(
+                        onTap: isLoading
                             ? null
                             : () {
                                 if (!_formKey.currentState!.validate()) return;
@@ -125,17 +125,13 @@ class _ProfileChangePasswordPageState extends State<ProfileChangePasswordPage> {
                                   ),
                                 );
                               },
-                        colorBackground:
-                            context.read<ProfileBloc>().state.isLoading
-                            ? Colors.grey
-                            : Colors.blue,
-                        textButton: context.read<ProfileBloc>().state.isLoading
+                        colorBackground: isLoading ? Colors.grey : Colors.blue,
+                        textButton: isLoading
                             ? SizedBox(
                                 width: 20,
                                 height: 20,
                                 child: const CircularProgressIndicator(
                                   color: Colors.white,
-                                  strokeWidth: 2,
                                 ),
                               )
                             : const Text(
