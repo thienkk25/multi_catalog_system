@@ -31,19 +31,6 @@ class MainApp extends StatelessWidget {
       ],
       child: BlocListener<NotificationCubit, NotificationState>(
         listener: (context, state) {
-          Color bgColor(NotificationType type) {
-            switch (type) {
-              case NotificationType.success:
-                return Colors.green;
-              case NotificationType.error:
-                return Colors.red;
-              case NotificationType.info:
-                return Colors.blue;
-              case NotificationType.warning:
-                return Colors.orange;
-            }
-          }
-
           state.mapOrNull(
             show: (value) {
               if (value.message.isEmpty) return;
@@ -52,7 +39,7 @@ class MainApp extends StatelessWidget {
                   behavior: SnackBarBehavior.floating,
                   duration: const Duration(seconds: 3),
                   dismissDirection: DismissDirection.down,
-                  backgroundColor: bgColor(value.type),
+                  backgroundColor: bgColorNotificationSnackBar(value.type),
                   content: Text(value.message),
                 ),
               );
