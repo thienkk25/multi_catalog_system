@@ -61,11 +61,8 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
                 child: BlocConsumer<CategoryGroupBloc, CategoryGroupState>(
                   listener: (context, state) {
                     if (state.successMessage != null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(state.successMessage!),
-                          backgroundColor: Colors.green,
-                        ),
+                      context.read<NotificationCubit>().success(
+                        state.successMessage!,
                       );
                     }
                   },

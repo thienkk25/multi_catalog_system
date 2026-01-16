@@ -79,11 +79,8 @@ class _ApiKeyManagementPageState extends State<ApiKeyManagementPage>
                       _showSuccessDialog(context, state.createdEntry!.key!);
                     }
                     if (state.successMessage != null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(state.successMessage!),
-                          backgroundColor: Colors.green,
-                        ),
+                      context.read<NotificationCubit>().success(
+                        state.successMessage!,
                       );
                     }
                   },
@@ -150,12 +147,7 @@ class _ApiKeyManagementPageState extends State<ApiKeyManagementPage>
   Future<void> _copyToClipboard(BuildContext context, String text) async {
     await Clipboard.setData(ClipboardData(text: text));
     if (!context.mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Sao chép thành công'),
-        backgroundColor: Colors.green,
-      ),
-    );
+    context.read<NotificationCubit>().success('Sao chép API Key thành công');
   }
 
   void _showSuccessDialog(BuildContext context, String apiKey) {

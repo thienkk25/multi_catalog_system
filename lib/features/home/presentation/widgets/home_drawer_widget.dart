@@ -46,7 +46,7 @@ class _HeaderDrawer extends StatelessWidget {
         return state.when(
           initial: () => const SizedBox.shrink(),
           loading: () => const Center(child: CircularProgressIndicator()),
-          unauthenticated: (_) => SizedBox(
+          unauthenticated: () => SizedBox(
             width: sizeW,
             child: CustomButton(
               onTap: () {
@@ -62,7 +62,7 @@ class _HeaderDrawer extends StatelessWidget {
               ),
             ),
           ),
-          authenticated: (user, _) {
+          authenticated: (user) {
             return Row(
               children: [
                 CircleAvatar(radius: 30, child: const Icon(Icons.person)),
@@ -259,6 +259,9 @@ class _FooterDrawer extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                   hoverColor: Colors.blue.withValues(alpha: .2),
                   onTap: () {
+                    context.read<NotificationCubit>().success(
+                      'Đăng xuất thành công',
+                    );
                     context.read<AuthBloc>().add(const AuthEvent.logout());
                   },
                   child: ListTile(

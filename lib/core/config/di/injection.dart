@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:multi_catalog_system/core/config/config.dart';
+import 'package:multi_catalog_system/core/notifications/notification_cubit.dart';
 import 'package:multi_catalog_system/features/auth/auth.dart';
 import 'package:multi_catalog_system/features/home/presentation/bloc/home_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -24,6 +25,8 @@ Future<void> init() async {
   final sharedPreferences = await SharedPreferences.getInstance();
 
   getIt.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
+
+  getIt.registerFactory(() => NotificationCubit());
 
   getIt.registerLazySingleton<AuthLocalDataSource>(
     () => AuthLocalDataSourceImpl(sharedPreferences: getIt()),

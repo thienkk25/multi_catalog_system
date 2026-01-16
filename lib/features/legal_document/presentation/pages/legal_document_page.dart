@@ -68,11 +68,8 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
                 child: BlocConsumer<LegalDocumentBloc, LegalDocumentState>(
                   listener: (context, state) {
                     if (state.successMessage != null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(state.successMessage!),
-                          backgroundColor: Colors.green,
-                        ),
+                      context.read<NotificationCubit>().success(
+                        state.successMessage!,
                       );
                     }
                   },

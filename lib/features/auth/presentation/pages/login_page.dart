@@ -82,15 +82,13 @@ class _LoginPageState extends State<LoginPage> {
                   listener: (context, state) {
                     state.mapOrNull(
                       authenticated: (_) {
+                        context.read<NotificationCubit>().success(
+                          'Đăng nhập thành công',
+                        );
                         context.go(RouterPaths.home);
                       },
                       error: (state) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            backgroundColor: Colors.red,
-                            content: Text(state.message),
-                          ),
-                        );
+                        context.read<NotificationCubit>().error(state.message);
                       },
                     );
                   },

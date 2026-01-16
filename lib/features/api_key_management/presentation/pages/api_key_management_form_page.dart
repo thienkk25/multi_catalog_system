@@ -194,12 +194,7 @@ class _ApiKeyManagementFormPageState extends State<ApiKeyManagementFormPage> {
   Future<void> _copyToClipboard(BuildContext context, String text) async {
     await Clipboard.setData(ClipboardData(text: text));
     if (!context.mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Sao chép thành công'),
-        backgroundColor: Colors.green,
-      ),
-    );
+    context.read<NotificationCubit>().success('Sao chép API Key thành công');
   }
 
   Widget _requiredLabel(String text) {

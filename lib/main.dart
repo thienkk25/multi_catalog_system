@@ -7,9 +7,6 @@ import 'features/auth/presentation/presentation.dart';
 import 'features/catalog_lookup/presentation/presentation.dart';
 import 'features/home/presentation/presentation.dart';
 
-final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
-    GlobalKey<ScaffoldMessengerState>();
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   setUrlStrategy();
@@ -22,78 +19,92 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) =>
-          getIt<AuthBloc>()..add(const AuthEvent.checkAuthenticated()),
-      child: BlocConsumer<AuthBloc, AuthState>(
+    final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+        GlobalKey<ScaffoldMessengerState>();
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) =>
+              getIt<AuthBloc>()..add(const AuthEvent.checkAuthenticated()),
+        ),
+        BlocProvider(create: (_) => getIt<NotificationCubit>()),
+      ],
+      child: BlocListener<NotificationCubit, NotificationState>(
         listener: (context, state) {
+          Color bgColor(NotificationType type) {
+            switch (type) {
+              case NotificationType.success:
+                return Colors.green;
+              case NotificationType.error:
+                return Colors.red;
+              case NotificationType.info:
+                return Colors.blue;
+              case NotificationType.warning:
+                return Colors.orange;
+            }
+          }
+
           state.mapOrNull(
-            authenticated: (authState) {
-              if (authState.message != null) {
-                scaffoldMessengerKey.currentState?.showSnackBar(
-                  SnackBar(
-                    duration: const Duration(seconds: 3),
-                    backgroundColor: Colors.green,
-                    content: Text(authState.message!),
-                  ),
-                );
-              }
-            },
-            unauthenticated: (unauthState) {
-              if (unauthState.message != null) {
-                scaffoldMessengerKey.currentState?.showSnackBar(
-                  SnackBar(
-                    duration: const Duration(seconds: 3),
-                    backgroundColor: Colors.green,
-                    content: Text(unauthState.message!),
-                  ),
-                );
-              }
-            },
-          );
-        },
-        buildWhen: (previous, current) {
-          final prevAuth = previous.mapOrNull(
-            authenticated: (_) => true,
-            unauthenticated: (_) => false,
-          );
-
-          final currAuth = current.mapOrNull(
-            authenticated: (_) => true,
-            unauthenticated: (_) => false,
-          );
-
-          return prevAuth != currAuth;
-        },
-        builder: (context, authState) {
-          final isAuthenticated =
-              authState.mapOrNull(authenticated: (_) => true) ?? false;
-
-          return MultiBlocProvider(
-            key: ValueKey(isAuthenticated),
-            providers: [
-              BlocProvider(create: (_) => getIt<HomeBloc>()),
-              BlocProvider(
-                create: (_) =>
-                    getIt<CatalogLookupBloc>()
-                      ..add(const CatalogLookupEvent.getDomainsRef()),
-              ),
-            ],
-            child: MaterialApp.router(
-              title: 'Multi Catalog System',
-              scaffoldMessengerKey: scaffoldMessengerKey,
-              theme: ThemeData(
-                scaffoldBackgroundColor: Color(0xFFF5F7FA),
-                appBarTheme: AppBarTheme(
-                  backgroundColor: Colors.blue,
-                  foregroundColor: Colors.white,
+            show: (value) {
+              if (value.message.isEmpty) return;
+              scaffoldMessengerKey.currentState?.showSnackBar(
+                SnackBar(
+                  behavior: SnackBarBehavior.floating,
+                  duration: const Duration(seconds: 3),
+                  dismissDirection: DismissDirection.down,
+                  backgroundColor: bgColor(value.type),
+                  content: Text(value.message),
                 ),
-              ),
-              routerConfig: AppRouter.router,
-              debugShowCheckedModeBanner: false,
-            ),
+              );
+            },
           );
+
+          context.read<NotificationCubit>().clear();
         },
+        child: BlocBuilder<AuthBloc, AuthState>(
+          buildWhen: (previous, current) {
+            final prevAuth = previous.mapOrNull(
+              authenticated: (_) => true,
+              unauthenticated: (_) => false,
+            );
+
+            final currAuth = current.mapOrNull(
+              authenticated: (_) => true,
+              unauthenticated: (_) => false,
+            );
+
+            return prevAuth != currAuth;
+          },
+          builder: (context, authState) {
+            final isAuthenticated =
+                authState.mapOrNull(authenticated: (_) => true) ?? false;
+
+            return MultiBlocProvider(
+              key: ValueKey(isAuthenticated),
+              providers: [
+                BlocProvider(create: (_) => getIt<HomeBloc>()),
+                BlocProvider(
+                  create: (_) =>
+                      getIt<CatalogLookupBloc>()
+                        ..add(const CatalogLookupEvent.getDomainsRef()),
+                ),
+              ],
+              child: MaterialApp.router(
+                title: 'Multi Catalog System',
+                scaffoldMessengerKey: scaffoldMessengerKey,
+                theme: ThemeData(
+                  scaffoldBackgroundColor: Color(0xFFF5F7FA),
+                  appBarTheme: AppBarTheme(
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                  ),
+                ),
+                routerConfig: AppRouter.router,
+                debugShowCheckedModeBanner: false,
+              ),
+            );
+          },
+        ),
       ),
     );
   }

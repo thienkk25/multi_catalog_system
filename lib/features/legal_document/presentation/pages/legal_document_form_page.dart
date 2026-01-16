@@ -258,33 +258,23 @@ class _LegalDocumentFormPageState extends State<LegalDocumentFormPage> {
   Future<void> _onSave(BuildContext context) async {
     if (!_formKey.currentState!.validate()) return;
     if (_issueDate == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Vui lọc nhập ngày phát hành')),
-      );
+      context.read<NotificationCubit>().warning('Vui lọc nhập ngày phát hành');
       return;
     }
     if (_effectiveDate == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Vui lọc nhập ngày hiệu lực')),
-      );
+      context.read<NotificationCubit>().warning('Vui lọc nhập ngày hiệu lực');
       return;
     }
     if (_effectiveDate != null && _effectiveDate!.isBefore(_issueDate!)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Ngày hết hiệu lực phải lớn hơn hoặc bằng ngày phát hành',
-          ),
-        ),
+      context.read<NotificationCubit>().warning(
+        'Ngày hiệu lực phải lớn hơn hoặc bằng ngày phát hành',
       );
       return;
     }
     if (_expiryDate != null &&
         _expiryDate!.isBefore(_effectiveDate!.add(const Duration(days: 1)))) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Ngày hết hiệu lực phải sau ngày hiệu lực'),
-        ),
+      context.read<NotificationCubit>().warning(
+        'Ngày hết hiệu lực phải sau ngày hiệu lực',
       );
       return;
     }

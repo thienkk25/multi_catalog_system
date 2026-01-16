@@ -71,11 +71,8 @@ class _DomainManagementPageState extends State<DomainManagementPage>
                     BlocConsumer<DomainManagementBloc, DomainManagementState>(
                       listener: (context, state) {
                         if (state.successMessage != null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(state.successMessage!),
-                              backgroundColor: Colors.green,
-                            ),
+                          context.read<NotificationCubit>().success(
+                            state.successMessage!,
                           );
                         }
                       },
