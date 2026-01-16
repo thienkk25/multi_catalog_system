@@ -46,7 +46,7 @@ class _HeaderDrawer extends StatelessWidget {
         return state.when(
           initial: () => const SizedBox.shrink(),
           loading: () => const Center(child: CircularProgressIndicator()),
-          unauthenticated: () => SizedBox(
+          unauthenticated: (_) => SizedBox(
             width: sizeW,
             child: CustomButton(
               onTap: () {
@@ -62,7 +62,7 @@ class _HeaderDrawer extends StatelessWidget {
               ),
             ),
           ),
-          authenticated: (user) {
+          authenticated: (user, _) {
             return Row(
               children: [
                 CircleAvatar(radius: 30, child: const Icon(Icons.person)),

@@ -39,7 +39,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
           result.fold(
             (failure) => emit(_mapFailureToState(failure)),
-            (user) => emit(AuthState.authenticated(entry: user)),
+            (user) => emit(
+              AuthState.authenticated(
+                entry: user,
+                message: 'Đăng nhập thành công',
+              ),
+            ),
           );
         },
 
@@ -67,7 +72,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
         logout: (_) async {
           await authLogoutUseCase();
-          emit(const AuthState.unauthenticated());
+          emit(
+            const AuthState.unauthenticated(message: 'Đăng xuất thành công'),
+          );
         },
 
         checkAuthenticated: (_) async {
