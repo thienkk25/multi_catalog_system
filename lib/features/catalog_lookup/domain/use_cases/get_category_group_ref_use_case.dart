@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
+import 'package:multi_catalog_system/core/domain/entities/category_group/category_group_ref_entry.dart';
 import 'package:multi_catalog_system/core/error/failures.dart';
-import 'package:multi_catalog_system/features/catalog_lookup/domain/entities/category_group_ref_entry.dart';
 import 'package:multi_catalog_system/features/catalog_lookup/domain/repositories/catalog_lookup_repository.dart';
 
 class GetCategoryGroupRefUseCase {

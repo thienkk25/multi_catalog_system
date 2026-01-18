@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:multi_catalog_system/core/config/networks/base_remote_data_source.dart';
 import 'package:multi_catalog_system/core/error/exceptions.dart';
-import 'package:multi_catalog_system/features/catalog_lookup/data/models/category_group_ref_model.dart';
-import 'package:multi_catalog_system/features/catalog_lookup/data/models/domain_ref_model.dart';
+import 'package:multi_catalog_system/core/data/models/category_group/category_group_ref_model.dart';
+import 'package:multi_catalog_system/core/data/models/domain/domain_ref_model.dart';
 
 abstract class CatalogLookupRemoteDataSource {
   Future<List<DomainRefModel>> getDomainsRef();

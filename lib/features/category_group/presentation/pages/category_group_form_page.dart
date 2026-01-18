@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/core.dart';
-import 'package:multi_catalog_system/features/catalog_lookup/domain/entities/domain_ref_entry.dart';
 import 'package:multi_catalog_system/features/catalog_lookup/presentation/presentation.dart';
 import 'package:multi_catalog_system/features/category_group/domain/domain.dart';
 import 'package:multi_catalog_system/features/category_group/presentation/bloc/category_group_bloc.dart';

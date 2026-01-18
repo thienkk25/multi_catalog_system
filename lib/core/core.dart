@@ -4,6 +4,8 @@ export 'error/failures.dart';
 export 'router/app_router.dart';
 export 'router/router_names.dart';
 export 'utils/utils.dart';
+export 'data/data.dart';
+export 'domain/domain.dart';
 export 'widgets/custom_button.dart';
 export 'widgets/custom_card.dart';
 export 'widgets/custom_dropdown_button.dart';
