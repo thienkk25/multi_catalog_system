@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:multi_catalog_system/core/config/constants/app_constant.dart';
 import 'package:multi_catalog_system/core/notifications/notification_cubit.dart';
 import 'package:multi_catalog_system/core/widgets/custom_button.dart';
 import 'package:multi_catalog_system/core/widgets/custom_input.dart';
@@ -19,9 +20,6 @@ class ProfileFormPage extends StatefulWidget {
 
 class _ProfileFormPageState extends State<ProfileFormPage> {
   final _formKey = GlobalKey<FormState>();
-
-  final String _regPhone = r'^(?:\+84|0084|0)(?:1|2|3|5|7|8|9)[0-9]{8,9}$';
-
   final _fullNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
@@ -133,7 +131,7 @@ class _ProfileFormPageState extends State<ProfileFormPage> {
 
                       final phone = value.trim();
 
-                      final regExp = RegExp(_regPhone);
+                      final regExp = RegExp(AppConstant.regPhone);
 
                       if (!regExp.hasMatch(phone)) {
                         return 'Số điện thoại không hợp lệ';

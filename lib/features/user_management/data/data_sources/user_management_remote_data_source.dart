@@ -31,7 +31,6 @@ class UserManagementRemoteDataSourceImpl extends BaseRemoteDataSource
         '/admin/users',
         queryParameters: queryParams,
       );
-
       final List<dynamic> jsonList = response.data['data']['data'];
       return jsonList
           .map((json) => UserManagementModel.fromJson(json))

@@ -20,9 +20,7 @@ class UserManagementRepositoryImpl implements UserManagementRepository {
       fullName: m.fullName,
       phone: m.phone,
       status: m.status,
-      role: m.role == null
-          ? null
-          : RoleEntry(id: m.role?.id, code: m.role?.code, name: m.role?.name),
+      role: RoleEntry(id: m.role?.id, code: m.role?.code, name: m.role?.name),
       domains: m.domains
           ?.map((d) => DomainRefEntry(id: d.id, name: d.name, code: d.code))
           .toList(),
@@ -30,7 +28,11 @@ class UserManagementRepositoryImpl implements UserManagementRepository {
     );
   }
 
-  Map<String, dynamic> _createPayload(UserManagementEntry e) => {};
+  Map<String, dynamic> _createPayload(UserManagementEntry e) => {
+    'email': e.email,
+    'password': e.password,
+    'user_metadata': e.userMetadata,
+  };
 
   Map<String, dynamic> _updatePayload(UserManagementEntry e) => {};
 

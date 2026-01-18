@@ -27,7 +27,7 @@ class UserManagementBloc
     UserManagementEvent event,
     Emitter<UserManagementState> emit,
   ) async {
-    event.map(
+    await event.map(
       getAll: (e) async {
         emit(
           state.copyWith(isLoading: true, error: null, successMessage: null),

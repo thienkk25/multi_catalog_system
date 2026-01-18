@@ -154,7 +154,7 @@ class SystemHistoryDetailView extends StatelessWidget {
                     Expanded(
                       flex: 3,
                       child: Text(
-                        dateTimeFormatFull(value),
+                        formatValue(value),
                         style: TextStyle(color: _actionColor(log.action)),
                       ),
                     ),
@@ -232,14 +232,14 @@ class SystemHistoryDetailView extends StatelessWidget {
           Expanded(
             flex: 3,
             child: Text(
-              dateTimeFormatFull(oldValue),
+              formatValue(oldValue),
               style: const TextStyle(color: Color(0xFF9CA3AF)),
             ),
           ),
           Expanded(
             flex: 3,
             child: Text(
-              dateTimeFormatFull(newValue),
+              formatValue(newValue),
               style: TextStyle(
                 color: _actionColor(log.action),
                 fontWeight: FontWeight.w600,

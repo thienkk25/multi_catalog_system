@@ -13,10 +13,6 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  // Regular expression for email validation
-  final RegExp emailRegExp = RegExp(
-    r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+",
-  );
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final FocusNode passFocusNode = FocusNode();
@@ -57,7 +53,9 @@ class _LoginPageState extends State<LoginPage> {
                   validator: (p0) {
                     if (p0 == null || p0.isEmpty) {
                       return 'Vui lòng nhập email';
-                    } else if (!emailRegExp.hasMatch(emailController.text)) {
+                    } else if (!RegExp(
+                      AppConstant.regEmail,
+                    ).hasMatch(emailController.text)) {
                       return 'Email không đúng định dạng';
                     }
                     return null;

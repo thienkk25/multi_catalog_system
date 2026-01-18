@@ -10,6 +10,8 @@ class UserManagementEntry {
   final RoleEntry? role;
   final List<DomainRefEntry>? domains;
   final DateTime? createdAt;
+  final String? password;
+  final Map<String, dynamic>? userMetadata;
 
   UserManagementEntry({
     this.id,
@@ -20,5 +22,7 @@ class UserManagementEntry {
     this.role,
     this.domains,
     this.createdAt,
+    this.password,
+    this.userMetadata,
   });
 }

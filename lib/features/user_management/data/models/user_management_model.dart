@@ -19,5 +19,5 @@ abstract class UserManagementModel with _$UserManagementModel {
   }) = _UserManagementModel;
 
   factory UserManagementModel.fromJson(Map<String, dynamic> json) =>
-      UserManagementModel.fromJson(json);
+      _$UserManagementModelFromJson(json);
 }
