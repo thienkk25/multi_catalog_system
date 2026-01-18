@@ -63,8 +63,10 @@ class MainApp extends StatelessWidget {
             return prevAuth != currAuth;
           },
           builder: (context, authState) {
-            final isAuthenticated =
-                authState.mapOrNull(authenticated: (_) => true) ?? false;
+            final isAuthenticated = authState.mapOrNull(
+              authenticated: (_) => true,
+              unauthenticated: (_) => false,
+            );
 
             return MultiBlocProvider(
               key: ValueKey(isAuthenticated),

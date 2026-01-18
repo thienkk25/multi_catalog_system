@@ -6,7 +6,7 @@ part 'role_model.g.dart';
 @freezed
 abstract class RoleModel with _$RoleModel {
   const factory RoleModel({
-    required String id,
+    required int id,
     required String code,
     required String name,
   }) = _RoleModel;

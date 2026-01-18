@@ -18,6 +18,7 @@ import 'domain_management/domain_injection.dart';
 import 'legal_document/legal_document_injection.dart';
 import 'profile/profile_injection.dart';
 import 'system_history_management/system_history_management_injection.dart';
+import 'user_management/user_management_injection.dart';
 
 final getIt = GetIt.instance;
 
@@ -79,6 +80,8 @@ Future<void> init() async {
   initSystemHistoryManagementModule();
 
   initProfileModule();
+
+  initUserManagementModule();
 
   getIt.registerFactory(() => HomeBloc());
 }
