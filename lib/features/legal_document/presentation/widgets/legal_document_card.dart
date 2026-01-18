@@ -11,7 +11,6 @@ import 'package:multi_catalog_system/core/widgets/role_based_widget.dart';
 import 'package:multi_catalog_system/features/legal_document/domain/entities/legal_document_entry.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/bloc/legal_document_bloc.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/bloc/legal_document_event.dart';
-import 'package:multi_catalog_system/features/legal_document/presentation/pages/legal_document_form_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class LegalDocumentCard extends StatelessWidget {
@@ -135,7 +134,6 @@ class LegalDocumentCard extends StatelessWidget {
                       RouterNames.legalDocumentForm,
                       extra: {
                         'bloc': context.read<LegalDocumentBloc>(),
-                        'type': LegalDocumentFormPageType.update,
                         'entry': entry,
                       },
                     );

@@ -24,7 +24,6 @@ class CategoryItemRoutes {
         return BlocProvider.value(
           value: data['bloc'] as CategoryItemBloc,
           child: CategoryItemFormPage(
-            type: data['type'] as CategoryItemFormType,
             entry: data['entry'] as CategoryItemEntry?,
           ),
         );

@@ -121,7 +121,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
           onPressedAdd: () {
             context.pushNamed(
               RouterNames.legalDocumentForm,
-              extra: {'bloc': bloc, 'type': LegalDocumentFormPageType.create},
+              extra: {'bloc': bloc},
             );
           },
         ),

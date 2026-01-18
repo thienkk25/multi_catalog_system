@@ -26,7 +26,6 @@ class LegalDocumentRoutes {
             BlocProvider(create: (_) => getIt<DocumentFileCubit>()),
           ],
           child: LegalDocumentFormPage(
-            type: data['type'] as LegalDocumentFormPageType,
             entry: data['entry'] as LegalDocumentEntry?,
           ),
         );

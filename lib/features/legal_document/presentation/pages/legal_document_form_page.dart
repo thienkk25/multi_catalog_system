@@ -9,12 +9,9 @@ import 'package:multi_catalog_system/features/legal_document/presentation/bloc/l
 import 'package:multi_catalog_system/features/legal_document/presentation/bloc/legal_document_state.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/widgets/legal_document_import_file.dart';
 
-enum LegalDocumentFormPageType { create, update }
-
 class LegalDocumentFormPage extends StatefulWidget {
   final LegalDocumentEntry? entry;
-  final LegalDocumentFormPageType type;
-  const LegalDocumentFormPage({super.key, this.entry, required this.type});
+  const LegalDocumentFormPage({super.key, this.entry});
 
   @override
   State<LegalDocumentFormPage> createState() => _LegalDocumentFormPageState();
@@ -32,12 +29,11 @@ class _LegalDocumentFormPageState extends State<LegalDocumentFormPage> {
   final GlobalKey _bottomBarKey = GlobalKey();
   double _bottomBarHeight = 0;
 
-  late bool _isEdit;
+  bool get _isUpdate => widget.entry != null;
 
   @override
   void initState() {
     super.initState();
-    _isEdit = widget.type == LegalDocumentFormPageType.update;
     if (widget.entry != null) {
       _codeController.text = widget.entry!.code ?? '';
       _nameController.text = widget.entry!.title ?? '';
@@ -81,7 +77,7 @@ class _LegalDocumentFormPageState extends State<LegalDocumentFormPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: _isEdit
+        title: _isUpdate
             ? const Text('Chỉnh sửa văn bản pháp lý')
             : const Text('Tạo văn bản pháp lý'),
         centerTitle: true,
@@ -285,7 +281,7 @@ class _LegalDocumentFormPageState extends State<LegalDocumentFormPage> {
       );
       return;
     }
-    if (_isEdit) {
+    if (_isUpdate) {
       final data = LegalDocumentEntry(
         id: widget.entry!.id,
         code: _codeController.text.isNotEmpty

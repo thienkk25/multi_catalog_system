@@ -26,7 +26,7 @@ class _UserManagementFormPageState extends State<UserManagementFormPage> {
   late final TextEditingController _phoneCtrl;
   final TextEditingController _passwordCtrl = TextEditingController();
 
-  bool get isUpdate => widget.entry != null;
+  bool get _isUpdate => widget.entry != null;
 
   @override
   void initState() {
@@ -49,7 +49,7 @@ class _UserManagementFormPageState extends State<UserManagementFormPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(isUpdate ? 'Cập nhật người dùng' : 'Tạo người dùng'),
+        title: Text(_isUpdate ? 'Cập nhật người dùng' : 'Tạo người dùng'),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -61,7 +61,7 @@ class _UserManagementFormPageState extends State<UserManagementFormPage> {
               children: [
                 CustomInput(
                   controller: _emailCtrl,
-                  readOnly: isUpdate,
+                  readOnly: _isUpdate,
                   lable: const Row(
                     children: [
                       Text('Email'),
@@ -122,7 +122,7 @@ class _UserManagementFormPageState extends State<UserManagementFormPage> {
                   hintText: 'Nhập mật khẩu người dùng',
                 ),
                 SizedBox(height: 16),
-                if (!isUpdate)
+                if (!_isUpdate)
                   NoteWidget(
                     icon: Icons.info,
                     note: 'Nếu mật khẩu để trống mặc định là "12345678"',
@@ -132,7 +132,7 @@ class _UserManagementFormPageState extends State<UserManagementFormPage> {
                 CustomButton(
                   onTap: () {
                     if (!_formKey.currentState!.validate()) return;
-                    if (isUpdate) {
+                    if (_isUpdate) {
                       final entry = UserManagementEntry(
                         id: widget.entry!.id,
                         email: _emailCtrl.text,
@@ -157,7 +157,7 @@ class _UserManagementFormPageState extends State<UserManagementFormPage> {
                   },
                   colorBackground: Colors.blue,
                   textButton: Text(
-                    isUpdate ? 'Cập nhật' : 'Tạo',
+                    _isUpdate ? 'Cập nhật' : 'Tạo',
                     style: TextStyle(color: Colors.white),
                   ),
                 ),

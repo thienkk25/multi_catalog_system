@@ -15,12 +15,9 @@ import 'package:multi_catalog_system/features/category_item/presentation/bloc/ca
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_state.dart';
 import 'package:multi_catalog_system/features/legal_document/domain/entities/legal_document_entry.dart';
 
-enum CategoryItemFormType { create, update }
-
 class CategoryItemFormPage extends StatefulWidget {
   final CategoryItemEntry? entry;
-  final CategoryItemFormType type;
-  const CategoryItemFormPage({super.key, required this.type, this.entry});
+  const CategoryItemFormPage({super.key, this.entry});
 
   @override
   State<CategoryItemFormPage> createState() => _CategoryItemFormPageState();
@@ -40,7 +37,7 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
   final GlobalKey _bottomBarKey = GlobalKey();
   double _bottomBarHeight = 0;
 
-  late bool _isEdit;
+  bool get _isUpdate => widget.entry != null;
 
   @override
   void initState() {
@@ -49,7 +46,6 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
       const CatalogLookupEvent.getDomainsRef(),
     );
     _domains = context.read<CatalogLookupBloc>().state.domainsRef;
-    _isEdit = widget.type == CategoryItemFormType.update;
     if (widget.entry != null) {
       _codeController.text = widget.entry!.code!;
       _nameController.text = widget.entry!.name!;
@@ -88,7 +84,7 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isEdit ? 'Cập nhật Mục danh mục' : 'Tạo Mục danh mục'),
+        title: Text(_isUpdate ? 'Cập nhật Mục danh mục' : 'Tạo Mục danh mục'),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -315,7 +311,7 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
 
   void _onSave({required BuildContext context, required bool isEdit}) {
     if (!_formKey.currentState!.validate()) return;
-    if (_isEdit) {
+    if (_isUpdate) {
       final entry = CategoryItemEntry(
         id: widget.entry!.id,
         name: _nameController.text.isNotEmpty

@@ -121,7 +121,7 @@ class _CategoryItemPageState extends State<CategoryItemPage> {
           onPressedAdd: () {
             context.pushNamed(
               RouterNames.categoryItemForm,
-              extra: {'bloc': bloc, 'type': CategoryItemFormType.create},
+              extra: {'bloc': bloc},
             );
           },
         ),
