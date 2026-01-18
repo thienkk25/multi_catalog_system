@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:multi_catalog_system/core/utils/formatter/data_time_formatter.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_entry.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/widgets/category_item_status_chip.dart';
@@ -115,10 +115,7 @@ class _InfoTab extends StatelessWidget {
                 ),
               _InfoRow(label: 'Lĩnh vực', value: entry.domainName!),
               _InfoRow(label: 'Nhóm danh mục', value: entry.groupName!),
-              _InfoRow(
-                label: 'Ngày tạo',
-                value: DateFormat('dd/MM/yyyy').format(entry.createdAt!),
-              ),
+              _InfoRow(label: 'Ngày tạo', value: dateFormat(entry.createdAt)),
             ],
           ),
         ),
@@ -163,7 +160,7 @@ class _HistoryTab extends StatelessWidget {
             leading: const Icon(Icons.history),
             title: Text('Phiên bản ${3 - index}'),
             subtitle: const Text('Cập nhật mô tả danh mục'),
-            trailing: Text(DateFormat('dd/MM/yyyy').format(DateTime.now())),
+            trailing: Text(dateFormat(DateTime.now())),
           ),
         );
       },

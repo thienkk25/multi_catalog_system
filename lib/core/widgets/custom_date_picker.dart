@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:multi_catalog_system/core/utils/formatter/data_time_formatter.dart';
 
 class CustomDatePicker extends StatefulWidget {
   final IconData? icon;
@@ -28,12 +28,8 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
     super.initState();
     _selectedDate = widget.initialDate;
     _controller = TextEditingController(
-      text: _selectedDate != null ? _format(_selectedDate!) : '',
+      text: _selectedDate != null ? dateFormat(_selectedDate!) : '',
     );
-  }
-
-  String _format(DateTime date) {
-    return DateFormat('dd/MM/yyyy').format(date);
   }
 
   Future<void> _pickDate() async {
@@ -88,7 +84,7 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
                   ),
                   Text(
                     _selectedDate != null
-                        ? _format(_selectedDate!)
+                        ? dateFormat(_selectedDate!)
                         : 'Chọn ngày',
                     style: const TextStyle(fontWeight: FontWeight.w600),
                   ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:multi_catalog_system/core/utils/formatter/data_time_formatter.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/features/system_history_management/domain/entities/system_history_entry.dart';
 
@@ -10,7 +10,7 @@ class SystemHistoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final time = DateFormat('HH:mm:ss dd/MM/yyyy').format(log.timestamp);
+    final time = dateTimeFormat(log.timestamp);
 
     return CustomCard(
       child: Row(

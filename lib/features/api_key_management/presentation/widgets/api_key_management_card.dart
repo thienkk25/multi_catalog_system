@@ -3,9 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:multi_catalog_system/core/notifications/notification_cubit.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
+import 'package:multi_catalog_system/core/utils/formatter/data_time_formatter.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/core/widgets/role_based_widget.dart';
 import 'package:multi_catalog_system/features/api_key_management/domain/entities/api_key_entry.dart';
@@ -108,7 +108,7 @@ class ApiKeyManagementCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('Tạo bởi: ${entry.createdBy ?? 'System'}'),
-                    Text('Ngày tạo: ${_formatDate(entry.createdAt!)}'),
+                    Text('Ngày tạo: ${dateFormat(entry.createdAt!)}'),
                   ],
                 ),
               ),
@@ -147,10 +147,6 @@ class ApiKeyManagementCard extends StatelessWidget {
     await Clipboard.setData(ClipboardData(text: text));
     if (!context.mounted) return;
     context.read<NotificationCubit>().success('Sao chép API Key thành công');
-  }
-
-  String _formatDate(DateTime date) {
-    return DateFormat('dd/MM/yyyy').format(date);
   }
 
   Color _actionColor(String action) {

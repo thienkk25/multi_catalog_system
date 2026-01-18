@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
+import 'package:multi_catalog_system/core/utils/formatter/data_time_formatter.dart';
 import 'package:multi_catalog_system/core/widgets/custom_button.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/core/widgets/error_retry_widget.dart';
@@ -111,11 +111,11 @@ class _ProfilePageState extends State<ProfilePage> {
                             children: [
                               _InfoRow(
                                 label: 'Ngày tạo',
-                                value: _formatDate(entry?.createdAt),
+                                value: dateFormat(entry?.createdAt),
                               ),
                               _InfoRow(
                                 label: 'Cập nhật lần cuối',
-                                value: _formatDate(entry?.updatedAt),
+                                value: dateFormat(entry?.updatedAt),
                               ),
                             ],
                           ),
@@ -171,11 +171,6 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
       ),
     );
-  }
-
-  String _formatDate(DateTime? date) {
-    if (date == null) return 'N/A';
-    return DateFormat('dd/MM/yyyy HH:mm').format(date);
   }
 
   String _statusText(String status) {

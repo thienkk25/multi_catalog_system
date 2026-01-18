@@ -43,6 +43,11 @@ class RouterNames {
   static const String categoryItemDetail = 'categoryItemDetail';
   static const String categoryItemAddLegalDocuments =
       'categoryItemAddLegalDocuments';
+
+  // user_management
+  static const String userManagement = 'userManagement';
+  static const String userManagementForm = 'userManagementForm';
+  static const String userManagementDetail = 'userManagementDetail';
 }
 
 class RouterPaths {
@@ -90,4 +95,9 @@ class RouterPaths {
   static const String categoryItemDetail = '/category-item/:id';
   static const String categoryItemAddLegalDocuments =
       '/category-item/add-legal-documents';
+
+  // user_management
+  static const String userManagement = '/user-management';
+  static const String userManagementForm = '/user-management/form';
+  static const String userManagementDetail = '/user-management/:id';
 }

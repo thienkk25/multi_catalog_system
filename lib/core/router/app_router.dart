@@ -11,6 +11,7 @@ import 'import_file/import_file_routes.dart';
 import 'legal_document/legal_document_routes.dart';
 import 'profile/profile_routes.dart';
 import 'system_history_management/system_history_management_routes.dart';
+import 'user_management/user_management_routes.dart';
 
 class AppRouter {
   static final router = GoRouter(
@@ -23,6 +24,7 @@ class AppRouter {
       ...LegalDocumentRoutes.routes,
       ...ImportFileRoutes.routes,
       ...ProfileRoutes.routes,
+      ...UserManagementRoutes.routes,
       ...ApiKeyManagementRoutes.routes,
       ...SystemHistoryManagementRoutes.routes,
     ],

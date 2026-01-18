@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:multi_catalog_system/core/utils/formatter/data_time_formatter.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/features/system_history_management/domain/entities/system_history_entry.dart';
 
@@ -49,7 +49,7 @@ class SystemHistoryDetailView extends StatelessWidget {
           const SizedBox(height: 12),
           _buildInfoRow('Endpoint', log.endpoint),
           _buildInfoRow('User ID', log.userId ?? 'System'),
-          _buildInfoRow('Thời gian', _formatDateTime(log.timestamp)),
+          _buildInfoRow('Thời gian', dateTimeFormatFull(log.timestamp)),
         ],
       ),
     );
@@ -154,7 +154,7 @@ class SystemHistoryDetailView extends StatelessWidget {
                     Expanded(
                       flex: 3,
                       child: Text(
-                        _formatValue(value),
+                        dateTimeFormatFull(value),
                         style: TextStyle(color: _actionColor(log.action)),
                       ),
                     ),
@@ -232,14 +232,14 @@ class SystemHistoryDetailView extends StatelessWidget {
           Expanded(
             flex: 3,
             child: Text(
-              _formatValue(oldValue),
+              dateTimeFormatFull(oldValue),
               style: const TextStyle(color: Color(0xFF9CA3AF)),
             ),
           ),
           Expanded(
             flex: 3,
             child: Text(
-              _formatValue(newValue),
+              dateTimeFormatFull(newValue),
               style: TextStyle(
                 color: _actionColor(log.action),
                 fontWeight: FontWeight.w600,
@@ -249,22 +249,5 @@ class SystemHistoryDetailView extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  String _formatDateTime(DateTime dateTime) {
-    return DateFormat('yyyy-MM-dd HH:mm:ss').format(dateTime.toLocal());
-  }
-
-  String _formatValue(dynamic value) {
-    if (value == null) return 'null';
-
-    if (value is String) {
-      final parsed = DateTime.tryParse(value);
-      if (parsed != null) {
-        return DateFormat('yyyy-MM-dd HH:mm:ss').format(parsed.toLocal());
-      }
-    }
-
-    return value.toString();
   }
 }

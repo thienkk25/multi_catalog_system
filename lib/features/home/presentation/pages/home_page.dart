@@ -53,8 +53,13 @@ class _HomePageState extends State<HomePage> {
             RoleBasedWidget(permission: ['approver'], child: ApproverPage()),
       ),
       HomePageConfig(
-        builder: () =>
-            RoleBasedWidget(permission: ['admin'], child: UserManagementPage()),
+        builder: () => RoleBasedWidget(
+          permission: ['admin'],
+          child: BlocProvider(
+            create: (_) => getIt<UserManagementBloc>(),
+            child: UserManagementPage(),
+          ),
+        ),
       ),
       HomePageConfig(
         builder: () => RoleBasedWidget(

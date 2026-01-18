@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:multi_catalog_system/core/utils/formatter/data_time_formatter.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_entry.dart';
 
@@ -53,7 +53,7 @@ class CategoryItemCard extends StatelessWidget {
           Align(
             alignment: Alignment.centerRight,
             child: Text(
-              'Tạo ngày ${DateFormat('dd/MM/yyyy').format(entry.createdAt!)}',
+              'Tạo ngày ${dateFormat(entry.createdAt!)}',
               style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey),
             ),
           ),
