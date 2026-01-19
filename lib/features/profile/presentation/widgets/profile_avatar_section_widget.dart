@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:multi_catalog_system/features/profile/domain/entities/user_entry.dart';
+import 'package:multi_catalog_system/core/domain/entities/auth/user_entry.dart';
 
 class ProfileAvatarSectionWidget extends StatelessWidget {
   final UserEntry? entry;

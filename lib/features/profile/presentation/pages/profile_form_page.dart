@@ -5,7 +5,7 @@ import 'package:multi_catalog_system/core/config/constants/app_constant.dart';
 import 'package:multi_catalog_system/core/notifications/notification_cubit.dart';
 import 'package:multi_catalog_system/core/widgets/custom_button.dart';
 import 'package:multi_catalog_system/core/widgets/custom_input.dart';
-import 'package:multi_catalog_system/features/profile/domain/entities/user_entry.dart';
+import 'package:multi_catalog_system/core/domain/entities/auth/user_entry.dart';
 import 'package:multi_catalog_system/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:multi_catalog_system/features/profile/presentation/bloc/profile_event.dart';
 import 'package:multi_catalog_system/features/profile/presentation/bloc/profile_state.dart';

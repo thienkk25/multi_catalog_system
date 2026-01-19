@@ -1,3 +1,9 @@
 export 'models/category_group/category_group_ref_model.dart';
 export 'models/domain/domain_ref_model.dart';
 export 'models/role/role_model.dart';
+export 'models/auth/user_model.dart';
+export 'models/auth/session_model.dart';
+export 'models/auth/identity_model.dart';
+export 'models/auth/identity_data_model.dart';
+export 'models/auth/app_metadata_model.dart';
+export 'models/auth/user_metadata_model.dart';

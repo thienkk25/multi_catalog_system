@@ -1,4 +1,3 @@
-export 'entities/user_entry.dart';
 export 'repositories/user_repository.dart';
 export 'use_cases/change_password_use_case.dart';
 export 'use_cases/get_me_use_case.dart';

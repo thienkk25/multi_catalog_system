@@ -6,7 +6,7 @@ import 'package:multi_catalog_system/core/error/exceptions.dart';
 import 'package:multi_catalog_system/core/error/failures.dart';
 import 'package:multi_catalog_system/features/auth/data/data_sources/auth_local_data_source.dart';
 import 'package:multi_catalog_system/features/auth/data/data_sources/auth_remote_data_source.dart';
-import 'package:multi_catalog_system/features/profile/domain/entities/user_entry.dart';
+import 'package:multi_catalog_system/core/domain/entities/auth/user_entry.dart';
 import 'package:multi_catalog_system/features/auth/domain/repositories/auth_repository.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
@@ -18,7 +18,14 @@ class AuthRepositoryImpl implements AuthRepository {
     required this.authLocalDataSource,
   });
 
-  UserEntry _toEntity(UserModel model) => UserEntry();
+  UserEntry _toEntity(UserModel model) => UserEntry(
+    id: model.id,
+    email: model.email,
+    fullName: model.userMetadata?.fullName,
+    phone: model.userMetadata?.phone,
+    createdAt: model.createdAt,
+    updatedAt: model.updatedAt,
+  );
 
   final _controller = StreamController<AuthStatus>.broadcast();
 
