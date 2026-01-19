@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:multi_catalog_system/core/data/models/auth/user_model.dart';
+import 'package:multi_catalog_system/core/domain/entities/role/role_entry.dart';
 import 'package:multi_catalog_system/core/error/exceptions.dart';
 import 'package:multi_catalog_system/core/error/failures.dart';
 import 'package:multi_catalog_system/features/profile/data/data_sources/user_remote_data_source.dart';
@@ -18,6 +19,7 @@ class UserRepositoryImpl implements UserRepository {
     phone: model.userMetadata?.phone,
     createdAt: model.createdAt,
     updatedAt: model.updatedAt,
+    lastSignInAt: model.lastSignInAt,
   );
 
   Map<String, dynamic> _toJson(UserEntry entry) => {
@@ -54,10 +56,21 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<Either<Failure, UserEntry>> getUser() async {
+  Future<Either<Failure, UserEntry>> getProfile() async {
     try {
-      final model = await remoteDataSource.getUser();
-      return Right(_toEntity(model));
+      final model = await remoteDataSource.getProfile();
+      return Right(
+        UserEntry(
+          id: model.id,
+          email: model.email,
+          fullName: model.fullName,
+          phone: model.phone,
+          status: model.status,
+          role: RoleEntry(code: model.roleCode, name: model.roleName),
+          createdAt: model.createdAt,
+          updatedAt: model.updatedAt,
+        ),
+      );
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
     } on UnexpectedException catch (e) {

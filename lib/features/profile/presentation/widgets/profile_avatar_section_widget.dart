@@ -66,10 +66,10 @@ class ProfileAvatarSectionWidget extends StatelessWidget {
           children: [
             if (entry?.email != null)
               _InfoChip(icon: Icons.email_outlined, label: entry!.email!),
-            if (entry?.roleName != null)
+            if (entry?.role?.name != null)
               _InfoChip(
                 icon: Icons.verified_user_outlined,
-                label: entry!.roleName!,
+                label: entry!.role!.name!,
               ),
           ],
         ),

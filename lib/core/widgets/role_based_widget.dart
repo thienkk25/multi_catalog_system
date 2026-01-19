@@ -25,7 +25,7 @@ class RoleBasedWidget extends StatelessWidget {
         unauthenticated: (_) => true,
       ),
       builder: (context, state) => FutureBuilder<bool>(
-        future: hasPermission(permission),
+        future: _hasPermission(permission),
         builder: (context, snapshot) {
           if (!snapshot.hasData || snapshot.data == false) {
             return const SizedBox.shrink();
@@ -36,7 +36,7 @@ class RoleBasedWidget extends StatelessWidget {
     );
   }
 
-  Future<bool> hasPermission(List<String> permission) async {
+  Future<bool> _hasPermission(List<String> permission) async {
     final pref = await SharedPreferences.getInstance();
     final userRoleString = pref.getString('CACHED_USER_ROLE');
     if (userRoleString == null) return false;

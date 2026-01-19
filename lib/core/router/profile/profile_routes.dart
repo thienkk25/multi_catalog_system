@@ -11,7 +11,8 @@ class ProfileRoutes {
       path: RouterPaths.profile,
       name: RouterNames.profile,
       builder: (context, state) => BlocProvider(
-        create: (_) => getIt<ProfileBloc>()..add(const ProfileEvent.getUser()),
+        create: (_) =>
+            getIt<ProfileBloc>()..add(const ProfileEvent.getProfile()),
         child: ProfilePage(),
       ),
     ),

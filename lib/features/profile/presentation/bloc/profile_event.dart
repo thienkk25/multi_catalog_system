@@ -5,7 +5,7 @@ part 'profile_event.freezed.dart';
 
 @freezed
 class ProfileEvent with _$ProfileEvent {
-  const factory ProfileEvent.getUser() = _GetUser;
+  const factory ProfileEvent.getProfile() = _GetProfile;
   const factory ProfileEvent.updateProfile({required UserEntry entry}) =
       _UpdateProfile;
   const factory ProfileEvent.changePassword({required String newPassword}) =

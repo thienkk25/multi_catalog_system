@@ -68,7 +68,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: ErrorRetryWidget(
                   error: error,
                   onRetry: () {
-                    bloc.add(const ProfileEvent.getUser());
+                    bloc.add(const ProfileEvent.getProfile());
                   },
                 ),
               );

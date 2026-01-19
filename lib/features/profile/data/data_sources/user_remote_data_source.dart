@@ -2,10 +2,11 @@ import 'package:dio/dio.dart';
 import 'package:multi_catalog_system/core/config/networks/base_remote_data_source.dart';
 import 'package:multi_catalog_system/core/data/models/auth/user_model.dart';
 import 'package:multi_catalog_system/core/error/exceptions.dart';
+import 'package:multi_catalog_system/features/profile/data/models/profile_model.dart';
 
 abstract class UserRemoteDataSource {
   Future<UserModel> getMe();
-  Future<UserModel> getUser();
+  Future<ProfileModel> getProfile();
   Future<UserModel> changePassword({required Map<String, dynamic> data});
   Future<UserModel> updateProfile({required Map<String, dynamic> data});
 }
@@ -16,33 +17,11 @@ class UserRemoteDataSourceImpl extends BaseRemoteDataSource
 
   UserRemoteDataSourceImpl({required this.dio});
 
-  Map<String, dynamic> _fromResponse(Response response) {
-    if (response.data is! Map<String, dynamic>) {
-      throw UnexpectedException('Invalid response format');
-    }
-    if (!response.data.containsKey('data') ||
-        response.data['data'] is! Map<String, dynamic>) {
-      throw UnexpectedException('Missing or invalid data field in response');
-    }
-    final data = response.data['data'] as Map<String, dynamic>;
-    return {
-      'id': data['user']['id'],
-      'full_name': data['user']['user_metadata']['full_name'] ?? '',
-      'phone': data['user']['user_metadata']['phone'] ?? '',
-      'email': data['user']['email'],
-      'created_at': data['user']['created_at'],
-      'updated_at': data['user']['updated_at'] ?? '',
-      'role_name': '',
-      'role_code': '',
-      'status': '',
-    };
-  }
-
   @override
   Future<UserModel> changePassword({required Map<String, dynamic> data}) async {
     try {
       final response = await dio.patch('/user/change-password', data: data);
-      return UserModel.fromJson(_fromResponse(response));
+      return UserModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);
     } on AppException {
@@ -54,20 +33,6 @@ class UserRemoteDataSourceImpl extends BaseRemoteDataSource
 
   @override
   Future<UserModel> getMe() async {
-    try {
-      final response = await dio.get('/user/me');
-      return UserModel.fromJson(_fromResponse(response));
-    } on DioException catch (e) {
-      handleDioError(e);
-    } on AppException {
-      rethrow;
-    } catch (e) {
-      throw UnexpectedException(e.toString());
-    }
-  }
-
-  @override
-  Future<UserModel> getUser() async {
     try {
       final response = await dio.get('/user/');
       return UserModel.fromJson(response.data['data']);
@@ -81,10 +46,24 @@ class UserRemoteDataSourceImpl extends BaseRemoteDataSource
   }
 
   @override
+  Future<ProfileModel> getProfile() async {
+    try {
+      final response = await dio.get('/user/profile');
+      return ProfileModel.fromJson(response.data['data']);
+    } on DioException catch (e) {
+      handleDioError(e);
+    } on AppException {
+      rethrow;
+    } catch (e) {
+      throw UnexpectedException(e.toString());
+    }
+  }
+
+  @override
   Future<UserModel> updateProfile({required Map<String, dynamic> data}) async {
     try {
       final response = await dio.patch('/user/update-profile', data: data);
-      return UserModel.fromJson(_fromResponse(response));
+      return UserModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);
     } on AppException {

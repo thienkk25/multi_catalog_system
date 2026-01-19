@@ -14,14 +14,14 @@ void initProfileModule() {
     () => UserRepositoryImpl(remoteDataSource: getIt()),
   );
 
-  getIt.registerLazySingleton(() => GetUserUseCase(repository: getIt()));
+  getIt.registerLazySingleton(() => GetProfileUseCase(repository: getIt()));
   getIt.registerLazySingleton(() => GetMeUseCase(repository: getIt()));
   getIt.registerLazySingleton(() => UpdateProfileUseCase(repository: getIt()));
   getIt.registerLazySingleton(() => ChangePasswordUseCase(repository: getIt()));
 
   getIt.registerFactory(
     () => ProfileBloc(
-      getUserUseCase: getIt(),
+      getProfileUseCase: getIt(),
       getMeUseCase: getIt(),
       updateProfileUseCase: getIt(),
       changePasswordUseCase: getIt(),

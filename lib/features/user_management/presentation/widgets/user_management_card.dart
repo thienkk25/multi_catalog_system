@@ -106,6 +106,7 @@ class UserManagementCard extends StatelessWidget {
                                 );
                               },
                               onDelete: () {
+                                context.pop();
                                 context.read<UserManagementBloc>().add(
                                   UserManagementEvent.delete(id: entry.id!),
                                 );

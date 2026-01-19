@@ -42,7 +42,6 @@ class AuthRemoteDataSourceImpl extends BaseRemoteDataSource
         '/auth/login',
         data: {'email': email, 'password': pass},
       );
-
       return SessionModel.fromJson(response.data['data']['session']);
     } on DioException catch (e) {
       handleDioError(e);

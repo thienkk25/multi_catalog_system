@@ -25,6 +25,7 @@ class AuthRepositoryImpl implements AuthRepository {
     phone: model.userMetadata?.phone,
     createdAt: model.createdAt,
     updatedAt: model.updatedAt,
+    lastSignInAt: model.lastSignInAt,
   );
 
   final _controller = StreamController<AuthStatus>.broadcast();
@@ -69,7 +70,6 @@ class AuthRepositoryImpl implements AuthRepository {
       final role = await authRemoteDataSource.getRole(
         accessToken: result.accessToken,
       );
-
       await authLocalDataSource.cacheAuthToken(result.accessToken);
       await authLocalDataSource.cacheRefreshToken(result.refreshToken);
       await authLocalDataSource.cacheUser(result.user);

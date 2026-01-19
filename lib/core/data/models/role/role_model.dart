@@ -6,9 +6,9 @@ part 'role_model.g.dart';
 @freezed
 abstract class RoleModel with _$RoleModel {
   const factory RoleModel({
-    required int? id,
-    required String? code,
-    required String? name,
+    required int id,
+    required String code,
+    required String name,
   }) = _RoleModel;
 
   factory RoleModel.fromJson(Map<String, dynamic> json) =>

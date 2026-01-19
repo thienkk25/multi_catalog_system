@@ -4,7 +4,7 @@ import 'package:multi_catalog_system/core/domain/entities/auth/user_entry.dart';
 
 abstract class UserRepository {
   Future<Either<Failure, UserEntry>> getMe();
-  Future<Either<Failure, UserEntry>> getUser();
+  Future<Either<Failure, UserEntry>> getProfile();
   Future<Either<Failure, UserEntry>> changePassword({
     required String newPassword,
   });
