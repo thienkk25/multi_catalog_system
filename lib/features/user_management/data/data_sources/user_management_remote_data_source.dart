@@ -10,8 +10,10 @@ abstract class UserManagementRemoteDataSource {
     required String id,
     required Map<String, dynamic> data,
   });
-  Future<void> delete({required String id});
   Future<UserManagementModel> getById({required String id});
+  Future<void> delete({required String id});
+  Future<void> activate({required String id});
+  Future<void> deactivate({required String id});
 }
 
 class UserManagementRemoteDataSourceImpl extends BaseRemoteDataSource
@@ -95,6 +97,24 @@ class UserManagementRemoteDataSourceImpl extends BaseRemoteDataSource
   Future<void> delete({required String id}) async {
     try {
       await dio.delete('/admin/users/$id');
+    } catch (e) {
+      throw UnexpectedException(e.toString());
+    }
+  }
+
+  @override
+  Future<void> activate({required String id}) async {
+    try {
+      await dio.patch('/admin/users/$id/activate');
+    } catch (e) {
+      throw UnexpectedException(e.toString());
+    }
+  }
+
+  @override
+  Future<void> deactivate({required String id}) async {
+    try {
+      await dio.patch('/admin/users/$id/deactivate');
     } catch (e) {
       throw UnexpectedException(e.toString());
     }

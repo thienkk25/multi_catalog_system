@@ -12,6 +12,8 @@ class UserManagementBloc
   final DeleteUserManagementUseCase delete;
   final GetAllUserManagementUseCase getAll;
   final GetByIdUserManagementUseCase getById;
+  final ActivateUserManagementUseCase activate;
+  final DeactivateUserManagementUseCase deactivate;
 
   UserManagementBloc({
     required this.create,
@@ -19,6 +21,8 @@ class UserManagementBloc
     required this.delete,
     required this.getAll,
     required this.getById,
+    required this.activate,
+    required this.deactivate,
   }) : super(const UserManagementState()) {
     on<UserManagementEvent>(_onEvent);
   }
@@ -113,6 +117,48 @@ class UserManagementBloc
           (l) => emit(state.copyWith(entries: previous, error: mapFailure(l))),
           (_) {
             emit(state.copyWith(successMessage: 'Xóa thành công'));
+          },
+        );
+      },
+      activate: (e) async {
+        final previous = List<UserManagementEntry>.from(state.entries);
+
+        emit(
+          state.copyWith(
+            entries: state.entries.where((d) => d.id != e.id).toList(),
+            successMessage: null,
+            error: null,
+          ),
+        );
+
+        final result = await activate(id: e.id);
+        if (emit.isDone) return;
+
+        result.fold(
+          (l) => emit(state.copyWith(entries: previous, error: mapFailure(l))),
+          (_) {
+            emit(state.copyWith(successMessage: 'Khóa thành công'));
+          },
+        );
+      },
+      deactivate: (e) async {
+        final previous = List<UserManagementEntry>.from(state.entries);
+
+        emit(
+          state.copyWith(
+            entries: state.entries.where((d) => d.id != e.id).toList(),
+            successMessage: null,
+            error: null,
+          ),
+        );
+
+        final result = await deactivate(id: e.id);
+        if (emit.isDone) return;
+
+        result.fold(
+          (l) => emit(state.copyWith(entries: previous, error: mapFailure(l))),
+          (_) {
+            emit(state.copyWith(successMessage: 'Mở thành công'));
           },
         );
       },

@@ -29,6 +29,12 @@ void initUserManagementModule() {
   getIt.registerLazySingleton(
     () => GetByIdUserManagementUseCase(repository: getIt()),
   );
+  getIt.registerLazySingleton(
+    () => ActivateUserManagementUseCase(repository: getIt()),
+  );
+  getIt.registerLazySingleton(
+    () => DeactivateUserManagementUseCase(repository: getIt()),
+  );
 
   getIt.registerFactory(
     () => UserManagementBloc(
@@ -37,6 +43,8 @@ void initUserManagementModule() {
       delete: getIt<DeleteUserManagementUseCase>(),
       getById: getIt<GetByIdUserManagementUseCase>(),
       getAll: getIt<GetAllUserManagementUseCase>(),
+      activate: getIt<ActivateUserManagementUseCase>(),
+      deactivate: getIt<DeactivateUserManagementUseCase>(),
     ),
   );
 }

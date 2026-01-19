@@ -106,4 +106,28 @@ class UserManagementRepositoryImpl implements UserManagementRepository {
       return Left(UnexpectedFailure(e.message));
     }
   }
+
+  @override
+  Future<Either<Failure, Unit>> activate({required String id}) async {
+    try {
+      await remoteDataSource.activate(id: id);
+      return const Right(unit);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
+    } on UnexpectedException catch (e) {
+      return Left(UnexpectedFailure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Unit>> deactivate({required String id}) async {
+    try {
+      await remoteDataSource.deactivate(id: id);
+      return const Right(unit);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
+    } on UnexpectedException catch (e) {
+      return Left(UnexpectedFailure(e.message));
+    }
+  }
 }
