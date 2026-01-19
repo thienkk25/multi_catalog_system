@@ -12,8 +12,8 @@ abstract class UserManagementRemoteDataSource {
   });
   Future<UserManagementModel> getById({required String id});
   Future<void> delete({required String id});
-  Future<void> activate({required String id});
-  Future<void> deactivate({required String id});
+  Future<UserManagementModel> activate({required String id});
+  Future<UserManagementModel> deactivate({required String id});
 }
 
 class UserManagementRemoteDataSourceImpl extends BaseRemoteDataSource
@@ -103,18 +103,28 @@ class UserManagementRemoteDataSourceImpl extends BaseRemoteDataSource
   }
 
   @override
-  Future<void> activate({required String id}) async {
+  Future<UserManagementModel> activate({required String id}) async {
     try {
-      await dio.patch('/admin/users/$id/activate');
+      final response = await dio.patch('/admin/users/$id/activate');
+      return UserManagementModel.fromJson(response.data['data']);
+    } on DioException catch (e) {
+      handleDioError(e);
+    } on AppException {
+      rethrow;
     } catch (e) {
       throw UnexpectedException(e.toString());
     }
   }
 
   @override
-  Future<void> deactivate({required String id}) async {
+  Future<UserManagementModel> deactivate({required String id}) async {
     try {
-      await dio.patch('/admin/users/$id/deactivate');
+      final response = await dio.patch('/admin/users/$id/deactivate');
+      return UserManagementModel.fromJson(response.data['data']);
+    } on DioException catch (e) {
+      handleDioError(e);
+    } on AppException {
+      rethrow;
     } catch (e) {
       throw UnexpectedException(e.toString());
     }

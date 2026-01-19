@@ -1,8 +1,8 @@
 import 'package:dartz/dartz.dart';
+import 'package:multi_catalog_system/core/data/models/auth/user_model.dart';
 import 'package:multi_catalog_system/core/error/exceptions.dart';
 import 'package:multi_catalog_system/core/error/failures.dart';
 import 'package:multi_catalog_system/features/profile/data/data_sources/user_remote_data_source.dart';
-import 'package:multi_catalog_system/features/profile/data/models/user_model.dart';
 import 'package:multi_catalog_system/features/profile/domain/entities/user_entry.dart';
 import 'package:multi_catalog_system/features/profile/domain/repositories/user_repository.dart';
 
@@ -14,11 +14,11 @@ class UserRepositoryImpl implements UserRepository {
   UserEntry _toEntity(UserModel model) => UserEntry(
     id: model.id,
     email: model.email,
-    fullName: model.fullName,
+    // fullName: model.fullName,
     phone: model.phone,
-    status: model.status,
-    roleCode: model.roleCode,
-    roleName: model.roleName,
+    // status: model.status,
+    // roleCode: model.roleCode,
+    // roleName: model.roleName,
     createdAt: model.createdAt,
     updatedAt: model.updatedAt,
   );

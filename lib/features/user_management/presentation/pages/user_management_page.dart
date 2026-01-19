@@ -66,7 +66,17 @@ class _UserManagementPageState extends State<UserManagementPage>
                 },
               ),
               Expanded(
-                child: BlocBuilder<UserManagementBloc, UserManagementState>(
+                child: BlocConsumer<UserManagementBloc, UserManagementState>(
+                  listener: (context, state) {
+                    if (state.successMessage != null) {
+                      context.read<NotificationCubit>().success(
+                        state.successMessage!,
+                      );
+                    }
+                    if (state.error != null) {
+                      context.read<NotificationCubit>().error(state.error!);
+                    }
+                  },
                   builder: (context, state) =>
                       state.when((isLoading, entries, error, successMessage) {
                         if (isLoading) {

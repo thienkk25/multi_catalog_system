@@ -121,44 +121,52 @@ class UserManagementBloc
         );
       },
       activate: (e) async {
-        final previous = List<UserManagementEntry>.from(state.entries);
-
         emit(
-          state.copyWith(
-            entries: state.entries.where((d) => d.id != e.id).toList(),
-            successMessage: null,
-            error: null,
-          ),
+          state.copyWith(isLoading: true, error: null, successMessage: null),
         );
 
         final result = await activate(id: e.id);
         if (emit.isDone) return;
 
         result.fold(
-          (l) => emit(state.copyWith(entries: previous, error: mapFailure(l))),
-          (_) {
-            emit(state.copyWith(successMessage: 'Khóa thành công'));
+          (l) => emit(state.copyWith(isLoading: false, error: mapFailure(l))),
+          (r) {
+            final updated = [
+              for (final d in state.entries)
+                if (d.id == r.id) r else d,
+            ];
+            emit(
+              state.copyWith(
+                isLoading: false,
+                entries: updated,
+                successMessage: 'Mở khóa thành công',
+              ),
+            );
           },
         );
       },
       deactivate: (e) async {
-        final previous = List<UserManagementEntry>.from(state.entries);
-
         emit(
-          state.copyWith(
-            entries: state.entries.where((d) => d.id != e.id).toList(),
-            successMessage: null,
-            error: null,
-          ),
+          state.copyWith(isLoading: true, error: null, successMessage: null),
         );
 
         final result = await deactivate(id: e.id);
         if (emit.isDone) return;
 
         result.fold(
-          (l) => emit(state.copyWith(entries: previous, error: mapFailure(l))),
-          (_) {
-            emit(state.copyWith(successMessage: 'Mở thành công'));
+          (l) => emit(state.copyWith(isLoading: false, error: mapFailure(l))),
+          (r) {
+            final updated = [
+              for (final d in state.entries)
+                if (d.id == r.id) r else d,
+            ];
+            emit(
+              state.copyWith(
+                isLoading: false,
+                entries: updated,
+                successMessage: 'Khóa thành công',
+              ),
+            );
           },
         );
       },

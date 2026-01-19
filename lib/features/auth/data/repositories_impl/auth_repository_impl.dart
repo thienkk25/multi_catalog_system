@@ -1,11 +1,11 @@
 import 'dart:async';
 
 import 'package:dartz/dartz.dart';
+import 'package:multi_catalog_system/core/data/models/auth/user_model.dart';
 import 'package:multi_catalog_system/core/error/exceptions.dart';
 import 'package:multi_catalog_system/core/error/failures.dart';
 import 'package:multi_catalog_system/features/auth/data/data_sources/auth_local_data_source.dart';
 import 'package:multi_catalog_system/features/auth/data/data_sources/auth_remote_data_source.dart';
-import 'package:multi_catalog_system/features/profile/data/models/user_model.dart';
 import 'package:multi_catalog_system/features/profile/domain/entities/user_entry.dart';
 import 'package:multi_catalog_system/features/auth/domain/repositories/auth_repository.dart';
 
@@ -18,15 +18,7 @@ class AuthRepositoryImpl implements AuthRepository {
     required this.authLocalDataSource,
   });
 
-  UserEntry _toEntity(UserModel model) => UserEntry(
-    id: model.id,
-    email: model.email,
-    fullName: model.fullName,
-    phone: model.phone,
-    status: model.status,
-    createdAt: model.createdAt,
-    updatedAt: model.updatedAt,
-  );
+  UserEntry _toEntity(UserModel model) => UserEntry();
 
   final _controller = StreamController<AuthStatus>.broadcast();
 

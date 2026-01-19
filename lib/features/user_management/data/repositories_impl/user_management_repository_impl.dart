@@ -30,8 +30,12 @@ class UserManagementRepositoryImpl implements UserManagementRepository {
 
   Map<String, dynamic> _createPayload(UserManagementEntry e) => {
     'email': e.email,
-    'password': e.password,
-    'user_metadata': e.userMetadata,
+    if (e.password != null) 'password': e.password,
+    if (e.fullName != null || e.phone != null)
+      'user_metadata': {
+        if (e.fullName != null) 'full_name': e.fullName,
+        if (e.phone != null) 'phone': e.phone,
+      },
   };
 
   Map<String, dynamic> _updatePayload(UserManagementEntry e) => {};
@@ -108,10 +112,12 @@ class UserManagementRepositoryImpl implements UserManagementRepository {
   }
 
   @override
-  Future<Either<Failure, Unit>> activate({required String id}) async {
+  Future<Either<Failure, UserManagementEntry>> activate({
+    required String id,
+  }) async {
     try {
-      await remoteDataSource.activate(id: id);
-      return const Right(unit);
+      final model = await remoteDataSource.activate(id: id);
+      return Right(_toEntity(model));
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
     } on UnexpectedException catch (e) {
@@ -120,10 +126,12 @@ class UserManagementRepositoryImpl implements UserManagementRepository {
   }
 
   @override
-  Future<Either<Failure, Unit>> deactivate({required String id}) async {
+  Future<Either<Failure, UserManagementEntry>> deactivate({
+    required String id,
+  }) async {
     try {
-      await remoteDataSource.deactivate(id: id);
-      return const Right(unit);
+      final model = await remoteDataSource.deactivate(id: id);
+      return Right(_toEntity(model));
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
     } on UnexpectedException catch (e) {

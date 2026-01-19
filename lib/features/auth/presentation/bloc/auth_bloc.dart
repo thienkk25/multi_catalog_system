@@ -84,6 +84,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   AuthState _mapFailureToState(Failure failure) {
+    print(failure);
     if (failure is InvalidCredentialsFailure) {
       return const AuthState.error(
         message: 'Tài khoản email hoặc mật khẩu không chính xác',

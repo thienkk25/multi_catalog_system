@@ -83,7 +83,19 @@ class UserManagementCard extends StatelessWidget {
                           PopupMenuItem(
                             child: _UserCardMenu(
                               isLocked: entry.status == 'active',
-                              onLockUnlock: () {},
+                              onLockUnlock: () {
+                                if (entry.status == 'active') {
+                                  context.read<UserManagementBloc>().add(
+                                    UserManagementEvent.deactivate(
+                                      id: entry.id!,
+                                    ),
+                                  );
+                                } else {
+                                  context.read<UserManagementBloc>().add(
+                                    UserManagementEvent.activate(id: entry.id!),
+                                  );
+                                }
+                              },
                               onEdit: () {
                                 context.pushNamed(
                                   RouterNames.userManagementForm,

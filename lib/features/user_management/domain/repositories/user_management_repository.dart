@@ -12,6 +12,6 @@ abstract class UserManagementRepository {
     required UserManagementEntry entry,
   });
   Future<Either<Failure, void>> delete({required String id});
-  Future<Either<Failure, void>> activate({required String id});
-  Future<Either<Failure, void>> deactivate({required String id});
+  Future<Either<Failure, UserManagementEntry>> activate({required String id});
+  Future<Either<Failure, UserManagementEntry>> deactivate({required String id});
 }
