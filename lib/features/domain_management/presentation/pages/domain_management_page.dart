@@ -85,7 +85,7 @@ class _DomainManagementPageState extends State<DomainManagementPage>
                         ) {
                           if (isLoading) {
                             return const Center(
-                              child: CircularProgressIndicator(),
+                              child: CustomCircularProgressScreen(),
                             );
                           }
                           if (error != null) {

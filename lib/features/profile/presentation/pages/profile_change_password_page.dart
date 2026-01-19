@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/notifications/notification_cubit.dart';
 import 'package:multi_catalog_system/core/widgets/custom_button.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
+import 'package:multi_catalog_system/core/widgets/custom_circular_progress.dart';
 import 'package:multi_catalog_system/core/widgets/password_field_widget.dart';
 import 'package:multi_catalog_system/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:multi_catalog_system/features/profile/presentation/bloc/profile_event.dart';
@@ -135,13 +136,7 @@ class _ProfileChangePasswordPageState extends State<ProfileChangePasswordPage> {
                               },
                         colorBackground: isLoading ? Colors.grey : Colors.blue,
                         textButton: isLoading
-                            ? SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: const CircularProgressIndicator(
-                                  color: Colors.white,
-                                ),
-                              )
+                            ? const CustomCircularProgressButton()
                             : const Text(
                                 'Đổi mật khẩu',
                                 style: TextStyle(color: Colors.white),

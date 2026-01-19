@@ -88,7 +88,7 @@ class _CategoryItemAddLegalDocumentsPageState
                       ) {
                         if (isLoading) {
                           return const Center(
-                            child: CircularProgressIndicator(),
+                            child: CustomCircularProgressScreen(),
                           );
                         }
                         if (error != null) {

@@ -1,5 +1,4 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:multi_catalog_system/core/core.dart';
 
 import 'app_metadata_model.dart';
 import 'identity_model.dart';

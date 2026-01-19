@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:multi_catalog_system/core/utils/formatter/file_size_formatter.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
+import 'package:multi_catalog_system/core/widgets/custom_circular_progress.dart';
 import 'package:multi_catalog_system/core/widgets/file_icon.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/bloc/document_file_cubit.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/bloc/document_file_state.dart';
@@ -61,7 +62,7 @@ class LegalDocumentImportFile extends StatelessWidget {
                         child: Column(
                           children: [
                             state.isLoading
-                                ? const CircularProgressIndicator()
+                                ? const CustomCircularProgressButton()
                                 : Container(
                                     padding: const EdgeInsets.all(12),
                                     decoration: BoxDecoration(

@@ -80,7 +80,7 @@ class _UserManagementPageState extends State<UserManagementPage>
                   builder: (context, state) =>
                       state.when((isLoading, entries, error, successMessage) {
                         if (isLoading) {
-                          return Center(child: CircularProgressIndicator());
+                          return Center(child: CustomCircularProgressScreen());
                         }
                         if (error != null) {
                           return ErrorRetryWidget(

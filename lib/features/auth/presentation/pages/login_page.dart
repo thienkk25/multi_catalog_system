@@ -123,14 +123,7 @@ class _LoginPageState extends State<LoginPage> {
                                 },
                           colorBackground: Colors.blue,
                           textButton: isLoading
-                              ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: Colors.white,
-                                  ),
-                                )
+                              ? const CustomCircularProgressButton()
                               : const Text(
                                   'Đăng nhập',
                                   style: TextStyle(

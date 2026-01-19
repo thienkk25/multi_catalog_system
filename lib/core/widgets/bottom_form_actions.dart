@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:multi_catalog_system/core/widgets/custom_circular_progress.dart';
 
 import 'custom_button.dart';
 
@@ -53,14 +54,7 @@ class BottomFormActions extends StatelessWidget {
                     ? Colors.blue.withValues(alpha: .5)
                     : Colors.blue,
                 textButton: isLoading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.white,
-                        ),
-                      )
+                    ? const CustomCircularProgressButton()
                     : Row(
                         mainAxisSize: MainAxisSize.min,
                         children: const [

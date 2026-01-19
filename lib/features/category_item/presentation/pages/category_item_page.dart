@@ -78,7 +78,9 @@ class _CategoryItemPageState extends State<CategoryItemPage> {
                       successMessage,
                     ) {
                       if (isLoading) {
-                        return const Center(child: CircularProgressIndicator());
+                        return const Center(
+                          child: CustomCircularProgressScreen(),
+                        );
                       }
                       if (error != null) {
                         return ErrorRetryWidget(

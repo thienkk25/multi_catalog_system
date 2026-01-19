@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/widgets/custom_button.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
+import 'package:multi_catalog_system/core/widgets/custom_circular_progress.dart';
 import 'package:multi_catalog_system/core/widgets/custom_input.dart';
 import 'package:multi_catalog_system/core/widgets/error_retry_widget.dart';
 import 'package:multi_catalog_system/features/catalog_lookup/presentation/bloc/catalog_lookup_bloc.dart';
@@ -204,7 +205,7 @@ class _ApiKeyManagementAddDomainsPageState
       child: BlocBuilder<CatalogLookupBloc, CatalogLookupState>(
         builder: (context, state) {
           if (state.isLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: CustomCircularProgressScreen());
           }
 
           if (state.error != null) {

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
+import 'package:multi_catalog_system/core/widgets/custom_circular_progress.dart';
 import 'package:multi_catalog_system/core/widgets/custom_input.dart';
 import 'package:multi_catalog_system/core/widgets/error_retry_widget.dart';
 import 'package:multi_catalog_system/features/system_history_management/presentation/presentation.dart';
@@ -71,7 +72,9 @@ class _SystemHistoryPageState extends State<SystemHistoryPage> {
                   builder: (context, state) {
                     return state.when((isLoading, error, entries) {
                       if (isLoading) {
-                        return const Center(child: CircularProgressIndicator());
+                        return const Center(
+                          child: CustomCircularProgressScreen(),
+                        );
                       }
 
                       if (error != null) {

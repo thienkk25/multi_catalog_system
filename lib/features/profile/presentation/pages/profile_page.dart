@@ -5,6 +5,7 @@ import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/core/utils/formatter/data_time_formatter.dart';
 import 'package:multi_catalog_system/core/widgets/custom_button.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
+import 'package:multi_catalog_system/core/widgets/custom_circular_progress.dart';
 import 'package:multi_catalog_system/core/widgets/error_retry_widget.dart';
 import 'package:multi_catalog_system/features/profile/presentation/presentation.dart';
 
@@ -60,7 +61,7 @@ class _ProfilePageState extends State<ProfilePage> {
             successMessage,
           ) {
             if (isLoading) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(child: CustomCircularProgressScreen());
             }
 
             if (error != null) {

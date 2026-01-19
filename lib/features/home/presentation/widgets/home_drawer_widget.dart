@@ -45,7 +45,7 @@ class _HeaderDrawer extends StatelessWidget {
         final sizeW = drawerWidth - 20;
         return state.when(
           initial: () => const SizedBox.shrink(),
-          loading: () => const Center(child: CircularProgressIndicator()),
+          loading: () => const Center(child: CustomCircularProgressButton()),
           unauthenticated: () => SizedBox(
             width: sizeW,
             child: CustomButton(

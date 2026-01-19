@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/config/constants/app_constant.dart';
 import 'package:multi_catalog_system/core/notifications/notification_cubit.dart';
 import 'package:multi_catalog_system/core/widgets/custom_button.dart';
+import 'package:multi_catalog_system/core/widgets/custom_circular_progress.dart';
 import 'package:multi_catalog_system/core/widgets/custom_input.dart';
 import 'package:multi_catalog_system/core/domain/entities/auth/user_entry.dart';
 import 'package:multi_catalog_system/features/profile/presentation/bloc/profile_bloc.dart';
@@ -147,14 +148,7 @@ class _ProfileFormPageState extends State<ProfileFormPage> {
                     selector: (state) => state.isLoading,
                     builder: (context, isLoading) => CustomButton(
                       textButton: isLoading
-                          ? SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: const CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 2,
-                              ),
-                            )
+                          ? const CustomCircularProgressButton()
                           : const Text(
                               'Lưu thay đổi',
                               style: TextStyle(color: Colors.white),
@@ -186,7 +180,7 @@ class _ProfileFormPageState extends State<ProfileFormPage> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => Center(child: const CircularProgressIndicator()),
+      builder: (context) => Center(child: const CustomCircularProgressScreen()),
     );
     context.read<ProfileBloc>().add(ProfileEvent.updateProfile(entry: updated));
     Future.delayed(const Duration(seconds: 1), () {

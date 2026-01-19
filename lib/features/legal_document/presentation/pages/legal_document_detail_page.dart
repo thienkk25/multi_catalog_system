@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
+import 'package:multi_catalog_system/core/widgets/custom_circular_progress.dart';
 import 'package:multi_catalog_system/core/widgets/custom_label.dart';
 import 'package:multi_catalog_system/core/widgets/file_icon.dart';
 import 'package:multi_catalog_system/features/legal_document/domain/entities/legal_document_entry.dart';
@@ -19,7 +20,7 @@ class LegalDocumentDetailPage extends StatelessWidget {
       body: BlocBuilder<LegalDocumentBloc, LegalDocumentState>(
         builder: (context, state) {
           if (state.isLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: CustomCircularProgressScreen());
           }
           if (state.error != null) {
             return const Center(child: Text('Xảy ra lỗi'));
