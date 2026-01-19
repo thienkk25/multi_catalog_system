@@ -43,50 +43,30 @@ class _HeaderDrawer extends StatelessWidget {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         final sizeW = drawerWidth - 20;
-        return state.when(
-          initial: () => const SizedBox.shrink(),
-          loading: () => const Center(child: CustomCircularProgressButton()),
-          unauthenticated: () => SizedBox(
-            width: sizeW,
-            child: CustomButton(
-              onTap: () {
-                context.pushNamed(RouterNames.login);
-              },
-              colorBackground: Colors.blue,
-              textButton: const Text(
-                'Đăng nhập',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight(600),
+
+        return state.maybeWhen(
+          authenticated: (user) => Row(
+            children: [
+              CircleAvatar(radius: 30, child: const Icon(Icons.person)),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      user.fullName ?? 'Chưa cập nhật',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Text('Email: ${user.email}'),
+                  ],
                 ),
               ),
-            ),
+            ],
           ),
-          authenticated: (user) {
-            return Row(
-              children: [
-                CircleAvatar(radius: 30, child: const Icon(Icons.person)),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        user.fullName ?? 'Không tên',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      Text('Email: ${user.email}'),
-                    ],
-                  ),
-                ),
-              ],
-            );
-          },
-
-          error: (_) => SizedBox(
+          orElse: () => SizedBox(
             width: sizeW,
             child: CustomButton(
               onTap: () {
@@ -97,7 +77,7 @@ class _HeaderDrawer extends StatelessWidget {
                 'Đăng nhập',
                 style: TextStyle(
                   color: Colors.white,
-                  fontWeight: FontWeight(600),
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),
@@ -167,7 +147,6 @@ class _MainDrawer extends StatelessWidget {
                 pageIndex: 5,
               ),
             ),
-            Divider(),
 
             RoleBasedWidget(
               permission: ['admin', 'domainOfficer'],

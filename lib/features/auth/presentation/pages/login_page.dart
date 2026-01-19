@@ -121,7 +121,9 @@ class _LoginPageState extends State<LoginPage> {
                                     );
                                   }
                                 },
-                          colorBackground: Colors.blue,
+                          colorBackground: isLoading
+                              ? Colors.grey
+                              : Colors.blue,
                           textButton: isLoading
                               ? const CustomCircularProgressButton()
                               : const Text(

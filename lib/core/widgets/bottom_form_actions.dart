@@ -50,9 +50,7 @@ class BottomFormActions extends StatelessWidget {
             Expanded(
               child: CustomButton(
                 onTap: isLoading ? null : onSave,
-                colorBackground: isLoading
-                    ? Colors.blue.withValues(alpha: .5)
-                    : Colors.blue,
+                colorBackground: isLoading ? Colors.grey : Colors.blue,
                 textButton: isLoading
                     ? const CustomCircularProgressButton()
                     : Row(

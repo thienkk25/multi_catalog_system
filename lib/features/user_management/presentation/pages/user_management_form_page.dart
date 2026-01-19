@@ -9,6 +9,7 @@ import 'package:multi_catalog_system/core/widgets/note_widget.dart';
 import 'package:multi_catalog_system/features/user_management/domain/entities/user_management_entry.dart';
 import 'package:multi_catalog_system/features/user_management/presentation/bloc/user_management_bloc.dart';
 import 'package:multi_catalog_system/features/user_management/presentation/bloc/user_management_event.dart';
+import 'package:multi_catalog_system/features/user_management/presentation/bloc/user_management_state.dart';
 
 class UserManagementFormPage extends StatefulWidget {
   final UserManagementEntry? entry;
@@ -131,37 +132,15 @@ class _UserManagementFormPageState extends State<UserManagementFormPage> {
                       color: Colors.blue,
                     ),
                   SizedBox(height: 32),
-                  CustomButton(
-                    onTap: () {
-                      if (!_formKey.currentState!.validate()) return;
-                      if (_isUpdate) {
-                        final entry = UserManagementEntry(
-                          id: widget.entry!.id,
-                          email: _emailCtrl.text,
-                          fullName: _fullNameCtrl.text,
-                          phone: _phoneCtrl.text,
-                        );
-
-                        context.read<UserManagementBloc>().add(
-                          UserManagementEvent.update(entry: entry, id: ''),
-                        );
-                      } else {
-                        final entry = UserManagementEntry(
-                          email: _emailCtrl.text,
-                          fullName: _fullNameCtrl.text,
-                          phone: _phoneCtrl.text,
-                          password: _passwordCtrl.text,
-                        );
-                        context.read<UserManagementBloc>().add(
-                          UserManagementEvent.create(entry: entry),
-                        );
-                      }
-                      context.pop();
-                    },
-                    colorBackground: Colors.blue,
-                    textButton: Text(
-                      _isUpdate ? 'Cập nhật' : 'Tạo',
-                      style: TextStyle(color: Colors.white),
+                  BlocSelector<UserManagementBloc, UserManagementState, bool>(
+                    selector: (state) => state.isLoading,
+                    builder: (context, isLoading) => CustomButton(
+                      onTap: isLoading ? null : () => _onSubmit(context),
+                      colorBackground: isLoading ? Colors.grey : Colors.blue,
+                      textButton: Text(
+                        _isUpdate ? 'Cập nhật' : 'Tạo',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   ),
                 ],
@@ -171,5 +150,32 @@ class _UserManagementFormPageState extends State<UserManagementFormPage> {
         ),
       ),
     );
+  }
+
+  void _onSubmit(BuildContext context) {
+    if (!_formKey.currentState!.validate()) return;
+    if (_isUpdate) {
+      final entry = UserManagementEntry(
+        id: widget.entry!.id,
+        email: _emailCtrl.text,
+        fullName: _fullNameCtrl.text,
+        phone: _phoneCtrl.text,
+      );
+
+      context.read<UserManagementBloc>().add(
+        UserManagementEvent.update(entry: entry, id: ''),
+      );
+    } else {
+      final entry = UserManagementEntry(
+        email: _emailCtrl.text,
+        fullName: _fullNameCtrl.text,
+        phone: _phoneCtrl.text,
+        password: _passwordCtrl.text,
+      );
+      context.read<UserManagementBloc>().add(
+        UserManagementEvent.create(entry: entry),
+      );
+    }
+    context.pop();
   }
 }
