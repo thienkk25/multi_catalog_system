@@ -14,7 +14,7 @@ abstract class AuthLocalDataSource {
   Future<void> cacheUser(UserModel user);
   Future<UserModel?> getCachedUser();
 
-  Future<void> cacheUserRole(RoleModel userRole);
+  Future<void> cacheUserRole(RoleModel? userRole);
   Future<RoleModel?> getCachedUserRole();
 
   Future<void> clearAuthToken();
@@ -65,7 +65,8 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   }
 
   @override
-  Future<void> cacheUserRole(RoleModel userRole) {
+  Future<void> cacheUserRole(RoleModel? userRole) {
+    if (userRole == null) return sharedPreferences.remove(_userRoleKey);
     final userRoleJson = jsonEncode(userRole.toJson());
     return sharedPreferences.setString(_userRoleKey, userRoleJson);
   }

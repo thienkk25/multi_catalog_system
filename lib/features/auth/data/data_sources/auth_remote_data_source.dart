@@ -14,7 +14,7 @@ abstract class AuthRemoteDataSource {
 
   Future<void> logout();
 
-  Future<RoleModel> getRole({required String accessToken});
+  Future<RoleModel?> getRole({required String accessToken});
 }
 
 class AuthRemoteDataSourceImpl extends BaseRemoteDataSource
@@ -100,13 +100,17 @@ class AuthRemoteDataSourceImpl extends BaseRemoteDataSource
   }
 
   @override
-  Future<RoleModel> getRole({required String accessToken}) async {
+  Future<RoleModel?> getRole({required String accessToken}) async {
     try {
       final response = await dio.get(
         '/user/role',
         options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
       );
-      return RoleModel.fromJson(response.data['data']['role']);
+
+      final roleJson = response.data['data']['role'];
+      if (roleJson == null) return null;
+
+      return RoleModel.fromJson(roleJson);
     } on DioException catch (e) {
       handleDioError(e);
     } on AppException {
