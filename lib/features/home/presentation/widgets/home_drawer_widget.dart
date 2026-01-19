@@ -238,7 +238,6 @@ class _FooterDrawer extends StatelessWidget {
             return Column(
               spacing: 5,
               children: [
-                Divider(),
                 InkWell(
                   borderRadius: BorderRadius.circular(10),
                   hoverColor: Colors.blue.withValues(alpha: .2),

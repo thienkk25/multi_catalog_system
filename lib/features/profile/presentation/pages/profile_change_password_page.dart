@@ -129,7 +129,6 @@ class _ProfileChangePasswordPageState extends State<ProfileChangePasswordPage> {
                                 if (!_formKey.currentState!.validate()) return;
                                 context.read<ProfileBloc>().add(
                                   ProfileEvent.changePassword(
-                                    // oldPassword: _oldPasswordController.text,
                                     newPassword: _newPasswordController.text,
                                   ),
                                 );

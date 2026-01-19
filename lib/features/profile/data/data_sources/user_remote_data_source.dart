@@ -63,6 +63,7 @@ class UserRemoteDataSourceImpl extends BaseRemoteDataSource
   Future<UserModel> updateProfile({required Map<String, dynamic> data}) async {
     try {
       final response = await dio.patch('/user/update-profile', data: data);
+
       return UserModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);

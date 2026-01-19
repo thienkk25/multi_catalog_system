@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:multi_catalog_system/core/core.dart';
 
 import 'app_metadata_model.dart';
 import 'identity_model.dart';
@@ -10,10 +11,13 @@ part 'user_model.g.dart';
 @freezed
 abstract class UserModel with _$UserModel {
   const factory UserModel({
-    required String id,
-    required String aud,
-    required String role,
-    required String email,
+    String? id,
+
+    String? aud,
+
+    String? role,
+
+    String? email,
 
     @JsonKey(name: 'email_confirmed_at') DateTime? emailConfirmedAt,
 
@@ -33,7 +37,7 @@ abstract class UserModel with _$UserModel {
 
     @JsonKey(name: 'updated_at') DateTime? updatedAt,
 
-    @JsonKey(name: 'is_anonymous') required bool isAnonymous,
+    bool? isAnonymous,
   }) = _UserModel;
 
   factory UserModel.fromJson(Map<String, dynamic> json) =>

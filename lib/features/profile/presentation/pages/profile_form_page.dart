@@ -176,10 +176,12 @@ class _ProfileFormPageState extends State<ProfileFormPage> {
     if (!_formKey.currentState!.validate()) return;
 
     final updated = UserEntry(
-      fullName: _fullNameController.text.isNotEmpty
+      fullName: widget.entry.fullName != _fullNameController.text
           ? _fullNameController.text
           : null,
-      phone: _phoneController.text.isNotEmpty ? _phoneController.text : null,
+      phone: widget.entry.phone != _phoneController.text
+          ? _phoneController.text
+          : null,
     );
     showDialog(
       context: context,

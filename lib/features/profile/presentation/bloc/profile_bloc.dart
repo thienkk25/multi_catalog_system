@@ -38,7 +38,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
             );
           },
           (r) {
-            add(ProfileEvent.getProfile());
+            add(const ProfileEvent.getProfile());
             emit(
               state.copyWith(successMessage: "Thay đổi mật khẩu thành công"),
             );
@@ -115,7 +115,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
             );
           },
           (r) {
-            add(ProfileEvent.getProfile());
+            add(const ProfileEvent.getProfile());
             emit(
               state.copyWith(successMessage: "Cập nhật thông tin thành công"),
             );
