@@ -5,12 +5,16 @@ import 'package:multi_catalog_system/features/user_management/domain/entities/us
 
 class UserManagementAvatarSectionWidget extends StatelessWidget {
   final UserManagementEntry? entry;
+  final double? sizeAvatar;
 
-  const UserManagementAvatarSectionWidget({super.key, this.entry});
+  const UserManagementAvatarSectionWidget({
+    super.key,
+    this.entry,
+    this.sizeAvatar,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final sizeAvatar = 60.0;
     final initials = entry?.fullName != null && entry!.fullName!.isNotEmpty
         ? entry!.fullName![0].toUpperCase()
         : '?';
@@ -25,8 +29,8 @@ class UserManagementAvatarSectionWidget extends StatelessWidget {
     }
 
     return Container(
-      width: sizeAvatar,
-      height: sizeAvatar,
+      width: sizeAvatar ?? 60,
+      height: sizeAvatar ?? 60,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: radomColor(),
@@ -41,7 +45,11 @@ class UserManagementAvatarSectionWidget extends StatelessWidget {
       alignment: Alignment.center,
       child: Text(
         initials,
-        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        style: TextStyle(
+          fontSize: sizeAvatar != null ? sizeAvatar! / 2 : 30,
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }

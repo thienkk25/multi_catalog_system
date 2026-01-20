@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/core/utils/formatter/data_time_formatter.dart';
 import 'package:multi_catalog_system/core/utils/formatter/phone_number_fomatter.dart';
+import 'package:multi_catalog_system/core/widgets/custom_alert_dialog.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/core/widgets/custom_label.dart';
 import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_bloc.dart';
@@ -16,229 +16,254 @@ import 'package:multi_catalog_system/features/user_management/presentation/widge
 
 class UserManagementCard extends StatelessWidget {
   final UserManagementEntry entry;
+
   const UserManagementCard({super.key, required this.entry});
 
   @override
   Widget build(BuildContext context) {
     return CustomCard(
       child: Column(
-        spacing: 20,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            spacing: 10,
-            children: [
-              UserManagementAvatarSectionWidget(entry: entry),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  spacing: 5,
-                  children: [
-                    BlocSelector<AuthBloc, AuthState, String?>(
-                      selector: (state) => state.mapOrNull(
-                        authenticated: (value) => value.entry.email,
-                      ),
-                      builder: (context, email) {
-                        return Text(
-                          entry.email == email
-                              ? 'Tôi'
-                              : entry.fullName ?? 'Chưa cập nhật',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        );
-                      },
-                    ),
-                    Text(
-                      entry.email ?? '-',
-                      style: TextStyle(color: Colors.grey[600]),
-                    ),
-                    Row(
-                      spacing: 5,
-                      children: [
-                        CustomLabel(
-                          text: entry.role?.name ?? 'Chưa có quyền',
-                          color: _colorRole(entry.role?.code),
-                        ),
-                        CustomLabel(
-                          text: _status(entry.status),
-                          color: _colorStatus(entry.status),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-
-              BlocSelector<AuthBloc, AuthState, String?>(
-                selector: (state) => state.mapOrNull(
-                  authenticated: (value) => value.entry.email,
-                ),
-                builder: (context, email) => entry.email == email
-                    ? SizedBox.shrink()
-                    : PopupMenuButton(
-                        icon: SvgPicture.asset(
-                          'assets/icons/menu-vertical-menu-dots-more-svgrepo-com.svg',
-                          width: 20,
-                          height: 20,
-                        ),
-                        itemBuilder: (context) => [
-                          PopupMenuItem(
-                            child: _UserCardMenu(
-                              isLocked: entry.status == 'active',
-                              onLockUnlock: () {
-                                context.pop();
-                                if (entry.status == 'active') {
-                                  context.read<UserManagementBloc>().add(
-                                    UserManagementEvent.deactivate(
-                                      id: entry.id!,
-                                    ),
-                                  );
-                                } else {
-                                  context.read<UserManagementBloc>().add(
-                                    UserManagementEvent.activate(id: entry.id!),
-                                  );
-                                }
-                              },
-                              onEdit: () {
-                                context.pushNamed(
-                                  RouterNames.userManagementForm,
-                                  extra: {
-                                    'bloc': context.read<UserManagementBloc>(),
-                                    'entry': entry,
-                                  },
-                                );
-                              },
-                              onDelete: () {
-                                context.pop();
-                                context.read<UserManagementBloc>().add(
-                                  UserManagementEvent.delete(id: entry.id!),
-                                );
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-              ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            spacing: 10,
-            children: [
-              CustomLabel(
-                text: 'SĐT: ${phoneNumberFormatter(entry.phone)}',
-                color: Colors.grey.shade700,
-              ),
-              CustomLabel(
-                text: 'Ngày tạo: ${dateTimeFormat(entry.createdAt)}',
-                color: Colors.grey.shade500,
-              ),
-            ],
-          ),
+          _Header(entry: entry),
+          const SizedBox(height: 12),
+          _MetaInfo(entry: entry),
         ],
       ),
     );
   }
+}
 
-  String _status(String? status) {
-    switch (status) {
-      case 'active':
-        return 'Hoạt động';
-      case 'inactive':
-        return 'Khóa';
-      default:
-        return '-';
-    }
-  }
+class _Header extends StatelessWidget {
+  final UserManagementEntry entry;
 
-  Color _colorStatus(String? status) {
-    switch (status) {
-      case 'active':
-        return Colors.green;
-      case 'inactive':
-        return Colors.red;
-      default:
-        return Colors.grey;
-    }
-  }
+  const _Header({required this.entry});
 
-  Color _colorRole(String? role) {
-    switch (role) {
-      case 'admin':
-        return Colors.red;
-      case 'domainOfficer':
-        return Colors.blue;
-      case 'approver':
-        return Colors.orange;
-      default:
-        return Colors.grey;
-    }
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        UserManagementAvatarSectionWidget(entry: entry),
+        const SizedBox(width: 12),
+
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              BlocSelector<AuthBloc, AuthState, String?>(
+                selector: (state) =>
+                    state.mapOrNull(authenticated: (v) => v.entry.email),
+                builder: (context, email) {
+                  return Text(
+                    entry.email == email
+                        ? 'Tôi'
+                        : entry.fullName ?? 'Chưa cập nhật',
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 2),
+              Text(
+                entry.email ?? '-',
+                style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+              ),
+              const SizedBox(height: 6),
+              Row(
+                children: [
+                  CustomLabel(
+                    text: entry.role?.name ?? 'Chưa có quyền',
+                    color: _colorRole(entry.role?.code),
+                  ),
+                  const SizedBox(width: 6),
+                  CustomLabel(
+                    text: _status(entry.status),
+                    color: _colorStatus(entry.status),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+
+        _ActionMenu(entry: entry),
+      ],
+    );
   }
 }
 
-class _UserCardMenu extends StatelessWidget {
-  final bool isLocked;
-  final VoidCallback? onLockUnlock;
-  final VoidCallback onEdit;
-  final VoidCallback onDelete;
+class _ActionMenu extends StatelessWidget {
+  final UserManagementEntry entry;
 
-  const _UserCardMenu({
-    required this.onEdit,
-    required this.onDelete,
-    required this.isLocked,
-    required this.onLockUnlock,
-  });
+  const _ActionMenu({required this.entry});
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      spacing: 5,
+    return BlocSelector<AuthBloc, AuthState, String?>(
+      selector: (state) => state.mapOrNull(authenticated: (v) => v.entry.email),
+      builder: (context, email) {
+        if (entry.email == email) return const SizedBox.shrink();
+
+        return PopupMenuButton<_MenuAction>(
+          icon: const Icon(Icons.more_vert, size: 20),
+          onSelected: (action) {
+            final bloc = context.read<UserManagementBloc>();
+
+            switch (action) {
+              case _MenuAction.lock:
+                bloc.add(UserManagementEvent.deactivate(id: entry.id!));
+                break;
+              case _MenuAction.unlock:
+                bloc.add(UserManagementEvent.activate(id: entry.id!));
+                break;
+              case _MenuAction.edit:
+                context.pushNamed(
+                  RouterNames.userManagementForm,
+                  extra: {'bloc': bloc, 'entry': entry},
+                );
+                break;
+              case _MenuAction.delete:
+                showDialog(
+                  context: context,
+                  builder: (_) => CustomAlertDialog(
+                    onCancel: () => context.pop(),
+                    onConfirm: () {
+                      context.pop();
+                      bloc.add(UserManagementEvent.delete(id: entry.id!));
+                    },
+                  ),
+                );
+                break;
+            }
+          },
+          itemBuilder: (_) => [
+            PopupMenuItem(
+              value: entry.status == 'active'
+                  ? _MenuAction.lock
+                  : _MenuAction.unlock,
+              child: Row(
+                children: [
+                  Icon(
+                    entry.status == 'active' ? Icons.lock : Icons.lock_open,
+                    size: 18,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    entry.status == 'active'
+                        ? 'Khóa tài khoản'
+                        : 'Mở khóa tài khoản',
+                  ),
+                ],
+              ),
+            ),
+            const PopupMenuDivider(),
+            const PopupMenuItem(
+              value: _MenuAction.edit,
+              child: Row(
+                children: [
+                  Icon(Icons.edit, size: 18),
+                  SizedBox(width: 8),
+                  Text('Chỉnh sửa'),
+                ],
+              ),
+            ),
+            const PopupMenuItem(
+              value: _MenuAction.delete,
+              child: Row(
+                children: [
+                  Icon(Icons.delete, size: 18, color: Colors.red),
+                  SizedBox(width: 8),
+                  Text('Xóa'),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+enum _MenuAction { lock, unlock, edit, delete }
+
+class _MetaInfo extends StatelessWidget {
+  final UserManagementEntry entry;
+
+  const _MetaInfo({required this.entry});
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      spacing: 12,
+      runSpacing: 8,
       children: [
-        if (isLocked)
-          InkWell(
-            borderRadius: BorderRadius.circular(10),
-            onTap: onLockUnlock,
-            child: Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: ListTile(
-                leading: Icon(Icons.lock, color: Colors.brown),
-                title: Text('Khóa tài khoản'),
-              ),
-            ),
-          )
-        else
-          InkWell(
-            borderRadius: BorderRadius.circular(10),
-            onTap: onLockUnlock,
-            child: Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: ListTile(
-                leading: Icon(Icons.lock_open, color: Colors.green),
-                title: Text('Mở khóa tài khoản'),
-              ),
-            ),
-          ),
-        InkWell(
-          borderRadius: BorderRadius.circular(10),
-          onTap: onEdit,
-          child: Padding(
-            padding: const EdgeInsets.all(5.0),
-            child: ListTile(
-              leading: Icon(Icons.edit, color: Colors.blue),
-              title: Text('Chỉnh sửa'),
-            ),
-          ),
+        _InfoItem(icon: Icons.phone, text: phoneNumberFormatter(entry.phone)),
+        _InfoItem(
+          icon: Icons.calendar_today,
+          text: 'Tạo: ${dateTimeFormat(entry.createdAt)}',
         ),
-        InkWell(
-          borderRadius: BorderRadius.circular(10),
-          onTap: onDelete,
-          child: Padding(
-            padding: const EdgeInsets.all(5.0),
-            child: ListTile(
-              leading: Icon(Icons.delete, color: Colors.red),
-              title: Text('Xóa'),
-            ),
-          ),
+        _InfoItem(
+          icon: Icons.login,
+          text: 'Đăng nhập: ${dateTimeFormat(entry.lastSignInAt)}',
         ),
       ],
     );
+  }
+}
+
+class _InfoItem extends StatelessWidget {
+  final IconData icon;
+  final String text;
+
+  const _InfoItem({required this.icon, required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 14, color: Colors.grey),
+        const SizedBox(width: 4),
+        Text(text, style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
+      ],
+    );
+  }
+}
+
+String _status(String? status) {
+  switch (status) {
+    case 'active':
+      return 'Hoạt động';
+    case 'inactive':
+      return 'Khóa';
+    default:
+      return '-';
+  }
+}
+
+Color _colorStatus(String? status) {
+  switch (status) {
+    case 'active':
+      return Colors.green;
+    case 'inactive':
+      return Colors.red;
+    default:
+      return Colors.grey;
+  }
+}
+
+Color _colorRole(String? role) {
+  switch (role) {
+    case 'admin':
+      return Colors.red;
+    case 'domainOfficer':
+      return Colors.blue;
+    case 'approver':
+      return Colors.orange;
+    default:
+      return Colors.grey;
   }
 }

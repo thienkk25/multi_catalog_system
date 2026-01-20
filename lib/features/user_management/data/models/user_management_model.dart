@@ -16,6 +16,8 @@ abstract class UserManagementModel with _$UserManagementModel {
     RoleModel? role,
     List<DomainRefModel>? domains,
     @JsonKey(name: 'created_at') required DateTime createdAt,
+    @JsonKey(name: 'updated_at') DateTime? updatedAt,
+    @JsonKey(name: 'last_sign_in_at') DateTime? lastSignInAt,
   }) = _UserManagementModel;
 
   factory UserManagementModel.fromJson(Map<String, dynamic> json) =>

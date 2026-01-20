@@ -1,5 +1,5 @@
 String phoneNumberFormatter(String? phoneNumber) {
-  if (phoneNumber == null) return '?';
+  if (phoneNumber == null || phoneNumber.isEmpty) return '?';
 
   final digits = phoneNumber.replaceAll(RegExp(r'\D'), '');
   if (digits.length != 10) return phoneNumber;

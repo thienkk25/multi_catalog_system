@@ -26,6 +26,8 @@ class UserManagementRepositoryImpl implements UserManagementRepository {
           ?.map((d) => DomainRefEntry(id: d.id, name: d.name, code: d.code))
           .toList(),
       createdAt: m.createdAt,
+      updatedAt: m.updatedAt,
+      lastSignInAt: m.lastSignInAt,
     );
   }
 

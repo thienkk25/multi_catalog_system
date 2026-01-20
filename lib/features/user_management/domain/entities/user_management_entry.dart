@@ -9,8 +9,10 @@ class UserManagementEntry {
   final String? status;
   final RoleEntry? role;
   final List<DomainRefEntry>? domains;
-  final DateTime? createdAt;
   final String? password;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+  final DateTime? lastSignInAt;
 
   UserManagementEntry({
     this.id,
@@ -22,5 +24,7 @@ class UserManagementEntry {
     this.domains,
     this.createdAt,
     this.password,
+    this.updatedAt,
+    this.lastSignInAt,
   });
 }

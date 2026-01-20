@@ -94,7 +94,13 @@ class _UserManagementPageState extends State<UserManagementPage>
                           shrinkWrap: true,
                           itemBuilder: (context, index) {
                             final entry = entries[index];
-                            return UserManagementCard(entry: entry);
+                            return GestureDetector(
+                              onTap: () => context.pushNamed(
+                                RouterNames.userManagementDetail,
+                                pathParameters: {'id': ?entry.id},
+                              ),
+                              child: UserManagementCard(entry: entry),
+                            );
                           },
                           separatorBuilder: (context, index) =>
                               SizedBox(height: 10),
