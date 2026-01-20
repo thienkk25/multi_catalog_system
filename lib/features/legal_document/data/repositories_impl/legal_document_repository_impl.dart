@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:multi_catalog_system/core/error/exception_mapper.dart';
 import 'package:multi_catalog_system/core/error/exceptions.dart';
 import 'package:multi_catalog_system/core/error/failures.dart';
 import 'package:multi_catalog_system/features/legal_document/data/data_sources/legal_document_remote_data_source.dart';
@@ -71,10 +72,10 @@ class LegalDocumentRepositoryImpl implements LegalDocumentRepository {
 
       final model = await remoteDataSource.create(data: formData);
       return Right(_toEntity(model));
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on UnexpectedException catch (e) {
-      return Left(UnexpectedFailure(e.message));
+    } on AppException catch (e) {
+      return Left(mapExceptionToFailure(e));
+    } catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 
@@ -87,10 +88,10 @@ class LegalDocumentRepositoryImpl implements LegalDocumentRepository {
         data: entries.map((e) => _createPayload(e)).toList(),
       );
       return Right(models.map((m) => _toEntity(m)).toList());
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on UnexpectedException catch (e) {
-      return Left(UnexpectedFailure(e.message));
+    } on AppException catch (e) {
+      return Left(mapExceptionToFailure(e));
+    } catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 
@@ -101,10 +102,10 @@ class LegalDocumentRepositoryImpl implements LegalDocumentRepository {
     try {
       final model = await remoteDataSource.getById(id: id);
       return Right(_toEntity(model));
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on UnexpectedException catch (e) {
-      return Left(UnexpectedFailure(e.message));
+    } on AppException catch (e) {
+      return Left(mapExceptionToFailure(e));
+    } catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 
@@ -115,10 +116,10 @@ class LegalDocumentRepositoryImpl implements LegalDocumentRepository {
     try {
       final models = await remoteDataSource.getAll(search: search);
       return Right(models.map((m) => _toEntity(m)).toList());
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on UnexpectedException catch (e) {
-      return Left(UnexpectedFailure(e.message));
+    } on AppException catch (e) {
+      return Left(mapExceptionToFailure(e));
+    } catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 
@@ -129,10 +130,10 @@ class LegalDocumentRepositoryImpl implements LegalDocumentRepository {
     try {
       final models = await remoteDataSource.getAllHasFile(search: search);
       return Right(models.map((m) => _toEntity(m)).toList());
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on UnexpectedException catch (e) {
-      return Left(UnexpectedFailure(e.message));
+    } on AppException catch (e) {
+      return Left(mapExceptionToFailure(e));
+    } catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 
@@ -160,10 +161,10 @@ class LegalDocumentRepositoryImpl implements LegalDocumentRepository {
         data: formData,
       );
       return Right(_toEntity(model));
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on UnexpectedException catch (e) {
-      return Left(UnexpectedFailure(e.message));
+    } on AppException catch (e) {
+      return Left(mapExceptionToFailure(e));
+    } catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 
@@ -176,10 +177,10 @@ class LegalDocumentRepositoryImpl implements LegalDocumentRepository {
         data: entries.map((e) => _updatePayload(e)).toList(),
       );
       return Right(models.map((m) => _toEntity(m)).toList());
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on UnexpectedException catch (e) {
-      return Left(UnexpectedFailure(e.message));
+    } on AppException catch (e) {
+      return Left(mapExceptionToFailure(e));
+    } catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 
@@ -188,10 +189,10 @@ class LegalDocumentRepositoryImpl implements LegalDocumentRepository {
     try {
       await remoteDataSource.delete(id: id);
       return const Right(unit);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on UnexpectedException catch (e) {
-      return Left(UnexpectedFailure(e.message));
+    } on AppException catch (e) {
+      return Left(mapExceptionToFailure(e));
+    } catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 }

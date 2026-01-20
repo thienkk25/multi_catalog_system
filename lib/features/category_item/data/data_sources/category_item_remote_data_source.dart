@@ -42,8 +42,6 @@ class CategoryItemRemoteDataSourceImpl extends BaseRemoteDataSource
       return jsonList.map((json) => CategoryItemModel.fromJson(json)).toList();
     } on DioException catch (e) {
       handleDioError(e);
-    } on AppException {
-      rethrow;
     } catch (e) {
       throw UnexpectedException(e.toString());
     }
@@ -56,8 +54,6 @@ class CategoryItemRemoteDataSourceImpl extends BaseRemoteDataSource
       return CategoryItemModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);
-    } on AppException {
-      rethrow;
     } catch (e) {
       throw UnexpectedException(e.toString());
     }
@@ -70,8 +66,6 @@ class CategoryItemRemoteDataSourceImpl extends BaseRemoteDataSource
       return CategoryItemModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);
-    } on AppException {
-      rethrow;
     } catch (e) {
       throw UnexpectedException(e.toString());
     }
@@ -87,8 +81,6 @@ class CategoryItemRemoteDataSourceImpl extends BaseRemoteDataSource
       return jsonList.map((json) => CategoryItemModel.fromJson(json)).toList();
     } on DioException catch (e) {
       handleDioError(e);
-    } on AppException {
-      rethrow;
     } catch (e) {
       throw UnexpectedException(e.toString());
     }
@@ -104,8 +96,6 @@ class CategoryItemRemoteDataSourceImpl extends BaseRemoteDataSource
       return jsonList.map((json) => CategoryItemModel.fromJson(json)).toList();
     } on DioException catch (e) {
       handleDioError(e);
-    } on AppException {
-      rethrow;
     } catch (e) {
       throw UnexpectedException(e.toString());
     }
@@ -121,8 +111,6 @@ class CategoryItemRemoteDataSourceImpl extends BaseRemoteDataSource
       return CategoryItemModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);
-    } on AppException {
-      rethrow;
     } catch (e) {
       throw UnexpectedException(e.toString());
     }
@@ -132,6 +120,8 @@ class CategoryItemRemoteDataSourceImpl extends BaseRemoteDataSource
   Future<void> delete({required String id}) async {
     try {
       await dio.delete('/category-item/$id');
+    } on DioException catch (e) {
+      handleDioError(e);
     } catch (e) {
       throw UnexpectedException(e.toString());
     }

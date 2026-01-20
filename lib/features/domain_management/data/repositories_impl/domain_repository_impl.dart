@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:multi_catalog_system/core/error/exception_mapper.dart';
 import 'package:multi_catalog_system/core/error/exceptions.dart';
 import 'package:multi_catalog_system/core/error/failures.dart';
 import 'package:multi_catalog_system/features/domain_management/data/data_sources/domain_remote_data_source.dart';
@@ -38,10 +39,10 @@ class DomainRepositoryImpl implements DomainRepository {
     try {
       final model = await remoteDataSource.create(data: _createPayload(entry));
       return Right(_toEntity(model));
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on UnexpectedException catch (e) {
-      return Left(UnexpectedFailure(e.message));
+    } on AppException catch (e) {
+      return Left(mapExceptionToFailure(e));
+    } catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 
@@ -54,10 +55,10 @@ class DomainRepositoryImpl implements DomainRepository {
         data: entries.map((e) => _createPayload(e)).toList(),
       );
       return Right(models.map((m) => _toEntity(m)).toList());
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on UnexpectedException catch (e) {
-      return Left(UnexpectedFailure(e.message));
+    } on AppException catch (e) {
+      return Left(mapExceptionToFailure(e));
+    } catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 
@@ -66,10 +67,10 @@ class DomainRepositoryImpl implements DomainRepository {
     try {
       final model = await remoteDataSource.getById(id: id);
       return Right(_toEntity(model));
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on UnexpectedException catch (e) {
-      return Left(UnexpectedFailure(e.message));
+    } on AppException catch (e) {
+      return Left(mapExceptionToFailure(e));
+    } catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 
@@ -78,10 +79,10 @@ class DomainRepositoryImpl implements DomainRepository {
     try {
       final models = await remoteDataSource.getAll(search: search);
       return Right(models.map((m) => _toEntity(m)).toList());
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on UnexpectedException catch (e) {
-      return Left(UnexpectedFailure(e.message));
+    } on AppException catch (e) {
+      return Left(mapExceptionToFailure(e));
+    } catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 
@@ -95,10 +96,10 @@ class DomainRepositoryImpl implements DomainRepository {
         id: entry.id!,
       );
       return Right(_toEntity(model));
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on UnexpectedException catch (e) {
-      return Left(UnexpectedFailure(e.message));
+    } on AppException catch (e) {
+      return Left(mapExceptionToFailure(e));
+    } catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 
@@ -111,10 +112,10 @@ class DomainRepositoryImpl implements DomainRepository {
         data: entries.map((e) => _updatePayload(e)).toList(),
       );
       return Right(models.map((m) => _toEntity(m)).toList());
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on UnexpectedException catch (e) {
-      return Left(UnexpectedFailure(e.message));
+    } on AppException catch (e) {
+      return Left(mapExceptionToFailure(e));
+    } catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 
@@ -123,10 +124,10 @@ class DomainRepositoryImpl implements DomainRepository {
     try {
       await remoteDataSource.delete(id: id);
       return const Right(unit);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on UnexpectedException catch (e) {
-      return Left(UnexpectedFailure(e.message));
+    } on AppException catch (e) {
+      return Left(mapExceptionToFailure(e));
+    } catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 }

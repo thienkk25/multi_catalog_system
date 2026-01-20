@@ -84,6 +84,7 @@ class UserManagementCard extends StatelessWidget {
                             child: _UserCardMenu(
                               isLocked: entry.status == 'active',
                               onLockUnlock: () {
+                                context.pop();
                                 if (entry.status == 'active') {
                                   context.read<UserManagementBloc>().add(
                                     UserManagementEvent.deactivate(

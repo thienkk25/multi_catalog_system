@@ -42,8 +42,6 @@ class CategoryGroupRemoteDataSourceImpl extends BaseRemoteDataSource
       return jsonList.map((json) => CategoryGroupModel.fromJson(json)).toList();
     } on DioException catch (e) {
       handleDioError(e);
-    } on AppException {
-      rethrow;
     } catch (e) {
       throw UnexpectedException(e.toString());
     }
@@ -56,8 +54,6 @@ class CategoryGroupRemoteDataSourceImpl extends BaseRemoteDataSource
       return CategoryGroupModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);
-    } on AppException {
-      rethrow;
     } catch (e) {
       throw UnexpectedException(e.toString());
     }
@@ -72,8 +68,6 @@ class CategoryGroupRemoteDataSourceImpl extends BaseRemoteDataSource
       return CategoryGroupModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);
-    } on AppException {
-      rethrow;
     } catch (e) {
       throw UnexpectedException(e.toString());
     }
@@ -89,8 +83,6 @@ class CategoryGroupRemoteDataSourceImpl extends BaseRemoteDataSource
       return jsonList.map((json) => CategoryGroupModel.fromJson(json)).toList();
     } on DioException catch (e) {
       handleDioError(e);
-    } on AppException {
-      rethrow;
     } catch (e) {
       throw UnexpectedException(e.toString());
     }
@@ -109,8 +101,6 @@ class CategoryGroupRemoteDataSourceImpl extends BaseRemoteDataSource
       return jsonList.map((json) => CategoryGroupModel.fromJson(json)).toList();
     } on DioException catch (e) {
       handleDioError(e);
-    } on AppException {
-      rethrow;
     } catch (e) {
       throw UnexpectedException(e.toString());
     }
@@ -126,8 +116,6 @@ class CategoryGroupRemoteDataSourceImpl extends BaseRemoteDataSource
       return CategoryGroupModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);
-    } on AppException {
-      rethrow;
     } catch (e) {
       throw UnexpectedException(e.toString());
     }
@@ -137,6 +125,8 @@ class CategoryGroupRemoteDataSourceImpl extends BaseRemoteDataSource
   Future<void> delete({required String id}) async {
     try {
       await dio.delete('/category-group/$id');
+    } on DioException catch (e) {
+      handleDioError(e);
     } catch (e) {
       throw UnexpectedException(e.toString());
     }

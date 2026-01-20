@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:multi_catalog_system/core/data/models/category_group/category_group_ref_model.dart';
 import 'package:multi_catalog_system/core/domain/entities/category_group/category_group_ref_entry.dart';
 import 'package:multi_catalog_system/core/domain/entities/domain/domain_ref_entry.dart';
+import 'package:multi_catalog_system/core/error/exception_mapper.dart';
 import 'package:multi_catalog_system/core/error/exceptions.dart';
 import 'package:multi_catalog_system/core/error/failures.dart';
 import 'package:multi_catalog_system/features/catalog_lookup/data/data_sources/catalog_lookup_remote_data_source.dart';
@@ -34,10 +35,10 @@ class CatalogLookupRepositoryImpl implements CatalogLookupRepository {
         domainId: domainId,
       );
       return Right(model.map((e) => _toCategoryGroupEntity(e)).toList());
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on UnexpectedException catch (e) {
-      return Left(UnexpectedFailure(e.message));
+    } on AppException catch (e) {
+      return Left(mapExceptionToFailure(e));
+    } catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 
@@ -46,10 +47,10 @@ class CatalogLookupRepositoryImpl implements CatalogLookupRepository {
     try {
       final model = await remoteDataSource.getDomainsRef();
       return Right(model.map((e) => _toDomainEntity(e)).toList());
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on UnexpectedException catch (e) {
-      return Left(UnexpectedFailure(e.message));
+    } on AppException catch (e) {
+      return Left(mapExceptionToFailure(e));
+    } catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 

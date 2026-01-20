@@ -7,13 +7,9 @@ import 'package:multi_catalog_system/core/error/exceptions.dart';
 
 abstract class AuthRemoteDataSource {
   Future<SessionModel> login({required String email, required String pass});
-
   Future<UserModel> getCurrentUser();
-
   Future<SessionModel> refreshToken({required String refreshToken});
-
   Future<void> logout();
-
   Future<RoleModel?> getRole({required String accessToken});
 }
 
@@ -23,13 +19,21 @@ class AuthRemoteDataSourceImpl extends BaseRemoteDataSource
 
   AuthRemoteDataSourceImpl({required this.dio});
 
-  /// Override handleDioError để bắt riêng Auth 401
+  // Override để xử lý RIÊNG auth 401
   @override
   Never handleDioError(DioException e) {
-    if (e.response?.statusCode == 401) {
-      throw const InvalidCredentialsException();
+    final status = e.response?.statusCode;
+    final data = e.response?.data;
+
+    final message = data is Map<String, dynamic> && data['message'] != null
+        ? data['message'].toString()
+        : 'Có lỗi xảy ra';
+
+    if (status == 401) {
+      throw InvalidCredentialsException(message: message);
     }
-    return super.handleDioError(e);
+
+    super.handleDioError(e);
   }
 
   @override
@@ -42,11 +46,10 @@ class AuthRemoteDataSourceImpl extends BaseRemoteDataSource
         '/auth/login',
         data: {'email': email, 'password': pass},
       );
+
       return SessionModel.fromJson(response.data['data']['session']);
     } on DioException catch (e) {
       handleDioError(e);
-    } on AppException {
-      rethrow;
     } catch (e) {
       throw UnexpectedException(e.toString());
     }
@@ -55,13 +58,11 @@ class AuthRemoteDataSourceImpl extends BaseRemoteDataSource
   @override
   Future<UserModel> getCurrentUser() async {
     try {
-      final response = await dio.get('/user/');
+      final response = await dio.get('/user');
 
       return UserModel.fromJson(response.data['data']['user']);
     } on DioException catch (e) {
       handleDioError(e);
-    } on AppException {
-      rethrow;
     } catch (e) {
       throw UnexpectedException(e.toString());
     }
@@ -73,14 +74,13 @@ class AuthRemoteDataSourceImpl extends BaseRemoteDataSource
       final response = await dio.post(
         '/auth/refresh',
         data: {'refresh_token': refreshToken},
+
         options: Options(headers: {'Authorization': null}),
       );
 
       return SessionModel.fromJson(response.data['data']['session']);
     } on DioException catch (e) {
       handleDioError(e);
-    } on AppException {
-      rethrow;
     } catch (e) {
       throw UnexpectedException(e.toString());
     }
@@ -92,8 +92,6 @@ class AuthRemoteDataSourceImpl extends BaseRemoteDataSource
       await dio.post('/auth/logout');
     } on DioException catch (e) {
       handleDioError(e);
-    } on AppException {
-      rethrow;
     } catch (e) {
       throw UnexpectedException(e.toString());
     }
@@ -113,8 +111,6 @@ class AuthRemoteDataSourceImpl extends BaseRemoteDataSource
       return RoleModel.fromJson(roleJson);
     } on DioException catch (e) {
       handleDioError(e);
-    } on AppException {
-      rethrow;
     } catch (e) {
       throw UnexpectedException(e.toString());
     }

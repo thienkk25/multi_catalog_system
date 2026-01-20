@@ -32,18 +32,24 @@ class NotFoundFailure extends Failure {
 /// ===== AUTH =====
 
 class UnauthorizedFailure extends Failure {
-  const UnauthorizedFailure()
-    : super(message: 'Chưa đăng nhập hoặc token không hợp lệ', statusCode: 401);
+  const UnauthorizedFailure({String? message})
+    : super(
+        message: message ?? 'Chưa đăng nhập hoặc token không hợp lệ',
+        statusCode: 401,
+      );
 }
 
 class InvalidCredentialsFailure extends Failure {
-  const InvalidCredentialsFailure()
-    : super(message: '"Email hoặc mật khẩu không đúng"', statusCode: 401);
+  const InvalidCredentialsFailure({String? message})
+    : super(
+        message: message ?? 'Email hoặc mật khẩu không đúng',
+        statusCode: 401,
+      );
 }
 
 class ForbiddenFailure extends Failure {
-  const ForbiddenFailure()
-    : super(message: 'Quyền truy cập bị từ chối', statusCode: 403);
+  const ForbiddenFailure({String? message})
+    : super(message: message ?? 'Quyền truy cập bị từ chối', statusCode: 403);
 }
 
 /// ===== CACHE =====

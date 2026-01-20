@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:multi_catalog_system/core/domain/entities/domain/domain_ref_entry.dart';
 import 'package:multi_catalog_system/core/domain/entities/role/role_entry.dart';
+import 'package:multi_catalog_system/core/error/exception_mapper.dart';
 import 'package:multi_catalog_system/core/error/exceptions.dart';
 import 'package:multi_catalog_system/core/error/failures.dart';
 import 'package:multi_catalog_system/features/user_management/data/data_sources/user_management_remote_data_source.dart';
@@ -47,10 +48,10 @@ class UserManagementRepositoryImpl implements UserManagementRepository {
     try {
       final model = await remoteDataSource.create(data: _createPayload(entry));
       return Right(_toEntity(model));
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on UnexpectedException catch (e) {
-      return Left(UnexpectedFailure(e.message));
+    } on AppException catch (e) {
+      return Left(mapExceptionToFailure(e));
+    } catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 
@@ -61,10 +62,10 @@ class UserManagementRepositoryImpl implements UserManagementRepository {
     try {
       final model = await remoteDataSource.getById(id: id);
       return Right(_toEntity(model));
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on UnexpectedException catch (e) {
-      return Left(UnexpectedFailure(e.message));
+    } on AppException catch (e) {
+      return Left(mapExceptionToFailure(e));
+    } catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 
@@ -75,10 +76,10 @@ class UserManagementRepositoryImpl implements UserManagementRepository {
     try {
       final models = await remoteDataSource.getAll(search: search);
       return Right(models.map((m) => _toEntity(m)).toList());
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on UnexpectedException catch (e) {
-      return Left(UnexpectedFailure(e.message));
+    } on AppException catch (e) {
+      return Left(mapExceptionToFailure(e));
+    } catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 
@@ -92,10 +93,10 @@ class UserManagementRepositoryImpl implements UserManagementRepository {
         id: entry.id!,
       );
       return Right(_toEntity(model));
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on UnexpectedException catch (e) {
-      return Left(UnexpectedFailure(e.message));
+    } on AppException catch (e) {
+      return Left(mapExceptionToFailure(e));
+    } catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 
@@ -104,10 +105,10 @@ class UserManagementRepositoryImpl implements UserManagementRepository {
     try {
       await remoteDataSource.delete(id: id);
       return const Right(unit);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on UnexpectedException catch (e) {
-      return Left(UnexpectedFailure(e.message));
+    } on AppException catch (e) {
+      return Left(mapExceptionToFailure(e));
+    } catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 
@@ -118,10 +119,10 @@ class UserManagementRepositoryImpl implements UserManagementRepository {
     try {
       final model = await remoteDataSource.activate(id: id);
       return Right(_toEntity(model));
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on UnexpectedException catch (e) {
-      return Left(UnexpectedFailure(e.message));
+    } on AppException catch (e) {
+      return Left(mapExceptionToFailure(e));
+    } catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 
@@ -132,10 +133,10 @@ class UserManagementRepositoryImpl implements UserManagementRepository {
     try {
       final model = await remoteDataSource.deactivate(id: id);
       return Right(_toEntity(model));
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on UnexpectedException catch (e) {
-      return Left(UnexpectedFailure(e.message));
+    } on AppException catch (e) {
+      return Left(mapExceptionToFailure(e));
+    } catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 }

@@ -39,8 +39,6 @@ class CatalogLookupRemoteDataSourceImpl extends BaseRemoteDataSource
           .toList();
     } on DioException catch (e) {
       handleDioError(e);
-    } on AppException {
-      rethrow;
     } catch (e) {
       throw UnexpectedException(e.toString());
     }
@@ -56,8 +54,6 @@ class CatalogLookupRemoteDataSourceImpl extends BaseRemoteDataSource
       return jsonList.map((json) => DomainRefModel.fromJson(json)).toList();
     } on DioException catch (e) {
       handleDioError(e);
-    } on AppException {
-      rethrow;
     } catch (e) {
       throw UnexpectedException(e.toString());
     }

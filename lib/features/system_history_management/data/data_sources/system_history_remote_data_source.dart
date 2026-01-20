@@ -29,8 +29,6 @@ class SystemHistoryRemoteDataSourceImpl extends BaseRemoteDataSource
       return jsonList.map((json) => SystemHistoryModel.fromJson(json)).toList();
     } on DioException catch (e) {
       handleDioError(e);
-    } on AppException {
-      rethrow;
     } catch (e) {
       throw UnexpectedException(e.toString());
     }
@@ -43,8 +41,6 @@ class SystemHistoryRemoteDataSourceImpl extends BaseRemoteDataSource
       return SystemHistoryModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);
-    } on AppException {
-      rethrow;
     } catch (e) {
       throw UnexpectedException(e.toString());
     }

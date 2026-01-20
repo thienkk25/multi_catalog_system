@@ -26,7 +26,7 @@ class NotFoundPage extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               const Text(
-                'Oops! Page not found.',
+                'Trang không tồn tại!',
                 style: TextStyle(fontSize: 20, color: Colors.black54),
                 textAlign: TextAlign.center,
               ),

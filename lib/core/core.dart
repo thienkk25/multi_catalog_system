@@ -24,3 +24,4 @@ export 'notifications/notification_cubit.dart';
 export 'notifications/notification_state.dart';
 export 'utils/formatter/background_notification_snack_bar_formatter.dart';
 export 'widgets/custom_circular_progress.dart';
+export 'error/exception_mapper.dart';

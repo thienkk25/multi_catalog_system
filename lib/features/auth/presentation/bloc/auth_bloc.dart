@@ -84,18 +84,34 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   AuthState _mapFailureToState(Failure failure) {
-    print(failure);
     if (failure is InvalidCredentialsFailure) {
-      return const AuthState.error(
-        message: 'Tài khoản email hoặc mật khẩu không chính xác',
-      );
+      return AuthState.error(message: failure.message);
     }
+
+    if (failure is UnauthorizedFailure) {
+      return AuthState.unauthenticated();
+    }
+
+    if (failure is ForbiddenFailure) {
+      return AuthState.error(message: failure.message);
+    }
+
+    if (failure is NotFoundFailure) {
+      return AuthState.error(message: failure.message);
+    }
+
     if (failure is ServerFailure) {
-      return const AuthState.error(message: 'Lỗi máy chủ');
+      return AuthState.error(message: failure.message);
     }
+
+    if (failure is NetworkFailure) {
+      return AuthState.error(message: failure.message);
+    }
+
     if (failure is CacheFailure) {
       return const AuthState.unauthenticated();
     }
-    return const AuthState.error(message: 'Đã xảy ra lỗi');
+
+    return AuthState.error(message: failure.message);
   }
 }

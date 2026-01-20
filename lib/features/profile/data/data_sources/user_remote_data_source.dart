@@ -24,8 +24,6 @@ class UserRemoteDataSourceImpl extends BaseRemoteDataSource
       return UserModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);
-    } on AppException {
-      rethrow;
     } catch (e) {
       throw UnexpectedException(e.toString());
     }
@@ -38,8 +36,6 @@ class UserRemoteDataSourceImpl extends BaseRemoteDataSource
       return UserModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);
-    } on AppException {
-      rethrow;
     } catch (e) {
       throw UnexpectedException(e.toString());
     }
@@ -52,8 +48,6 @@ class UserRemoteDataSourceImpl extends BaseRemoteDataSource
       return ProfileModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);
-    } on AppException {
-      rethrow;
     } catch (e) {
       throw UnexpectedException(e.toString());
     }
@@ -67,8 +61,6 @@ class UserRemoteDataSourceImpl extends BaseRemoteDataSource
       return UserModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);
-    } on AppException {
-      rethrow;
     } catch (e) {
       throw UnexpectedException(e.toString());
     }

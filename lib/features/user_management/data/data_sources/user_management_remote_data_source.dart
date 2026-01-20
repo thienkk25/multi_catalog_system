@@ -39,8 +39,6 @@ class UserManagementRemoteDataSourceImpl extends BaseRemoteDataSource
           .toList();
     } on DioException catch (e) {
       handleDioError(e);
-    } on AppException {
-      rethrow;
     } catch (e) {
       throw UnexpectedException(e.toString());
     }
@@ -53,8 +51,6 @@ class UserManagementRemoteDataSourceImpl extends BaseRemoteDataSource
       return UserManagementModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);
-    } on AppException {
-      rethrow;
     } catch (e) {
       throw UnexpectedException(e.toString());
     }
@@ -69,8 +65,6 @@ class UserManagementRemoteDataSourceImpl extends BaseRemoteDataSource
       return UserManagementModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);
-    } on AppException {
-      rethrow;
     } catch (e) {
       throw UnexpectedException(e.toString());
     }
@@ -86,8 +80,6 @@ class UserManagementRemoteDataSourceImpl extends BaseRemoteDataSource
       return UserManagementModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);
-    } on AppException {
-      rethrow;
     } catch (e) {
       throw UnexpectedException(e.toString());
     }
@@ -97,6 +89,8 @@ class UserManagementRemoteDataSourceImpl extends BaseRemoteDataSource
   Future<void> delete({required String id}) async {
     try {
       await dio.delete('/admin/users/$id');
+    } on DioException catch (e) {
+      handleDioError(e);
     } catch (e) {
       throw UnexpectedException(e.toString());
     }
@@ -109,8 +103,6 @@ class UserManagementRemoteDataSourceImpl extends BaseRemoteDataSource
       return UserManagementModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);
-    } on AppException {
-      rethrow;
     } catch (e) {
       throw UnexpectedException(e.toString());
     }
@@ -123,8 +115,6 @@ class UserManagementRemoteDataSourceImpl extends BaseRemoteDataSource
       return UserManagementModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);
-    } on AppException {
-      rethrow;
     } catch (e) {
       throw UnexpectedException(e.toString());
     }

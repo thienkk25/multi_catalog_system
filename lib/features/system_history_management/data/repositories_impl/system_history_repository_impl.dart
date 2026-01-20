@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:multi_catalog_system/core/error/exception_mapper.dart';
 import 'package:multi_catalog_system/core/error/exceptions.dart';
 import 'package:multi_catalog_system/core/error/failures.dart';
 import 'package:multi_catalog_system/features/system_history_management/data/data_sources/system_history_remote_data_source.dart';
@@ -28,10 +29,10 @@ class SystemHistoryRepositoryImpl implements SystemHistoryRepository {
     try {
       final models = await remoteDataSource.getAll(search: search);
       return Right(models.map((m) => _toEntity(m)).toList());
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on UnexpectedException catch (e) {
-      return Left(UnexpectedFailure(e.message));
+    } on AppException catch (e) {
+      return Left(mapExceptionToFailure(e));
+    } catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 
@@ -42,10 +43,10 @@ class SystemHistoryRepositoryImpl implements SystemHistoryRepository {
     try {
       final model = await remoteDataSource.getById(id: id);
       return Right(_toEntity(model));
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on UnexpectedException catch (e) {
-      return Left(UnexpectedFailure(e.message));
+    } on AppException catch (e) {
+      return Left(mapExceptionToFailure(e));
+    } catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 }

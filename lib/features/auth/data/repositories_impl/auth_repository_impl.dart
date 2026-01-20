@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:dartz/dartz.dart';
 import 'package:multi_catalog_system/core/data/models/auth/user_model.dart';
+import 'package:multi_catalog_system/core/error/exception_mapper.dart';
 import 'package:multi_catalog_system/core/error/exceptions.dart';
 import 'package:multi_catalog_system/core/error/failures.dart';
 import 'package:multi_catalog_system/features/auth/data/data_sources/auth_local_data_source.dart';
@@ -51,12 +52,10 @@ class AuthRepositoryImpl implements AuthRepository {
       await authLocalDataSource.cacheUser(remoteUser);
 
       return Right(_toEntity(remoteUser));
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on CacheException catch (e) {
-      return Left(CacheFailure(message: e.message));
-    } on UnexpectedException catch (e) {
-      return Left(UnexpectedFailure(e.message));
+    } on AppException catch (e) {
+      return Left(mapExceptionToFailure(e));
+    } catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 
@@ -77,14 +76,10 @@ class AuthRepositoryImpl implements AuthRepository {
       await authLocalDataSource.cacheUserRole(role);
 
       return Right(_toEntity(result.user));
-    } on InvalidCredentialsException {
-      return Left(InvalidCredentialsFailure());
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on CacheException catch (e) {
-      return Left(CacheFailure(message: e.message));
-    } on UnexpectedException catch (e) {
-      return Left(UnexpectedFailure(e.message));
+    } on AppException catch (e) {
+      return Left(mapExceptionToFailure(e));
+    } catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 
@@ -104,12 +99,10 @@ class AuthRepositoryImpl implements AuthRepository {
       }
 
       return const Right(unit);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on CacheException catch (e) {
-      return Left(CacheFailure(message: e.message));
-    } on UnexpectedException catch (e) {
-      return Left(UnexpectedFailure(e.message));
+    } on AppException catch (e) {
+      return Left(mapExceptionToFailure(e));
+    } catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 
@@ -119,12 +112,10 @@ class AuthRepositoryImpl implements AuthRepository {
       await authLocalDataSource.clearAuthToken();
       await authRemoteDataSource.logout();
       return const Right(unit);
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on CacheException catch (e) {
-      return Left(CacheFailure(message: e.message));
-    } on UnexpectedException catch (e) {
-      return Left(UnexpectedFailure(e.message));
+    } on AppException catch (e) {
+      return Left(mapExceptionToFailure(e));
+    } catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 }

@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:multi_catalog_system/core/data/models/auth/user_model.dart';
 import 'package:multi_catalog_system/core/domain/entities/role/role_entry.dart';
+import 'package:multi_catalog_system/core/error/exception_mapper.dart';
 import 'package:multi_catalog_system/core/error/exceptions.dart';
 import 'package:multi_catalog_system/core/error/failures.dart';
 import 'package:multi_catalog_system/features/profile/data/data_sources/user_remote_data_source.dart';
@@ -36,10 +37,10 @@ class UserRepositoryImpl implements UserRepository {
         data: {'new_password': newPassword},
       );
       return Right(_toEntity(model));
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on UnexpectedException catch (e) {
-      return Left(UnexpectedFailure(e.message));
+    } on AppException catch (e) {
+      return Left(mapExceptionToFailure(e));
+    } catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 
@@ -48,10 +49,10 @@ class UserRepositoryImpl implements UserRepository {
     try {
       final model = await remoteDataSource.getMe();
       return Right(_toEntity(model));
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on UnexpectedException catch (e) {
-      return Left(UnexpectedFailure(e.message));
+    } on AppException catch (e) {
+      return Left(mapExceptionToFailure(e));
+    } catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 
@@ -71,10 +72,10 @@ class UserRepositoryImpl implements UserRepository {
           updatedAt: model.updatedAt,
         ),
       );
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on UnexpectedException catch (e) {
-      return Left(UnexpectedFailure(e.message));
+    } on AppException catch (e) {
+      return Left(mapExceptionToFailure(e));
+    } catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 
@@ -85,10 +86,10 @@ class UserRepositoryImpl implements UserRepository {
     try {
       final model = await remoteDataSource.updateProfile(data: _toJson(entry));
       return Right(_toEntity(model));
-    } on ServerException catch (e) {
-      return Left(ServerFailure(message: e.message, statusCode: e.statusCode));
-    } on UnexpectedException catch (e) {
-      return Left(UnexpectedFailure(e.message));
+    } on AppException catch (e) {
+      return Left(mapExceptionToFailure(e));
+    } catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 }

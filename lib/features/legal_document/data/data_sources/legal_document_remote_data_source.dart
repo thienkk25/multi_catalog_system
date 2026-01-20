@@ -43,8 +43,6 @@ class LegalDocumentRemoteDataSourceImpl extends BaseRemoteDataSource
       return jsonList.map((json) => LegalDocumentModel.fromJson(json)).toList();
     } on DioException catch (e) {
       handleDioError(e);
-    } on AppException {
-      rethrow;
     } catch (e) {
       throw UnexpectedException(e.toString());
     }
@@ -66,8 +64,6 @@ class LegalDocumentRemoteDataSourceImpl extends BaseRemoteDataSource
       return jsonList.map((json) => LegalDocumentModel.fromJson(json)).toList();
     } on DioException catch (e) {
       handleDioError(e);
-    } on AppException {
-      rethrow;
     } catch (e) {
       throw UnexpectedException(e.toString());
     }
@@ -80,8 +76,6 @@ class LegalDocumentRemoteDataSourceImpl extends BaseRemoteDataSource
       return LegalDocumentModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);
-    } on AppException {
-      rethrow;
     } catch (e) {
       throw UnexpectedException(e.toString());
     }
@@ -99,8 +93,6 @@ class LegalDocumentRemoteDataSourceImpl extends BaseRemoteDataSource
       return LegalDocumentModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);
-    } on AppException {
-      rethrow;
     } catch (e) {
       throw UnexpectedException(e.toString());
     }
@@ -116,8 +108,6 @@ class LegalDocumentRemoteDataSourceImpl extends BaseRemoteDataSource
       return jsonList.map((json) => LegalDocumentModel.fromJson(json)).toList();
     } on DioException catch (e) {
       handleDioError(e);
-    } on AppException {
-      rethrow;
     } catch (e) {
       throw UnexpectedException(e.toString());
     }
@@ -136,8 +126,6 @@ class LegalDocumentRemoteDataSourceImpl extends BaseRemoteDataSource
       return jsonList.map((json) => LegalDocumentModel.fromJson(json)).toList();
     } on DioException catch (e) {
       handleDioError(e);
-    } on AppException {
-      rethrow;
     } catch (e) {
       throw UnexpectedException(e.toString());
     }
@@ -157,8 +145,6 @@ class LegalDocumentRemoteDataSourceImpl extends BaseRemoteDataSource
       return LegalDocumentModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);
-    } on AppException {
-      rethrow;
     } catch (e) {
       throw UnexpectedException(e.toString());
     }
@@ -168,6 +154,8 @@ class LegalDocumentRemoteDataSourceImpl extends BaseRemoteDataSource
   Future<void> delete({required String id}) async {
     try {
       await dio.delete('/legal-document/$id');
+    } on DioException catch (e) {
+      handleDioError(e);
     } catch (e) {
       throw UnexpectedException(e.toString());
     }

@@ -26,15 +26,18 @@ class TimeoutException extends AppException {
 /// ===== AUTH =====
 
 class UnauthorizedException extends AppException {
-  const UnauthorizedException() : super('Unauthorized', 401);
+  const UnauthorizedException({String? message})
+    : super(message ?? 'Unauthorized', 401);
 }
 
 class InvalidCredentialsException extends AppException {
-  const InvalidCredentialsException() : super('Invalid email or password', 401);
+  const InvalidCredentialsException({String? message})
+    : super(message ?? 'Invalid email or password', 401);
 }
 
 class ForbiddenException extends AppException {
-  const ForbiddenException() : super('Access denied', 403);
+  const ForbiddenException({String? message})
+    : super(message ?? 'Access denied', 403);
 }
 
 /// ===== CACHE / LOCAL =====
@@ -46,7 +49,8 @@ class CacheException extends AppException {
 /// ===== DATA =====
 
 class NotFoundException extends AppException {
-  const NotFoundException() : super('Resource not found', 404);
+  const NotFoundException({String? message})
+    : super(message ?? 'Resource not found', 404);
 }
 
 class ParseException extends AppException {
