@@ -117,6 +117,7 @@ class _ProfileFormPageState extends State<ProfileFormPage> {
                     controller: _emailController,
                     lable: Text('Email'),
                     prefixIcon: Icon(Icons.email_outlined),
+                    suffixIcon: Icon(Icons.lock, color: Colors.blue),
                     readOnly: true,
                   ),
                   CustomInput(

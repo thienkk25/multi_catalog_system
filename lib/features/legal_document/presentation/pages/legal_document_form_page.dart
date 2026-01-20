@@ -284,17 +284,17 @@ class _LegalDocumentFormPageState extends State<LegalDocumentFormPage> {
     if (_isUpdate) {
       final data = LegalDocumentEntry(
         id: widget.entry!.id,
-        code: _codeController.text.isNotEmpty
+        code: widget.entry?.code == _codeController.text
             ? _codeController.text
             : widget.entry?.code,
-        title: _nameController.text.isNotEmpty
+        title: widget.entry?.title == _nameController.text
             ? _nameController.text
             : widget.entry?.title,
         type: _type ?? widget.entry?.type,
         issueDate: _issueDate ?? widget.entry?.issueDate,
         effectiveDate: _effectiveDate ?? widget.entry?.effectiveDate,
         expiryDate: _expiryDate ?? widget.entry?.expiryDate,
-        description: _descriptionController.text.isNotEmpty
+        description: widget.entry?.description == _descriptionController.text
             ? _descriptionController.text
             : widget.entry?.description,
         fileName: widget.entry?.fileName,

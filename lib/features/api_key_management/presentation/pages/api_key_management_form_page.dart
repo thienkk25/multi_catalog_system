@@ -32,6 +32,9 @@ class _ApiKeyManagementFormPageState extends State<ApiKeyManagementFormPage> {
   final GlobalKey _bottomBarKey = GlobalKey();
   double _bottomBarHeight = 0;
 
+  bool get _isDetail => widget.type == ApiKeyManagementFormPageType.detail;
+  bool get _isUpdate => widget.type == ApiKeyManagementFormPageType.update;
+
   @override
   void initState() {
     super.initState();
@@ -69,16 +72,13 @@ class _ApiKeyManagementFormPageState extends State<ApiKeyManagementFormPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isEdit = widget.type == ApiKeyManagementFormPageType.update;
-    final isView = widget.type == ApiKeyManagementFormPageType.detail;
-
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: Text(
-          isView
+          _isDetail
               ? 'Chi tiết API Key'
-              : isEdit
+              : _isUpdate
               ? 'Chỉnh sửa API Key'
               : 'Thêm API Key mới',
           style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -103,7 +103,7 @@ class _ApiKeyManagementFormPageState extends State<ApiKeyManagementFormPage> {
                             children: [
                               CustomInput(
                                 controller: _systemNameController,
-                                enabled: !isView,
+                                enabled: !_isDetail,
                                 lable: _requiredLabel('Tên API Key / Mô tả'),
                                 hintText:
                                     'Nhập tên hoặc mô tả mục đích sử dụng...',
@@ -125,7 +125,7 @@ class _ApiKeyManagementFormPageState extends State<ApiKeyManagementFormPage> {
                                   ),
                                 ],
 
-                                onChanged: isView
+                                onChanged: _isDetail
                                     ? null
                                     : (value) {
                                         setState(() {
@@ -137,14 +137,14 @@ class _ApiKeyManagementFormPageState extends State<ApiKeyManagementFormPage> {
                               ),
                               ApiKeyManagementPermissionFieldWidget(
                                 fields: _allowedDomains,
-                                isView: isView,
+                                isView: _isDetail,
                               ),
                             ],
                           ),
                         ),
                       ),
                       const SizedBox(height: 20),
-                      if (!isView)
+                      if (!_isDetail)
                         NoteWidget(
                           icon: Icons.info,
                           note: 'Key sẽ được hệ thống tạo tự động sau khi tạo',
@@ -172,21 +172,21 @@ class _ApiKeyManagementFormPageState extends State<ApiKeyManagementFormPage> {
                   ),
                 ),
 
-                if (!isView)
+                if (!_isDetail)
                   SliverPadding(
                     padding: EdgeInsets.only(bottom: _bottomBarHeight),
                   ),
               ],
             ),
 
-            if (!isView)
+            if (!_isDetail)
               BlocSelector<ApiKeyBloc, ApiKeyState, bool>(
                 selector: (state) => state.isLoading,
                 builder: (context, isLoading) => BottomFormActions(
                   isLoading: isLoading,
                   key: _bottomBarKey,
                   onCancel: () => context.pop(),
-                  onSave: () => _onSave(context: context, isEdit: isEdit),
+                  onSave: () => _onSave(context: context),
                 ),
               ),
           ],
@@ -221,12 +221,12 @@ class _ApiKeyManagementFormPageState extends State<ApiKeyManagementFormPage> {
     );
   }
 
-  void _onSave({required BuildContext context, required bool isEdit}) {
+  void _onSave({required BuildContext context}) {
     if (!_formKey.currentState!.validate()) return;
-    if (isEdit) {
+    if (_isUpdate) {
       final entry = ApiKeyEntry(
         id: widget.entry!.id,
-        systemName: _systemNameController.text.isNotEmpty
+        systemName: widget.entry?.systemName != _systemNameController.text
             ? _systemNameController.text
             : widget.entry?.systemName,
         status: _selectedAction,

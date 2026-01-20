@@ -112,11 +112,11 @@ class _ProfilePageState extends State<ProfilePage> {
                             children: [
                               _InfoRow(
                                 label: 'Ngày tạo',
-                                value: dateFormat(entry?.createdAt),
+                                value: dateTimeFormat(entry?.createdAt),
                               ),
                               _InfoRow(
                                 label: 'Cập nhật lần cuối',
-                                value: dateFormat(entry?.updatedAt),
+                                value: dateTimeFormat(entry?.updatedAt),
                               ),
                             ],
                           ),
@@ -179,7 +179,7 @@ class _ProfilePageState extends State<ProfilePage> {
       case 'active':
         return 'Hoạt động';
       case 'inactive':
-        return 'Không hoạt động';
+        return 'Khóa';
       default:
         return 'Không xác định';
     }

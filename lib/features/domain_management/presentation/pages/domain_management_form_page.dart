@@ -29,6 +29,9 @@ class _DomainManagementFormPageState extends State<DomainManagementFormPage> {
   final GlobalKey _bottomBarKey = GlobalKey();
   double _bottomBarHeight = 0;
 
+  bool get _isDetail => widget.type == DomainFormType.detail;
+  bool get _isUpdate => widget.type == DomainFormType.update;
+
   @override
   void initState() {
     super.initState();
@@ -66,16 +69,13 @@ class _DomainManagementFormPageState extends State<DomainManagementFormPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isEdit = widget.type == DomainFormType.update;
-    final isView = widget.type == DomainFormType.detail;
-
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: Text(
-          isView
+          _isDetail
               ? 'Chi tiết lĩnh vực'
-              : isEdit
+              : _isUpdate
               ? 'Chỉnh sửa lĩnh vực'
               : 'Thêm lĩnh vực',
           style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -103,7 +103,7 @@ class _DomainManagementFormPageState extends State<DomainManagementFormPage> {
                                 children: [
                                   CustomInput(
                                     controller: _codeController,
-                                    enabled: !isView,
+                                    enabled: !_isDetail,
                                     lable: _requiredLabel('Mã lĩnh vực'),
                                     hintText: 'Ví dụ: CT-A,...',
                                     validator: (p0) => p0 == null || p0.isEmpty
@@ -112,7 +112,7 @@ class _DomainManagementFormPageState extends State<DomainManagementFormPage> {
                                   ),
                                   CustomInput(
                                     controller: _nameController,
-                                    enabled: !isView,
+                                    enabled: !_isDetail,
                                     lable: _requiredLabel('Tên lĩnh vực'),
                                     hintText: 'Ví dụ: Chăn nuôi, Môi trường...',
                                     validator: (p0) => p0 == null || p0.isEmpty
@@ -125,7 +125,7 @@ class _DomainManagementFormPageState extends State<DomainManagementFormPage> {
                             CustomCard(
                               child: CustomInput(
                                 controller: _descriptionController,
-                                enabled: !isView,
+                                enabled: !_isDetail,
                                 lable: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -155,21 +155,21 @@ class _DomainManagementFormPageState extends State<DomainManagementFormPage> {
                   ),
                 ),
 
-                if (!isView)
+                if (!_isDetail)
                   SliverPadding(
                     padding: EdgeInsets.only(bottom: _bottomBarHeight),
                   ),
               ],
             ),
 
-            if (!isView)
+            if (!_isDetail)
               BlocSelector<DomainManagementBloc, DomainManagementState, bool>(
                 selector: (state) => state.isLoading,
                 builder: (context, isLoading) => BottomFormActions(
                   isLoading: isLoading,
                   key: _bottomBarKey,
                   onCancel: () => context.pop(),
-                  onSave: () => _onSave(context: context, isEdit: isEdit),
+                  onSave: () => _onSave(context: context),
                 ),
               ),
           ],
@@ -198,18 +198,18 @@ class _DomainManagementFormPageState extends State<DomainManagementFormPage> {
     );
   }
 
-  void _onSave({required BuildContext context, required bool isEdit}) {
+  void _onSave({required BuildContext context}) {
     if (!_formKey.currentState!.validate()) return;
-    if (isEdit) {
+    if (_isUpdate) {
       final entry = DomainEntry(
         id: widget.entry!.id,
-        code: _codeController.text.isNotEmpty
+        code: widget.entry?.code != _codeController.text
             ? _codeController.text
             : widget.entry?.code,
-        name: _nameController.text.isNotEmpty
+        name: widget.entry?.name != _nameController.text
             ? _nameController.text
             : widget.entry?.name,
-        description: _descriptionController.text.isNotEmpty
+        description: widget.entry?.description != _descriptionController.text
             ? _descriptionController.text
             : widget.entry?.description,
       );

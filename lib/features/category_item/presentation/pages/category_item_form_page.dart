@@ -314,13 +314,13 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
     if (_isUpdate) {
       final entry = CategoryItemEntry(
         id: widget.entry!.id,
-        name: _nameController.text.isNotEmpty
+        name: widget.entry?.name != _nameController.text
             ? _nameController.text
             : widget.entry?.name,
-        code: _codeController.text.isNotEmpty
+        code: widget.entry?.code != _codeController.text
             ? _codeController.text
             : widget.entry?.code,
-        description: _descriptionController.text.isNotEmpty
+        description: widget.entry?.description != _descriptionController.text
             ? _descriptionController.text
             : widget.entry?.description,
         status: 'active',

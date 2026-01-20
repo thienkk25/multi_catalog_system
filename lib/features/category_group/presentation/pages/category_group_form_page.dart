@@ -28,6 +28,9 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
   final GlobalKey _bottomBarKey = GlobalKey();
   double _bottomBarHeight = 0;
 
+  bool get _isDetail => widget.type == CategoryGroupFormType.detail;
+  bool get _isUpdate => widget.type == CategoryGroupFormType.update;
+
   @override
   void initState() {
     super.initState();
@@ -66,15 +69,13 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isEdit = widget.type == CategoryGroupFormType.update;
-    final isView = widget.type == CategoryGroupFormType.detail;
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: Text(
-          isView
+          _isDetail
               ? 'Chi tiết nhóm danh mục'
-              : isEdit
+              : _isUpdate
               ? 'Chỉnh sửa nhóm danh mục'
               : 'Thêm nhóm danh mục',
         ),
@@ -100,7 +101,7 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
                                 spacing: 20,
                                 children: [
                                   CustomInput(
-                                    enabled: isView ? false : true,
+                                    enabled: _isDetail ? false : true,
                                     controller: _codeController,
                                     lable: _requiredLabel('Mã Nhóm danh mục'),
                                     hintText: 'Nhập mã nhóm danh mục',
@@ -109,7 +110,7 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
                                         : null,
                                   ),
                                   CustomInput(
-                                    enabled: isView ? false : true,
+                                    enabled: _isDetail ? false : true,
                                     controller: _nameController,
                                     lable: _requiredLabel('Tên Nhóm danh mục'),
                                     hintText: 'Nhập tên nhóm danh mục',
@@ -141,7 +142,7 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
                                               ),
                                             )
                                             .toList(),
-                                        onChanged: isView
+                                        onChanged: _isDetail
                                             ? null
                                             : (value) {
                                                 if (value == null) return;
@@ -162,7 +163,7 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
                             ),
                             CustomCard(
                               child: CustomInput(
-                                enabled: isView ? false : true,
+                                enabled: _isDetail ? false : true,
                                 controller: _descriptionController,
                                 lable: Row(
                                   mainAxisAlignment:
@@ -198,14 +199,14 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
                 ),
               ],
             ),
-            if (!isView)
+            if (!_isDetail)
               BlocSelector<CategoryGroupBloc, CategoryGroupState, bool>(
                 selector: (state) => state.isLoading,
                 builder: (context, isLoading) => BottomFormActions(
                   isLoading: isLoading,
                   key: _bottomBarKey,
                   onCancel: () => context.pop(),
-                  onSave: () => _onSave(context: context, isEdit: isEdit),
+                  onSave: () => _onSave(context: context),
                 ),
               ),
           ],
@@ -234,19 +235,19 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
     );
   }
 
-  void _onSave({required BuildContext context, required bool isEdit}) {
+  void _onSave({required BuildContext context}) {
     if (!_formKey.currentState!.validate()) return;
-    if (isEdit) {
+    if (_isUpdate) {
       final entry = CategoryGroupEntry(
         id: widget.entry!.id,
         domainId: _selectedDomainId,
-        code: _codeController.text.isNotEmpty
+        code: widget.entry?.code != _codeController.text
             ? _codeController.text
             : widget.entry?.code,
-        name: _nameController.text.isNotEmpty
+        name: widget.entry?.name != _nameController.text
             ? _nameController.text
             : widget.entry?.name,
-        description: _descriptionController.text.isNotEmpty
+        description: widget.entry?.description != _descriptionController.text
             ? _descriptionController.text
             : widget.entry?.description,
       );
