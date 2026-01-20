@@ -20,42 +20,40 @@ class UserManagementDetailPage extends StatelessWidget {
         centerTitle: true,
       ),
       body: SafeArea(
-        child: Expanded(
-          child: BlocBuilder<UserManagementBloc, UserManagementState>(
-            builder: (context, state) => state.when((
-              isLoading,
-              entries,
-              error,
-              successMessage,
-            ) {
-              if (isLoading) {
-                return Center(child: CustomCircularProgressScreen());
-              }
-              if (error != null) {
-                return Center(
-                  child: Text(error, style: const TextStyle(color: Colors.red)),
-                );
-              }
-
-              if (entries.isEmpty) {
-                return const Center(child: Text('Không tìm thấy người dùng'));
-              }
-
-              final UserManagementEntry entry = entries.first;
-              return SingleChildScrollView(
-                padding: const EdgeInsets.all(10),
-                child: Column(
-                  children: [
-                    _Header(entry: entry),
-                    const SizedBox(height: 16),
-                    _InfoSection(entry: entry),
-                    const SizedBox(height: 16),
-                    _SystemSection(entry: entry),
-                  ],
-                ),
+        child: BlocBuilder<UserManagementBloc, UserManagementState>(
+          builder: (context, state) => state.when((
+            isLoading,
+            entries,
+            error,
+            successMessage,
+          ) {
+            if (isLoading) {
+              return Center(child: CustomCircularProgressScreen());
+            }
+            if (error != null) {
+              return Center(
+                child: Text(error, style: const TextStyle(color: Colors.red)),
               );
-            }),
-          ),
+            }
+
+            if (entries.isEmpty) {
+              return const Center(child: Text('Không tìm thấy người dùng'));
+            }
+
+            final UserManagementEntry entry = entries.first;
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                children: [
+                  _Header(entry: entry),
+                  const SizedBox(height: 16),
+                  _InfoSection(entry: entry),
+                  const SizedBox(height: 16),
+                  _SystemSection(entry: entry),
+                ],
+              ),
+            );
+          }),
         ),
       ),
     );

@@ -149,6 +149,7 @@ class _ActionMenu extends StatelessWidget {
                   Icon(
                     entry.status == 'active' ? Icons.lock : Icons.lock_open,
                     size: 18,
+                    color: entry.status == 'active' ? Colors.red : Colors.green,
                   ),
                   const SizedBox(width: 8),
                   Text(

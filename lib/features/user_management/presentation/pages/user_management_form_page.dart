@@ -157,20 +157,21 @@ class _UserManagementFormPageState extends State<UserManagementFormPage> {
     if (_isUpdate) {
       final entry = UserManagementEntry(
         id: widget.entry!.id,
-        email: _emailCtrl.text,
-        fullName: _fullNameCtrl.text,
-        phone: _phoneCtrl.text,
+        fullName: widget.entry!.fullName != _fullNameCtrl.text
+            ? _fullNameCtrl.text
+            : null,
+        phone: widget.entry!.phone != _phoneCtrl.text ? _phoneCtrl.text : null,
       );
 
       context.read<UserManagementBloc>().add(
-        UserManagementEvent.update(entry: entry, id: ''),
+        UserManagementEvent.update(entry: entry, id: entry.id!),
       );
     } else {
       final entry = UserManagementEntry(
         email: _emailCtrl.text,
-        fullName: _fullNameCtrl.text,
-        phone: _phoneCtrl.text,
-        password: _passwordCtrl.text,
+        fullName: _fullNameCtrl.text.isNotEmpty ? _fullNameCtrl.text : null,
+        phone: _phoneCtrl.text.isNotEmpty ? _phoneCtrl.text : null,
+        password: _passwordCtrl.text.isNotEmpty ? _passwordCtrl.text : null,
       );
       context.read<UserManagementBloc>().add(
         UserManagementEvent.create(entry: entry),

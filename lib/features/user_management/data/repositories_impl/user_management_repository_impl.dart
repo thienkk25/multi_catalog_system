@@ -41,7 +41,14 @@ class UserManagementRepositoryImpl implements UserManagementRepository {
       },
   };
 
-  Map<String, dynamic> _updatePayload(UserManagementEntry e) => {};
+  Map<String, dynamic> _updatePayload(UserManagementEntry e) => {
+    if (e.password != null) 'password': e.password,
+    if (e.fullName != null || e.phone != null)
+      'user_metadata': {
+        if (e.fullName != null) 'full_name': e.fullName,
+        if (e.phone != null) 'phone': e.phone,
+      },
+  };
 
   @override
   Future<Either<Failure, UserManagementEntry>> create({
