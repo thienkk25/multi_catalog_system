@@ -22,6 +22,15 @@ class AuthRemoteDataSourceImpl extends BaseRemoteDataSource
   // Override để xử lý RIÊNG auth 401
   @override
   Never handleDioError(DioException e) {
+    if (e.type == DioExceptionType.connectionTimeout ||
+        e.type == DioExceptionType.receiveTimeout) {
+      throw const TimeoutException();
+    }
+
+    if (e.type == DioExceptionType.connectionError) {
+      throw const NetworkException();
+    }
+
     final status = e.response?.statusCode;
     final data = e.response?.data;
 

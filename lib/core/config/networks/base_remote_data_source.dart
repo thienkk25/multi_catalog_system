@@ -3,6 +3,15 @@ import 'package:multi_catalog_system/core/error/exceptions.dart';
 
 abstract class BaseRemoteDataSource {
   Never handleDioError(DioException e) {
+    if (e.type == DioExceptionType.connectionTimeout ||
+        e.type == DioExceptionType.receiveTimeout) {
+      throw const TimeoutException();
+    }
+
+    if (e.type == DioExceptionType.connectionError) {
+      throw const NetworkException();
+    }
+
     final status = e.response?.statusCode;
     final data = e.response?.data;
 
