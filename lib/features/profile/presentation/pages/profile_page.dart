@@ -52,29 +52,28 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Thông tin cá nhân'), centerTitle: true),
-      body: SafeArea(
-        child: BlocBuilder<ProfileBloc, ProfileState>(
-          builder: (context, state) => state.when((
-            isLoading,
-            entry,
-            error,
-            successMessage,
-          ) {
-            if (isLoading) {
-              return const Center(child: CustomCircularProgressScreen());
-            }
+      body: BlocBuilder<ProfileBloc, ProfileState>(
+        builder: (context, state) {
+          if (state.isLoading) {
+            return const Center(child: CustomCircularProgressScreen());
+          }
 
-            if (error != null) {
-              return Center(
-                child: ErrorRetryWidget(
-                  error: error,
-                  onRetry: () {
-                    bloc.add(const ProfileEvent.getProfile());
-                  },
-                ),
-              );
-            }
-            return Stack(
+          if (state.error != null) {
+            return Center(
+              child: ErrorRetryWidget(
+                error: state.error!,
+                onRetry: () => bloc.add(const ProfileEvent.getProfile()),
+              ),
+            );
+          }
+
+          final entry = state.entry;
+          if (entry == null) {
+            return const Center(child: Text('Không có dữ liệu'));
+          }
+
+          return SafeArea(
+            child: Stack(
               children: [
                 CustomScrollView(
                   slivers: [
@@ -89,20 +88,20 @@ class _ProfilePageState extends State<ProfilePage> {
                             children: [
                               _InfoRow(
                                 label: 'Họ tên',
-                                value: entry?.fullName ?? 'Chưa cập nhật',
+                                value: entry.fullName ?? 'Chưa cập nhật',
                               ),
                               _InfoRow(
                                 label: 'Email',
-                                value: entry?.email ?? '',
+                                value: entry.email ?? '',
                               ),
                               _InfoRow(
                                 label: 'Số điện thoại',
-                                value: entry?.phone ?? 'Chưa cập nhật',
+                                value: entry.phone ?? 'Chưa cập nhật',
                               ),
                               _InfoRow(
                                 label: 'Trạng thái',
-                                value: _statusText(entry?.status ?? ''),
-                                valueColor: _statusColor(entry?.status ?? ''),
+                                value: _statusText(entry.status ?? ''),
+                                valueColor: _statusColor(entry.status ?? ''),
                               ),
                             ],
                           ),
@@ -112,11 +111,11 @@ class _ProfilePageState extends State<ProfilePage> {
                             children: [
                               _InfoRow(
                                 label: 'Ngày tạo',
-                                value: dateTimeFormat(entry?.createdAt),
+                                value: dateTimeFormat(entry.createdAt),
                               ),
                               _InfoRow(
                                 label: 'Cập nhật lần cuối',
-                                value: dateTimeFormat(entry?.updatedAt),
+                                value: dateTimeFormat(entry.updatedAt),
                               ),
                             ],
                           ),
@@ -140,7 +139,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     ),
                     SliverPadding(
-                      padding: EdgeInsets.only(bottom: _bottomBarHeight),
+                      padding: EdgeInsets.only(bottom: 60 + _bottomBarHeight),
                     ),
                   ],
                 ),
@@ -149,8 +148,9 @@ class _ProfilePageState extends State<ProfilePage> {
                   bottom: 0,
                   left: 0,
                   right: 0,
-                  child: Padding(
+                  child: Container(
                     padding: const EdgeInsets.all(10.0),
+                    color: Colors.white,
                     child: CustomButton(
                       colorBackground: Colors.blue,
                       textButton: Text(
@@ -167,9 +167,9 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
               ],
-            );
-          }),
-        ),
+            ),
+          );
+        },
       ),
     );
   }
