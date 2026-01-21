@@ -63,11 +63,7 @@ class ApiKeyBloc extends Bloc<ApiKeyEvent, ApiKeyState> {
         result.fold(
           (l) => emit(state.copyWith(isLoading: false, error: mapFailure(l))),
           (r) {
-            final updated = [
-              for (final d in state.entries)
-                if (d.id == r.id) r else d,
-            ];
-            emit(state.copyWith(isLoading: false, entries: updated));
+            emit(state.copyWith(isLoading: false, entries: [r]));
           },
         );
       },

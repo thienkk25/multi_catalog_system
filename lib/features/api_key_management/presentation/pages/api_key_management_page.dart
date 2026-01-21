@@ -8,7 +8,6 @@ import 'package:multi_catalog_system/core/core.dart';
 import 'package:multi_catalog_system/features/api_key_management/presentation/bloc/api_key_bloc.dart';
 import 'package:multi_catalog_system/features/api_key_management/presentation/bloc/api_key_event.dart';
 import 'package:multi_catalog_system/features/api_key_management/presentation/bloc/api_key_state.dart';
-import 'package:multi_catalog_system/features/api_key_management/presentation/pages/api_key_management_form_page.dart';
 import 'package:multi_catalog_system/features/api_key_management/presentation/widgets/api_key_management_card.dart';
 
 class ApiKeyManagementPage extends StatefulWidget {
@@ -116,7 +115,6 @@ class _ApiKeyManagementPageState extends State<ApiKeyManagementPage>
                               context.pushNamed(
                                 RouterNames.apiKeyDetail,
                                 pathParameters: {'id': ?entry.id},
-                                extra: entry,
                               );
                             },
                             child: ApiKeyManagementCard(entry: entry),
@@ -133,13 +131,7 @@ class _ApiKeyManagementPageState extends State<ApiKeyManagementPage>
         CustomFloatingActionButton(
           onPressedImport: () {},
           onPressedAdd: () {
-            context.pushNamed(
-              RouterNames.apiKeyForm,
-              extra: {
-                'bloc': bloc,
-                'type': ApiKeyManagementFormPageType.create,
-              },
-            );
+            context.pushNamed(RouterNames.apiKeyForm, extra: {'bloc': bloc});
           },
         ),
       ],
@@ -197,21 +189,7 @@ class _ApiKeyManagementPageState extends State<ApiKeyManagementPage>
 
                 const SizedBox(height: 16),
 
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF3F4F6),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: SelectableText(
-                    apiKey,
-                    style: const TextStyle(
-                      fontFamily: 'monospace',
-                      fontSize: 13,
-                    ),
-                  ),
-                ),
+                CodeBlockWidget(text: apiKey),
 
                 const SizedBox(height: 20),
 

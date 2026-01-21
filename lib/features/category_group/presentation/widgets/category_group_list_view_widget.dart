@@ -19,7 +19,7 @@ class CategoryGroupListViewWidget extends StatelessWidget {
       separatorBuilder: (context, index) => SizedBox(height: 10),
       itemBuilder: (context, index) {
         return GestureDetector(
-          onTap: () => _onTap(context: context, entry: categoryGroup[index]),
+          onTap: () => _onDetail(context: context, entry: categoryGroup[index]),
           child: CustomCard(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,7 +56,7 @@ class CategoryGroupListViewWidget extends StatelessWidget {
                     spacing: 10,
                     children: [
                       GestureDetector(
-                        onTap: () => _onEdit(
+                        onTap: () => _onUpdate(
                           context: context,
                           bloc: bloc,
                           entry: categoryGroup[index],
@@ -86,7 +86,7 @@ class CategoryGroupListViewWidget extends StatelessWidget {
                         ),
                       ),
                       GestureDetector(
-                        onTap: () => _onDelete(
+                        onTap: () => _onRemove(
                           context: context,
                           bloc: bloc,
                           entry: categoryGroup[index],
@@ -126,33 +126,28 @@ class CategoryGroupListViewWidget extends StatelessWidget {
     );
   }
 
-  void _onTap({
+  void _onDetail({
     required BuildContext context,
     required CategoryGroupEntry entry,
   }) {
     context.pushNamed(
       RouterNames.categoryGroupDetail,
       pathParameters: {'id': ?entry.id},
-      extra: entry,
     );
   }
 
-  void _onEdit({
+  void _onUpdate({
     required BuildContext context,
     required CategoryGroupBloc bloc,
     required CategoryGroupEntry entry,
   }) {
     context.pushNamed(
       RouterNames.categoryGroupForm,
-      extra: {
-        'bloc': bloc,
-        'type': CategoryGroupFormType.update,
-        'entry': entry,
-      },
+      extra: {'bloc': bloc, 'entry': entry},
     );
   }
 
-  void _onDelete({
+  void _onRemove({
     required BuildContext context,
     required CategoryGroupBloc bloc,
     required CategoryGroupEntry entry,

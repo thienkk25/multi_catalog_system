@@ -7,12 +7,9 @@ import 'package:multi_catalog_system/features/domain_management/presentation/blo
 import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_management_event.dart';
 import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_management_state.dart';
 
-enum DomainFormType { detail, create, update }
-
 class DomainManagementFormPage extends StatefulWidget {
-  const DomainManagementFormPage({super.key, required this.type, this.entry});
+  const DomainManagementFormPage({super.key, this.entry});
 
-  final DomainFormType type;
   final DomainEntry? entry;
 
   @override
@@ -29,8 +26,7 @@ class _DomainManagementFormPageState extends State<DomainManagementFormPage> {
   final GlobalKey _bottomBarKey = GlobalKey();
   double _bottomBarHeight = 0;
 
-  bool get _isDetail => widget.type == DomainFormType.detail;
-  bool get _isUpdate => widget.type == DomainFormType.update;
+  bool get _isUpdate => widget.entry != null;
 
   @override
   void initState() {
@@ -73,11 +69,7 @@ class _DomainManagementFormPageState extends State<DomainManagementFormPage> {
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: Text(
-          _isDetail
-              ? 'Chi tiết lĩnh vực'
-              : _isUpdate
-              ? 'Chỉnh sửa lĩnh vực'
-              : 'Thêm lĩnh vực',
+          _isUpdate ? 'Chỉnh sửa lĩnh vực' : 'Thêm lĩnh vực',
           style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
@@ -103,7 +95,6 @@ class _DomainManagementFormPageState extends State<DomainManagementFormPage> {
                                 children: [
                                   CustomInput(
                                     controller: _codeController,
-                                    enabled: !_isDetail,
                                     lable: _requiredLabel('Mã lĩnh vực'),
                                     hintText: 'Ví dụ: CT-A,...',
                                     validator: (p0) => p0 == null || p0.isEmpty
@@ -112,7 +103,6 @@ class _DomainManagementFormPageState extends State<DomainManagementFormPage> {
                                   ),
                                   CustomInput(
                                     controller: _nameController,
-                                    enabled: !_isDetail,
                                     lable: _requiredLabel('Tên lĩnh vực'),
                                     hintText: 'Ví dụ: Chăn nuôi, Môi trường...',
                                     validator: (p0) => p0 == null || p0.isEmpty
@@ -125,7 +115,6 @@ class _DomainManagementFormPageState extends State<DomainManagementFormPage> {
                             CustomCard(
                               child: CustomInput(
                                 controller: _descriptionController,
-                                enabled: !_isDetail,
                                 lable: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -155,23 +144,21 @@ class _DomainManagementFormPageState extends State<DomainManagementFormPage> {
                   ),
                 ),
 
-                if (!_isDetail)
-                  SliverPadding(
-                    padding: EdgeInsets.only(bottom: _bottomBarHeight),
-                  ),
+                SliverPadding(
+                  padding: EdgeInsets.only(bottom: _bottomBarHeight),
+                ),
               ],
             ),
 
-            if (!_isDetail)
-              BlocSelector<DomainManagementBloc, DomainManagementState, bool>(
-                selector: (state) => state.isLoading,
-                builder: (context, isLoading) => BottomFormActions(
-                  isLoading: isLoading,
-                  key: _bottomBarKey,
-                  onCancel: () => context.pop(),
-                  onSave: () => _onSave(context: context),
-                ),
+            BlocSelector<DomainManagementBloc, DomainManagementState, bool>(
+              selector: (state) => state.isLoading,
+              builder: (context, isLoading) => BottomFormActions(
+                isLoading: isLoading,
+                key: _bottomBarKey,
+                onCancel: () => context.pop(),
+                onSave: () => _onSave(context: context),
               ),
+            ),
           ],
         ),
       ),

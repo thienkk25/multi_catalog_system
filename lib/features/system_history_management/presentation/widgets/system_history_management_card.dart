@@ -3,10 +3,10 @@ import 'package:multi_catalog_system/core/utils/formatter/data_time_formatter.da
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/features/system_history_management/domain/entities/system_history_entry.dart';
 
-class SystemHistoryCard extends StatelessWidget {
+class SystemHistoryManagementCard extends StatelessWidget {
   final SystemHistoryEntry log;
 
-  const SystemHistoryCard({super.key, required this.log});
+  const SystemHistoryManagementCard({super.key, required this.log});
 
   @override
   Widget build(BuildContext context) {

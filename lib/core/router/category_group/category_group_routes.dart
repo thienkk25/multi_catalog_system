@@ -23,7 +23,6 @@ class CategoryGroupRoutes {
         return BlocProvider.value(
           value: data['bloc'] as CategoryGroupBloc,
           child: CategoryGroupFormPage(
-            type: data['type'] as CategoryGroupFormType,
             entry: data['entry'] as CategoryGroupEntry?,
           ),
         );
@@ -34,15 +33,11 @@ class CategoryGroupRoutes {
       name: RouterNames.categoryGroupDetail,
       builder: (context, state) {
         final id = state.pathParameters['id']!;
-        final entry = state.extra as CategoryGroupEntry?;
         return BlocProvider(
           create: (context) =>
               getIt<CategoryGroupBloc>()
                 ..add(CategoryGroupEvent.getById(id: id)),
-          child: CategoryGroupFormPage(
-            type: CategoryGroupFormType.detail,
-            entry: entry,
-          ),
+          child: CategoryGroupDetailPage(),
         );
       },
     ),

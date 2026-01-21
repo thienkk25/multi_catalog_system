@@ -8,12 +8,9 @@ import 'package:multi_catalog_system/features/category_group/presentation/bloc/c
 import 'package:multi_catalog_system/features/category_group/presentation/bloc/category_group_event.dart';
 import 'package:multi_catalog_system/features/category_group/presentation/bloc/category_group_state.dart';
 
-enum CategoryGroupFormType { detail, create, update }
-
 class CategoryGroupFormPage extends StatefulWidget {
-  final CategoryGroupFormType type;
   final CategoryGroupEntry? entry;
-  const CategoryGroupFormPage({super.key, required this.type, this.entry});
+  const CategoryGroupFormPage({super.key, this.entry});
 
   @override
   State<CategoryGroupFormPage> createState() => _CategoryGroupFormPageState();
@@ -28,8 +25,7 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
   final GlobalKey _bottomBarKey = GlobalKey();
   double _bottomBarHeight = 0;
 
-  bool get _isDetail => widget.type == CategoryGroupFormType.detail;
-  bool get _isUpdate => widget.type == CategoryGroupFormType.update;
+  bool get _isUpdate => widget.entry != null;
 
   @override
   void initState() {
@@ -73,11 +69,7 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: Text(
-          _isDetail
-              ? 'Chi tiết nhóm danh mục'
-              : _isUpdate
-              ? 'Chỉnh sửa nhóm danh mục'
-              : 'Thêm nhóm danh mục',
+          _isUpdate ? 'Chỉnh sửa nhóm danh mục' : 'Thêm nhóm danh mục',
         ),
         centerTitle: true,
       ),
@@ -101,7 +93,6 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
                                 spacing: 20,
                                 children: [
                                   CustomInput(
-                                    enabled: _isDetail ? false : true,
                                     controller: _codeController,
                                     lable: _requiredLabel('Mã Nhóm danh mục'),
                                     hintText: 'Nhập mã nhóm danh mục',
@@ -110,7 +101,6 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
                                         : null,
                                   ),
                                   CustomInput(
-                                    enabled: _isDetail ? false : true,
                                     controller: _nameController,
                                     lable: _requiredLabel('Tên Nhóm danh mục'),
                                     hintText: 'Nhập tên nhóm danh mục',
@@ -142,15 +132,13 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
                                               ),
                                             )
                                             .toList(),
-                                        onChanged: _isDetail
-                                            ? null
-                                            : (value) {
-                                                if (value == null) return;
+                                        onChanged: (value) {
+                                          if (value == null) return;
 
-                                                setState(() {
-                                                  _selectedDomainId = value;
-                                                });
-                                              },
+                                          setState(() {
+                                            _selectedDomainId = value;
+                                          });
+                                        },
                                         validator: (p0) =>
                                             p0 == null || p0.isEmpty
                                             ? 'Vui lòng chọn lĩnh vực'
@@ -163,7 +151,6 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
                             ),
                             CustomCard(
                               child: CustomInput(
-                                enabled: _isDetail ? false : true,
                                 controller: _descriptionController,
                                 lable: Row(
                                   mainAxisAlignment:
@@ -199,16 +186,15 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
                 ),
               ],
             ),
-            if (!_isDetail)
-              BlocSelector<CategoryGroupBloc, CategoryGroupState, bool>(
-                selector: (state) => state.isLoading,
-                builder: (context, isLoading) => BottomFormActions(
-                  isLoading: isLoading,
-                  key: _bottomBarKey,
-                  onCancel: () => context.pop(),
-                  onSave: () => _onSave(context: context),
-                ),
+            BlocSelector<CategoryGroupBloc, CategoryGroupState, bool>(
+              selector: (state) => state.isLoading,
+              builder: (context, isLoading) => BottomFormActions(
+                isLoading: isLoading,
+                key: _bottomBarKey,
+                onCancel: () => context.pop(),
+                onSave: () => _onSave(context: context),
               ),
+            ),
           ],
         ),
       ),

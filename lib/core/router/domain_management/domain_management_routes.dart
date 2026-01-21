@@ -22,10 +22,7 @@ class DomainManagementRoutes {
         final data = state.extra as Map<String, dynamic>;
         return BlocProvider.value(
           value: data['bloc'] as DomainManagementBloc,
-          child: DomainManagementFormPage(
-            type: data['type'] as DomainFormType,
-            entry: data['entry'] as DomainEntry?,
-          ),
+          child: DomainManagementFormPage(entry: data['entry'] as DomainEntry?),
         );
       },
     ),
@@ -34,16 +31,11 @@ class DomainManagementRoutes {
       name: RouterNames.domainDetail,
       builder: (context, state) {
         final id = state.pathParameters['id']!;
-        final entry = state.extra as DomainEntry?;
-
         return BlocProvider(
           create: (_) =>
               getIt<DomainManagementBloc>()
                 ..add(DomainManagementEvent.getById(id: id)),
-          child: DomainManagementFormPage(
-            type: DomainFormType.detail,
-            entry: entry,
-          ),
+          child: DomainManagementDetailPage(),
         );
       },
     ),

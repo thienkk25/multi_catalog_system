@@ -5,3 +5,4 @@ export 'pages/api_key_management_page.dart';
 export 'pages/api_key_management_form_page.dart';
 export 'widgets/api_key_management_card.dart';
 export 'pages/api_key_management_add_domains_page.dart';
+export 'pages/api_key_management_detail_page.dart';

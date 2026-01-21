@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/core.dart';
@@ -9,12 +8,9 @@ import 'package:multi_catalog_system/features/api_key_management/domain/entities
 import 'package:multi_catalog_system/features/api_key_management/presentation/presentation.dart';
 import 'package:multi_catalog_system/features/api_key_management/presentation/widgets/api_key_management_permission_field_widget.dart';
 
-enum ApiKeyManagementFormPageType { detail, create, update }
-
 class ApiKeyManagementFormPage extends StatefulWidget {
-  const ApiKeyManagementFormPage({super.key, required this.type, this.entry});
+  const ApiKeyManagementFormPage({super.key, this.entry});
 
-  final ApiKeyManagementFormPageType type;
   final ApiKeyEntry? entry;
 
   @override
@@ -32,8 +28,7 @@ class _ApiKeyManagementFormPageState extends State<ApiKeyManagementFormPage> {
   final GlobalKey _bottomBarKey = GlobalKey();
   double _bottomBarHeight = 0;
 
-  bool get _isDetail => widget.type == ApiKeyManagementFormPageType.detail;
-  bool get _isUpdate => widget.type == ApiKeyManagementFormPageType.update;
+  bool get _isUpdate => widget.entry != null;
 
   @override
   void initState() {
@@ -76,11 +71,7 @@ class _ApiKeyManagementFormPageState extends State<ApiKeyManagementFormPage> {
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: Text(
-          _isDetail
-              ? 'Chi tiết API Key'
-              : _isUpdate
-              ? 'Chỉnh sửa API Key'
-              : 'Thêm API Key mới',
+          _isUpdate ? 'Chỉnh sửa API Key' : 'Thêm API Key mới',
           style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
@@ -103,7 +94,6 @@ class _ApiKeyManagementFormPageState extends State<ApiKeyManagementFormPage> {
                             children: [
                               CustomInput(
                                 controller: _systemNameController,
-                                enabled: !_isDetail,
                                 lable: _requiredLabel('Tên API Key / Mô tả'),
                                 hintText:
                                     'Nhập tên hoặc mô tả mục đích sử dụng...',
@@ -125,80 +115,51 @@ class _ApiKeyManagementFormPageState extends State<ApiKeyManagementFormPage> {
                                   ),
                                 ],
 
-                                onChanged: _isDetail
-                                    ? null
-                                    : (value) {
-                                        setState(() {
-                                          _selectedAction = value;
-                                        });
-                                      },
+                                onChanged: (value) {
+                                  setState(() {
+                                    _selectedAction = value;
+                                  });
+                                },
                                 validator: (p0) =>
                                     p0 == null ? 'Bắt buộc' : null,
                               ),
                               ApiKeyManagementPermissionFieldWidget(
                                 fields: _allowedDomains,
-                                isView: _isDetail,
+                                isDetail: false,
                               ),
                             ],
                           ),
                         ),
                       ),
                       const SizedBox(height: 20),
-                      if (!_isDetail)
+                      if (!_isUpdate)
                         NoteWidget(
                           icon: Icons.info,
                           note: 'Key sẽ được hệ thống tạo tự động sau khi tạo',
                           color: Colors.blueAccent,
-                        )
-                      else
-                        GestureDetector(
-                          onTap: () =>
-                              _copyToClipboard(context, _keyController.text),
-                          child: Padding(
-                            padding: const EdgeInsets.all(5.0),
-                            child: CustomButton(
-                              colorBackground: Colors.blue,
-                              textButton: Text(
-                                'Sao chép API Key',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ),
                         ),
                     ]),
                   ),
                 ),
-
-                if (!_isDetail)
-                  SliverPadding(
-                    padding: EdgeInsets.only(bottom: _bottomBarHeight),
-                  ),
+                SliverPadding(
+                  padding: EdgeInsets.only(bottom: _bottomBarHeight),
+                ),
               ],
             ),
 
-            if (!_isDetail)
-              BlocSelector<ApiKeyBloc, ApiKeyState, bool>(
-                selector: (state) => state.isLoading,
-                builder: (context, isLoading) => BottomFormActions(
-                  isLoading: isLoading,
-                  key: _bottomBarKey,
-                  onCancel: () => context.pop(),
-                  onSave: () => _onSave(context: context),
-                ),
+            BlocSelector<ApiKeyBloc, ApiKeyState, bool>(
+              selector: (state) => state.isLoading,
+              builder: (context, isLoading) => BottomFormActions(
+                isLoading: isLoading,
+                key: _bottomBarKey,
+                onCancel: () => context.pop(),
+                onSave: () => _onSave(context: context),
               ),
+            ),
           ],
         ),
       ),
     );
-  }
-
-  Future<void> _copyToClipboard(BuildContext context, String text) async {
-    await Clipboard.setData(ClipboardData(text: text));
-    if (!context.mounted) return;
-    context.read<NotificationCubit>().success('Sao chép API Key thành công');
   }
 
   Widget _requiredLabel(String text) {

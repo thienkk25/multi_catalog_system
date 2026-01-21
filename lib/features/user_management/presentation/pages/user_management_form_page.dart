@@ -122,7 +122,9 @@ class _UserManagementFormPageState extends State<UserManagementFormPage> {
                         Text('Tùy chọn', style: TextStyle(color: Colors.grey)),
                       ],
                     ),
-                    hintText: 'Nhập mật khẩu người dùng',
+                    hintText: _isUpdate
+                        ? 'Để trống nếu không muốn thay đổi mật khẩu'
+                        : 'Nhập mật khẩu người dùng',
                   ),
                   SizedBox(height: 16),
                   if (!_isUpdate)
@@ -130,7 +132,15 @@ class _UserManagementFormPageState extends State<UserManagementFormPage> {
                       icon: Icons.info,
                       note: 'Nếu mật khẩu để trống mặc định là "12345678"',
                       color: Colors.blue,
+                    )
+                  else
+                    NoteWidget(
+                      icon: Icons.info,
+                      note:
+                          'Nhập mật khẩu mới để thay đổi, hoặc để trống để giữ nguyên mật khẩu hiện tại',
+                      color: Colors.blue,
                     ),
+
                   SizedBox(height: 32),
                   BlocSelector<UserManagementBloc, UserManagementState, bool>(
                     selector: (state) => state.isLoading,

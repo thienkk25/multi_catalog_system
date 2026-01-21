@@ -29,7 +29,7 @@ class DomainManagementGridView extends StatelessWidget {
       itemBuilder: (context, index) {
         final domain = domains[index];
         return GestureDetector(
-          onTap: () => _onView(context: context, entry: domain),
+          onTap: () => _onDetail(context: context, entry: domain),
           child: CustomCard(
             child: Stack(
               children: [
@@ -73,12 +73,12 @@ class DomainManagementGridView extends StatelessWidget {
                       itemBuilder: (context) => [
                         PopupMenuItem(
                           child: _DomainCardMenu(
-                            onEdit: () => _onEdit(
+                            onEdit: () => _onUpdate(
                               context: context,
                               bloc: bloc,
                               entry: domain,
                             ),
-                            onDelete: () => _onDelete(
+                            onDelete: () => _onRemove(
                               context: context,
                               bloc: bloc,
                               entry: domain,
@@ -97,15 +97,14 @@ class DomainManagementGridView extends StatelessWidget {
     );
   }
 
-  void _onView({required BuildContext context, required DomainEntry entry}) {
+  void _onDetail({required BuildContext context, required DomainEntry entry}) {
     context.pushNamed(
       RouterNames.domainDetail,
       pathParameters: {'id': ?entry.id},
-      extra: entry,
     );
   }
 
-  void _onEdit({
+  void _onUpdate({
     required BuildContext context,
     required DomainManagementBloc bloc,
     required DomainEntry entry,
@@ -113,11 +112,11 @@ class DomainManagementGridView extends StatelessWidget {
     context.pop();
     context.pushNamed(
       RouterNames.domainForm,
-      extra: {'bloc': bloc, 'type': DomainFormType.update, 'entry': entry},
+      extra: {'bloc': bloc, 'entry': entry},
     );
   }
 
-  void _onDelete({
+  void _onRemove({
     required BuildContext context,
     required DomainManagementBloc bloc,
     required DomainEntry entry,

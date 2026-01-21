@@ -103,7 +103,7 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
           onPressedAdd: () {
             context.pushNamed(
               RouterNames.categoryGroupForm,
-              extra: {'bloc': bloc, 'type': CategoryGroupFormType.create},
+              extra: {'bloc': bloc},
             );
           },
         ),

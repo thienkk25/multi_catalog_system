@@ -9,14 +9,16 @@ import 'package:multi_catalog_system/core/widgets/custom_input.dart';
 import 'package:multi_catalog_system/core/widgets/error_retry_widget.dart';
 import 'package:multi_catalog_system/features/system_history_management/presentation/presentation.dart';
 
-class SystemHistoryPage extends StatefulWidget {
-  const SystemHistoryPage({super.key});
+class SystemHistoryManagementPage extends StatefulWidget {
+  const SystemHistoryManagementPage({super.key});
 
   @override
-  State<SystemHistoryPage> createState() => _SystemHistoryPageState();
+  State<SystemHistoryManagementPage> createState() =>
+      _SystemHistoryManagementPageState();
 }
 
-class _SystemHistoryPageState extends State<SystemHistoryPage> {
+class _SystemHistoryManagementPageState
+    extends State<SystemHistoryManagementPage> {
   final TextEditingController _searchController = TextEditingController();
   Timer? _debounce;
   late final SystemHistoryBloc bloc;
@@ -95,9 +97,10 @@ class _SystemHistoryPageState extends State<SystemHistoryPage> {
                             pathParameters: {
                               'id': entries[index].id.toString(),
                             },
-                            extra: entries[index],
                           ),
-                          child: SystemHistoryCard(log: entries[index]),
+                          child: SystemHistoryManagementCard(
+                            log: entries[index],
+                          ),
                         ),
                         separatorBuilder: (context, index) =>
                             const SizedBox(height: 10),

@@ -20,10 +20,7 @@ class ApiKeyManagementRoutes {
         final data = state.extra as Map<String, dynamic>;
         return BlocProvider.value(
           value: data['bloc'] as ApiKeyBloc,
-          child: ApiKeyManagementFormPage(
-            type: data['type'] as ApiKeyManagementFormPageType,
-            entry: data['entry'] as ApiKeyEntry?,
-          ),
+          child: ApiKeyManagementFormPage(entry: data['entry'] as ApiKeyEntry?),
         );
       },
     ),
@@ -40,13 +37,9 @@ class ApiKeyManagementRoutes {
       name: RouterNames.apiKeyDetail,
       builder: (context, state) {
         final id = state.pathParameters['id']!;
-        final entry = state.extra as ApiKeyEntry;
         return BlocProvider(
           create: (_) => getIt<ApiKeyBloc>()..add(ApiKeyEvent.getById(id: id)),
-          child: ApiKeyManagementFormPage(
-            type: ApiKeyManagementFormPageType.detail,
-            entry: entry,
-          ),
+          child: ApiKeyManagementDetailPage(),
         );
       },
     ),

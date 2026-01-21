@@ -4,11 +4,11 @@ import 'package:multi_catalog_system/core/router/router_names.dart';
 
 class ApiKeyManagementPermissionFieldWidget extends StatefulWidget {
   final List<String> fields;
-  final bool isView;
+  final bool isDetail;
   const ApiKeyManagementPermissionFieldWidget({
     super.key,
     required this.fields,
-    required this.isView,
+    required this.isDetail,
   });
 
   @override
@@ -48,10 +48,10 @@ class _ApiKeyManagementPermissionFieldWidgetState
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  deleteIcon: widget.isView
+                  deleteIcon: widget.isDetail
                       ? null
                       : const Icon(Icons.close, size: 18),
-                  onDeleted: widget.isView
+                  onDeleted: widget.isDetail
                       ? null
                       : () {
                           setState(() => widget.fields.remove(field));
@@ -60,7 +60,7 @@ class _ApiKeyManagementPermissionFieldWidgetState
                   side: BorderSide(color: Colors.blue.shade200),
                 ),
               ),
-              if (!widget.isView)
+              if (!widget.isDetail)
                 Row(
                   spacing: 8,
                   children: [

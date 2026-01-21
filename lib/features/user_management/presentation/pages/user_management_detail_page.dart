@@ -21,39 +21,32 @@ class UserManagementDetailPage extends StatelessWidget {
       ),
       body: SafeArea(
         child: BlocBuilder<UserManagementBloc, UserManagementState>(
-          builder: (context, state) => state.when((
-            isLoading,
-            entries,
-            error,
-            successMessage,
-          ) {
-            if (isLoading) {
-              return Center(child: CustomCircularProgressScreen());
+          builder: (context, state) {
+            if (state.isLoading) {
+              return const Center(child: CustomCircularProgressScreen());
             }
-            if (error != null) {
-              return Center(
-                child: Text(error, style: const TextStyle(color: Colors.red)),
-              );
+            if (state.error != null) {
+              return const Center(child: Text('Xảy ra lỗi'));
             }
-
-            if (entries.isEmpty) {
-              return const Center(child: Text('Không tìm thấy người dùng'));
+            final entry = state.entries.firstOrNull;
+            if (entry == null) {
+              return const Center(child: Text('Không tìm thấy dữ liệu'));
             }
-
-            final UserManagementEntry entry = entries.first;
-            return SingleChildScrollView(
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                children: [
-                  _Header(entry: entry),
-                  const SizedBox(height: 16),
-                  _InfoSection(entry: entry),
-                  const SizedBox(height: 16),
-                  _SystemSection(entry: entry),
-                ],
+            return SafeArea(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  children: [
+                    _Header(entry: entry),
+                    const SizedBox(height: 16),
+                    _InfoSection(entry: entry),
+                    const SizedBox(height: 16),
+                    _SystemSection(entry: entry),
+                  ],
+                ),
               ),
             );
-          }),
+          },
         ),
       ),
     );
