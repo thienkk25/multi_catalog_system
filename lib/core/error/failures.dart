@@ -21,7 +21,7 @@ class NetworkFailure extends Failure {
 }
 
 class TimeoutFailure extends Failure {
-  const TimeoutFailure() : super(message: 'Hết thời gian kết nối');
+  const TimeoutFailure() : super(message: 'Kết nối quá thời gian');
 }
 
 class NotFoundFailure extends Failure {
@@ -50,6 +50,11 @@ class InvalidCredentialsFailure extends Failure {
 class ForbiddenFailure extends Failure {
   const ForbiddenFailure({String? message})
     : super(message: message ?? 'Quyền truy cập bị từ chối', statusCode: 403);
+}
+
+class SessionExpiredFailure extends Failure {
+  const SessionExpiredFailure({String? message})
+    : super(message: message ?? 'Phiên đăng nhập đã hết hạn', statusCode: 401);
 }
 
 /// ===== CACHE =====

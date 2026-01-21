@@ -40,6 +40,11 @@ class ForbiddenException extends AppException {
     : super(message ?? 'Access denied', 403);
 }
 
+class RefreshTokenExpiredException extends AppException {
+  const RefreshTokenExpiredException({String? message})
+    : super(message ?? 'Phiên đăng nhập đã hết hạn', 401);
+}
+
 /// ===== CACHE / LOCAL =====
 
 class CacheException extends AppException {

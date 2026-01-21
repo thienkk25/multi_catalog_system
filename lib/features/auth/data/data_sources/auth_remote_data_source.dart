@@ -38,11 +38,28 @@ class AuthRemoteDataSourceImpl extends BaseRemoteDataSource
         ? data['message'].toString()
         : 'Có lỗi xảy ra';
 
+    final path = e.requestOptions.path;
+
     if (status == 401) {
-      throw InvalidCredentialsException(message: message);
+      // refresh token
+      if (path.contains('/auth/refresh')) {
+        throw const RefreshTokenExpiredException();
+      }
+
+      // login
+      if (path.contains('/auth/login')) {
+        throw InvalidCredentialsException(message: message);
+      }
+
+      // API thường
+      throw UnauthorizedException(message: message);
     }
 
-    super.handleDioError(e);
+    if (status == 403) {
+      throw ForbiddenException(message: message);
+    }
+
+    throw UnexpectedException(message);
   }
 
   @override

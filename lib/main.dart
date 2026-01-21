@@ -79,7 +79,7 @@ class MainApp extends StatelessWidget {
                 ),
               ],
               child: MaterialApp.router(
-                title: 'Multi Catalog System',
+                title: AppConstant.appName,
                 scaffoldMessengerKey: scaffoldMessengerKey,
                 theme: ThemeData(
                   scaffoldBackgroundColor: Color(0xFFF5F7FA),

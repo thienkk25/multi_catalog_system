@@ -6,6 +6,10 @@ Failure mapExceptionToFailure(AppException e) {
     return InvalidCredentialsFailure(message: e.message);
   }
 
+  if (e is RefreshTokenExpiredException) {
+    return const SessionExpiredFailure();
+  }
+
   if (e is UnauthorizedException) {
     return UnauthorizedFailure(message: e.message);
   }

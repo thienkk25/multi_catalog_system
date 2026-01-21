@@ -7,14 +7,15 @@ import 'package:multi_catalog_system/features/auth/presentation/presentation.dar
 import 'package:multi_catalog_system/features/home/presentation/presentation.dart';
 
 class HomeDrawerWidget extends StatelessWidget {
-  const HomeDrawerWidget({super.key});
+  final double? drawerWidth;
+  const HomeDrawerWidget({super.key, this.drawerWidth});
 
   @override
   Widget build(BuildContext context) {
-    final drawerWidth = MediaQuery.of(context).size.width * 0.8;
-
+    final drawerWidth = this.drawerWidth ?? 250;
     return Drawer(
       width: drawerWidth,
+      backgroundColor: Color(0xFFF5F7FA),
       child: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(10.0),

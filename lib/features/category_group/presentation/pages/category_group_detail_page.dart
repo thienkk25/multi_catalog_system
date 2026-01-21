@@ -44,7 +44,6 @@ class CategoryGroupDetailPage extends StatelessWidget {
                         value: entry.description,
                         isMultiLine: true,
                       ),
-                      _infoRow(label: 'Domain ID', value: entry.domainId),
                     ],
                   ),
                   const SizedBox(height: 16),

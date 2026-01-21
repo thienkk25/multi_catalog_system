@@ -16,7 +16,7 @@ class AuthRoutes {
           authenticated: (_) => true,
           orElse: () => false,
         )) {
-          return RouterNames.home;
+          return RouterPaths.home;
         }
         return null;
       },
