@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:multi_catalog_system/core/error/failures.dart';
-import 'package:multi_catalog_system/features/domain_management/domain/entities/domain_entry.dart';
+import 'package:multi_catalog_system/features/domain_management/domain/entities/domain_page_entry.dart';
 import 'package:multi_catalog_system/features/domain_management/domain/repositories/domain_repository.dart';
 
 class GetAllDomainUseCase {
@@ -8,7 +8,11 @@ class GetAllDomainUseCase {
 
   GetAllDomainUseCase({required this.repository});
 
-  Future<Either<Failure, List<DomainEntry>>> call({String? search}) async {
-    return repository.getAll(search: search);
+  Future<Either<Failure, DomainPageEntry>> call({
+    String? search,
+    int? page,
+    int? limit,
+  }) async {
+    return repository.getAll(search: search, page: page, limit: limit);
   }
 }

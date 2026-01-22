@@ -19,21 +19,37 @@ class _DomainManagementPageState extends State<DomainManagementPage>
   bool get wantKeepAlive => true;
 
   final TextEditingController _searchController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
   Timer? _debounce;
   late final DomainManagementBloc bloc;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      bloc = context.read<DomainManagementBloc>();
-      bloc.add(const DomainManagementEvent.getAll());
-    });
+
+    bloc = context.read<DomainManagementBloc>();
+    bloc.add(const DomainManagementEvent.getAll());
+
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (!_scrollController.hasClients) return;
+    if (!bloc.state.hasMore) return;
+    if (bloc.state.isLoadingMore) return;
+
+    final position = _scrollController.position;
+    if (position.maxScrollExtent <= 0) return;
+
+    if (position.pixels >= position.maxScrollExtent - 200) {
+      bloc.add(const DomainManagementEvent.loadMore());
+    }
   }
 
   @override
   void dispose() {
     _searchController.dispose();
+    _scrollController.dispose();
     _debounce?.cancel();
     super.dispose();
   }
@@ -77,27 +93,52 @@ class _DomainManagementPageState extends State<DomainManagementPage>
                         }
                       },
                       builder: (context, state) {
-                        return state.when((
-                          isLoading,
-                          entries,
-                          error,
-                          successMessage,
-                        ) {
-                          if (isLoading) {
-                            return const Center(
-                              child: CustomCircularProgressScreen(),
+                        if (state.isLoading) {
+                          return const Center(
+                            child: CustomCircularProgressScreen(),
+                          );
+                        }
+                        if (state.error != null) {
+                          return ErrorRetryWidget(
+                            error: state.error!,
+                            onRetry: () {
+                              bloc.add(const DomainManagementEvent.getAll());
+                            },
+                          );
+                        }
+                        final entries = state.entries;
+                        if (entries.isEmpty) {
+                          return const Center(child: Text('Không có dữ liệu'));
+                        }
+                        return GridView.builder(
+                          controller: _scrollController,
+                          shrinkWrap: true,
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                mainAxisSpacing: 10,
+                                crossAxisSpacing: 10,
+                              ),
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          itemCount:
+                              entries.length + (state.isLoadingMore ? 1 : 0),
+                          itemBuilder: (context, index) {
+                            if (index == entries.length) {
+                              return const Center(
+                                child: CustomCircularProgressLoadMore(),
+                              );
+                            }
+
+                            final entry = entries[index];
+                            return GestureDetector(
+                              onTap: () => context.pushNamed(
+                                RouterNames.domainDetail,
+                                pathParameters: {'id': ?entry.id},
+                              ),
+                              child: DomainManagementCard(entry: entry),
                             );
-                          }
-                          if (error != null) {
-                            return ErrorRetryWidget(
-                              error: error,
-                              onRetry: () {
-                                bloc.add(const DomainManagementEvent.getAll());
-                              },
-                            );
-                          }
-                          return DomainManagementGridView(domains: entries);
-                        });
+                          },
+                        );
                       },
                     ),
               ),

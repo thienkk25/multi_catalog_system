@@ -7,7 +7,14 @@ part 'domain_management_state.freezed.dart';
 abstract class DomainManagementState with _$DomainManagementState {
   const factory DomainManagementState({
     @Default(false) bool isLoading,
-    @Default([]) List<DomainEntry> entries,
+    @Default(false) bool isLoadingMore,
+    @Default(false) bool hasMore,
+
+    @Default(1) int page,
+    @Default(20) int limit,
+
+    @Default(<DomainEntry>[]) List<DomainEntry> entries,
+
     String? error,
     String? successMessage,
   }) = _DomainManagementState;

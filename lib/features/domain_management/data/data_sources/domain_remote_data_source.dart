@@ -2,9 +2,10 @@ import 'package:dio/dio.dart';
 import 'package:multi_catalog_system/core/config/networks/base_remote_data_source.dart';
 import 'package:multi_catalog_system/core/error/exceptions.dart';
 import 'package:multi_catalog_system/features/domain_management/data/models/domain_model.dart';
+import 'package:multi_catalog_system/features/domain_management/data/models/domain_page_model.dart';
 
 abstract class DomainRemoteDataSource {
-  Future<List<DomainModel>> getAll({String? search});
+  Future<DomainPageModel> getAll({String? search, int? page, int? limit});
   Future<DomainModel> getById({required String id});
   Future<DomainModel> create({required Map<String, dynamic> data});
   Future<List<DomainModel>> createMany({
@@ -27,16 +28,25 @@ class DomainRemoteDataSourceImpl extends BaseRemoteDataSource
   DomainRemoteDataSourceImpl({required this.dio});
 
   @override
-  Future<List<DomainModel>> getAll({String? search}) async {
+  Future<DomainPageModel> getAll({
+    String? search,
+    int? page,
+    int? limit,
+  }) async {
     try {
       final queryParams = <String, dynamic>{};
 
       if (search != null) queryParams['search'] = search;
 
+      if (page != null) queryParams['page'] = page;
+
+      if (limit != null) queryParams['limit'] = limit;
+
       final response = await dio.get('/domain', queryParameters: queryParams);
 
-      final List<dynamic> jsonList = response.data['data']['data'];
-      return jsonList.map((json) => DomainModel.fromJson(json)).toList();
+      final data = response.data['data'];
+
+      return DomainPageModel.fromJson(data);
     } on DioException catch (e) {
       handleDioError(e);
     } catch (e) {
