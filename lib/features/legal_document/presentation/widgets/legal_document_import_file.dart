@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:multi_catalog_system/core/utils/formatter/file_size_formatter.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
-import 'package:multi_catalog_system/core/widgets/custom_circular_progress.dart';
-import 'package:multi_catalog_system/core/widgets/file_icon.dart';
+import 'package:multi_catalog_system/core/widgets/file_icon_widget.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/bloc/document_file_cubit.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/bloc/document_file_state.dart';
 
@@ -62,7 +61,10 @@ class LegalDocumentImportFile extends StatelessWidget {
                         child: Column(
                           children: [
                             state.isLoading
-                                ? const CustomCircularProgressButton()
+                                ? const CircularProgressIndicator(
+                                    color: Color(0xFF2563EB),
+                                    strokeWidth: 2,
+                                  )
                                 : Container(
                                     padding: const EdgeInsets.all(12),
                                     decoration: BoxDecoration(
@@ -107,7 +109,7 @@ class LegalDocumentImportFile extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         spacing: 10,
                         children: [
-                          FileIcon(
+                          FileIconWidget(
                             fileName: state.remoteFileName ?? state.file!.name,
                           ),
 

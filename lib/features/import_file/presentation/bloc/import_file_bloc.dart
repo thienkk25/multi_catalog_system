@@ -16,9 +16,9 @@ class ImportFileBloc extends Bloc<ImportFileEvent, ImportFileState> {
     Emitter<ImportFileState> emit,
   ) async {
     await event.when(
-      importFile: (files, table) async {
+      importFile: (file, table) async {
         emit(state.copyWith(isLoading: true, error: null, success: null));
-        final result = await importFileUseCase(files: files, table: table);
+        final result = await importFileUseCase(file: file, table: table);
         result.fold(
           (l) => emit(state.copyWith(isLoading: false, error: l)),
           (r) => emit(state.copyWith(isLoading: false, success: 'Thành công')),

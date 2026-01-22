@@ -6,7 +6,7 @@ import 'package:multi_catalog_system/core/widgets/bottom_form_actions.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/core/widgets/custom_dropdown_button.dart';
 import 'package:multi_catalog_system/core/widgets/custom_input.dart';
-import 'package:multi_catalog_system/core/widgets/file_icon.dart';
+import 'package:multi_catalog_system/core/widgets/file_icon_widget.dart';
 import 'package:multi_catalog_system/features/catalog_lookup/presentation/bloc/catalog_lookup_bloc.dart';
 import 'package:multi_catalog_system/features/catalog_lookup/presentation/bloc/catalog_lookup_event.dart';
 import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_entry.dart';
@@ -281,7 +281,7 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
                       child: Row(
                         spacing: 8,
                         children: [
-                          FileIcon(fileName: entry.fileName!),
+                          FileIconWidget(fileName: entry.fileName!),
                           Expanded(
                             child: Text(
                               entry.fileName!,

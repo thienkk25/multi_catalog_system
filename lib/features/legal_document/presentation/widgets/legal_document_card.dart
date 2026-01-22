@@ -6,7 +6,7 @@ import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/core/widgets/custom_alert_dialog.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/core/widgets/custom_label.dart';
-import 'package:multi_catalog_system/core/widgets/file_icon.dart';
+import 'package:multi_catalog_system/core/widgets/file_icon_widget.dart';
 import 'package:multi_catalog_system/core/widgets/role_based_widget.dart';
 import 'package:multi_catalog_system/features/legal_document/domain/entities/legal_document_entry.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/bloc/legal_document_bloc.dart';
@@ -107,7 +107,7 @@ class LegalDocumentCard extends StatelessWidget {
                 child: Row(
                   spacing: 8,
                   children: [
-                    FileIcon(fileName: entry.fileName!),
+                    FileIconWidget(fileName: entry.fileName!),
                     Expanded(
                       child: Text(
                         entry.fileName!,

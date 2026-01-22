@@ -5,7 +5,7 @@ import 'package:multi_catalog_system/features/import_file/domain/repositories/im
 class ImportFileRepositoryImpl implements ImportFileRepository {
   @override
   Future<Either<String, void>> importFile({
-    required List<PickedDocumentFile> files,
+    required PickedDocumentFile file,
     required String table,
   }) {
     // TODO: implement importFile

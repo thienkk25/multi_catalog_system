@@ -6,9 +6,9 @@ class ImportFileUseCase {
   final ImportFileRepository repository;
   ImportFileUseCase({required this.repository});
   Future<Either<String, void>> call({
-    required List<PickedDocumentFile> files,
+    required PickedDocumentFile file,
     required String table,
   }) {
-    return repository.importFile(files: files, table: table);
+    return repository.importFile(file: file, table: table);
   }
 }

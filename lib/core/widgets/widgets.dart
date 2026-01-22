@@ -9,7 +9,7 @@ export 'custom_floating_action_button.dart';
 export 'custom_input.dart';
 export 'custom_label.dart';
 export 'error_retry_widget.dart';
-export 'file_icon.dart';
+export 'file_icon_widget.dart';
 export 'note_widget.dart';
 export 'password_field_widget.dart';
 export 'role_based_widget.dart';

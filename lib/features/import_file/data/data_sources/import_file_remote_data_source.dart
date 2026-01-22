@@ -5,7 +5,7 @@ import 'package:multi_catalog_system/core/error/exceptions.dart';
 
 abstract class ImportFileRemoteDataSource {
   Future<void> importFile({
-    required List<PickedDocumentFile> files,
+    required PickedDocumentFile file,
     required String table,
   });
 }
@@ -18,11 +18,11 @@ class ImportFileRemoteDataSourceImpl extends BaseRemoteDataSource
 
   @override
   Future<void> importFile({
-    required List<PickedDocumentFile> files,
+    required PickedDocumentFile file,
     required String table,
   }) async {
     try {
-      await dio.post('/csv/', data: {'files': files, 'table': table});
+      await dio.post('/import', data: {'file': file, 'table': table});
     } on DioException catch (e) {
       handleDioError(e);
     } catch (e) {

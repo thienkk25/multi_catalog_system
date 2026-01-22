@@ -1,4 +1,6 @@
-abstract class AppException implements Exception {
+import 'package:equatable/equatable.dart';
+
+abstract class AppException extends Equatable implements Exception {
   final String message;
   final int? statusCode;
 
@@ -7,6 +9,9 @@ abstract class AppException implements Exception {
   @override
   String toString() =>
       'AppException(message: $message, statusCode: $statusCode)';
+
+  @override
+  List<Object?> get props => [message, statusCode];
 }
 
 /// ===== SERVER / NETWORK =====

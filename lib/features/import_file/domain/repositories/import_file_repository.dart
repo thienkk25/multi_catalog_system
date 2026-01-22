@@ -3,7 +3,7 @@ import 'package:multi_catalog_system/core/data/models/picked_document_file/picke
 
 abstract class ImportFileRepository {
   Future<Either<String, void>> importFile({
-    required List<PickedDocumentFile> files,
+    required PickedDocumentFile file,
     required String table,
   });
 }

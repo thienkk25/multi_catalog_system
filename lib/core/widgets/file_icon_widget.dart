@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-class FileIcon extends StatelessWidget {
+class FileIconWidget extends StatelessWidget {
   final String fileName;
   final double size;
   final Widget? iconCustom;
 
-  const FileIcon({
+  const FileIconWidget({
     super.key,
     required this.fileName,
     this.size = 24,

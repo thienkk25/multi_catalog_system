@@ -214,7 +214,7 @@ class _LegalDocumentCard extends StatelessWidget {
               child: Row(
                 spacing: 8,
                 children: [
-                  FileIcon(fileName: entry.fileName!),
+                  FileIconWidget(fileName: entry.fileName!),
                   Expanded(
                     child: Text(
                       entry.fileName!,
