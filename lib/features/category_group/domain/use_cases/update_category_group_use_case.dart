@@ -10,7 +10,7 @@ class UpdateCategoryGroupUseCase {
 
   Future<Either<Failure, CategoryGroupEntry>> call({
     required CategoryGroupEntry entry,
-  }) async {
+  }) {
     return repository.update(entry: entry);
   }
 }

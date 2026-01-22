@@ -10,7 +10,7 @@ class UpsertManyDomainUseCase {
 
   Future<Either<Failure, List<DomainEntry>>> call({
     required List<DomainEntry> entries,
-  }) async {
+  }) {
     return repository.upsertMany(entries: entries);
   }
 }

@@ -8,7 +8,7 @@ class GetAllApiKeyUseCase {
 
   GetAllApiKeyUseCase({required this.repository});
 
-  Future<Either<Failure, List<ApiKeyEntry>>> call({String? search}) async {
+  Future<Either<Failure, List<ApiKeyEntry>>> call({String? search}) {
     return repository.getAll(search: search);
   }
 }

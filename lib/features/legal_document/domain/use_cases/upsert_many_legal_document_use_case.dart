@@ -10,7 +10,7 @@ class UpsertManyLegalDocumentUseCase {
 
   Future<Either<Failure, List<LegalDocumentEntry>>> call({
     required List<LegalDocumentEntry> entries,
-  }) async {
+  }) {
     return repository.upsertMany(entries: entries);
   }
 }

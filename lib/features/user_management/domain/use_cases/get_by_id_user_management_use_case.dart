@@ -7,9 +7,7 @@ class GetByIdUserManagementUseCase {
   final UserManagementRepository repository;
   GetByIdUserManagementUseCase({required this.repository});
 
-  Future<Either<Failure, UserManagementEntry>> call({
-    required String id,
-  }) async {
+  Future<Either<Failure, UserManagementEntry>> call({required String id}) {
     return repository.getById(id: id);
   }
 }

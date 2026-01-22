@@ -8,9 +8,7 @@ class CreateApiKeyUseCase {
 
   CreateApiKeyUseCase({required this.repository});
 
-  Future<Either<Failure, ApiKeyEntry>> call({
-    required ApiKeyEntry entry,
-  }) async {
+  Future<Either<Failure, ApiKeyEntry>> call({required ApiKeyEntry entry}) {
     return repository.create(entry: entry);
   }
 }

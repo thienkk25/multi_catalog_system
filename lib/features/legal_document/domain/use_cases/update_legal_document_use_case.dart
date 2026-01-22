@@ -12,7 +12,7 @@ class UpdateLegalDocumentUseCase {
   Future<Either<Failure, LegalDocumentEntry>> call({
     required LegalDocumentEntry entry,
     PickedDocumentFile? file,
-  }) async {
+  }) {
     return repository.update(entry: entry, file: file);
   }
 }

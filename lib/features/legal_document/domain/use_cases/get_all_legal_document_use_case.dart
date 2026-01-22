@@ -8,9 +8,7 @@ class GetAllLegalDocumentUseCase {
 
   GetAllLegalDocumentUseCase({required this.repository});
 
-  Future<Either<Failure, List<LegalDocumentEntry>>> call({
-    String? search,
-  }) async {
+  Future<Either<Failure, List<LegalDocumentEntry>>> call({String? search}) {
     return repository.getAll(search: search);
   }
 }

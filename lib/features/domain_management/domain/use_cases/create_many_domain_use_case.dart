@@ -10,7 +10,7 @@ class CreateManyDomainUseCase {
 
   Future<Either<Failure, List<DomainEntry>>> call({
     required List<DomainEntry> entries,
-  }) async {
+  }) {
     return repository.createMany(entries: entries);
   }
 }

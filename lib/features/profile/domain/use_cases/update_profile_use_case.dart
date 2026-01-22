@@ -7,7 +7,7 @@ class UpdateProfileUseCase {
   final UserRepository repository;
 
   UpdateProfileUseCase({required this.repository});
-  Future<Either<Failure, UserEntry>> call({required UserEntry entry}) async {
+  Future<Either<Failure, UserEntry>> call({required UserEntry entry}) {
     return repository.updateProfile(entry: entry);
   }
 }

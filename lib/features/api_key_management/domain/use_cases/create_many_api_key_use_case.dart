@@ -10,7 +10,7 @@ class CreateManyApiKeyUseCase {
 
   Future<Either<Failure, List<ApiKeyEntry>>> call({
     required List<ApiKeyEntry> entries,
-  }) async {
+  }) {
     return repository.createMany(entries: entries);
   }
 }

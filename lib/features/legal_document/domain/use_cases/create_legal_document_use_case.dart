@@ -12,7 +12,7 @@ class CreateLegalDocumentUseCase {
   Future<Either<Failure, LegalDocumentEntry>> call({
     required LegalDocumentEntry entry,
     PickedDocumentFile? file,
-  }) async {
+  }) {
     return repository.create(entry: entry, file: file);
   }
 }

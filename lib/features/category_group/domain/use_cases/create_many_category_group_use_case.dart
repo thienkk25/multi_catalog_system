@@ -10,7 +10,7 @@ class CreateManyCategoryGroupUseCase {
 
   Future<Either<Failure, List<CategoryGroupEntry>>> call({
     required List<CategoryGroupEntry> entries,
-  }) async {
+  }) {
     return repository.createMany(entries: entries);
   }
 }

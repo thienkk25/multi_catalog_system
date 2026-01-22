@@ -10,7 +10,7 @@ class CreateManyCategoryItemUseCase {
 
   Future<Either<Failure, List<CategoryItemEntry>>> call({
     required List<CategoryItemEntry> entries,
-  }) async {
+  }) {
     return repository.createMany(entries: entries);
   }
 }

@@ -7,7 +7,7 @@ class ChangePasswordUseCase {
   final UserRepository repository;
 
   ChangePasswordUseCase({required this.repository});
-  Future<Either<Failure, UserEntry>> call({required String newPassword}) async {
+  Future<Either<Failure, UserEntry>> call({required String newPassword}) {
     return repository.changePassword(newPassword: newPassword);
   }
 }

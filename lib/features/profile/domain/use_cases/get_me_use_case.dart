@@ -8,7 +8,7 @@ class GetMeUseCase {
 
   GetMeUseCase({required this.repository});
 
-  Future<Either<Failure, UserEntry>> call() async {
+  Future<Either<Failure, UserEntry>> call() {
     return repository.getMe();
   }
 }

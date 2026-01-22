@@ -8,7 +8,7 @@ class GetByIdCategoryGroupUseCase {
 
   GetByIdCategoryGroupUseCase({required this.repository});
 
-  Future<Either<Failure, CategoryGroupEntry>> call({required String id}) async {
+  Future<Either<Failure, CategoryGroupEntry>> call({required String id}) {
     return repository.getById(id: id);
   }
 }

@@ -8,9 +8,7 @@ class GetAllUserManagementUseCase {
 
   GetAllUserManagementUseCase({required this.repository});
 
-  Future<Either<Failure, List<UserManagementEntry>>> call({
-    String? search,
-  }) async {
+  Future<Either<Failure, List<UserManagementEntry>>> call({String? search}) {
     return repository.getAll(search: search);
   }
 }

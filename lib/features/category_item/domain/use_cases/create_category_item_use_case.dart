@@ -10,7 +10,7 @@ class CreateCategoryItemUseCase {
 
   Future<Either<Failure, CategoryItemEntry>> call({
     required CategoryItemEntry entry,
-  }) async {
+  }) {
     return repository.create(entry: entry);
   }
 }

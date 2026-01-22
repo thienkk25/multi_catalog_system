@@ -7,7 +7,7 @@ class DeleteApiKeyUseCase {
 
   DeleteApiKeyUseCase({required this.repository});
 
-  Future<Either<Failure, void>> call({required String id}) async {
+  Future<Either<Failure, void>> call({required String id}) {
     return repository.delete(id: id);
   }
 }

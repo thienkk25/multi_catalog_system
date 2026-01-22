@@ -10,7 +10,7 @@ class UpsertManyCategoryGroupUseCase {
 
   Future<Either<Failure, List<CategoryGroupEntry>>> call({
     required List<CategoryGroupEntry> entries,
-  }) async {
+  }) {
     return repository.upsertMany(entries: entries);
   }
 }

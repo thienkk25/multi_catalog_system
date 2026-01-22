@@ -6,7 +6,7 @@ import 'package:multi_catalog_system/features/profile/domain/repositories/user_r
 class GetProfileUseCase {
   final UserRepository repository;
   GetProfileUseCase({required this.repository});
-  Future<Either<Failure, UserEntry>> call() async {
+  Future<Either<Failure, UserEntry>> call() {
     return repository.getProfile();
   }
 }

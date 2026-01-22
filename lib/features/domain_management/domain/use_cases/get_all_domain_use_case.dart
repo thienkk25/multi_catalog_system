@@ -12,7 +12,7 @@ class GetAllDomainUseCase {
     String? search,
     int? page,
     int? limit,
-  }) async {
+  }) {
     return repository.getAll(search: search, page: page, limit: limit);
   }
 }

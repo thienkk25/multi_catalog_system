@@ -10,7 +10,7 @@ class CreateManyLegalDocumentUseCase {
 
   Future<Either<Failure, List<LegalDocumentEntry>>> call({
     required List<LegalDocumentEntry> entries,
-  }) async {
+  }) {
     return repository.createMany(entries: entries);
   }
 }

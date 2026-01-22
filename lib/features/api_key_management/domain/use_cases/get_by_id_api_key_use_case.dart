@@ -8,7 +8,7 @@ class GetByIdApiKeyUseCase {
 
   GetByIdApiKeyUseCase({required this.repository});
 
-  Future<Either<Failure, ApiKeyEntry>> call({required String id}) async {
+  Future<Either<Failure, ApiKeyEntry>> call({required String id}) {
     return repository.getById(id: id);
   }
 }

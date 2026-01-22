@@ -8,9 +8,7 @@ class UpdateDomainUseCase {
 
   UpdateDomainUseCase({required this.repository});
 
-  Future<Either<Failure, DomainEntry>> call({
-    required DomainEntry entry,
-  }) async {
+  Future<Either<Failure, DomainEntry>> call({required DomainEntry entry}) {
     return repository.update(entry: entry);
   }
 }

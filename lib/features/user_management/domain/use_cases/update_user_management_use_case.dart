@@ -9,7 +9,7 @@ class UpdateUserManagementUseCase {
 
   Future<Either<Failure, UserManagementEntry>> call({
     required UserManagementEntry entry,
-  }) async {
+  }) {
     return repository.update(entry: entry);
   }
 }

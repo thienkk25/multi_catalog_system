@@ -9,7 +9,7 @@ class CreateUserManagementUseCase {
 
   Future<Either<Failure, UserManagementEntry>> call({
     required UserManagementEntry entry,
-  }) async {
+  }) {
     return repository.create(entry: entry);
   }
 }

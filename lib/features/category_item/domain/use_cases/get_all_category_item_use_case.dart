@@ -8,9 +8,7 @@ class GetAllCategoryItemUseCase {
 
   GetAllCategoryItemUseCase({required this.repository});
 
-  Future<Either<Failure, List<CategoryItemEntry>>> call({
-    String? search,
-  }) async {
+  Future<Either<Failure, List<CategoryItemEntry>>> call({String? search}) {
     return repository.getAll(search: search);
   }
 }

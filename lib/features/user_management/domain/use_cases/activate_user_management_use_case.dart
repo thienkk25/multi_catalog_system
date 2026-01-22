@@ -8,9 +8,7 @@ class ActivateUserManagementUseCase {
 
   ActivateUserManagementUseCase({required this.repository});
 
-  Future<Either<Failure, UserManagementEntry>> call({
-    required String id,
-  }) async {
+  Future<Either<Failure, UserManagementEntry>> call({required String id}) {
     return repository.activate(id: id);
   }
 }
