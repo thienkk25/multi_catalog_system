@@ -6,7 +6,7 @@ import 'package:multi_catalog_system/core/error/exceptions.dart';
 import 'package:multi_catalog_system/core/error/failures.dart';
 import 'package:multi_catalog_system/features/legal_document/data/data_sources/legal_document_remote_data_source.dart';
 import 'package:multi_catalog_system/features/legal_document/data/models/legal_document_model.dart';
-import 'package:multi_catalog_system/features/legal_document/data/models/picked_document_file.dart';
+import 'package:multi_catalog_system/core/data/models/picked_document_file/picked_document_file.dart';
 import 'package:multi_catalog_system/features/legal_document/domain/domain.dart';
 
 class LegalDocumentRepositoryImpl implements LegalDocumentRepository {

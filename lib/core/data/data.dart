@@ -7,3 +7,4 @@ export 'models/auth/identity_model.dart';
 export 'models/auth/identity_data_model.dart';
 export 'models/auth/app_metadata_model.dart';
 export 'models/auth/user_metadata_model.dart';
+export 'models/picked_document_file/picked_document_file.dart';

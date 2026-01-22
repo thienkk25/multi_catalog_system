@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:multi_catalog_system/features/legal_document/data/models/picked_document_file.dart';
+import 'package:multi_catalog_system/core/data/models/picked_document_file/picked_document_file.dart';
 import 'package:multi_catalog_system/features/legal_document/domain/entities/legal_document_entry.dart';
 
 part 'legal_document_event.freezed.dart';
