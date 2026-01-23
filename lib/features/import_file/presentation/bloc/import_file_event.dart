@@ -5,8 +5,12 @@ part 'import_file_event.freezed.dart';
 
 @freezed
 abstract class ImportFileEvent with _$ImportFileEvent {
-  const factory ImportFileEvent.importFile({
+  const factory ImportFileEvent.importSingleFile({
     required PickedDocumentFile file,
-    required String table,
-  }) = _ImportFileEvent;
+    required int type,
+  }) = _ImportSingleFile;
+
+  const factory ImportFileEvent.importCatalogFile({
+    required PickedDocumentFile file,
+  }) = _ImportCatalogFile;
 }

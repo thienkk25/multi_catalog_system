@@ -4,10 +4,12 @@ import 'package:multi_catalog_system/core/data/models/picked_document_file/picke
 import 'package:multi_catalog_system/core/error/exceptions.dart';
 
 abstract class ImportFileRemoteDataSource {
-  Future<void> importFile({
+  Future<void> importSingleFile({
     required PickedDocumentFile file,
-    required String table,
+    required int type,
   });
+
+  Future<void> importCatalogFile({required PickedDocumentFile file});
 }
 
 class ImportFileRemoteDataSourceImpl extends BaseRemoteDataSource
@@ -17,12 +19,23 @@ class ImportFileRemoteDataSourceImpl extends BaseRemoteDataSource
   ImportFileRemoteDataSourceImpl({required this.dio});
 
   @override
-  Future<void> importFile({
+  Future<void> importSingleFile({
     required PickedDocumentFile file,
-    required String table,
+    required int type,
   }) async {
     try {
-      await dio.post('/import', data: {'file': file, 'table': table});
+      await dio.post('/import', data: {'file': file, 'type': type});
+    } on DioException catch (e) {
+      handleDioError(e);
+    } catch (e) {
+      throw UnexpectedException(e.toString());
+    }
+  }
+
+  @override
+  Future<void> importCatalogFile({required PickedDocumentFile file}) async {
+    try {
+      await dio.post('/import', data: {'file': file});
     } on DioException catch (e) {
       handleDioError(e);
     } catch (e) {

@@ -168,23 +168,7 @@ class _ImportFilePageState extends State<ImportFilePage> {
                   BlocSelector<ImportFileBloc, ImportFileState, bool>(
                     selector: (state) => state.isLoading,
                     builder: (context, isLoading) => CustomButton(
-                      onTap: isLoading
-                          ? null
-                          : () {
-                              if (fileInfo == null || file == null) return;
-
-                              context.read<ImportFileBloc>().add(
-                                ImportFileEvent.importFile(
-                                  file: PickedDocumentFile(
-                                    file: kIsWeb ? null : file!,
-                                    bytes: kIsWeb ? file! : null,
-                                    name: fileInfo!['name'],
-                                    size: fileInfo!['file_size'],
-                                  ),
-                                  table: widget.typeImport.toString(),
-                                ),
-                              );
-                            },
+                      onTap: isLoading ? null : () => _onImportFile(),
                       colorBackground: isLoading ? Colors.grey : Colors.blue,
                       textButton: isLoading
                           ? const CustomCircularProgressButton()
@@ -204,5 +188,34 @@ class _ImportFilePageState extends State<ImportFilePage> {
         ),
       ),
     );
+  }
+
+  void _onImportFile() {
+    if (fileInfo == null || file == null) return;
+    if (widget.typeImport == 0) {
+      context.read<ImportFileBloc>().add(
+        ImportFileEvent.importSingleFile(
+          file: PickedDocumentFile(
+            file: kIsWeb ? null : file!,
+            bytes: kIsWeb ? file! : null,
+            name: fileInfo!['name'],
+            size: fileInfo!['file_size'],
+          ),
+          type: widget.typeImport,
+        ),
+      );
+    } else {
+      context.read<ImportFileBloc>().add(
+        ImportFileEvent.importSingleFile(
+          file: PickedDocumentFile(
+            file: kIsWeb ? null : file!,
+            bytes: kIsWeb ? file! : null,
+            name: fileInfo!['name'],
+            size: fileInfo!['file_size'],
+          ),
+          type: widget.typeImport,
+        ),
+      );
+    }
   }
 }

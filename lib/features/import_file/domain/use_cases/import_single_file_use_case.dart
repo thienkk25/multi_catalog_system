@@ -1,14 +1,15 @@
 import 'package:dartz/dartz.dart';
 import 'package:multi_catalog_system/core/data/models/picked_document_file/picked_document_file.dart';
+import 'package:multi_catalog_system/core/error/failures.dart';
 import 'package:multi_catalog_system/features/import_file/domain/repositories/import_file_repository.dart';
 
-class ImportFileUseCase {
+class ImportSingleFileUseCase {
   final ImportFileRepository repository;
-  ImportFileUseCase({required this.repository});
-  Future<Either<String, void>> call({
+  ImportSingleFileUseCase({required this.repository});
+  Future<Either<Failure, void>> call({
     required PickedDocumentFile file,
-    required String table,
+    required int type,
   }) {
-    return repository.importFile(file: file, table: table);
+    return repository.importSingleFile(file: file, type: type);
   }
 }
