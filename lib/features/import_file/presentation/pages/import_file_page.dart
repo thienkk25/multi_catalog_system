@@ -17,13 +17,8 @@ import 'package:multi_catalog_system/features/import_file/presentation/widgets/i
 import 'package:multi_catalog_system/features/import_file/presentation/widgets/import_file_file_card.dart';
 
 class ImportFilePage extends StatefulWidget {
-  const ImportFilePage({
-    super.key,
-    required this.typeImport,
-    this.allowedExtensions,
-  });
+  const ImportFilePage({super.key, required this.typeImport});
   final int typeImport;
-  final List<String>? allowedExtensions;
 
   @override
   State<ImportFilePage> createState() => _ImportFilePageState();
@@ -38,7 +33,7 @@ class _ImportFilePageState extends State<ImportFilePage> {
       withData: kIsWeb,
       allowMultiple: false,
       type: FileType.custom,
-      allowedExtensions: widget.allowedExtensions ?? ['xls', 'xlsx', 'csv'],
+      allowedExtensions: ['xlsx', 'csv'],
     );
 
     if (result == null) return;
