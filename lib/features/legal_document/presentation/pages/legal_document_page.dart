@@ -74,44 +74,41 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
                     }
                   },
                   builder: (context, state) {
-                    return state.when((
-                      isLoading,
-                      entries,
-                      selectedIds,
-                      error,
-                      successMessage,
-                    ) {
-                      if (isLoading) {
-                        return const Center(
-                          child: CustomCircularProgressScreen(),
-                        );
-                      }
-                      if (error != null) {
-                        return ErrorRetryWidget(
-                          error: error,
-                          onRetry: () {
-                            bloc.add(const LegalDocumentEvent.getAll());
-                          },
-                        );
-                      }
-                      return ListView.separated(
-                        itemCount: entries.length,
-                        separatorBuilder: (context, index) =>
-                            const SizedBox(height: 10),
-                        itemBuilder: (context, index) {
-                          final entry = entries[index];
-                          return GestureDetector(
-                            onTap: () {
-                              context.pushNamed(
-                                RouterNames.legalDocumentDetail,
-                                pathParameters: {'id': ?entry.id},
-                              );
-                            },
-                            child: LegalDocumentCard(entry: entry),
-                          );
+                    if (state.isLoading) {
+                      return const Center(
+                        child: CustomCircularProgressScreen(),
+                      );
+                    }
+                    if (state.error != null) {
+                      return ErrorRetryWidget(
+                        error: state.error!,
+                        onRetry: () {
+                          bloc.add(const LegalDocumentEvent.getAll());
                         },
                       );
-                    });
+                    }
+
+                    final entries = state.entries;
+                    if (entries.isEmpty) {
+                      return const Center(child: Text('Không có văn bản nào'));
+                    }
+                    return ListView.separated(
+                      itemCount: entries.length,
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: 10),
+                      itemBuilder: (context, index) {
+                        final entry = entries[index];
+                        return GestureDetector(
+                          onTap: () {
+                            context.pushNamed(
+                              RouterNames.legalDocumentDetail,
+                              pathParameters: {'id': ?entry.id},
+                            );
+                          },
+                          child: LegalDocumentCard(entry: entry),
+                        );
+                      },
+                    );
                   },
                 ),
               ),

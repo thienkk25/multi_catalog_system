@@ -67,29 +67,24 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
                     }
                   },
                   builder: (context, state) {
-                    return state.when((
-                      isLoading,
-                      entries,
-                      error,
-                      successMessage,
-                    ) {
-                      if (isLoading) {
-                        return const Center(
-                          child: CustomCircularProgressScreen(),
-                        );
-                      }
-                      if (error != null) {
-                        return ErrorRetryWidget(
-                          error: error,
-                          onRetry: () {
-                            bloc.add(const CategoryGroupEvent.getAll());
-                          },
-                        );
-                      }
-                      return CategoryGroupListViewWidget(
-                        categoryGroup: entries,
+                    if (state.isLoading) {
+                      return const Center(
+                        child: CustomCircularProgressScreen(),
                       );
-                    });
+                    }
+                    if (state.error != null) {
+                      return ErrorRetryWidget(
+                        error: state.error!,
+                        onRetry: () {
+                          bloc.add(const CategoryGroupEvent.getAll());
+                        },
+                      );
+                    }
+                    final entries = state.entries;
+                    if (entries.isEmpty) {
+                      return const Center(child: Text('Không có dữ liệu'));
+                    }
+                    return CategoryGroupListViewWidget(categoryGroup: entries);
                   },
                 ),
               ),

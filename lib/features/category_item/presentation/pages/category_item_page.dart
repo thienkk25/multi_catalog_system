@@ -71,46 +71,44 @@ class _CategoryItemPageState extends State<CategoryItemPage> {
                     }
                   },
                   builder: (context, state) {
-                    return state.when((
-                      isLoading,
-                      entries,
-                      error,
-                      successMessage,
-                    ) {
-                      if (isLoading) {
-                        return const Center(
-                          child: CustomCircularProgressScreen(),
-                        );
-                      }
-                      if (error != null) {
-                        return ErrorRetryWidget(
-                          error: error,
-                          onRetry: () {
-                            bloc.add(const CategoryItemEvent.getAll());
-                          },
-                        );
-                      }
-                      return ListView.separated(
-                        itemCount: entries.length,
-                        separatorBuilder: (context, index) =>
-                            const SizedBox(height: 10),
-                        itemBuilder: (context, index) {
-                          final entry = entries[index];
-                          return GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      CategoryItemDetailPage(entry: entry),
-                                ),
-                              );
-                            },
-                            child: CategoryItemCard(entry: entry),
-                          );
+                    if (state.isLoading) {
+                      return const Center(
+                        child: CustomCircularProgressScreen(),
+                      );
+                    }
+                    if (state.error != null) {
+                      return ErrorRetryWidget(
+                        error: state.error!,
+                        onRetry: () {
+                          bloc.add(const CategoryItemEvent.getAll());
                         },
                       );
-                    });
+                    }
+
+                    final entries = state.entries;
+                    if (entries.isEmpty) {
+                      return const Center(child: Text('Không có dữ liệu'));
+                    }
+                    return ListView.separated(
+                      itemCount: entries.length,
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: 10),
+                      itemBuilder: (context, index) {
+                        final entry = entries[index];
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    CategoryItemDetailPage(entry: entry),
+                              ),
+                            );
+                          },
+                          child: CategoryItemCard(entry: entry),
+                        );
+                      },
+                    );
                   },
                 ),
               ),
