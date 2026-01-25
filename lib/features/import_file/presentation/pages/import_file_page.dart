@@ -10,6 +10,7 @@ import 'package:multi_catalog_system/core/notifications/notification_cubit.dart'
 import 'package:multi_catalog_system/core/widgets/custom_button.dart';
 import 'package:multi_catalog_system/core/widgets/custom_circular_progress.dart';
 import 'package:multi_catalog_system/core/widgets/custom_dropdown_button.dart';
+import 'package:multi_catalog_system/core/widgets/note_widget.dart';
 import 'package:multi_catalog_system/features/import_file/presentation/bloc/import_file_bloc.dart';
 import 'package:multi_catalog_system/features/import_file/presentation/bloc/import_file_event.dart';
 import 'package:multi_catalog_system/features/import_file/presentation/bloc/import_file_state.dart';
@@ -28,6 +29,16 @@ class _ImportFilePageState extends State<ImportFilePage> {
   Map<String, dynamic>? fileInfo;
   dynamic file;
 
+  int type = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.typeImport != 0) {
+      type = widget.typeImport;
+    }
+  }
+
   Future<void> importFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       withData: kIsWeb,
@@ -41,7 +52,11 @@ class _ImportFilePageState extends State<ImportFilePage> {
     final picked = result.files.first;
 
     setState(() {
-      fileInfo = {'name': picked.name, 'file_size': picked.size};
+      fileInfo = {
+        'name': picked.name,
+        'path': picked.path,
+        'file_size': picked.size,
+      };
 
       if (kIsWeb) {
         file = picked.bytes;
@@ -55,7 +70,7 @@ class _ImportFilePageState extends State<ImportFilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Nhập Dữ liệu từ Tệp',
           style: TextStyle(fontWeight: FontWeight(600), fontSize: 20),
         ),
@@ -78,7 +93,7 @@ class _ImportFilePageState extends State<ImportFilePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  const Text(
                     'Chọn tệp để tải lên',
                     style: TextStyle(fontWeight: FontWeight(600), fontSize: 24),
                   ),
@@ -86,20 +101,20 @@ class _ImportFilePageState extends State<ImportFilePage> {
                     'Định dạng hỗ trợ: .CSV, .XLSX',
                     style: TextStyle(color: Colors.grey[500]),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   ImportFileDashedBoderWidget(
                     color: Colors.grey,
                     strokeWidth: 2,
                     child: Container(
                       height: 220,
                       width: double.infinity,
-                      padding: EdgeInsets.all(40),
+                      padding: const EdgeInsets.all(40),
                       child: Column(
                         spacing: 20,
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Container(
-                            padding: EdgeInsets.all(10),
+                            padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(50),
                               color: Colors.blue.withValues(alpha: .2),
@@ -123,7 +138,7 @@ class _ImportFilePageState extends State<ImportFilePage> {
                               colorBackground: Colors.grey.withValues(
                                 alpha: .2,
                               ),
-                              textButton: Text(
+                              textButton: const Text(
                                 'Chọn Tệp',
                                 style: TextStyle(fontWeight: FontWeight(600)),
                               ),
@@ -133,7 +148,7 @@ class _ImportFilePageState extends State<ImportFilePage> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   if (fileInfo != null && file != null)
                     ImportFileFileCard(
                       fileInfo: fileInfo!,
@@ -144,26 +159,63 @@ class _ImportFilePageState extends State<ImportFilePage> {
                         });
                       },
                     ),
-                  SizedBox(height: 20),
-                  CustomDropdownButton(
-                    lable: Text(
+                  const SizedBox(height: 20),
+                  CustomDropdownButton<int>(
+                    lable: const Text(
                       'Loại dữ liệu',
                       style: TextStyle(fontWeight: FontWeight(600)),
                     ),
-                    value: widget.typeImport,
+                    value: type,
                     items: [
-                      DropdownMenuItem(value: 0, child: Text('Tất cả')),
-                      DropdownMenuItem(value: 1, child: Text('Lĩnh vực')),
-                      DropdownMenuItem(value: 2, child: Text('Nhóm danh mục')),
-                      DropdownMenuItem(value: 3, child: Text('Mục danh mục')),
+                      const DropdownMenuItem(
+                        value: 0,
+                        child: Text('Lĩnh vực + Nhóm danh mục + Mục danh mục'),
+                      ),
+                      const DropdownMenuItem(value: 1, child: Text('Lĩnh vực')),
+                      const DropdownMenuItem(
+                        value: 2,
+                        child: Text('Nhóm danh mục'),
+                      ),
+                      const DropdownMenuItem(
+                        value: 3,
+                        child: Text('Mục danh mục'),
+                      ),
+                      const DropdownMenuItem(
+                        value: 4,
+                        child: Text('Văn bản pháp lý'),
+                      ),
+                      const DropdownMenuItem(value: 5, child: Text('API Key')),
+                      const DropdownMenuItem(
+                        value: 6,
+                        child: Text('Quản lý Người dùng'),
+                      ),
                     ],
-                    onChanged: widget.typeImport != 0 ? null : (value) {},
+                    onChanged: widget.typeImport != 0
+                        ? null
+                        : (value) {
+                            setState(() {
+                              type = value!;
+                            });
+                          },
                   ),
-                  SizedBox(height: 40),
+                  const SizedBox(height: 20),
+                  NoteWidget(
+                    icon: Icons.info,
+                    color: Colors.blue,
+                    note: _noteInforByType(type),
+                  ),
+                  const SizedBox(height: 10),
+                  const NoteWidget(
+                    icon: Icons.warning,
+                    color: Colors.red,
+                    note:
+                        'Chú ý: Khi import bản ghi trùng mã có thể bị ghi đè dữ liệu.',
+                  ),
+                  const SizedBox(height: 40),
                   BlocSelector<ImportFileBloc, ImportFileState, bool>(
                     selector: (state) => state.isLoading,
                     builder: (context, isLoading) => CustomButton(
-                      onTap: isLoading ? null : () => _onImportFile(),
+                      onTap: isLoading ? null : () => _onImportFile(context),
                       colorBackground: isLoading ? Colors.grey : Colors.blue,
                       textButton: isLoading
                           ? const CustomCircularProgressButton()
@@ -185,18 +237,47 @@ class _ImportFilePageState extends State<ImportFilePage> {
     );
   }
 
-  void _onImportFile() {
+  String _noteInforByType(int? type) {
+    switch (type) {
+      case 0:
+        return 'File CSV phải chứa đầy đủ 3 cấp: Lĩnh vực → Nhóm danh mục → Mục danh mục. Dữ liệu sẽ được import theo thứ tự và tự động liên kết.';
+
+      case 1:
+        return 'Chỉ import danh sách Lĩnh vực.';
+
+      case 2:
+        return 'Import Nhóm danh mục. Mỗi nhóm phải tham chiếu tới Lĩnh vực đã tồn tại trong hệ thống.';
+
+      case 3:
+        return 'Import Mục danh mục. Mỗi mục phải liên kết với Nhóm danh mục tương ứng.';
+
+      case 4:
+        return 'Import Văn bản pháp lý. Có thể bao gồm số hiệu, ngày ban hành và file đính kèm.';
+
+      case 5:
+        return 'Quản lý API Key. Dùng để tạo, cập nhật hoặc thu hồi khóa truy cập cho hệ thống bên ngoài.';
+
+      case 6:
+        return 'Quản lý Người dùng. Cho phép import danh sách người dùng và phân quyền truy cập.';
+
+      default:
+        return '';
+    }
+  }
+
+  void _onImportFile(BuildContext context) {
     if (fileInfo == null || file == null) return;
-    if (widget.typeImport == 0) {
+    if (type == 0) {
       context.read<ImportFileBloc>().add(
         ImportFileEvent.importSingleFile(
           file: PickedDocumentFile(
             file: kIsWeb ? null : file!,
             bytes: kIsWeb ? file! : null,
             name: fileInfo!['name'],
+            path: fileInfo!['path'],
             size: fileInfo!['file_size'],
           ),
-          type: widget.typeImport,
+          type: type,
         ),
       );
     } else {
@@ -206,9 +287,10 @@ class _ImportFilePageState extends State<ImportFilePage> {
             file: kIsWeb ? null : file!,
             bytes: kIsWeb ? file! : null,
             name: fileInfo!['name'],
+            path: fileInfo!['path'],
             size: fileInfo!['file_size'],
           ),
-          type: widget.typeImport,
+          type: type,
         ),
       );
     }

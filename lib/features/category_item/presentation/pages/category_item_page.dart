@@ -119,7 +119,9 @@ class _CategoryItemPageState extends State<CategoryItemPage> {
         ),
 
         CustomFloatingActionButton(
-          onPressedImport: () {},
+          onPressedImport: () {
+            context.pushNamed(RouterNames.importFile, extra: 3);
+          },
           onPressedAdd: () {
             context.pushNamed(
               RouterNames.categoryItemForm,

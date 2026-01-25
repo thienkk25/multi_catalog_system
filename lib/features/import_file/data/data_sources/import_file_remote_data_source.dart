@@ -1,15 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:multi_catalog_system/core/config/networks/base_remote_data_source.dart';
-import 'package:multi_catalog_system/core/data/models/picked_document_file/picked_document_file.dart';
 import 'package:multi_catalog_system/core/error/exceptions.dart';
 
 abstract class ImportFileRemoteDataSource {
-  Future<void> importSingleFile({
-    required PickedDocumentFile file,
-    required int type,
-  });
+  Future<void> importSingleFile({required FormData data});
 
-  Future<void> importCatalogFile({required PickedDocumentFile file});
+  Future<void> importCatalogFile({required FormData data});
 }
 
 class ImportFileRemoteDataSourceImpl extends BaseRemoteDataSource
@@ -19,12 +15,13 @@ class ImportFileRemoteDataSourceImpl extends BaseRemoteDataSource
   ImportFileRemoteDataSourceImpl({required this.dio});
 
   @override
-  Future<void> importSingleFile({
-    required PickedDocumentFile file,
-    required int type,
-  }) async {
+  Future<void> importSingleFile({required FormData data}) async {
     try {
-      await dio.post('/import', data: {'file': file, 'type': type});
+      await dio.post(
+        '/import/single',
+        data: data,
+        options: Options(contentType: Headers.multipartFormDataContentType),
+      );
     } on DioException catch (e) {
       handleDioError(e);
     } catch (e) {
@@ -33,9 +30,13 @@ class ImportFileRemoteDataSourceImpl extends BaseRemoteDataSource
   }
 
   @override
-  Future<void> importCatalogFile({required PickedDocumentFile file}) async {
+  Future<void> importCatalogFile({required FormData data}) async {
     try {
-      await dio.post('/import', data: {'file': file});
+      await dio.post(
+        '/import/catalog',
+        data: data,
+        options: Options(contentType: Headers.multipartFormDataContentType),
+      );
     } on DioException catch (e) {
       handleDioError(e);
     } catch (e) {

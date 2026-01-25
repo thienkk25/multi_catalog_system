@@ -110,7 +110,8 @@ class LegalDocumentImportFile extends StatelessWidget {
                         spacing: 10,
                         children: [
                           FileIconWidget(
-                            fileName: state.remoteFileName ?? state.file!.name,
+                            fileName:
+                                state.remoteFileName ?? state.file?.name ?? '',
                           ),
 
                           Expanded(
@@ -119,7 +120,9 @@ class LegalDocumentImportFile extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  state.remoteFileName ?? state.file!.name,
+                                  state.remoteFileName ??
+                                      state.file?.name ??
+                                      '',
                                   style: TextStyle(
                                     fontWeight: FontWeight(600),
                                     fontSize: 16,
@@ -127,7 +130,7 @@ class LegalDocumentImportFile extends StatelessWidget {
                                 ),
                                 if (state.remoteFileName == null)
                                   Text(
-                                    formatFileSize(state.file!.size),
+                                    formatFileSize(state.file?.size ?? 0),
                                     style: TextStyle(color: Colors.grey),
                                   ),
                               ],

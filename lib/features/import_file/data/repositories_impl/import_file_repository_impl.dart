@@ -1,4 +1,6 @@
 import 'package:dartz/dartz.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:multi_catalog_system/core/data/models/picked_document_file/picked_document_file.dart';
 import 'package:multi_catalog_system/core/error/exception_mapper.dart';
 import 'package:multi_catalog_system/core/error/exceptions.dart';
@@ -17,7 +19,15 @@ class ImportFileRepositoryImpl implements ImportFileRepository {
     required int type,
   }) async {
     try {
-      await remoteDataSource.importSingleFile(file: file, type: type);
+      final formData = FormData.fromMap({'type': type});
+
+      final multipartFile = kIsWeb
+          ? MultipartFile.fromBytes(file.bytes!, filename: file.name)
+          : await MultipartFile.fromFile(file.file!.path, filename: file.name);
+
+      formData.files.add(MapEntry('file', multipartFile));
+
+      await remoteDataSource.importSingleFile(data: formData);
       return const Right(unit);
     } on AppException catch (e) {
       return Left(mapExceptionToFailure(e));
@@ -31,7 +41,14 @@ class ImportFileRepositoryImpl implements ImportFileRepository {
     required PickedDocumentFile file,
   }) async {
     try {
-      await remoteDataSource.importCatalogFile(file: file);
+      final formData = FormData();
+
+      final multipartFile = kIsWeb
+          ? MultipartFile.fromBytes(file.bytes!, filename: file.path)
+          : await MultipartFile.fromFile(file.file!.path, filename: file.path);
+
+      formData.files.add(MapEntry('file', multipartFile));
+      await remoteDataSource.importCatalogFile(data: formData);
       return const Right(unit);
     } on AppException catch (e) {
       return Left(mapExceptionToFailure(e));
