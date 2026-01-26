@@ -7,7 +7,9 @@ class CustomFloatingActionButton extends StatefulWidget {
     super.key,
     required this.onPressedImport,
     required this.onPressedAdd,
+    this.permission,
   });
+  final List<String>? permission;
   final VoidCallback onPressedImport;
   final VoidCallback onPressedAdd;
 
@@ -23,7 +25,7 @@ class _CustomFloatingActionButtonState
   @override
   Widget build(BuildContext context) {
     return RoleBasedWidget(
-      permission: ['admin', 'domainOfficer'],
+      permission: widget.permission ?? ['admin', 'domainOfficer'],
       child: Positioned(
         right: 20,
         bottom: 50,

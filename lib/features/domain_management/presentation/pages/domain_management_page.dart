@@ -19,8 +19,8 @@ class _DomainManagementPageState extends State<DomainManagementPage>
   bool get wantKeepAlive => true;
 
   final TextEditingController _searchController = TextEditingController();
-  final ScrollController _scrollController = ScrollController();
   Timer? _debounce;
+  final ScrollController _scrollController = ScrollController();
   late final DomainManagementBloc bloc;
 
   @override
@@ -146,6 +146,7 @@ class _DomainManagementPageState extends State<DomainManagementPage>
           ),
         ),
         CustomFloatingActionButton(
+          permission: ['admin'],
           onPressedImport: () {
             context.pushNamed(RouterNames.importFile, extra: 1);
           },

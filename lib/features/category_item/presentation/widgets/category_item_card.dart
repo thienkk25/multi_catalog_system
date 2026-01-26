@@ -29,7 +29,7 @@ class CategoryItemCard extends StatelessWidget {
                   ),
                 ),
               ),
-              CategoryItemStatusChip(status: entry.status!),
+              CategoryItemStatusChip(status: entry.status ?? '-'),
             ],
           ),
 

@@ -46,7 +46,7 @@ class DomainManagementCard extends StatelessWidget {
             ],
           ),
           RoleBasedWidget(
-            permission: ['admin', 'domainOfficer'],
+            permission: ['admin'],
             child: Positioned(
               right: 0,
               top: 0,
@@ -73,14 +73,16 @@ class DomainManagementCard extends StatelessWidget {
   }
 
   void _onUpdate({required BuildContext context}) {
+    final bloc = context.read<DomainManagementBloc>();
     context.pop();
     context.pushNamed(
       RouterNames.domainForm,
-      extra: {'bloc': context.read<DomainManagementBloc>(), 'entry': entry},
+      extra: {'bloc': bloc, 'entry': entry},
     );
   }
 
   void _onRemove({required BuildContext context}) {
+    final bloc = context.read<DomainManagementBloc>();
     context.pop();
     showDialog(
       context: context,
@@ -89,9 +91,7 @@ class DomainManagementCard extends StatelessWidget {
         onConfirm: () {
           final id = entry.id;
           if (id == null) return;
-          context.read<DomainManagementBloc>().add(
-            DomainManagementEvent.delete(id: id),
-          );
+          bloc.add(DomainManagementEvent.delete(id: id));
           context.pop();
         },
       ),

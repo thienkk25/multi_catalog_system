@@ -116,6 +116,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
           ),
         ),
         CustomFloatingActionButton(
+          permission: ['admin'],
           onPressedImport: () {},
           onPressedAdd: () {
             context.pushNamed(

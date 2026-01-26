@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -15,6 +17,8 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
     with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
+  final TextEditingController _searchController = TextEditingController();
+  Timer? _debounce;
   late final CategoryGroupBloc bloc;
 
   @override
@@ -24,6 +28,13 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
       bloc = context.read<CategoryGroupBloc>();
       bloc.add(const CategoryGroupEvent.getAll());
     });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _debounce?.cancel();
+    super.dispose();
   }
 
   @override
@@ -44,6 +55,25 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
                     child: CustomInput(
                       hintText: 'Tìm kiếm theo mã, tên...',
                       suffixIcon: Icon(Icons.search),
+                      controller: _searchController,
+                      onChanged: (value) {
+                        final search = value.trim();
+                        if (_debounce?.isActive ?? false) {
+                          _debounce?.cancel();
+                        }
+                        _debounce = Timer(
+                          const Duration(milliseconds: 500),
+                          () {
+                            if (search.isEmpty) {
+                              bloc.add(const CategoryGroupEvent.getAll());
+                            } else {
+                              bloc.add(
+                                CategoryGroupEvent.getAll(search: search),
+                              );
+                            }
+                          },
+                        );
+                      },
                     ),
                   ),
                   IconButton(

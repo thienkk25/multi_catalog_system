@@ -48,6 +48,7 @@ class RouterNames {
   static const String userManagement = 'userManagement';
   static const String userManagementForm = 'userManagementForm';
   static const String userManagementDetail = 'userManagementDetail';
+  static const String userManagementAddDomains = 'userManagementAddDomains';
 }
 
 class RouterPaths {
@@ -100,4 +101,5 @@ class RouterPaths {
   static const String userManagement = '/user-management';
   static const String userManagementForm = '/user-management/form';
   static const String userManagementDetail = '/user-management/:id';
+  static const String userManagementAddDomains = '/user-management/add-domains';
 }
