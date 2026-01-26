@@ -7,3 +7,4 @@ export 'use_cases/get_by_id_user_management_use_case.dart';
 export 'use_cases/update_user_management_use_case.dart';
 export 'use_cases/activate_user_management_use_case.dart';
 export 'use_cases/deactivate_user_management_use_case.dart';
+export 'use_cases/grant_access_user_management_use_case.dart';

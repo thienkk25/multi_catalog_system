@@ -148,4 +148,24 @@ class UserManagementRepositoryImpl implements UserManagementRepository {
       return Left(UnexpectedFailure(e.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, UserManagementEntry>> grantAccess({
+    required UserManagementEntry entry,
+  }) async {
+    try {
+      final model = await remoteDataSource.grantAccess(
+        data: {
+          'user_id': entry.id,
+          'role_id': entry.role?.id,
+          'domain_ids': entry.domains?.map((d) => d.id).toList(),
+        },
+      );
+      return Right(_toEntity(model));
+    } on AppException catch (e) {
+      return Left(mapExceptionToFailure(e));
+    } catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
+    }
+  }
 }

@@ -18,4 +18,7 @@ class UserManagementEvent with _$UserManagementEvent {
   const factory UserManagementEvent.activate({required String id}) = _Activate;
   const factory UserManagementEvent.deactivate({required String id}) =
       _Deactivate;
+  const factory UserManagementEvent.grantAccess({
+    required UserManagementEntry entry,
+  }) = _GrantAccess;
 }

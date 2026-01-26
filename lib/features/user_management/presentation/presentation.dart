@@ -6,3 +6,5 @@ export 'widgets/user_management_card.dart';
 export 'widgets/user_management_avatar_section_widget.dart';
 export 'pages/user_management_detail_page.dart';
 export 'pages/user_management_form_page.dart';
+export 'widgets/user_management_dialog_grant_access.dart';
+export 'pages/user_management_add_domains_page.dart';

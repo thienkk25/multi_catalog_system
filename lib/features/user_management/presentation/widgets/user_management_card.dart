@@ -14,6 +14,8 @@ import 'package:multi_catalog_system/features/user_management/presentation/bloc/
 import 'package:multi_catalog_system/features/user_management/presentation/bloc/user_management_event.dart';
 import 'package:multi_catalog_system/features/user_management/presentation/widgets/user_management_avatar_section_widget.dart';
 
+import 'user_management_dialog_grant_access.dart';
+
 class UserManagementCard extends StatelessWidget {
   final UserManagementEntry entry;
 
@@ -119,6 +121,14 @@ class _ActionMenu extends StatelessWidget {
               case _MenuAction.unlock:
                 bloc.add(UserManagementEvent.activate(id: entry.id!));
                 break;
+              case _MenuAction.grant:
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (_) =>
+                      UserManagementDialogGrantAccess(bloc: bloc, entry: entry),
+                );
+                break;
               case _MenuAction.edit:
                 context.pushNamed(
                   RouterNames.userManagementForm,
@@ -160,6 +170,16 @@ class _ActionMenu extends StatelessWidget {
                 ],
               ),
             ),
+            const PopupMenuItem(
+              value: _MenuAction.grant,
+              child: Row(
+                children: [
+                  Icon(Icons.security_outlined, size: 18, color: Colors.blue),
+                  SizedBox(width: 8),
+                  Text('Quyền tài khoản'),
+                ],
+              ),
+            ),
             const PopupMenuDivider(),
             const PopupMenuItem(
               value: _MenuAction.edit,
@@ -188,7 +208,7 @@ class _ActionMenu extends StatelessWidget {
   }
 }
 
-enum _MenuAction { lock, unlock, edit, delete }
+enum _MenuAction { lock, unlock, grant, edit, delete }
 
 class _MetaInfo extends StatelessWidget {
   final UserManagementEntry entry;

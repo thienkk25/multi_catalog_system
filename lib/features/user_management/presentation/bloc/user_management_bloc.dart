@@ -14,6 +14,7 @@ class UserManagementBloc
   final GetByIdUserManagementUseCase getById;
   final ActivateUserManagementUseCase activate;
   final DeactivateUserManagementUseCase deactivate;
+  final GrantAccessUserManagementUseCase grantAccess;
 
   UserManagementBloc({
     required this.create,
@@ -23,6 +24,7 @@ class UserManagementBloc
     required this.getById,
     required this.activate,
     required this.deactivate,
+    required this.grantAccess,
   }) : super(const UserManagementState()) {
     on<UserManagementEvent>(_onEvent);
   }
@@ -165,6 +167,31 @@ class UserManagementBloc
                 isLoading: false,
                 entries: updated,
                 successMessage: 'Khóa thành công',
+              ),
+            );
+          },
+        );
+      },
+      grantAccess: (e) async {
+        emit(
+          state.copyWith(isLoading: true, error: null, successMessage: null),
+        );
+
+        final result = await grantAccess(entry: e.entry);
+        if (emit.isDone) return;
+
+        result.fold(
+          (l) => emit(state.copyWith(isLoading: false, error: mapFailure(l))),
+          (r) {
+            final updated = [
+              for (final d in state.entries)
+                if (d.id == r.id) r else d,
+            ];
+            emit(
+              state.copyWith(
+                isLoading: false,
+                entries: updated,
+                successMessage: 'Cập nhật thành công',
               ),
             );
           },

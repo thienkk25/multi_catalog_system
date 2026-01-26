@@ -14,6 +14,7 @@ abstract class UserManagementRemoteDataSource {
   Future<void> delete({required String id});
   Future<UserManagementModel> activate({required String id});
   Future<UserManagementModel> deactivate({required String id});
+  Future<UserManagementModel> grantAccess({required Map<String, dynamic> data});
 }
 
 class UserManagementRemoteDataSourceImpl extends BaseRemoteDataSource
@@ -112,6 +113,20 @@ class UserManagementRemoteDataSourceImpl extends BaseRemoteDataSource
   Future<UserManagementModel> deactivate({required String id}) async {
     try {
       final response = await dio.patch('/admin/users/$id/deactivate');
+      return UserManagementModel.fromJson(response.data['data']);
+    } on DioException catch (e) {
+      handleDioError(e);
+    } catch (e) {
+      throw UnexpectedException(e.toString());
+    }
+  }
+
+  @override
+  Future<UserManagementModel> grantAccess({
+    required Map<String, dynamic> data,
+  }) async {
+    try {
+      final response = await dio.post('/admin/users/grant-access', data: data);
       return UserManagementModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);
