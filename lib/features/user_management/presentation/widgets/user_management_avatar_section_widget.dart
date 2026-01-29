@@ -1,10 +1,10 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:multi_catalog_system/core/domain/entities/auth/user_profile_entry.dart';
+import 'package:multi_catalog_system/core/domain/entities/auth/user_entry.dart';
 
 class UserManagementAvatarSectionWidget extends StatelessWidget {
-  final UserProfileEntry? entry;
+  final UserEntry? entry;
   final double? sizeAvatar;
 
   const UserManagementAvatarSectionWidget({

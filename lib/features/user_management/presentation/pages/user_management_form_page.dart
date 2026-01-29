@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/config/constants/app_constant.dart';
-import 'package:multi_catalog_system/core/domain/entities/auth/user_profile_entry.dart';
+import 'package:multi_catalog_system/core/domain/entities/auth/user_entry.dart';
 import 'package:multi_catalog_system/core/widgets/custom_button.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/core/widgets/custom_input.dart';
@@ -12,7 +12,7 @@ import 'package:multi_catalog_system/features/user_management/presentation/bloc/
 import 'package:multi_catalog_system/features/user_management/presentation/bloc/user_management_state.dart';
 
 class UserManagementFormPage extends StatefulWidget {
-  final UserProfileEntry? entry;
+  final UserEntry? entry;
 
   const UserManagementFormPage({super.key, this.entry});
 
@@ -165,7 +165,7 @@ class _UserManagementFormPageState extends State<UserManagementFormPage> {
   void _onSubmit(BuildContext context) {
     if (!_formKey.currentState!.validate()) return;
     if (_isUpdate) {
-      final entry = UserProfileEntry(
+      final entry = UserEntry(
         id: widget.entry!.id,
         fullName: widget.entry!.fullName != _fullNameCtrl.text
             ? _fullNameCtrl.text
@@ -177,7 +177,7 @@ class _UserManagementFormPageState extends State<UserManagementFormPage> {
         UserManagementEvent.update(entry: entry, id: entry.id!),
       );
     } else {
-      final entry = UserProfileEntry(
+      final entry = UserEntry(
         email: _emailCtrl.text,
         fullName: _fullNameCtrl.text.isNotEmpty ? _fullNameCtrl.text : null,
         phone: _phoneCtrl.text.isNotEmpty ? _phoneCtrl.text : null,

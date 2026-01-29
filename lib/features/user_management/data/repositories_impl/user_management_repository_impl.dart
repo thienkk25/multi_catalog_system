@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:multi_catalog_system/core/data/models/auth/user_profile_model.dart';
-import 'package:multi_catalog_system/core/domain/entities/auth/user_profile_entry.dart';
+import 'package:multi_catalog_system/core/domain/entities/auth/user_entry.dart';
 import 'package:multi_catalog_system/core/domain/entities/domain/domain_ref_entry.dart';
 import 'package:multi_catalog_system/core/domain/entities/role/role_entry.dart';
 import 'package:multi_catalog_system/core/error/exception_mapper.dart';
@@ -14,8 +14,8 @@ class UserManagementRepositoryImpl implements UserManagementRepository {
 
   UserManagementRepositoryImpl({required this.remoteDataSource});
 
-  UserProfileEntry _toEntity(UserProfileModel m) {
-    return UserProfileEntry(
+  UserEntry _toEntity(UserProfileModel m) {
+    return UserEntry(
       id: m.id,
       email: m.email,
       fullName: m.fullName,
@@ -31,7 +31,7 @@ class UserManagementRepositoryImpl implements UserManagementRepository {
     );
   }
 
-  Map<String, dynamic> _createPayload(UserProfileEntry e) => {
+  Map<String, dynamic> _createPayload(UserEntry e) => {
     'email': e.email,
     if (e.password != null) 'password': e.password,
     if (e.fullName != null || e.phone != null)
@@ -41,7 +41,7 @@ class UserManagementRepositoryImpl implements UserManagementRepository {
       },
   };
 
-  Map<String, dynamic> _updatePayload(UserProfileEntry e) => {
+  Map<String, dynamic> _updatePayload(UserEntry e) => {
     if (e.password != null) 'password': e.password,
     if (e.fullName != null || e.phone != null)
       'user_metadata': {
@@ -51,9 +51,7 @@ class UserManagementRepositoryImpl implements UserManagementRepository {
   };
 
   @override
-  Future<Either<Failure, UserProfileEntry>> create({
-    required UserProfileEntry entry,
-  }) async {
+  Future<Either<Failure, UserEntry>> create({required UserEntry entry}) async {
     try {
       final model = await remoteDataSource.create(data: _createPayload(entry));
       return Right(_toEntity(model));
@@ -65,9 +63,7 @@ class UserManagementRepositoryImpl implements UserManagementRepository {
   }
 
   @override
-  Future<Either<Failure, UserProfileEntry>> getById({
-    required String id,
-  }) async {
+  Future<Either<Failure, UserEntry>> getById({required String id}) async {
     try {
       final model = await remoteDataSource.getById(id: id);
       return Right(_toEntity(model));
@@ -79,9 +75,7 @@ class UserManagementRepositoryImpl implements UserManagementRepository {
   }
 
   @override
-  Future<Either<Failure, List<UserProfileEntry>>> getAll({
-    String? search,
-  }) async {
+  Future<Either<Failure, List<UserEntry>>> getAll({String? search}) async {
     try {
       final models = await remoteDataSource.getAll(search: search);
       return Right(models.map((m) => _toEntity(m)).toList());
@@ -93,9 +87,7 @@ class UserManagementRepositoryImpl implements UserManagementRepository {
   }
 
   @override
-  Future<Either<Failure, UserProfileEntry>> update({
-    required UserProfileEntry entry,
-  }) async {
+  Future<Either<Failure, UserEntry>> update({required UserEntry entry}) async {
     try {
       final model = await remoteDataSource.update(
         data: _updatePayload(entry),
@@ -122,9 +114,7 @@ class UserManagementRepositoryImpl implements UserManagementRepository {
   }
 
   @override
-  Future<Either<Failure, UserProfileEntry>> activate({
-    required String id,
-  }) async {
+  Future<Either<Failure, UserEntry>> activate({required String id}) async {
     try {
       final model = await remoteDataSource.activate(id: id);
       return Right(_toEntity(model));
@@ -136,9 +126,7 @@ class UserManagementRepositoryImpl implements UserManagementRepository {
   }
 
   @override
-  Future<Either<Failure, UserProfileEntry>> deactivate({
-    required String id,
-  }) async {
+  Future<Either<Failure, UserEntry>> deactivate({required String id}) async {
     try {
       final model = await remoteDataSource.deactivate(id: id);
       return Right(_toEntity(model));
@@ -150,8 +138,8 @@ class UserManagementRepositoryImpl implements UserManagementRepository {
   }
 
   @override
-  Future<Either<Failure, UserProfileEntry>> grantAccess({
-    required UserProfileEntry entry,
+  Future<Either<Failure, UserEntry>> grantAccess({
+    required UserEntry entry,
   }) async {
     try {
       final model = await remoteDataSource.grantAccess(

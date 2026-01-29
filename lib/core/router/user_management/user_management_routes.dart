@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/config/di/injection.dart';
-import 'package:multi_catalog_system/core/domain/entities/auth/user_profile_entry.dart';
+import 'package:multi_catalog_system/core/domain/entities/auth/user_entry.dart';
 import 'package:multi_catalog_system/core/domain/entities/domain/domain_ref_entry.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/features/user_management/presentation/presentation.dart';
@@ -20,9 +20,7 @@ class UserManagementRoutes {
         final data = state.extra as Map<String, dynamic>;
         return BlocProvider.value(
           value: data['bloc'] as UserManagementBloc,
-          child: UserManagementFormPage(
-            entry: data['entry'] as UserProfileEntry?,
-          ),
+          child: UserManagementFormPage(entry: data['entry'] as UserEntry?),
         );
       },
     ),

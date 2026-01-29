@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:multi_catalog_system/core/domain/entities/auth/user_profile_entry.dart';
+import 'package:multi_catalog_system/core/domain/entities/auth/user_entry.dart';
 
 part 'user_management_state.freezed.dart';
 
@@ -7,7 +7,7 @@ part 'user_management_state.freezed.dart';
 abstract class UserManagementState with _$UserManagementState {
   const factory UserManagementState({
     @Default(false) bool isLoading,
-    @Default([]) List<UserProfileEntry> entries,
+    @Default([]) List<UserEntry> entries,
     String? error,
     String? successMessage,
   }) = _UserManagementState;

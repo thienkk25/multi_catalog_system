@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:multi_catalog_system/core/domain/entities/auth/user_profile_entry.dart';
+import 'package:multi_catalog_system/core/domain/entities/auth/user_entry.dart';
 import 'package:multi_catalog_system/core/utils/formatter/map_failure_formatter.dart';
 import 'package:multi_catalog_system/features/user_management/domain/domain.dart';
 
@@ -103,7 +103,7 @@ class UserManagementBloc
         );
       },
       delete: (e) async {
-        final previous = List<UserProfileEntry>.from(state.entries);
+        final previous = List<UserEntry>.from(state.entries);
 
         emit(
           state.copyWith(

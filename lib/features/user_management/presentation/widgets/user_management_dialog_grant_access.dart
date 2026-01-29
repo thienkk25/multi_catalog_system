@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:multi_catalog_system/core/domain/entities/auth/user_profile_entry.dart';
+import 'package:multi_catalog_system/core/domain/entities/auth/user_entry.dart';
 import 'package:multi_catalog_system/core/domain/entities/domain/domain_ref_entry.dart';
 import 'package:multi_catalog_system/core/domain/entities/role/role_entry.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
@@ -11,7 +11,7 @@ import 'package:multi_catalog_system/features/user_management/presentation/bloc/
 
 class UserManagementDialogGrantAccess extends StatefulWidget {
   final UserManagementBloc bloc;
-  final UserProfileEntry entry;
+  final UserEntry entry;
   const UserManagementDialogGrantAccess({
     super.key,
     required this.entry,
@@ -114,7 +114,7 @@ class _UserManagementDialogGrantAccessState
                       final domains = widget.entry.domains;
                       widget.bloc.add(
                         UserManagementEvent.grantAccess(
-                          entry: UserProfileEntry(
+                          entry: UserEntry(
                             id: widget.entry.id,
                             role: RoleEntry(id: _selectedRole),
                             domains: domains,
