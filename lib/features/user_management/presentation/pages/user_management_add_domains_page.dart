@@ -161,7 +161,7 @@ class _UserManagementAddDomainsPageState
                 padding: const EdgeInsets.only(right: 8),
                 child: Chip(
                   label: Text(
-                    domain.code,
+                    domain.name,
                     style: const TextStyle(
                       color: Colors.blue,
                       fontWeight: FontWeight.w500,

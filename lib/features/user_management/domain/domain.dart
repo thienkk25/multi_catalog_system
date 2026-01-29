@@ -1,4 +1,3 @@
-export 'entities/user_management_entry.dart';
 export 'repositories/user_management_repository.dart';
 export 'use_cases/create_user_management_use_case.dart';
 export 'use_cases/delete_user_management_use_case.dart';

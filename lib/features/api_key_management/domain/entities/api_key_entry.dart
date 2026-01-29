@@ -1,4 +1,6 @@
-class ApiKeyEntry {
+import 'package:equatable/equatable.dart';
+
+class ApiKeyEntry extends Equatable {
   final String? id;
   final String? key;
   final String? systemName;
@@ -7,7 +9,7 @@ class ApiKeyEntry {
   final String? createdBy;
   final DateTime? createdAt;
 
-  ApiKeyEntry({
+  const ApiKeyEntry({
     this.id,
     this.key,
     this.systemName,
@@ -16,4 +18,15 @@ class ApiKeyEntry {
     this.createdBy,
     this.createdAt,
   });
+
+  @override
+  List<Object?> get props => [
+    id,
+    key,
+    systemName,
+    allowedDomains,
+    status,
+    createdBy,
+    createdAt,
+  ];
 }

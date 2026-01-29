@@ -1,4 +1,6 @@
-class CategoryItemEntry {
+import 'package:equatable/equatable.dart';
+
+class CategoryItemEntry extends Equatable {
   final String? id;
   final String? code;
   final String? name;
@@ -10,7 +12,7 @@ class CategoryItemEntry {
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
-  CategoryItemEntry({
+  const CategoryItemEntry({
     this.id,
     this.code,
     this.name,
@@ -22,4 +24,18 @@ class CategoryItemEntry {
     this.createdAt,
     this.updatedAt,
   });
+
+  @override
+  List<Object?> get props => [
+    id,
+    code,
+    name,
+    description,
+    status,
+    groupId,
+    groupName,
+    domainName,
+    createdAt,
+    updatedAt,
+  ];
 }

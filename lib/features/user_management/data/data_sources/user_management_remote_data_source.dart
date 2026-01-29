@@ -1,20 +1,20 @@
 import 'package:dio/dio.dart';
 import 'package:multi_catalog_system/core/config/networks/base_remote_data_source.dart';
+import 'package:multi_catalog_system/core/data/models/auth/user_profile_model.dart';
 import 'package:multi_catalog_system/core/error/exceptions.dart';
-import 'package:multi_catalog_system/features/user_management/data/models/user_management_model.dart';
 
 abstract class UserManagementRemoteDataSource {
-  Future<List<UserManagementModel>> getAll({String? search});
-  Future<UserManagementModel> create({required Map<String, dynamic> data});
-  Future<UserManagementModel> update({
+  Future<List<UserProfileModel>> getAll({String? search});
+  Future<UserProfileModel> create({required Map<String, dynamic> data});
+  Future<UserProfileModel> update({
     required String id,
     required Map<String, dynamic> data,
   });
-  Future<UserManagementModel> getById({required String id});
+  Future<UserProfileModel> getById({required String id});
   Future<void> delete({required String id});
-  Future<UserManagementModel> activate({required String id});
-  Future<UserManagementModel> deactivate({required String id});
-  Future<UserManagementModel> grantAccess({required Map<String, dynamic> data});
+  Future<UserProfileModel> activate({required String id});
+  Future<UserProfileModel> deactivate({required String id});
+  Future<UserProfileModel> grantAccess({required Map<String, dynamic> data});
 }
 
 class UserManagementRemoteDataSourceImpl extends BaseRemoteDataSource
@@ -24,7 +24,7 @@ class UserManagementRemoteDataSourceImpl extends BaseRemoteDataSource
   UserManagementRemoteDataSourceImpl({required this.dio});
 
   @override
-  Future<List<UserManagementModel>> getAll({String? search}) async {
+  Future<List<UserProfileModel>> getAll({String? search}) async {
     try {
       final queryParams = <String, dynamic>{};
 
@@ -35,9 +35,7 @@ class UserManagementRemoteDataSourceImpl extends BaseRemoteDataSource
         queryParameters: queryParams,
       );
       final List<dynamic> jsonList = response.data['data']['data'];
-      return jsonList
-          .map((json) => UserManagementModel.fromJson(json))
-          .toList();
+      return jsonList.map((json) => UserProfileModel.fromJson(json)).toList();
     } on DioException catch (e) {
       handleDioError(e);
     } catch (e) {
@@ -46,10 +44,10 @@ class UserManagementRemoteDataSourceImpl extends BaseRemoteDataSource
   }
 
   @override
-  Future<UserManagementModel> getById({required String id}) async {
+  Future<UserProfileModel> getById({required String id}) async {
     try {
       final response = await dio.get('/admin/users/$id');
-      return UserManagementModel.fromJson(response.data['data']);
+      return UserProfileModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);
     } catch (e) {
@@ -58,12 +56,10 @@ class UserManagementRemoteDataSourceImpl extends BaseRemoteDataSource
   }
 
   @override
-  Future<UserManagementModel> create({
-    required Map<String, dynamic> data,
-  }) async {
+  Future<UserProfileModel> create({required Map<String, dynamic> data}) async {
     try {
       final response = await dio.post('/admin/users', data: data);
-      return UserManagementModel.fromJson(response.data['data']);
+      return UserProfileModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);
     } catch (e) {
@@ -72,13 +68,13 @@ class UserManagementRemoteDataSourceImpl extends BaseRemoteDataSource
   }
 
   @override
-  Future<UserManagementModel> update({
+  Future<UserProfileModel> update({
     required String id,
     required Map<String, dynamic> data,
   }) async {
     try {
       final response = await dio.patch('/admin/users/$id', data: data);
-      return UserManagementModel.fromJson(response.data['data']);
+      return UserProfileModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);
     } catch (e) {
@@ -98,10 +94,10 @@ class UserManagementRemoteDataSourceImpl extends BaseRemoteDataSource
   }
 
   @override
-  Future<UserManagementModel> activate({required String id}) async {
+  Future<UserProfileModel> activate({required String id}) async {
     try {
       final response = await dio.patch('/admin/users/$id/activate');
-      return UserManagementModel.fromJson(response.data['data']);
+      return UserProfileModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);
     } catch (e) {
@@ -110,10 +106,10 @@ class UserManagementRemoteDataSourceImpl extends BaseRemoteDataSource
   }
 
   @override
-  Future<UserManagementModel> deactivate({required String id}) async {
+  Future<UserProfileModel> deactivate({required String id}) async {
     try {
       final response = await dio.patch('/admin/users/$id/deactivate');
-      return UserManagementModel.fromJson(response.data['data']);
+      return UserProfileModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);
     } catch (e) {
@@ -122,12 +118,12 @@ class UserManagementRemoteDataSourceImpl extends BaseRemoteDataSource
   }
 
   @override
-  Future<UserManagementModel> grantAccess({
+  Future<UserProfileModel> grantAccess({
     required Map<String, dynamic> data,
   }) async {
     try {
       final response = await dio.post('/admin/users/grant-access', data: data);
-      return UserManagementModel.fromJson(response.data['data']);
+      return UserProfileModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);
     } catch (e) {

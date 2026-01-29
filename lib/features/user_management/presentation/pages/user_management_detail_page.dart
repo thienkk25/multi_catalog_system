@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:multi_catalog_system/core/domain/entities/auth/user_profile_entry.dart';
 import 'package:multi_catalog_system/core/utils/formatter/data_time_formatter.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/core/widgets/custom_circular_progress.dart';
 import 'package:multi_catalog_system/core/widgets/custom_label.dart';
-import 'package:multi_catalog_system/features/user_management/domain/entities/user_management_entry.dart';
 import 'package:multi_catalog_system/features/user_management/presentation/bloc/user_management_bloc.dart';
 import 'package:multi_catalog_system/features/user_management/presentation/bloc/user_management_state.dart';
 import 'package:multi_catalog_system/features/user_management/presentation/widgets/user_management_avatar_section_widget.dart';
@@ -54,7 +54,7 @@ class UserManagementDetailPage extends StatelessWidget {
 }
 
 class _Header extends StatelessWidget {
-  final UserManagementEntry entry;
+  final UserProfileEntry entry;
 
   const _Header({required this.entry});
 
@@ -99,7 +99,7 @@ class _Header extends StatelessWidget {
 }
 
 class _InfoSection extends StatelessWidget {
-  final UserManagementEntry entry;
+  final UserProfileEntry entry;
 
   const _InfoSection({required this.entry});
 
@@ -129,7 +129,7 @@ class _InfoSection extends StatelessWidget {
 }
 
 class _SystemSection extends StatelessWidget {
-  final UserManagementEntry entry;
+  final UserProfileEntry entry;
 
   const _SystemSection({required this.entry});
 

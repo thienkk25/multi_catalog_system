@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:multi_catalog_system/core/domain/entities/auth/user_profile_entry.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/core/utils/formatter/data_time_formatter.dart';
 import 'package:multi_catalog_system/core/utils/formatter/phone_number_fomatter.dart';
@@ -9,7 +10,6 @@ import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/core/widgets/custom_label.dart';
 import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_state.dart';
-import 'package:multi_catalog_system/features/user_management/domain/entities/user_management_entry.dart';
 import 'package:multi_catalog_system/features/user_management/presentation/bloc/user_management_bloc.dart';
 import 'package:multi_catalog_system/features/user_management/presentation/bloc/user_management_event.dart';
 import 'package:multi_catalog_system/features/user_management/presentation/widgets/user_management_avatar_section_widget.dart';
@@ -17,7 +17,7 @@ import 'package:multi_catalog_system/features/user_management/presentation/widge
 import 'user_management_dialog_grant_access.dart';
 
 class UserManagementCard extends StatelessWidget {
-  final UserManagementEntry entry;
+  final UserProfileEntry entry;
 
   const UserManagementCard({super.key, required this.entry});
 
@@ -37,7 +37,7 @@ class UserManagementCard extends StatelessWidget {
 }
 
 class _Header extends StatelessWidget {
-  final UserManagementEntry entry;
+  final UserProfileEntry entry;
 
   const _Header({required this.entry});
 
@@ -98,7 +98,7 @@ class _Header extends StatelessWidget {
 }
 
 class _ActionMenu extends StatelessWidget {
-  final UserManagementEntry entry;
+  final UserProfileEntry entry;
 
   const _ActionMenu({required this.entry});
 
@@ -211,7 +211,7 @@ class _ActionMenu extends StatelessWidget {
 enum _MenuAction { lock, unlock, grant, edit, delete }
 
 class _MetaInfo extends StatelessWidget {
-  final UserManagementEntry entry;
+  final UserProfileEntry entry;
 
   const _MetaInfo({required this.entry});
 

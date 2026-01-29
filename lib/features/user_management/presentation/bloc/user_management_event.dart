@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:multi_catalog_system/features/user_management/domain/entities/user_management_entry.dart';
+import 'package:multi_catalog_system/core/domain/entities/auth/user_profile_entry.dart';
 
 part 'user_management_event.freezed.dart';
 
@@ -7,18 +7,17 @@ part 'user_management_event.freezed.dart';
 class UserManagementEvent with _$UserManagementEvent {
   const factory UserManagementEvent.getAll({String? search}) = _GetAll;
   const factory UserManagementEvent.getById({required String id}) = _GetById;
-  const factory UserManagementEvent.create({
-    required UserManagementEntry entry,
-  }) = _Create;
+  const factory UserManagementEvent.create({required UserProfileEntry entry}) =
+      _Create;
   const factory UserManagementEvent.update({
     required String id,
-    required UserManagementEntry entry,
+    required UserProfileEntry entry,
   }) = _Update;
   const factory UserManagementEvent.delete({required String id}) = _Delete;
   const factory UserManagementEvent.activate({required String id}) = _Activate;
   const factory UserManagementEvent.deactivate({required String id}) =
       _Deactivate;
   const factory UserManagementEvent.grantAccess({
-    required UserManagementEntry entry,
+    required UserProfileEntry entry,
   }) = _GrantAccess;
 }

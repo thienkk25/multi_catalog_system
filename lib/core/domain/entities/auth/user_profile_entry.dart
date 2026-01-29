@@ -1,7 +1,8 @@
+import 'package:equatable/equatable.dart';
 import 'package:multi_catalog_system/core/domain/entities/domain/domain_ref_entry.dart';
 import 'package:multi_catalog_system/core/domain/entities/role/role_entry.dart';
 
-class UserManagementEntry {
+class UserProfileEntry extends Equatable {
   final String? id;
   final String? email;
   final String? fullName;
@@ -14,7 +15,7 @@ class UserManagementEntry {
   final DateTime? updatedAt;
   final DateTime? lastSignInAt;
 
-  UserManagementEntry({
+  const UserProfileEntry({
     this.id,
     this.email,
     this.fullName,
@@ -22,9 +23,24 @@ class UserManagementEntry {
     this.status,
     this.role,
     this.domains,
-    this.createdAt,
     this.password,
+    this.createdAt,
     this.updatedAt,
     this.lastSignInAt,
   });
+
+  @override
+  List<Object?> get props => [
+    id,
+    email,
+    fullName,
+    phone,
+    status,
+    role,
+    domains,
+    password,
+    createdAt,
+    updatedAt,
+    lastSignInAt,
+  ];
 }

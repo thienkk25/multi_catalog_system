@@ -1,4 +1,6 @@
-class LegalDocumentEntry {
+import 'package:equatable/equatable.dart';
+
+class LegalDocumentEntry extends Equatable {
   final String? id;
   final String? code;
   final String? title;
@@ -14,7 +16,7 @@ class LegalDocumentEntry {
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
-  LegalDocumentEntry({
+  const LegalDocumentEntry({
     this.id,
     this.code,
     this.title,
@@ -30,4 +32,22 @@ class LegalDocumentEntry {
     this.createdAt,
     this.updatedAt,
   });
+
+  @override
+  List<Object?> get props => [
+    id,
+    code,
+    title,
+    type,
+    issuedByName,
+    issueDate,
+    effectiveDate,
+    expiryDate,
+    description,
+    fileName,
+    fileUrl,
+    status,
+    createdAt,
+    updatedAt,
+  ];
 }

@@ -1,4 +1,6 @@
-class CategoryGroupEntry {
+import 'package:equatable/equatable.dart';
+
+class CategoryGroupEntry extends Equatable {
   final String? id;
   final String? domainId;
   final String? code;
@@ -6,7 +8,7 @@ class CategoryGroupEntry {
   final String? description;
   final DateTime? createdAt;
   final DateTime? updatedAt;
-  CategoryGroupEntry({
+  const CategoryGroupEntry({
     this.id,
     this.domainId,
     this.code,
@@ -15,4 +17,15 @@ class CategoryGroupEntry {
     this.createdAt,
     this.updatedAt,
   });
+
+  @override
+  List<Object?> get props => [
+    id,
+    domainId,
+    code,
+    name,
+    description,
+    createdAt,
+    updatedAt,
+  ];
 }
