@@ -25,6 +25,9 @@ class _CategoryItemAddLegalDocumentsPageState
   Timer? _debounce;
   late List<LegalDocumentEntry> _legalDocuments;
 
+  final GlobalKey _bottomBarKey = GlobalKey();
+  double _bottomBarHeight = 0;
+
   @override
   void initState() {
     super.initState();
@@ -35,7 +38,23 @@ class _CategoryItemAddLegalDocumentsPageState
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final context = _bottomBarKey.currentContext;
+      if (context != null) {
+        final height = context.size?.height ?? 0;
+        if (height != _bottomBarHeight) {
+          setState(() => _bottomBarHeight = height);
+        }
+      }
+    });
+  }
+
+  @override
   void dispose() {
+    _bottomBarKey.currentState?.dispose();
     _searchController.dispose();
     _debounce?.cancel();
     super.dispose();
@@ -47,16 +66,32 @@ class _CategoryItemAddLegalDocumentsPageState
       appBar: AppBar(
         title: const Text('Danh sách văn bản pháp lý'),
         centerTitle: true,
+        actions: [
+          TextButton(
+            onPressed: () {
+              context.pop();
+            },
+            child: const Text(
+              'Hủy',
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
       ),
       body: SafeArea(
         child: Stack(
           children: [
-            Padding(
-              padding: EdgeInsetsGeometry.all(10.0),
-              child: Column(
-                spacing: 10,
-                children: [
-                  CustomInput(
+            CustomScrollView(
+              slivers: [
+                SliverAppBar(
+                  pinned: true,
+                  automaticallyImplyLeading: false,
+                  automaticallyImplyActions: false,
+                  backgroundColor: Color(0xFFF5F7FA),
+                  title: CustomInput(
                     hintText: 'Tìm kiếm theo tên, mã...',
                     suffixIcon: Icon(Icons.search),
                     onChanged: (value) {
@@ -77,77 +112,89 @@ class _CategoryItemAddLegalDocumentsPageState
                       });
                     },
                   ),
-                  Expanded(
-                    child: BlocBuilder<LegalDocumentBloc, LegalDocumentState>(
-                      builder: (context, state) => state.when((
-                        isLoading,
-                        entries,
-                        selectedIds,
-                        error,
-                        successMessage,
-                      ) {
-                        if (isLoading) {
-                          return const Center(
-                            child: CustomCircularProgressScreen(),
-                          );
-                        }
-                        if (error != null) {
-                          return ErrorRetryWidget(
-                            error: error,
-                            onRetry: () {
-                              context.read<LegalDocumentBloc>().add(
-                                const LegalDocumentEvent.getAllHasFile(),
-                              );
-                            },
-                          );
-                        }
-                        return ListView.separated(
-                          itemCount: entries.length,
-                          separatorBuilder: (_, _) =>
-                              const SizedBox(height: 10),
-                          itemBuilder: (_, index) {
-                            final entry = entries[index];
-
-                            return BlocSelector<
-                              LegalDocumentBloc,
-                              LegalDocumentState,
-                              bool
-                            >(
-                              selector: (state) =>
-                                  state.selectedIds.contains(entry.id),
-                              builder: (_, isSelected) {
-                                return _LegalDocumentCard(
-                                  entry: entry,
-                                  isSelected: isSelected,
-                                  onChanged: (_) {
-                                    context.read<LegalDocumentBloc>().add(
-                                      LegalDocumentEvent.toggleSelect(
-                                        entry.id!,
-                                      ),
-                                    );
-                                    if (!isSelected) {
-                                      _legalDocuments.add(entry);
-                                    } else {
-                                      _legalDocuments.remove(entry);
-                                    }
-                                  },
+                ),
+                SliverPadding(
+                  padding: const EdgeInsets.all(10.0),
+                  sliver: SliverList(
+                    delegate: SliverChildListDelegate([
+                      BlocBuilder<LegalDocumentBloc, LegalDocumentState>(
+                        builder: (context, state) => state.when((
+                          isLoading,
+                          entries,
+                          selectedIds,
+                          error,
+                          successMessage,
+                        ) {
+                          if (isLoading) {
+                            return const Center(
+                              child: CustomCircularProgressScreen(),
+                            );
+                          }
+                          if (error != null) {
+                            return ErrorRetryWidget(
+                              error: error,
+                              onRetry: () {
+                                context.read<LegalDocumentBloc>().add(
+                                  const LegalDocumentEvent.getAllHasFile(),
                                 );
                               },
                             );
-                          },
-                        );
-                      }),
-                    ),
+                          }
+                          return ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: entries.length,
+                            itemBuilder: (_, index) {
+                              final entry = entries[index];
+
+                              return BlocSelector<
+                                LegalDocumentBloc,
+                                LegalDocumentState,
+                                bool
+                              >(
+                                selector: (state) =>
+                                    state.selectedIds.contains(entry.id),
+                                builder: (_, isSelected) {
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 5,
+                                    ),
+                                    child: _LegalDocumentCard(
+                                      entry: entry,
+                                      isSelected: isSelected,
+                                      onChanged: (_) {
+                                        context.read<LegalDocumentBloc>().add(
+                                          LegalDocumentEvent.toggleSelect(
+                                            entry.id!,
+                                          ),
+                                        );
+                                        if (!isSelected) {
+                                          _legalDocuments.add(entry);
+                                        } else {
+                                          _legalDocuments.remove(entry);
+                                        }
+                                      },
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          );
+                        }),
+                      ),
+                    ]),
                   ),
-                ],
-              ),
+                ),
+                SliverPadding(
+                  padding: EdgeInsets.only(bottom: _bottomBarHeight),
+                ),
+              ],
             ),
             BlocSelector<LegalDocumentBloc, LegalDocumentState, int>(
+              key: _bottomBarKey,
               selector: (state) => state.selectedIds.length,
               builder: (_, countSelected) {
                 return _BottomFormActions(
                   countSelected: countSelected,
-                  onCancel: () => context.pop(),
                   onSave: () {
                     context.pop(_legalDocuments);
                   },
@@ -172,53 +219,121 @@ class _LegalDocumentCard extends StatelessWidget {
     required this.onChanged,
   });
 
+  String _formatDate(DateTime date) {
+    return '${date.day}/${date.month}/${date.year}';
+  }
+
+  Widget _metaItem(
+    BuildContext context, {
+    required IconData icon,
+    required String? text,
+  }) {
+    if (text == null || text.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 14, color: Colors.grey),
+        const SizedBox(width: 4),
+        Text(text, style: TextStyle(color: Colors.grey.shade700)),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      borderRadius: BorderRadius.circular(10),
+      borderRadius: BorderRadius.circular(14),
       onTap: () => onChanged(!isSelected),
-      child: CustomCard(
-        color: isSelected ? Colors.blue.withValues(alpha: .1) : null,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: isSelected ? Colors.blue.withValues(alpha: .06) : Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: isSelected ? Colors.blue : Colors.grey.shade300,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: .04),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: 5,
           children: [
             Row(
-              spacing: 5,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  child: Text(
-                    entry.title!,
-                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        entry.title ?? '--',
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        entry.description ?? '',
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(color: Colors.grey.shade600),
+                      ),
+                    ],
                   ),
                 ),
                 Checkbox(
-                  shape: const CircleBorder(),
                   value: isSelected,
-                  onChanged: (value) => onChanged(value ?? false),
+                  activeColor: Colors.blue,
+                  shape: const CircleBorder(),
+                  onChanged: (v) => onChanged(v ?? false),
                 ),
               ],
             ),
-            Text(entry.code!, style: const TextStyle(color: Colors.grey)),
+            const SizedBox(height: 10),
+            Wrap(
+              spacing: 12,
+              runSpacing: 6,
+              children: [
+                _metaItem(context, icon: Icons.tag, text: entry.code),
+                _metaItem(context, icon: Icons.category, text: entry.type),
+                if (entry.effectiveDate != null)
+                  _metaItem(
+                    context,
+                    icon: Icons.event,
+                    text: 'Hiệu lực: ${_formatDate(entry.effectiveDate!)}',
+                  ),
+              ],
+            ),
+            const SizedBox(height: 12),
             Container(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.grey.withValues(alpha: .15),
+                color: Colors.blue.withValues(alpha: .08),
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(
-                  color: isSelected
-                      ? Colors.blue
-                      : Colors.blue.withValues(alpha: .3),
-                ),
+                border: Border.all(color: Colors.blue.shade300),
               ),
               child: Row(
-                spacing: 8,
                 children: [
-                  FileIconWidget(fileName: entry.fileName!),
+                  FileIconWidget(fileName: entry.fileName ?? ''),
+                  const SizedBox(width: 10),
                   Expanded(
                     child: Text(
-                      entry.fileName!,
-                      style: const TextStyle(fontWeight: FontWeight.w600),
+                      entry.fileName ?? '',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: Colors.blue,
+                      ),
                     ),
                   ),
                 ],
@@ -234,12 +349,7 @@ class _LegalDocumentCard extends StatelessWidget {
 class _BottomFormActions extends StatelessWidget {
   final int countSelected;
   final VoidCallback onSave;
-  final VoidCallback onCancel;
-  const _BottomFormActions({
-    required this.onCancel,
-    required this.onSave,
-    required this.countSelected,
-  });
+  const _BottomFormActions({required this.onSave, required this.countSelected});
 
   @override
   Widget build(BuildContext context) {
@@ -259,30 +369,16 @@ class _BottomFormActions extends StatelessWidget {
             ),
           ],
         ),
-        child: Column(
-          spacing: 10,
-          children: [
-            CustomButton(
-              onTap: onSave,
-              colorBackground: Colors.blue,
-              textButton: Text(
-                'Xác nhận ($countSelected)',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight(600),
-                ),
-              ),
+        child: CustomButton(
+          onTap: onSave,
+          colorBackground: Colors.blue,
+          textButton: Text(
+            'Xác nhận ($countSelected)',
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight(600),
             ),
-            CustomButton(
-              onTap: onCancel,
-              colorBackground: Colors.white,
-              colorBorder: Colors.blue.withValues(alpha: .5),
-              textButton: const Text(
-                'Hủy',
-                style: TextStyle(fontWeight: FontWeight(600)),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );

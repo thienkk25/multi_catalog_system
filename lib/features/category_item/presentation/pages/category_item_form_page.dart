@@ -9,6 +9,7 @@ import 'package:multi_catalog_system/core/widgets/custom_input.dart';
 import 'package:multi_catalog_system/core/widgets/file_icon_widget.dart';
 import 'package:multi_catalog_system/features/catalog_lookup/presentation/bloc/catalog_lookup_bloc.dart';
 import 'package:multi_catalog_system/features/catalog_lookup/presentation/bloc/catalog_lookup_event.dart';
+import 'package:multi_catalog_system/features/catalog_lookup/presentation/bloc/catalog_lookup_state.dart';
 import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_entry.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_bloc.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_event.dart';
@@ -29,7 +30,6 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   List _domains = [];
-  List _categoryGroups = [];
   List<LegalDocumentEntry> _legalDocuments = [];
   String? _selectedDomainId;
   String? _selectedCategoryGroupId;
@@ -174,39 +174,47 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
                 _selectedDomainId = value;
                 _selectedCategoryGroupId = null;
               });
+
               context.read<CatalogLookupBloc>().add(
                 CatalogLookupEvent.getCategoryGroupsRef(domainId: value),
               );
-              _categoryGroups = context
-                  .read<CatalogLookupBloc>()
-                  .state
-                  .categoryGroupRef;
             },
             validator: (v) =>
-                v == null || v.isEmpty ? 'Vui nhập chọn lĩnh vực' : null,
+                v == null || v.isEmpty ? 'Vui lòng chọn lĩnh vực' : null,
           ),
-          CustomDropdownButton<String>(
-            lable: const Text(
-              'Nhóm danh mục',
-              style: TextStyle(fontWeight: FontWeight.w600),
-            ),
-            hint: 'Chọn nhóm danh mục',
-            value: _selectedCategoryGroupId,
-            items: _categoryGroups
-                .map(
-                  (e) => DropdownMenuItem<String>(
-                    value: e.id,
-                    child: Text(e.name),
-                  ),
-                )
-                .toList(),
-            onChanged: (value) {
-              setState(() {
-                _selectedCategoryGroupId = value;
-              });
+          BlocBuilder<CatalogLookupBloc, CatalogLookupState>(
+            buildWhen: (prev, curr) =>
+                prev.categoryGroupRef != curr.categoryGroupRef,
+            builder: (context, state) {
+              final categoryGroups = state.categoryGroupRef;
+
+              return CustomDropdownButton<String>(
+                lable: const Text(
+                  'Nhóm danh mục',
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+                hint: 'Chọn nhóm danh mục',
+                value: _selectedCategoryGroupId,
+                items: categoryGroups
+                    .map(
+                      (e) => DropdownMenuItem<String>(
+                        value: e.id,
+                        child: Text(e.name),
+                      ),
+                    )
+                    .toList(),
+                onChanged: categoryGroups.isEmpty
+                    ? null
+                    : (value) {
+                        setState(() {
+                          _selectedCategoryGroupId = value;
+                        });
+                      },
+                validator: (v) => v == null || v.isEmpty
+                    ? 'Vui lòng chọn nhóm danh mục'
+                    : null,
+              );
             },
-            validator: (v) =>
-                v == null || v.isEmpty ? 'Vui nhập chọn nhóm danh mục' : null,
           ),
           CustomInput(
             controller: _descriptionController,
@@ -323,8 +331,8 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
         description: widget.entry?.description != _descriptionController.text
             ? _descriptionController.text
             : widget.entry?.description,
-        status: 'active',
         groupId: _selectedCategoryGroupId,
+        legalDocuments: _legalDocuments,
       );
       context.read<CategoryItemBloc>().add(
         CategoryItemEvent.update(entry: entry),
@@ -336,8 +344,8 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
         description: _descriptionController.text.isNotEmpty
             ? _descriptionController.text
             : null,
-        status: 'active',
         groupId: _selectedCategoryGroupId,
+        legalDocuments: _legalDocuments,
       );
       context.read<CategoryItemBloc>().add(
         CategoryItemEvent.create(entry: entry),

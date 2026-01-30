@@ -5,37 +5,68 @@ import 'package:multi_catalog_system/core/error/failures.dart';
 import 'package:multi_catalog_system/features/category_item/data/data_sources/category_item_remote_data_source.dart';
 import 'package:multi_catalog_system/features/category_item/data/models/category_item_model.dart';
 import 'package:multi_catalog_system/features/category_item/domain/domain.dart';
+import 'package:multi_catalog_system/features/legal_document/data/models/legal_document_model.dart';
+import 'package:multi_catalog_system/features/legal_document/domain/entities/legal_document_entry.dart';
 
 class CategoryItemRepositoryImpl implements CategoryItemRepository {
   final CategoryItemRemoteDataSource remoteDataSource;
 
   CategoryItemRepositoryImpl({required this.remoteDataSource});
 
-  CategoryItemEntry _toEntity(CategoryItemModel model) => CategoryItemEntry(
-    id: model.id,
-    code: model.code,
-    name: model.name,
-    description: model.description,
-    status: model.status,
-    groupId: model.groupId,
-    groupName: model.group.name,
-    domainName: model.group.domain.name,
-    createdAt: model.createdAt,
-    updatedAt: model.updatedAt,
-  );
+  CategoryItemEntry _toEntityCategoryItem(CategoryItemModel model) =>
+      CategoryItemEntry(
+        id: model.id,
+        code: model.code,
+        name: model.name,
+        description: model.description,
+        status: model.status,
+        groupId: model.group.id,
+        groupName: model.group.name,
+        domainName: model.group.domain.name,
+        legalDocuments: model.legalDocuments
+            ?.map((e) => _toEntityLegalDocument(e))
+            .toList(),
+        createdAt: model.createdAt,
+        updatedAt: model.updatedAt,
+      );
+
+  LegalDocumentEntry _toEntityLegalDocument(LegalDocumentModel model) =>
+      LegalDocumentEntry(
+        id: model.id,
+        code: model.code,
+        title: model.title,
+        description: model.description,
+        type: model.type,
+        status: model.status,
+        issuedByName: model.issuedByName,
+        issueDate: model.issueDate,
+        effectiveDate: model.effectiveDate,
+        expiryDate: model.expiryDate,
+        fileName: model.fileName,
+        fileUrl: model.fileUrl,
+        createdAt: model.createdAt,
+        updatedAt: model.updatedAt,
+      );
 
   Map<String, dynamic> _createPayload(CategoryItemEntry entry) => {
-    'code': entry.code,
-    'name': entry.name,
-    if (entry.description != null) 'description': entry.description,
-    'group_id': entry.groupId,
+    'category_item': {
+      'code': entry.code,
+      'name': entry.name,
+      if (entry.description != null) 'description': entry.description,
+      'group_id': entry.groupId,
+    },
+    'legal_document_ids': entry.legalDocuments?.map((e) => e.id).toList(),
   };
 
   Map<String, dynamic> _updatePayload(CategoryItemEntry entry) => {
-    if (entry.code != null) 'code': entry.code,
-    if (entry.name != null) 'name': entry.name,
-    if (entry.description != null) 'description': entry.description,
-    if (entry.groupId != null) 'group_id': entry.groupId,
+    'category_item': {
+      if (entry.code != null) 'code': entry.code,
+      if (entry.name != null) 'name': entry.name,
+      if (entry.description != null) 'description': entry.description,
+      if (entry.groupId != null) 'group_id': entry.groupId,
+    },
+    if (entry.legalDocuments != null && entry.legalDocuments!.isNotEmpty)
+      'legal_document_ids': entry.legalDocuments?.map((e) => e.id).toList(),
   };
 
   @override
@@ -44,7 +75,7 @@ class CategoryItemRepositoryImpl implements CategoryItemRepository {
   }) async {
     try {
       final model = await remoteDataSource.create(data: _createPayload(entry));
-      return Right(_toEntity(model));
+      return Right(_toEntityCategoryItem(model));
     } on AppException catch (e) {
       return Left(mapExceptionToFailure(e));
     } catch (e) {
@@ -60,7 +91,7 @@ class CategoryItemRepositoryImpl implements CategoryItemRepository {
       final models = await remoteDataSource.createMany(
         data: entries.map((e) => _createPayload(e)).toList(),
       );
-      return Right(models.map((m) => _toEntity(m)).toList());
+      return Right(models.map((m) => _toEntityCategoryItem(m)).toList());
     } on AppException catch (e) {
       return Left(mapExceptionToFailure(e));
     } catch (e) {
@@ -74,7 +105,7 @@ class CategoryItemRepositoryImpl implements CategoryItemRepository {
   }) async {
     try {
       final model = await remoteDataSource.getById(id: id);
-      return Right(_toEntity(model));
+      return Right(_toEntityCategoryItem(model));
     } on AppException catch (e) {
       return Left(mapExceptionToFailure(e));
     } catch (e) {
@@ -88,7 +119,7 @@ class CategoryItemRepositoryImpl implements CategoryItemRepository {
   }) async {
     try {
       final models = await remoteDataSource.getAll(search: search);
-      return Right(models.map((m) => _toEntity(m)).toList());
+      return Right(models.map((m) => _toEntityCategoryItem(m)).toList());
     } on AppException catch (e) {
       return Left(mapExceptionToFailure(e));
     } catch (e) {
@@ -105,7 +136,7 @@ class CategoryItemRepositoryImpl implements CategoryItemRepository {
         id: entry.id!,
         data: _updatePayload(entry),
       );
-      return Right(_toEntity(model));
+      return Right(_toEntityCategoryItem(model));
     } on AppException catch (e) {
       return Left(mapExceptionToFailure(e));
     } catch (e) {
@@ -121,7 +152,7 @@ class CategoryItemRepositoryImpl implements CategoryItemRepository {
       final models = await remoteDataSource.upsertMany(
         data: entries.map((e) => _updatePayload(e)).toList(),
       );
-      return Right(models.map((m) => _toEntity(m)).toList());
+      return Right(models.map((m) => _toEntityCategoryItem(m)).toList());
     } on AppException catch (e) {
       return Left(mapExceptionToFailure(e));
     } catch (e) {

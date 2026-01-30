@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:multi_catalog_system/core/utils/formatter/data_time_formatter.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
+import 'package:multi_catalog_system/core/widgets/file_icon_widget.dart';
 import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_entry.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/widgets/category_item_status_chip.dart';
+import 'package:multi_catalog_system/features/legal_document/domain/entities/legal_document_entry.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CategoryItemDetailPage extends StatefulWidget {
   final CategoryItemEntry entry;
@@ -76,8 +79,6 @@ class _InfoTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
@@ -122,23 +123,28 @@ class _InfoTab extends StatelessWidget {
 
         const SizedBox(height: 12),
 
-        CustomCard(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Văn bản pháp lý liên quan',
-                style: theme.textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
+        if (entry.legalDocuments != null && entry.legalDocuments!.isNotEmpty)
+          CustomCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Văn bản pháp lý liên quan',
+                  style: TextStyle(fontWeight: FontWeight.w600),
                 ),
-              ),
-              const SizedBox(height: 8),
-
-              _LegalItem(title: 'Nghị định 47/2020/NĐ-CP'),
-              _LegalItem(title: 'Thông tư 14/2021/TT-BYT'),
-            ],
+                const SizedBox(height: 8),
+                ListView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: entry.legalDocuments?.length ?? 0,
+                  itemBuilder: (context, index) {
+                    final legalDocument = entry.legalDocuments?[index];
+                    return _LegalItem(legalDocument: legalDocument);
+                  },
+                ),
+              ],
+            ),
           ),
-        ),
       ],
     );
   }
@@ -269,17 +275,43 @@ class _InfoRow extends StatelessWidget {
 }
 
 class _LegalItem extends StatelessWidget {
-  final String title;
-  const _LegalItem({required this.title});
+  final LegalDocumentEntry? legalDocument;
+  const _LegalItem({required this.legalDocument});
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      leading: const Icon(Icons.description, color: Colors.red),
-      title: Text(title),
-      trailing: const Icon(Icons.chevron_right),
-      onTap: () {},
+    if (legalDocument == null) {
+      return const SizedBox.shrink();
+    }
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(10),
+        onTap: () async {
+          final uri = Uri.parse(legalDocument!.fileUrl!);
+          await launchUrl(uri);
+        },
+        child: Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: Colors.grey.withValues(alpha: .15),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: Colors.blue.withValues(alpha: .5)),
+          ),
+          child: Row(
+            spacing: 8,
+            children: [
+              FileIconWidget(fileName: legalDocument!.fileName!),
+              Expanded(
+                child: Text(
+                  legalDocument!.fileName!,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
