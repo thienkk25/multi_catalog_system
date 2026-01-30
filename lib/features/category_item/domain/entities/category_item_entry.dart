@@ -11,8 +11,8 @@ class CategoryItemEntry extends Equatable {
   final String? groupName;
   final String? domainName;
   final List<LegalDocumentEntry>? legalDocuments;
-  final String? createdBy;
-  final String? updatedBy;
+  final String? createdByName;
+  final String? updatedByName;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -26,8 +26,8 @@ class CategoryItemEntry extends Equatable {
     this.groupName,
     this.domainName,
     this.legalDocuments,
-    this.createdBy,
-    this.updatedBy,
+    this.createdByName,
+    this.updatedByName,
     this.createdAt,
     this.updatedAt,
   });
@@ -43,8 +43,8 @@ class CategoryItemEntry extends Equatable {
     groupName,
     domainName,
     legalDocuments,
-    createdBy,
-    updatedBy,
+    createdByName,
+    updatedByName,
     createdAt,
     updatedAt,
   ];

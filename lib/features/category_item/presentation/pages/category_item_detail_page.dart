@@ -106,16 +106,21 @@ class _InfoTab extends StatelessWidget {
         CustomCard(
           child: Column(
             children: [
-              _InfoRow(label: 'Mã danh mục', value: entry.code!),
-              _InfoRow(label: 'Tên danh mục', value: entry.name!),
+              _InfoRow(label: 'Mã danh mục', value: entry.code),
+              _InfoRow(label: 'Tên danh mục', value: entry.name),
               if (entry.description?.isNotEmpty == true)
                 _InfoRow(
                   label: 'Mô tả',
                   value: entry.description!,
                   multiline: true,
                 ),
-              _InfoRow(label: 'Lĩnh vực', value: entry.domainName!),
-              _InfoRow(label: 'Nhóm danh mục', value: entry.groupName!),
+              _InfoRow(label: 'Lĩnh vực', value: entry.domainName),
+              _InfoRow(label: 'Nhóm danh mục', value: entry.groupName),
+              _InfoRow(label: 'Người tạo', value: entry.createdByName),
+              _InfoRow(
+                label: 'Người cập nhật gần đây',
+                value: entry.updatedByName,
+              ),
               _InfoRow(label: 'Ngày tạo', value: dateFormat(entry.createdAt)),
             ],
           ),
@@ -234,7 +239,7 @@ class _AdminActions extends StatelessWidget {
 
 class _InfoRow extends StatelessWidget {
   final String label;
-  final String value;
+  final String? value;
   final bool multiline;
 
   const _InfoRow({
@@ -264,7 +269,7 @@ class _InfoRow extends StatelessWidget {
           ),
           Expanded(
             child: Text(
-              value,
+              value ?? '-',
               style: const TextStyle(fontWeight: FontWeight.w500),
             ),
           ),

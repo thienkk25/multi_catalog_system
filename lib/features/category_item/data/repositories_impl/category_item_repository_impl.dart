@@ -26,6 +26,8 @@ class CategoryItemRepositoryImpl implements CategoryItemRepository {
         legalDocuments: model.legalDocuments
             ?.map((e) => _toEntityLegalDocument(e))
             .toList(),
+        createdByName: model.createdByName,
+        updatedByName: model.updatedByName,
         createdAt: model.createdAt,
         updatedAt: model.updatedAt,
       );

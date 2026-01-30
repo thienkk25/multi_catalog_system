@@ -15,8 +15,8 @@ abstract class CategoryItemModel with _$CategoryItemModel {
     String? status,
     required CategoryGroupResModel group,
     @JsonKey(name: 'legal_documents') List<LegalDocumentModel>? legalDocuments,
-    @JsonKey(name: 'created_by') String? createdBy,
-    @JsonKey(name: 'updated_by') String? updatedBy,
+    @JsonKey(name: 'created_by_name') String? createdByName,
+    @JsonKey(name: 'updated_by_name') String? updatedByName,
     @JsonKey(name: 'created_at') required DateTime createdAt,
     @JsonKey(name: 'updated_at') DateTime? updatedAt,
   }) = _CategoryItemModel;
