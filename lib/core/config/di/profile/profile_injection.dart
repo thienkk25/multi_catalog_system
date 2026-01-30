@@ -15,14 +15,12 @@ void initProfileModule() {
   );
 
   getIt.registerLazySingleton(() => GetProfileUseCase(repository: getIt()));
-  getIt.registerLazySingleton(() => GetMeUseCase(repository: getIt()));
   getIt.registerLazySingleton(() => UpdateProfileUseCase(repository: getIt()));
   getIt.registerLazySingleton(() => ChangePasswordUseCase(repository: getIt()));
 
   getIt.registerFactory(
     () => ProfileBloc(
       getProfileUseCase: getIt(),
-      getMeUseCase: getIt(),
       updateProfileUseCase: getIt(),
       changePasswordUseCase: getIt(),
     ),

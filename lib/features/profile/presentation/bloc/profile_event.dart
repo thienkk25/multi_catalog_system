@@ -10,6 +10,4 @@ class ProfileEvent with _$ProfileEvent {
       _UpdateProfile;
   const factory ProfileEvent.changePassword({required String newPassword}) =
       _ChangePassword;
-
-  const factory ProfileEvent.getMe() = _GetMe;
 }

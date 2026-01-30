@@ -121,7 +121,7 @@ class _InfoSection extends StatelessWidget {
             label: 'Lĩnh vực quản lý',
             value: entry.domains == null || entry.domains!.isEmpty
                 ? '-'
-                : entry.domains!.map((e) => e.name).join(', '),
+                : entry.domains!.map((e) => '${e.name} (${e.code})').join(', '),
           ),
       ],
     );

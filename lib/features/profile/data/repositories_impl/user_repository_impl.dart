@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
-import 'package:multi_catalog_system/core/data/models/auth/user_model.dart';
+import 'package:multi_catalog_system/core/data/models/auth/user_profile_model.dart';
+import 'package:multi_catalog_system/core/domain/entities/domain/domain_ref_entry.dart';
 import 'package:multi_catalog_system/core/domain/entities/role/role_entry.dart';
 import 'package:multi_catalog_system/core/error/exception_mapper.dart';
 import 'package:multi_catalog_system/core/error/exceptions.dart';
@@ -13,11 +14,20 @@ class UserRepositoryImpl implements UserRepository {
 
   UserRepositoryImpl({required this.remoteDataSource});
 
-  UserEntry _toEntity(UserModel model) => UserEntry(
+  UserEntry _toEntity(UserProfileModel model) => UserEntry(
     id: model.id,
     email: model.email,
-    fullName: model.userMetadata?.fullName,
-    phone: model.userMetadata?.phone,
+    fullName: model.fullName,
+    phone: model.phone,
+    status: model.status,
+    role: RoleEntry(
+      id: model.role?.id,
+      code: model.role?.code,
+      name: model.role?.name,
+    ),
+    domains: model.domains
+        ?.map((d) => DomainRefEntry(id: d.id, name: d.name, code: d.code))
+        .toList(),
     createdAt: model.createdAt,
     updatedAt: model.updatedAt,
     lastSignInAt: model.lastSignInAt,
@@ -45,33 +55,10 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<Either<Failure, UserEntry>> getMe() async {
-    try {
-      final model = await remoteDataSource.getMe();
-      return Right(_toEntity(model));
-    } on AppException catch (e) {
-      return Left(mapExceptionToFailure(e));
-    } catch (e) {
-      return Left(UnexpectedFailure(e.toString()));
-    }
-  }
-
-  @override
   Future<Either<Failure, UserEntry>> getProfile() async {
     try {
       final model = await remoteDataSource.getProfile();
-      return Right(
-        UserEntry(
-          id: model.id,
-          email: model.email,
-          fullName: model.fullName,
-          phone: model.phone,
-          status: model.status,
-          role: RoleEntry(code: model.roleCode, name: model.roleName),
-          createdAt: model.createdAt,
-          updatedAt: model.updatedAt,
-        ),
-      );
+      return Right(_toEntity(model));
     } on AppException catch (e) {
       return Left(mapExceptionToFailure(e));
     } catch (e) {

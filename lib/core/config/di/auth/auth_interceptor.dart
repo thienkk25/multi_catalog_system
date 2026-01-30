@@ -43,14 +43,7 @@ class AuthInterceptor extends Interceptor {
         await authLocal.clearAuthToken();
         authRepository.notifyUnauthenticated();
 
-        // NUỐT 401 – không cho rơi xuống data layer
-        return handler.resolve(
-          Response(
-            requestOptions: err.requestOptions,
-            statusCode: 401,
-            data: {'success': false, 'message': 'Phiên đăng nhập đã hết hạn'},
-          ),
-        );
+        return handler.reject(err);
       }
 
       // Lấy token mới
@@ -58,13 +51,14 @@ class AuthInterceptor extends Interceptor {
       if (newToken == null || newToken.isEmpty) {
         await authRepository.logout();
 
-        return handler.resolve(
-          Response(
-            requestOptions: err.requestOptions,
-            statusCode: 401,
-            data: {'success': false, 'message': 'Phiên đăng nhập đã hết hạn'},
-          ),
-        );
+        return handler.reject(err);
+        // return handler.resolve(
+        //   Response(
+        //     requestOptions: err.requestOptions,
+        //     statusCode: 401,
+        //     data: {'success': false, 'message': 'Phiên đăng nhập đã hết hạn'},
+        //   ),
+        // );
       }
 
       try {

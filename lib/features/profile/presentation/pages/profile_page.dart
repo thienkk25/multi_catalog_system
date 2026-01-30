@@ -87,22 +87,35 @@ class _ProfilePageState extends State<ProfilePage> {
                             title: 'Thông tin tài khoản',
                             children: [
                               _InfoRow(
+                                icon: Icons.person,
                                 label: 'Họ tên',
                                 value: entry.fullName ?? 'Chưa cập nhật',
                               ),
                               _InfoRow(
+                                icon: Icons.email,
                                 label: 'Email',
                                 value: entry.email ?? '',
                               ),
                               _InfoRow(
+                                icon: Icons.phone,
                                 label: 'Số điện thoại',
                                 value: entry.phone ?? 'Chưa cập nhật',
                               ),
                               _InfoRow(
+                                icon: Icons.lock_outline,
                                 label: 'Trạng thái',
                                 value: _statusText(entry.status ?? ''),
                                 valueColor: _statusColor(entry.status ?? ''),
                               ),
+                              if (entry.domains != null &&
+                                  entry.domains!.isNotEmpty)
+                                _InfoRow(
+                                  icon: Icons.domain,
+                                  label: 'Lĩnh vực quản lý',
+                                  value: entry.domains!
+                                      .map((d) => '${d.name} (${d.code})')
+                                      .join(', '),
+                                ),
                             ],
                           ),
                           const SizedBox(height: 16),
@@ -110,12 +123,14 @@ class _ProfilePageState extends State<ProfilePage> {
                             title: 'Thời gian',
                             children: [
                               _InfoRow(
+                                icon: Icons.calendar_month_outlined,
                                 label: 'Ngày tạo',
                                 value: dateTimeFormat(entry.createdAt),
                               ),
                               _InfoRow(
-                                label: 'Cập nhật lần cuối',
-                                value: dateTimeFormat(entry.updatedAt),
+                                icon: Icons.login_outlined,
+                                label: 'Lần cuối đăng nhập',
+                                value: dateTimeFormat(entry.lastSignInAt),
                               ),
                             ],
                           ),
@@ -222,11 +237,17 @@ class _InfoCard extends StatelessWidget {
 }
 
 class _InfoRow extends StatelessWidget {
+  final IconData icon;
   final String label;
   final String value;
   final Color? valueColor;
 
-  const _InfoRow({required this.label, required this.value, this.valueColor});
+  const _InfoRow({
+    required this.label,
+    required this.value,
+    this.valueColor,
+    required this.icon,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -234,6 +255,8 @@ class _InfoRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
         children: [
+          Icon(icon, size: 20, color: Colors.blue),
+          const SizedBox(width: 5),
           Expanded(
             flex: 3,
             child: Text(
@@ -278,6 +301,7 @@ class _ActionRow extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 12),
         child: Row(
           children: [
+            Icon(icon, size: 20, color: Colors.blue),
             const SizedBox(width: 12),
             Expanded(
               child: Text(

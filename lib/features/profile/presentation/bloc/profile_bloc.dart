@@ -7,13 +7,11 @@ import 'profile_state.dart';
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final ChangePasswordUseCase changePasswordUseCase;
-  final GetMeUseCase getMeUseCase;
   final GetProfileUseCase getProfileUseCase;
   final UpdateProfileUseCase updateProfileUseCase;
 
   ProfileBloc({
     required this.changePasswordUseCase,
-    required this.getMeUseCase,
     required this.getProfileUseCase,
     required this.updateProfileUseCase,
   }) : super(const ProfileState()) {
@@ -38,35 +36,12 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
             );
           },
           (r) {
-            add(const ProfileEvent.getProfile());
-            emit(
-              state.copyWith(successMessage: "Thay đổi mật khẩu thành công"),
-            );
-          },
-        );
-      },
-      getMe: (e) async {
-        emit(
-          state.copyWith(isLoading: true, error: null, successMessage: null),
-        );
-        final result = await getMeUseCase();
-        result.fold(
-          (l) {
             emit(
               state.copyWith(
                 isLoading: false,
-                error: mapFailure(l),
-                successMessage: null,
-              ),
-            );
-          },
-          (r) {
-            emit(
-              state.copyWith(
-                isLoading: false,
-                entry: r,
                 error: null,
-                successMessage: null,
+                entry: r,
+                successMessage: "Thay đổi mật khẩu thành công",
               ),
             );
           },
@@ -115,9 +90,13 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
             );
           },
           (r) {
-            add(const ProfileEvent.getProfile());
             emit(
-              state.copyWith(successMessage: "Cập nhật thông tin thành công"),
+              state.copyWith(
+                isLoading: false,
+                entry: r,
+                error: null,
+                successMessage: "Cập nhật thông tin thành công",
+              ),
             );
           },
         );

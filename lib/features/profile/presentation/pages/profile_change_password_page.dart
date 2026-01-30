@@ -101,9 +101,10 @@ class _ProfileChangePasswordPageState extends State<ProfileChangePasswordPage> {
                       },
                     ),
                     const SizedBox(height: 16),
-                    ProfilePasswordRulesWidget(
-                      password: _newPasswordController.text,
-                    ),
+                    if (_newPasswordController.text.isNotEmpty)
+                      ProfilePasswordRulesWidget(
+                        password: _newPasswordController.text,
+                      ),
                     const SizedBox(height: 16),
                     PasswordFieldWidget(
                       controller: _confirmPasswordController,
