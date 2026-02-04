@@ -138,18 +138,6 @@ class _MainDrawer extends StatelessWidget {
               pageIndex: 4,
             ),
             RoleBasedWidget(
-              permission: ['approver'],
-              child: _DrawerItem(
-                icon: SvgPicture.asset(
-                  'assets/icons/approve-invoice-svgrepo-com.svg',
-                  height: 20,
-                ),
-                title: 'Danh sách chờ duyệt',
-                pageIndex: 5,
-              ),
-            ),
-
-            RoleBasedWidget(
               permission: ['admin', 'domainOfficer'],
               child: _DrawerItem(
                 icon: SvgPicture.asset(
@@ -175,7 +163,7 @@ class _MainDrawer extends StatelessWidget {
                       height: 20,
                     ),
                     title: 'Quản lý người dùng',
-                    pageIndex: 6,
+                    pageIndex: 5,
                   ),
                   _DrawerItem(
                     icon: SvgPicture.asset(
@@ -183,7 +171,7 @@ class _MainDrawer extends StatelessWidget {
                       height: 20,
                     ),
                     title: 'API Key',
-                    pageIndex: 7,
+                    pageIndex: 6,
                   ),
                   _DrawerItem(
                     icon: SvgPicture.asset(

@@ -1,0 +1,14 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_version_entry.dart';
+
+part 'category_item_version_state.freezed.dart';
+
+@freezed
+abstract class CategoryItemVersionState with _$CategoryItemVersionState {
+  const factory CategoryItemVersionState({
+    @Default(false) bool isLoading,
+    @Default([]) List<CategoryItemVersionEntry> entries,
+    String? error,
+    String? successMessage,
+  }) = _CategoryItemVersionState;
+}
