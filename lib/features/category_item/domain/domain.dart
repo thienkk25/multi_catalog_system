@@ -13,3 +13,4 @@ export 'use_cases/delete_by_admin_category_item_version_use_case.dart';
 export 'use_cases/delete_category_item_version_use_case.dart';
 export 'use_cases/create_category_item_version_use_case.dart';
 export 'use_cases/update_category_item_version_use_case.dart';
+export 'repositories/category_item_version_repository.dart';

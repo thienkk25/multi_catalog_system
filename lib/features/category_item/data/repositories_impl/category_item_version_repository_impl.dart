@@ -8,10 +8,11 @@ import 'package:multi_catalog_system/features/category_item/domain/domain.dart';
 import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_version_entry.dart';
 import 'package:multi_catalog_system/features/category_item/domain/repositories/category_item_version_repository.dart';
 
-class CategoryItemRepositoryImpl implements CategoryItemVersionRepository {
+class CategoryItemVersionRepositoryImpl
+    implements CategoryItemVersionRepository {
   final CategoryItemVersionRemoteDataSource remoteDataSource;
 
-  CategoryItemRepositoryImpl({required this.remoteDataSource});
+  CategoryItemVersionRepositoryImpl({required this.remoteDataSource});
 
   CategoryItemVersionEntry _toEntity(CategoryItemVersionModel model) =>
       CategoryItemVersionEntry(
