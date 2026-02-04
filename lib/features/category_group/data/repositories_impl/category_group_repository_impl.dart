@@ -51,22 +51,6 @@ class CategoryGroupRepositoryImpl implements CategoryGroupRepository {
   }
 
   @override
-  Future<Either<Failure, List<CategoryGroupEntry>>> createMany({
-    required List<CategoryGroupEntry> entries,
-  }) async {
-    try {
-      final models = await remoteDataSource.createMany(
-        data: entries.map((e) => _createPayload(e)).toList(),
-      );
-      return Right(models.map((m) => _toEntity(m)).toList());
-    } on AppException catch (e) {
-      return Left(mapExceptionToFailure(e));
-    } catch (e) {
-      return Left(UnexpectedFailure(e.toString()));
-    }
-  }
-
-  @override
   Future<Either<Failure, CategoryGroupEntry>> getById({
     required String id,
   }) async {
@@ -104,22 +88,6 @@ class CategoryGroupRepositoryImpl implements CategoryGroupRepository {
         data: _updatePayload(entry),
       );
       return Right(_toEntity(model));
-    } on AppException catch (e) {
-      return Left(mapExceptionToFailure(e));
-    } catch (e) {
-      return Left(UnexpectedFailure(e.toString()));
-    }
-  }
-
-  @override
-  Future<Either<Failure, List<CategoryGroupEntry>>> upsertMany({
-    required List<CategoryGroupEntry> entries,
-  }) async {
-    try {
-      final models = await remoteDataSource.upsertMany(
-        data: entries.map((e) => _updatePayload(e)).toList(),
-      );
-      return Right(models.map((m) => _toEntity(m)).toList());
     } on AppException catch (e) {
       return Left(mapExceptionToFailure(e));
     } catch (e) {

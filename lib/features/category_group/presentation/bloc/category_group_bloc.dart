@@ -7,21 +7,17 @@ import 'category_group_state.dart';
 
 class CategoryGroupBloc extends Bloc<CategoryGroupEvent, CategoryGroupState> {
   final CreateCategoryGroupUseCase create;
-  final CreateManyCategoryGroupUseCase createMany;
   final UpdateCategoryGroupUseCase update;
   final DeleteCategoryGroupUseCase delete;
   final GetByIdCategoryGroupUseCase getById;
   final GetAllCategoryGroupUseCase getAll;
-  final UpsertManyCategoryGroupUseCase upsertMany;
 
   CategoryGroupBloc({
     required this.create,
-    required this.createMany,
     required this.update,
     required this.delete,
     required this.getById,
     required this.getAll,
-    required this.upsertMany,
   }) : super(const CategoryGroupState()) {
     on<CategoryGroupEvent>(_onEvent);
   }
@@ -81,26 +77,6 @@ class CategoryGroupBloc extends Bloc<CategoryGroupEvent, CategoryGroupState> {
         );
       },
 
-      createMany: (e) async {
-        emit(
-          state.copyWith(isLoading: true, error: null, successMessage: null),
-        );
-
-        final result = await createMany(entries: e.entries);
-        if (emit.isDone) return;
-
-        result.fold(
-          (l) => emit(state.copyWith(isLoading: false, error: mapFailure(l))),
-          (r) => emit(
-            state.copyWith(
-              isLoading: false,
-              entries: [...r, ...state.entries],
-              successMessage: 'Tạo nhóm danh mục thành công',
-            ),
-          ),
-        );
-      },
-
       update: (e) async {
         emit(
           state.copyWith(isLoading: true, error: null, successMessage: null),
@@ -146,26 +122,6 @@ class CategoryGroupBloc extends Bloc<CategoryGroupEvent, CategoryGroupState> {
           (_) {
             emit(state.copyWith(successMessage: 'Xóa thành công'));
           },
-        );
-      },
-
-      upsertMany: (e) async {
-        emit(
-          state.copyWith(isLoading: true, error: null, successMessage: null),
-        );
-
-        final result = await upsertMany(entries: e.entries);
-        if (emit.isDone) return;
-
-        result.fold(
-          (l) => emit(state.copyWith(isLoading: false, error: mapFailure(l))),
-          (r) => emit(
-            state.copyWith(
-              isLoading: false,
-              entries: r,
-              successMessage: 'Cập nhật hoặc tạo nhóm danh mục thành công',
-            ),
-          ),
         );
       },
     );

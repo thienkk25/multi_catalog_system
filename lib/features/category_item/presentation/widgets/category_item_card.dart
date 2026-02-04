@@ -11,8 +11,6 @@ class CategoryItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return CustomCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -23,7 +21,7 @@ class CategoryItemCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   entry.name!,
-                  style: theme.textTheme.titleMedium?.copyWith(
+                  style: TextStyle(
                     fontWeight: FontWeight.w600,
                     color: Colors.blue,
                   ),
@@ -35,17 +33,15 @@ class CategoryItemCard extends StatelessWidget {
 
           const SizedBox(height: 12),
 
-          _InfoRow(label: 'Mã', value: entry.code!),
-          _InfoRow(label: 'Lĩnh vực', value: entry.domainName!),
-          _InfoRow(label: 'Nhóm', value: entry.groupName!),
+          _InfoRow(label: 'Mã mục', value: entry.code),
+          _InfoRow(label: 'Lĩnh vực', value: entry.domainName),
+          _InfoRow(label: 'Nhóm', value: entry.groupName),
 
           if (entry.description?.isNotEmpty == true) ...[
             const SizedBox(height: 8),
             Text(
               'Mô tả: ${entry.description}',
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: Colors.grey.shade700,
-              ),
+              style: TextStyle(color: Colors.grey.shade700),
             ),
           ],
 
@@ -54,7 +50,7 @@ class CategoryItemCard extends StatelessWidget {
             alignment: Alignment.centerRight,
             child: Text(
               'Tạo ngày ${dateFormat(entry.createdAt!)}',
-              style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey),
+              style: TextStyle(color: Colors.grey.shade600),
             ),
           ),
         ],
@@ -65,7 +61,7 @@ class CategoryItemCard extends StatelessWidget {
 
 class _InfoRow extends StatelessWidget {
   final String label;
-  final String value;
+  final String? value;
 
   const _InfoRow({required this.label, required this.value});
 
@@ -87,7 +83,7 @@ class _InfoRow extends StatelessWidget {
           ),
           Expanded(
             child: Text(
-              value,
+              value ?? '-',
               style: const TextStyle(fontWeight: FontWeight.w500),
             ),
           ),

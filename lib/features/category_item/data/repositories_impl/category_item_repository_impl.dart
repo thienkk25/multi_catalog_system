@@ -86,22 +86,6 @@ class CategoryItemRepositoryImpl implements CategoryItemRepository {
   }
 
   @override
-  Future<Either<Failure, List<CategoryItemEntry>>> createMany({
-    required List<CategoryItemEntry> entries,
-  }) async {
-    try {
-      final models = await remoteDataSource.createMany(
-        data: entries.map((e) => _createPayload(e)).toList(),
-      );
-      return Right(models.map((m) => _toEntityCategoryItem(m)).toList());
-    } on AppException catch (e) {
-      return Left(mapExceptionToFailure(e));
-    } catch (e) {
-      return Left(UnexpectedFailure(e.toString()));
-    }
-  }
-
-  @override
   Future<Either<Failure, CategoryItemEntry>> getById({
     required String id,
   }) async {
@@ -139,22 +123,6 @@ class CategoryItemRepositoryImpl implements CategoryItemRepository {
         data: _updatePayload(entry),
       );
       return Right(_toEntityCategoryItem(model));
-    } on AppException catch (e) {
-      return Left(mapExceptionToFailure(e));
-    } catch (e) {
-      return Left(UnexpectedFailure(e.toString()));
-    }
-  }
-
-  @override
-  Future<Either<Failure, List<CategoryItemEntry>>> upsertMany({
-    required List<CategoryItemEntry> entries,
-  }) async {
-    try {
-      final models = await remoteDataSource.upsertMany(
-        data: entries.map((e) => _updatePayload(e)).toList(),
-      );
-      return Right(models.map((m) => _toEntityCategoryItem(m)).toList());
     } on AppException catch (e) {
       return Left(mapExceptionToFailure(e));
     } catch (e) {

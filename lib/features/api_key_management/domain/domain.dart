@@ -1,9 +1,7 @@
 export 'entities/api_key_entry.dart';
 export 'repositories/api_key_repository.dart';
 export 'use_cases/create_api_key_use_case.dart';
-export 'use_cases/create_many_api_key_use_case.dart';
 export 'use_cases/delete_api_key_use_case.dart';
 export 'use_cases/get_all_api_key_use_case.dart';
 export 'use_cases/get_by_id_api_key_use_case.dart';
 export 'use_cases/update_api_key_use_case.dart';
-export 'use_cases/upsert_many_api_key_use_case.dart';

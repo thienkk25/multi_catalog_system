@@ -13,12 +13,6 @@ abstract class LegalDocumentRepository {
     required LegalDocumentEntry entry,
     PickedDocumentFile? file,
   });
-  Future<Either<Failure, List<LegalDocumentEntry>>> createMany({
-    required List<LegalDocumentEntry> entries,
-  });
-  Future<Either<Failure, List<LegalDocumentEntry>>> upsertMany({
-    required List<LegalDocumentEntry> entries,
-  });
   Future<Either<Failure, LegalDocumentEntry>> update({
     required LegalDocumentEntry entry,
     PickedDocumentFile? file,

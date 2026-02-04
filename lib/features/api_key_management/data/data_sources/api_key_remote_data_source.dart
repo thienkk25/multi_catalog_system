@@ -6,19 +6,10 @@ import 'package:multi_catalog_system/features/api_key_management/data/models/api
 abstract class ApiKeyRemoteDataSource {
   Future<List<ApiKeyModel>> getAll({String? search});
   Future<ApiKeyModel> getById({required String id});
-
   Future<ApiKeyModel> create({required Map<String, dynamic> data});
-  Future<List<ApiKeyModel>> createMany({
-    required List<Map<String, dynamic>> data,
-  });
-
   Future<ApiKeyModel> update({
     required String id,
     required Map<String, dynamic> data,
-  });
-
-  Future<List<ApiKeyModel>> upsertMany({
-    required List<Map<String, dynamic>> data,
   });
   Future<void> delete({required String id});
 }
@@ -64,38 +55,6 @@ class ApiKeyRemoteDataSourceImpl extends BaseRemoteDataSource
     try {
       final response = await dio.post('/api-key', data: data);
       return ApiKeyModel.fromJson(response.data['data']);
-    } on DioException catch (e) {
-      handleDioError(e);
-    } catch (e) {
-      throw UnexpectedException(e.toString());
-    }
-  }
-
-  @override
-  Future<List<ApiKeyModel>> createMany({
-    required List<Map<String, dynamic>> data,
-  }) async {
-    try {
-      final response = await dio.post('/api-key/bulk', data: data);
-      return (response.data as List)
-          .map((e) => ApiKeyModel.fromJson(e))
-          .toList();
-    } on DioException catch (e) {
-      handleDioError(e);
-    } catch (e) {
-      throw UnexpectedException(e.toString());
-    }
-  }
-
-  @override
-  Future<List<ApiKeyModel>> upsertMany({
-    required List<Map<String, dynamic>> data,
-  }) async {
-    try {
-      final response = await dio.post('/api-key/bulk/upsert', data: data);
-      return (response.data as List)
-          .map((e) => ApiKeyModel.fromJson(e))
-          .toList();
     } on DioException catch (e) {
       handleDioError(e);
     } catch (e) {

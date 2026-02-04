@@ -1,9 +1,7 @@
 export 'entities/category_item_entry.dart';
 export 'repositories/category_item_repository.dart';
 export 'use_cases/create_category_item_use_case.dart';
-export 'use_cases/create_many_category_item_use_case.dart';
 export 'use_cases/delete_category_item_use_case.dart';
 export 'use_cases/get_all_category_item_use_case.dart';
 export 'use_cases/get_by_id_category_item_use_case.dart';
 export 'use_cases/update_category_item_use_case.dart';
-export 'use_cases/upsert_many_category_item_use_case.dart';

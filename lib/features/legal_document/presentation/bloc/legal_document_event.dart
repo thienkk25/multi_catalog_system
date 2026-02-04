@@ -15,12 +15,6 @@ class LegalDocumentEvent with _$LegalDocumentEvent {
     required LegalDocumentEntry entry,
     PickedDocumentFile? file,
   }) = _Create;
-  const factory LegalDocumentEvent.createMany({
-    required List<LegalDocumentEntry> entries,
-  }) = _CreateMany;
-  const factory LegalDocumentEvent.upsertMany({
-    required List<LegalDocumentEntry> entries,
-  }) = _UpsertMany;
 
   const factory LegalDocumentEvent.update({
     required LegalDocumentEntry entry,

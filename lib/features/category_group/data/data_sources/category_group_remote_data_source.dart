@@ -7,12 +7,6 @@ abstract class CategoryGroupRemoteDataSource {
   Future<List<CategoryGroupModel>> getAll({String? search});
   Future<CategoryGroupModel> getById({required String id});
   Future<CategoryGroupModel> create({required Map<String, dynamic> data});
-  Future<List<CategoryGroupModel>> createMany({
-    required List<Map<String, dynamic>> data,
-  });
-  Future<List<CategoryGroupModel>> upsertMany({
-    required List<Map<String, dynamic>> data,
-  });
   Future<CategoryGroupModel> update({
     required String id,
     required Map<String, dynamic> data,
@@ -66,39 +60,6 @@ class CategoryGroupRemoteDataSourceImpl extends BaseRemoteDataSource
     try {
       final response = await dio.post('/category-group', data: data);
       return CategoryGroupModel.fromJson(response.data['data']);
-    } on DioException catch (e) {
-      handleDioError(e);
-    } catch (e) {
-      throw UnexpectedException(e.toString());
-    }
-  }
-
-  @override
-  Future<List<CategoryGroupModel>> createMany({
-    required List<Map<String, dynamic>> data,
-  }) async {
-    try {
-      final response = await dio.post('/category-group/bulk', data: data);
-      final List<dynamic> jsonList = response.data;
-      return jsonList.map((json) => CategoryGroupModel.fromJson(json)).toList();
-    } on DioException catch (e) {
-      handleDioError(e);
-    } catch (e) {
-      throw UnexpectedException(e.toString());
-    }
-  }
-
-  @override
-  Future<List<CategoryGroupModel>> upsertMany({
-    required List<Map<String, dynamic>> data,
-  }) async {
-    try {
-      final response = await dio.post(
-        '/category-group/bulk/upsert',
-        data: data,
-      );
-      final List<dynamic> jsonList = response.data;
-      return jsonList.map((json) => CategoryGroupModel.fromJson(json)).toList();
     } on DioException catch (e) {
       handleDioError(e);
     } catch (e) {

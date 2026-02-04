@@ -15,9 +15,6 @@ void initCategoryGroupModule() {
     () => CreateCategoryGroupUseCase(repository: getIt()),
   );
   getIt.registerLazySingleton(
-    () => CreateManyCategoryGroupUseCase(repository: getIt()),
-  );
-  getIt.registerLazySingleton(
     () => UpdateCategoryGroupUseCase(repository: getIt()),
   );
   getIt.registerLazySingleton(
@@ -29,9 +26,6 @@ void initCategoryGroupModule() {
   getIt.registerLazySingleton(
     () => GetAllCategoryGroupUseCase(repository: getIt()),
   );
-  getIt.registerLazySingleton(
-    () => UpsertManyCategoryGroupUseCase(repository: getIt()),
-  );
 
   getIt.registerFactory(
     () => CategoryGroupBloc(
@@ -40,8 +34,6 @@ void initCategoryGroupModule() {
       delete: getIt<DeleteCategoryGroupUseCase>(),
       getById: getIt<GetByIdCategoryGroupUseCase>(),
       getAll: getIt<GetAllCategoryGroupUseCase>(),
-      upsertMany: getIt<UpsertManyCategoryGroupUseCase>(),
-      createMany: getIt<CreateManyCategoryGroupUseCase>(),
     ),
   );
 }

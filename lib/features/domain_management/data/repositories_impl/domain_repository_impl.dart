@@ -48,22 +48,6 @@ class DomainRepositoryImpl implements DomainRepository {
   }
 
   @override
-  Future<Either<Failure, List<DomainEntry>>> createMany({
-    required List<DomainEntry> entries,
-  }) async {
-    try {
-      final models = await remoteDataSource.createMany(
-        data: entries.map((e) => _createPayload(e)).toList(),
-      );
-      return Right(models.map((m) => _toEntity(m)).toList());
-    } on AppException catch (e) {
-      return Left(mapExceptionToFailure(e));
-    } catch (e) {
-      return Left(UnexpectedFailure(e.toString()));
-    }
-  }
-
-  @override
   Future<Either<Failure, DomainEntry>> getById({required String id}) async {
     try {
       final model = await remoteDataSource.getById(id: id);
@@ -116,22 +100,6 @@ class DomainRepositoryImpl implements DomainRepository {
         id: entry.id!,
       );
       return Right(_toEntity(model));
-    } on AppException catch (e) {
-      return Left(mapExceptionToFailure(e));
-    } catch (e) {
-      return Left(UnexpectedFailure(e.toString()));
-    }
-  }
-
-  @override
-  Future<Either<Failure, List<DomainEntry>>> upsertMany({
-    required List<DomainEntry> entries,
-  }) async {
-    try {
-      final models = await remoteDataSource.upsertMany(
-        data: entries.map((e) => _updatePayload(e)).toList(),
-      );
-      return Right(models.map((m) => _toEntity(m)).toList());
     } on AppException catch (e) {
       return Left(mapExceptionToFailure(e));
     } catch (e) {

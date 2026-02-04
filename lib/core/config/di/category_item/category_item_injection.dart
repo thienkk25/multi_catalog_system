@@ -17,9 +17,6 @@ void initCategoryItemModule() {
     () => CreateCategoryItemUseCase(repository: getIt()),
   );
   getIt.registerLazySingleton(
-    () => CreateManyCategoryItemUseCase(repository: getIt()),
-  );
-  getIt.registerLazySingleton(
     () => UpdateCategoryItemUseCase(repository: getIt()),
   );
   getIt.registerLazySingleton(
@@ -31,19 +28,14 @@ void initCategoryItemModule() {
   getIt.registerLazySingleton(
     () => GetAllCategoryItemUseCase(repository: getIt()),
   );
-  getIt.registerLazySingleton(
-    () => UpsertManyCategoryItemUseCase(repository: getIt()),
-  );
 
   getIt.registerFactory(
     () => CategoryItemBloc(
       create: getIt<CreateCategoryItemUseCase>(),
-      createMany: getIt<CreateManyCategoryItemUseCase>(),
       update: getIt<UpdateCategoryItemUseCase>(),
       delete: getIt<DeleteCategoryItemUseCase>(),
       getById: getIt<GetByIdCategoryItemUseCase>(),
       getAll: getIt<GetAllCategoryItemUseCase>(),
-      upsertMany: getIt<UpsertManyCategoryItemUseCase>(),
     ),
   );
 }

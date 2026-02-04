@@ -11,12 +11,6 @@ class CategoryGroupEvent with _$CategoryGroupEvent {
 
   const factory CategoryGroupEvent.create({required CategoryGroupEntry entry}) =
       _Create;
-  const factory CategoryGroupEvent.createMany({
-    required List<CategoryGroupEntry> entries,
-  }) = _CreateMany;
-  const factory CategoryGroupEvent.upsertMany({
-    required List<CategoryGroupEntry> entries,
-  }) = _UpsertMany;
 
   const factory CategoryGroupEvent.update({required CategoryGroupEntry entry}) =
       _Update;

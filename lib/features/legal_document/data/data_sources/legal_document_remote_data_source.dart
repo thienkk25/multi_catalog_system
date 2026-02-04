@@ -8,12 +8,6 @@ abstract class LegalDocumentRemoteDataSource {
   Future<List<LegalDocumentModel>> getAllHasFile({String? search});
   Future<LegalDocumentModel> getById({required String id});
   Future<LegalDocumentModel> create({required FormData data});
-  Future<List<LegalDocumentModel>> createMany({
-    required List<Map<String, dynamic>> data,
-  });
-  Future<List<LegalDocumentModel>> upsertMany({
-    required List<Map<String, dynamic>> data,
-  });
   Future<LegalDocumentModel> update({
     required String id,
     required FormData data,
@@ -91,39 +85,6 @@ class LegalDocumentRemoteDataSourceImpl extends BaseRemoteDataSource
       );
 
       return LegalDocumentModel.fromJson(response.data['data']);
-    } on DioException catch (e) {
-      handleDioError(e);
-    } catch (e) {
-      throw UnexpectedException(e.toString());
-    }
-  }
-
-  @override
-  Future<List<LegalDocumentModel>> createMany({
-    required List<Map<String, dynamic>> data,
-  }) async {
-    try {
-      final response = await dio.post('/legal-document/bulk', data: data);
-      final List<dynamic> jsonList = response.data;
-      return jsonList.map((json) => LegalDocumentModel.fromJson(json)).toList();
-    } on DioException catch (e) {
-      handleDioError(e);
-    } catch (e) {
-      throw UnexpectedException(e.toString());
-    }
-  }
-
-  @override
-  Future<List<LegalDocumentModel>> upsertMany({
-    required List<Map<String, dynamic>> data,
-  }) async {
-    try {
-      final response = await dio.post(
-        '/legal-document/bulk/upsert',
-        data: data,
-      );
-      final List<dynamic> jsonList = response.data;
-      return jsonList.map((json) => LegalDocumentModel.fromJson(json)).toList();
     } on DioException catch (e) {
       handleDioError(e);
     } catch (e) {

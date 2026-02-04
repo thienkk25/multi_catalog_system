@@ -12,16 +12,10 @@ void initDomainModule() {
   );
 
   getIt.registerLazySingleton(() => CreateDomainUseCase(repository: getIt()));
-  getIt.registerLazySingleton(
-    () => CreateManyDomainUseCase(repository: getIt()),
-  );
   getIt.registerLazySingleton(() => UpdateDomainUseCase(repository: getIt()));
   getIt.registerLazySingleton(() => DeleteDomainUseCase(repository: getIt()));
   getIt.registerLazySingleton(() => GetByIdDomainUseCase(repository: getIt()));
   getIt.registerLazySingleton(() => GetAllDomainUseCase(repository: getIt()));
-  getIt.registerLazySingleton(
-    () => UpsertManyDomainUseCase(repository: getIt()),
-  );
 
   getIt.registerFactory(
     () => DomainManagementBloc(
@@ -30,8 +24,6 @@ void initDomainModule() {
       delete: getIt<DeleteDomainUseCase>(),
       getById: getIt<GetByIdDomainUseCase>(),
       getAll: getIt<GetAllDomainUseCase>(),
-      upsertMany: getIt<UpsertManyDomainUseCase>(),
-      createMany: getIt<CreateManyDomainUseCase>(),
     ),
   );
 }

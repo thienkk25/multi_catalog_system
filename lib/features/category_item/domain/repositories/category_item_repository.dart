@@ -8,12 +8,6 @@ abstract class CategoryItemRepository {
   Future<Either<Failure, CategoryItemEntry>> create({
     required CategoryItemEntry entry,
   });
-  Future<Either<Failure, List<CategoryItemEntry>>> createMany({
-    required List<CategoryItemEntry> entries,
-  });
-  Future<Either<Failure, List<CategoryItemEntry>>> upsertMany({
-    required List<CategoryItemEntry> entries,
-  });
   Future<Either<Failure, CategoryItemEntry>> update({
     required CategoryItemEntry entry,
   });

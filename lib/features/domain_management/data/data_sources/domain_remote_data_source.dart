@@ -8,12 +8,6 @@ abstract class DomainRemoteDataSource {
   Future<DomainPageModel> getAll({String? search, int? page, int? limit});
   Future<DomainModel> getById({required String id});
   Future<DomainModel> create({required Map<String, dynamic> data});
-  Future<List<DomainModel>> createMany({
-    required List<Map<String, dynamic>> data,
-  });
-  Future<List<DomainModel>> upsertMany({
-    required List<Map<String, dynamic>> data,
-  });
   Future<DomainModel> update({
     required String id,
     required Map<String, dynamic> data,
@@ -71,36 +65,6 @@ class DomainRemoteDataSourceImpl extends BaseRemoteDataSource
     try {
       final response = await dio.post('/domain', data: data);
       return DomainModel.fromJson(response.data['data']);
-    } on DioException catch (e) {
-      handleDioError(e);
-    } catch (e) {
-      throw UnexpectedException(e.toString());
-    }
-  }
-
-  @override
-  Future<List<DomainModel>> createMany({
-    required List<Map<String, dynamic>> data,
-  }) async {
-    try {
-      final response = await dio.post('/domain/bulk', data: data);
-      final List<dynamic> jsonList = response.data;
-      return jsonList.map((json) => DomainModel.fromJson(json)).toList();
-    } on DioException catch (e) {
-      handleDioError(e);
-    } catch (e) {
-      throw UnexpectedException(e.toString());
-    }
-  }
-
-  @override
-  Future<List<DomainModel>> upsertMany({
-    required List<Map<String, dynamic>> data,
-  }) async {
-    try {
-      final response = await dio.post('/domain/bulk/upsert', data: data);
-      final List<dynamic> jsonList = response.data;
-      return jsonList.map((json) => DomainModel.fromJson(json)).toList();
     } on DioException catch (e) {
       handleDioError(e);
     } catch (e) {

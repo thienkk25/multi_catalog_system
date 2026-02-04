@@ -7,21 +7,17 @@ import 'api_key_state.dart';
 
 class ApiKeyBloc extends Bloc<ApiKeyEvent, ApiKeyState> {
   final CreateApiKeyUseCase create;
-  final CreateManyApiKeyUseCase createMany;
   final UpdateApiKeyUseCase update;
   final DeleteApiKeyUseCase delete;
   final GetByIdApiKeyUseCase getById;
   final GetAllApiKeyUseCase getAll;
-  final UpsertManyApiKeyUseCase upsertMany;
 
   ApiKeyBloc({
     required this.create,
-    required this.createMany,
     required this.update,
     required this.delete,
     required this.getById,
     required this.getAll,
-    required this.upsertMany,
   }) : super(const ApiKeyState()) {
     on<ApiKeyEvent>(_onEvent);
   }
@@ -93,32 +89,6 @@ class ApiKeyBloc extends Bloc<ApiKeyEvent, ApiKeyState> {
           ),
         );
       },
-
-      createMany: (e) async {
-        emit(
-          state.copyWith(
-            isLoading: true,
-            error: null,
-            successMessage: null,
-            createdEntry: null,
-          ),
-        );
-
-        final result = await createMany(entries: e.entries);
-        if (emit.isDone) return;
-
-        result.fold(
-          (l) => emit(state.copyWith(isLoading: false, error: mapFailure(l))),
-          (r) => emit(
-            state.copyWith(
-              isLoading: false,
-              entries: [...r, ...state.entries],
-              successMessage: 'Tạo thành công',
-            ),
-          ),
-        );
-      },
-
       update: (e) async {
         emit(
           state.copyWith(
@@ -170,31 +140,6 @@ class ApiKeyBloc extends Bloc<ApiKeyEvent, ApiKeyState> {
           (_) {
             emit(state.copyWith(successMessage: 'Xóa thành công'));
           },
-        );
-      },
-
-      upsertMany: (e) async {
-        emit(
-          state.copyWith(
-            isLoading: true,
-            error: null,
-            successMessage: null,
-            createdEntry: null,
-          ),
-        );
-
-        final result = await upsertMany(entries: e.entries);
-        if (emit.isDone) return;
-
-        result.fold(
-          (l) => emit(state.copyWith(isLoading: false, error: mapFailure(l))),
-          (r) => emit(
-            state.copyWith(
-              isLoading: false,
-              entries: r,
-              successMessage: 'Cập nhật hoặc tạo thành công',
-            ),
-          ),
         );
       },
     );

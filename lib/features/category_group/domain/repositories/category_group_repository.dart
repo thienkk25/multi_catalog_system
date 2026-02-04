@@ -8,12 +8,6 @@ abstract class CategoryGroupRepository {
   Future<Either<Failure, CategoryGroupEntry>> create({
     required CategoryGroupEntry entry,
   });
-  Future<Either<Failure, List<CategoryGroupEntry>>> createMany({
-    required List<CategoryGroupEntry> entries,
-  });
-  Future<Either<Failure, List<CategoryGroupEntry>>> upsertMany({
-    required List<CategoryGroupEntry> entries,
-  });
   Future<Either<Failure, CategoryGroupEntry>> update({
     required CategoryGroupEntry entry,
   });
