@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:multi_catalog_system/core/domain/entities/domain/domain_ref_entry.dart';
 import 'package:multi_catalog_system/core/error/exception_mapper.dart';
 import 'package:multi_catalog_system/core/error/exceptions.dart';
 import 'package:multi_catalog_system/core/error/failures.dart';
@@ -20,9 +21,15 @@ class CategoryItemRepositoryImpl implements CategoryItemRepository {
         name: model.name,
         description: model.description,
         status: model.status,
-        groupId: model.group.id,
-        groupName: model.group.name,
-        domainName: model.group.domain.name,
+        group: CategoryGroupRefEntry(
+          id: model.group.id,
+          name: model.group.name,
+          domain: DomainRefEntry(
+            id: model.group.domain.id,
+            name: model.group.domain.name,
+            code: model.group.domain.code,
+          ),
+        ),
         legalDocuments: model.legalDocuments
             ?.map((e) => _toEntityLegalDocument(e))
             .toList(),
@@ -52,7 +59,7 @@ class CategoryItemRepositoryImpl implements CategoryItemRepository {
 
   Map<String, dynamic> _createPayload(CategoryItemEntry entry) => {
     'category_item': {
-      'group_id': entry.groupId,
+      'group_id': entry.group?.id,
       'code': entry.code,
       'name': entry.name,
       if (entry.description != null) 'description': entry.description,
@@ -62,7 +69,7 @@ class CategoryItemRepositoryImpl implements CategoryItemRepository {
 
   Map<String, dynamic> _updatePayload(CategoryItemEntry entry) => {
     'category_item': {
-      if (entry.groupId != null) 'group_id': entry.groupId,
+      if (entry.group?.id != null) 'group_id': entry.group?.id,
       if (entry.code != null) 'code': entry.code,
       if (entry.name != null) 'name': entry.name,
       if (entry.description != null) 'description': entry.description,

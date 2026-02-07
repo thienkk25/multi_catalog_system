@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:dartz/dartz.dart';
 import 'package:multi_catalog_system/core/data/models/auth/user_model.dart';
+import 'package:multi_catalog_system/core/domain/entities/role/role_entry.dart';
 import 'package:multi_catalog_system/core/error/exception_mapper.dart';
 import 'package:multi_catalog_system/core/error/exceptions.dart';
 import 'package:multi_catalog_system/core/error/failures.dart';
@@ -19,7 +20,7 @@ class AuthRepositoryImpl implements AuthRepository {
     required this.authLocalDataSource,
   });
 
-  UserEntry _toEntity(UserModel model) => UserEntry(
+  UserEntry _toEntity({required UserModel model, RoleEntry? role}) => UserEntry(
     id: model.id,
     email: model.email,
     fullName: model.userMetadata?.fullName,
@@ -27,6 +28,7 @@ class AuthRepositoryImpl implements AuthRepository {
     createdAt: model.createdAt,
     updatedAt: model.updatedAt,
     lastSignInAt: model.lastSignInAt,
+    role: role,
   );
 
   final _controller = StreamController<AuthStatus>.broadcast();
@@ -43,15 +45,38 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failure, UserEntry>> getCurrentUser() async {
     try {
       final cachedUser = await authLocalDataSource.getCachedUser();
-      if (cachedUser != null) return Right(_toEntity(cachedUser));
+      final cachedRole = await authLocalDataSource.getCachedUserRole();
+
+      if (cachedUser != null && cachedRole != null) {
+        return Right(
+          _toEntity(
+            model: cachedUser,
+            role: RoleEntry(
+              id: cachedRole.id,
+              code: cachedRole.code,
+              name: cachedRole.name,
+            ),
+          ),
+        );
+      }
 
       final token = await authLocalDataSource.getCachedAuthToken();
-      if (token == null) return Left(CacheFailure(message: "Token not found"));
+      if (token == null) {
+        return Left(CacheFailure(message: "Token not found"));
+      }
 
       final remoteUser = await authRemoteDataSource.getCurrentUser();
-      await authLocalDataSource.cacheUser(remoteUser);
+      final role = await authRemoteDataSource.getRole(accessToken: token);
 
-      return Right(_toEntity(remoteUser));
+      await authLocalDataSource.cacheUser(remoteUser);
+      await authLocalDataSource.cacheUserRole(role);
+
+      return Right(
+        _toEntity(
+          model: remoteUser,
+          role: RoleEntry(id: role?.id, code: role?.code, name: role?.name),
+        ),
+      );
     } on AppException catch (e) {
       return Left(mapExceptionToFailure(e));
     } catch (e) {
@@ -75,7 +100,12 @@ class AuthRepositoryImpl implements AuthRepository {
 
       await authLocalDataSource.cacheUserRole(role);
 
-      return Right(_toEntity(result.user));
+      return Right(
+        _toEntity(
+          model: result.user,
+          role: RoleEntry(id: role?.id, code: role?.code, name: role?.name),
+        ),
+      );
     } on AppException catch (e) {
       return Left(mapExceptionToFailure(e));
     } catch (e) {

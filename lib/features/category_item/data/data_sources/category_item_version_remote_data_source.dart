@@ -4,7 +4,10 @@ import 'package:multi_catalog_system/core/error/exceptions.dart';
 import 'package:multi_catalog_system/features/category_item/data/models/category_item_version_model.dart';
 
 abstract class CategoryItemVersionRemoteDataSource {
-  Future<List<CategoryItemVersionModel>> getAll({String? search});
+  Future<List<CategoryItemVersionModel>> getAll({
+    required String itemId,
+    String? search,
+  });
   Future<CategoryItemVersionModel> getById({required String id});
 
   Future<CategoryItemVersionModel> createVersion({
@@ -31,11 +34,15 @@ class CategoryItemVersionRemoteDataSourceImpl extends BaseRemoteDataSource
   CategoryItemVersionRemoteDataSourceImpl({required this.dio});
 
   @override
-  Future<List<CategoryItemVersionModel>> getAll({String? search}) async {
+  Future<List<CategoryItemVersionModel>> getAll({
+    required String itemId,
+    String? search,
+  }) async {
     try {
       final queryParams = <String, dynamic>{};
 
       if (search != null) queryParams['search'] = search;
+      queryParams['item_id'] = itemId;
 
       final response = await dio.get(
         '/category-item-version',

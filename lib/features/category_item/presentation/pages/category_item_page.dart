@@ -97,12 +97,9 @@ class _CategoryItemPageState extends State<CategoryItemPage> {
                         final entry = entries[index];
                         return GestureDetector(
                           onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    CategoryItemDetailPage(entry: entry),
-                              ),
+                            context.pushNamed(
+                              RouterNames.categoryItemDetail,
+                              pathParameters: {'id': ?entry.id},
                             );
                           },
                           child: CategoryItemCard(entry: entry),
@@ -121,10 +118,7 @@ class _CategoryItemPageState extends State<CategoryItemPage> {
             context.pushNamed(RouterNames.importFile, extra: 3);
           },
           onPressedAdd: () {
-            context.pushNamed(
-              RouterNames.categoryItemForm,
-              extra: {'bloc': bloc},
-            );
+            context.pushNamed(RouterNames.categoryItemFormCreate);
           },
         ),
       ],

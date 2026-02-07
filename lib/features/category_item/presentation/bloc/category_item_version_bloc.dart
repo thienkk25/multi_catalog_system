@@ -38,7 +38,7 @@ class CategoryItemVersionBloc
         emit(
           state.copyWith(isLoading: true, error: null, successMessage: null),
         );
-        final result = await getAll(search: e.search);
+        final result = await getAll(itemId: e.itemId, search: e.search);
         if (emit.isDone) return;
         result.fold(
           (l) => emit(state.copyWith(isLoading: false, error: mapFailure(l))),

@@ -28,7 +28,8 @@ class UserManagementRoutes {
       path: RouterPaths.userManagementAddDomains,
       name: RouterNames.userManagementAddDomains,
       builder: (context, state) {
-        final fields = state.extra as List<DomainRefEntry>;
+        final fields = (state.extra as List?)?.cast<DomainRefEntry>() ?? [];
+
         return UserManagementAddDomainsPage(fields: fields);
       },
     ),

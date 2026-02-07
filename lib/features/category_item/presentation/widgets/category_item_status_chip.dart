@@ -28,6 +28,7 @@ class CategoryItemStatusChip extends StatelessWidget {
   Color _statusColor(String status) {
     switch (status) {
       case 'active':
+      case 'approved':
         return Colors.green;
       case 'pending':
         return Colors.orange;
@@ -46,6 +47,8 @@ class CategoryItemStatusChip extends StatelessWidget {
         return 'CHỜ DUYỆT';
       case 'rejected':
         return 'TỪ CHỐI';
+      case 'approved':
+        return 'ĐÃ DUYỆT';
       default:
         return 'KHÔNG RÕ';
     }

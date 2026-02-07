@@ -39,10 +39,11 @@ class RouterNames {
 
   // category_item
   static const String categoryItem = 'categoryItem';
-  static const String categoryItemForm = 'categoryItemForm';
+  static const String categoryItemFormCreate = 'categoryItemFormCreate';
+  static const String categoryItemFormUpdate = 'categoryItemFormUpdate';
   static const String categoryItemDetail = 'categoryItemDetail';
-  static const String categoryItemAddLegalDocuments =
-      'categoryItemAddLegalDocuments';
+  static const String categoryItemFormAddLegalDocuments =
+      'categoryItemFormAddLegalDocuments';
 
   // user_management
   static const String userManagement = 'userManagement';
@@ -92,10 +93,11 @@ class RouterPaths {
 
   // category_item
   static const String categoryItem = '/category-item';
-  static const String categoryItemForm = '/category-item/form';
   static const String categoryItemDetail = '/category-item/:id';
-  static const String categoryItemAddLegalDocuments =
-      '/category-item/add-legal-documents';
+  static const String categoryItemFormCreate = '/category-item/form/create';
+  static const String categoryItemFormUpdate = '/category-item/form/:id';
+  static const String categoryItemFormAddLegalDocuments =
+      '/category-item/form/legal-documents';
 
   // user_management
   static const String userManagement = '/user-management';

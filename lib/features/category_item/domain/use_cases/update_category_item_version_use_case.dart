@@ -1,16 +1,17 @@
 import 'package:dartz/dartz.dart';
 import 'package:multi_catalog_system/core/error/failures.dart';
 import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_entry.dart';
-import 'package:multi_catalog_system/features/category_item/domain/repositories/category_item_repository.dart';
+import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_version_entry.dart';
+import 'package:multi_catalog_system/features/category_item/domain/repositories/category_item_version_repository.dart';
 
 class UpdateCategoryItemVersionUseCase {
-  final CategoryItemRepository repository;
+  final CategoryItemVersionRepository repository;
 
   UpdateCategoryItemVersionUseCase({required this.repository});
 
-  Future<Either<Failure, CategoryItemEntry>> call({
+  Future<Either<Failure, CategoryItemVersionEntry>> call({
     required CategoryItemEntry entry,
   }) {
-    return repository.update(entry: entry);
+    return repository.updateVersion(entry: entry);
   }
 }

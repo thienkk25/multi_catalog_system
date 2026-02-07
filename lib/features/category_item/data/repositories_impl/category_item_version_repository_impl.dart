@@ -6,7 +6,6 @@ import 'package:multi_catalog_system/features/category_item/data/data_sources/ca
 import 'package:multi_catalog_system/features/category_item/data/models/category_item_version_model.dart';
 import 'package:multi_catalog_system/features/category_item/domain/domain.dart';
 import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_version_entry.dart';
-import 'package:multi_catalog_system/features/category_item/domain/repositories/category_item_version_repository.dart';
 
 class CategoryItemVersionRepositoryImpl
     implements CategoryItemVersionRepository {
@@ -31,8 +30,8 @@ class CategoryItemVersionRepositoryImpl
       );
 
   Map<String, dynamic> _createPayload(CategoryItemEntry entry) => {
-    'category_item': {
-      'group_id': entry.groupId,
+    'version_data': {
+      'group_id': entry.group?.id,
       'code': entry.code,
       'name': entry.name,
       if (entry.description != null) 'description': entry.description,
@@ -41,8 +40,8 @@ class CategoryItemVersionRepositoryImpl
   };
 
   Map<String, dynamic> _updatePayload(CategoryItemEntry entry) => {
-    'category_item': {
-      if (entry.groupId != null) 'group_id': entry.groupId,
+    'version_data': {
+      if (entry.group?.id != null) 'group_id': entry.group?.id,
       if (entry.code != null) 'code': entry.code,
       if (entry.name != null) 'name': entry.name,
       if (entry.description != null) 'description': entry.description,
@@ -52,10 +51,14 @@ class CategoryItemVersionRepositoryImpl
   };
   @override
   Future<Either<Failure, List<CategoryItemVersionEntry>>> getAll({
+    required String itemId,
     String? search,
   }) async {
     try {
-      final models = await remoteDataSource.getAll(search: search);
+      final models = await remoteDataSource.getAll(
+        itemId: itemId,
+        search: search,
+      );
       return Right(models.map((m) => _toEntity(m)).toList());
     } on AppException catch (e) {
       return Left(mapExceptionToFailure(e));

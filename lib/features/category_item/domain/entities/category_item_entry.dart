@@ -1,15 +1,15 @@
 import 'package:equatable/equatable.dart';
 import 'package:multi_catalog_system/features/legal_document/domain/entities/legal_document_entry.dart';
 
+import 'category_group_ref_entry.dart';
+
 class CategoryItemEntry extends Equatable {
   final String? id;
   final String? code;
   final String? name;
   final String? description;
   final String? status;
-  final String? groupId;
-  final String? groupName;
-  final String? domainName;
+  final CategoryGroupRefEntry? group;
   final List<LegalDocumentEntry>? legalDocuments;
   final String? createdByName;
   final String? updatedByName;
@@ -22,9 +22,7 @@ class CategoryItemEntry extends Equatable {
     this.name,
     this.description,
     this.status,
-    this.groupId,
-    this.groupName,
-    this.domainName,
+    this.group,
     this.legalDocuments,
     this.createdByName,
     this.updatedByName,
@@ -39,9 +37,7 @@ class CategoryItemEntry extends Equatable {
     name,
     description,
     status,
-    groupId,
-    groupName,
-    domainName,
+    group,
     legalDocuments,
     createdByName,
     updatedByName,

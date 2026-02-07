@@ -1,7 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:multi_catalog_system/core/utils/extensions/auth_permission_extension.dart';
 import 'package:multi_catalog_system/core/utils/formatter/data_time_formatter.dart';
+import 'package:multi_catalog_system/core/widgets/custom_alert_dialog.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
+import 'package:multi_catalog_system/core/widgets/role_based_widget.dart';
 import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_entry.dart';
+import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_bloc.dart';
+import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_event.dart';
+import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_version_bloc.dart';
+import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_version_event.dart';
 
 import 'category_item_status_chip.dart';
 
@@ -34,8 +43,8 @@ class CategoryItemCard extends StatelessWidget {
           const SizedBox(height: 12),
 
           _InfoRow(label: 'Mã mục', value: entry.code),
-          _InfoRow(label: 'Lĩnh vực', value: entry.domainName),
-          _InfoRow(label: 'Nhóm', value: entry.groupName),
+          _InfoRow(label: 'Lĩnh vực', value: entry.group?.domain?.name),
+          _InfoRow(label: 'Nhóm', value: entry.group?.name),
 
           if (entry.description?.isNotEmpty == true) ...[
             const SizedBox(height: 8),
@@ -53,7 +62,68 @@ class CategoryItemCard extends StatelessWidget {
               style: TextStyle(color: Colors.grey.shade600),
             ),
           ),
+          _buildDeleteButton(
+            permission: ['admin', 'domainOfficer'],
+            onTap: () {
+              final ctx = context;
+              if (context.hasRole('admin')) {
+                showDialog(
+                  context: context,
+                  builder: (context) => CustomAlertDialog(
+                    onCancel: () => context.pop(),
+                    onConfirm: () {
+                      if (entry.id == null) return;
+                      context.pop();
+                      ctx.read<CategoryItemBloc>().add(
+                        CategoryItemEvent.delete(id: entry.id!),
+                      );
+                    },
+                  ),
+                );
+              } else {
+                showDialog(
+                  context: context,
+                  builder: (context) => CustomAlertDialog(
+                    onCancel: () => context.pop(),
+                    onConfirm: () {
+                      if (entry.id == null) return;
+                      context.pop();
+                      ctx.read<CategoryItemVersionBloc>().add(
+                        CategoryItemVersionEvent.deleteVersion(id: entry.id!),
+                      );
+                    },
+                  ),
+                );
+              }
+            },
+          ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildDeleteButton({
+    required List<String> permission,
+    required VoidCallback onTap,
+  }) {
+    return RoleBasedWidget(
+      permission: permission,
+      child: Align(
+        alignment: Alignment.centerRight,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            const SizedBox(height: 12),
+            GestureDetector(
+              onTap: onTap,
+              child: const Padding(
+                padding: EdgeInsets.all(10),
+                child: Icon(Icons.delete, color: Colors.red),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

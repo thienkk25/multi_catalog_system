@@ -5,7 +5,10 @@ part 'category_item_version_event.freezed.dart';
 
 @freezed
 class CategoryItemVersionEvent with _$CategoryItemVersionEvent {
-  const factory CategoryItemVersionEvent.getAll({String? search}) = GetAll;
+  const factory CategoryItemVersionEvent.getAll({
+    required String itemId,
+    String? search,
+  }) = GetAll;
 
   const factory CategoryItemVersionEvent.getById({required String id}) =
       GetById;

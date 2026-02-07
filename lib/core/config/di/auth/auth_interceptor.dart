@@ -30,44 +30,55 @@ class AuthInterceptor extends Interceptor {
   }
 
   // ================= ERROR =================
+  bool _isRefreshing = false;
+  Future<bool>? _refreshFuture;
+
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
     final is401 = err.response?.statusCode == 401;
-    final isRefresh = err.requestOptions.path.contains('/auth/refresh');
+    final isRefresh = err.requestOptions.extra['isRefresh'] == true;
+    final isRetry = err.requestOptions.extra['retry'] == true;
 
-    if (is401 && !isRefresh) {
-      final refreshed = await _refreshToken();
+    if (is401 && !isRefresh && !isRetry) {
+      if (_isRefreshing && _refreshFuture != null) {
+        await _refreshFuture;
+      } else {
+        _isRefreshing = true;
+        _refreshFuture = _refreshToken();
 
-      if (!refreshed) {
-        // Nếu refresh token thất bại → logout
-        await authLocal.clearAuthToken();
-        authRepository.notifyUnauthenticated();
+        bool? refreshed;
 
-        return handler.reject(err);
+        try {
+          refreshed = await _refreshFuture;
+        } finally {
+          _isRefreshing = false;
+        }
+
+        if (refreshed != true) {
+          await authRepository.logout();
+          return handler.reject(err);
+        }
       }
 
-      // Lấy token mới
       final newToken = await authLocal.getCachedAuthToken();
+
       if (newToken == null || newToken.isEmpty) {
         await authRepository.logout();
-
         return handler.reject(err);
-        // return handler.resolve(
-        //   Response(
-        //     requestOptions: err.requestOptions,
-        //     statusCode: 401,
-        //     data: {'success': false, 'message': 'Phiên đăng nhập đã hết hạn'},
-        //   ),
-        // );
       }
 
       try {
-        final requestOptions = err.requestOptions;
-        requestOptions.headers['Authorization'] = 'Bearer $newToken';
+        final requestOptions = err.requestOptions.copyWith(
+          headers: {
+            ...err.requestOptions.headers,
+            'Authorization': 'Bearer $newToken',
+          },
+          extra: {...err.requestOptions.extra, 'retry': true},
+        );
 
         final response = await dio.fetch(requestOptions);
         return handler.resolve(response);
-      } catch (e) {
+      } catch (_) {
         return handler.reject(err);
       }
     }

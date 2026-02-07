@@ -5,6 +5,7 @@ import 'package:multi_catalog_system/features/category_item/domain/entities/cate
 
 abstract class CategoryItemVersionRepository {
   Future<Either<Failure, List<CategoryItemVersionEntry>>> getAll({
+    required String itemId,
     String? search,
   });
   Future<Either<Failure, CategoryItemVersionEntry>> getById({

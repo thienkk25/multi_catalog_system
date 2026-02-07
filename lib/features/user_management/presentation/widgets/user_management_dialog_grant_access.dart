@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/domain/entities/auth/user_entry.dart';
 import 'package:multi_catalog_system/core/domain/entities/domain/domain_ref_entry.dart';
 import 'package:multi_catalog_system/core/domain/entities/role/role_entry.dart';
+import 'package:multi_catalog_system/core/notifications/notification_cubit.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/core/widgets/custom_button.dart';
 import 'package:multi_catalog_system/core/widgets/custom_dropdown_button.dart';
@@ -26,11 +28,13 @@ class UserManagementDialogGrantAccess extends StatefulWidget {
 class _UserManagementDialogGrantAccessState
     extends State<UserManagementDialogGrantAccess> {
   int? _selectedRole;
+  List<DomainRefEntry> _domains = [];
 
   @override
   void initState() {
     super.initState();
     _selectedRole = widget.entry.role?.id;
+    _domains = List.from(widget.entry.domains ?? []);
   }
 
   @override
@@ -87,7 +91,7 @@ class _UserManagementDialogGrantAccessState
               },
             ),
             const SizedBox(height: 12),
-            if (_selectedRole == 3) _permissionDomains(),
+            if (_selectedRole != 1) _permissionDomains(),
             const SizedBox(height: 12),
             Row(
               children: [
@@ -111,13 +115,19 @@ class _UserManagementDialogGrantAccessState
                       style: TextStyle(color: Colors.white),
                     ),
                     onTap: () {
-                      final domains = widget.entry.domains;
+                      if (_selectedRole == null) return;
+                      if (_selectedRole != 1 && _domains.isEmpty) {
+                        context.read<NotificationCubit>().warning(
+                          'Vui lòng chọn ít nhất một lĩnh vực được phân quyền',
+                        );
+                        return;
+                      }
                       widget.bloc.add(
                         UserManagementEvent.grantAccess(
                           entry: UserEntry(
                             id: widget.entry.id,
                             role: RoleEntry(id: _selectedRole),
-                            domains: domains,
+                            domains: _domains,
                           ),
                         ),
                       );
@@ -153,7 +163,7 @@ class _UserManagementDialogGrantAccessState
             spacing: 8,
             runSpacing: 8,
             children: [
-              ...(widget.entry.domains ?? []).map(
+              ..._domains.map(
                 (field) => Chip(
                   label: Text(
                     field.name,
@@ -164,7 +174,7 @@ class _UserManagementDialogGrantAccessState
                   ),
                   deleteIcon: const Icon(Icons.close, size: 18),
                   onDeleted: () {
-                    setState(() => (widget.entry.domains ?? []).remove(field));
+                    setState(() => (_domains).remove(field));
                   },
                   backgroundColor: Colors.blue.shade50,
                   side: BorderSide(color: Colors.blue.shade200),
@@ -191,23 +201,22 @@ class _UserManagementDialogGrantAccessState
                     backgroundColor: Colors.transparent,
                     side: BorderSide(color: Colors.blue.shade300),
                     onPressed: () async {
-                      final result =
-                          await context.pushNamed(
-                                RouterNames.userManagementAddDomains,
-                                extra: (widget.entry.domains ?? []),
-                              )
-                              as List<DomainRefEntry>?;
-
-                      if (result == null) return;
-
-                      setState(
-                        () => (widget.entry.domains ?? [])
-                          ..clear()
-                          ..addAll(result),
+                      final raw = await context.pushNamed(
+                        RouterNames.userManagementAddDomains,
+                        extra: _domains,
                       );
+
+                      if (raw == null) return;
+
+                      final result = (raw as List).cast<DomainRefEntry>();
+
+                      setState(() {
+                        _domains.clear();
+                        _domains.addAll(result);
+                      });
                     },
                   ),
-                  if ((widget.entry.domains ?? []).isNotEmpty)
+                  if (_domains.isNotEmpty)
                     ActionChip(
                       label: const Row(
                         mainAxisSize: MainAxisSize.min,
@@ -227,7 +236,7 @@ class _UserManagementDialogGrantAccessState
                       side: BorderSide(color: Colors.blue.shade300),
                       onPressed: () {
                         setState(() {
-                          (widget.entry.domains ?? []).clear();
+                          _domains.clear();
                         });
                       },
                     ),

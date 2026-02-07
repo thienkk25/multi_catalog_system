@@ -1,21 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/core/utils/formatter/data_time_formatter.dart';
+import 'package:multi_catalog_system/core/widgets/custom_button.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/core/widgets/file_icon_widget.dart';
+import 'package:multi_catalog_system/core/widgets/role_based_widget.dart';
 import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_entry.dart';
+import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_bloc.dart';
+import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_state.dart';
+import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_version_bloc.dart';
+import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_version_event.dart';
+import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_version_state.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/widgets/category_item_status_chip.dart';
 import 'package:multi_catalog_system/features/legal_document/domain/entities/legal_document_entry.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class CategoryItemDetailPage extends StatefulWidget {
-  final CategoryItemEntry entry;
-  final bool isAdmin;
-
-  const CategoryItemDetailPage({
-    super.key,
-    required this.entry,
-    this.isAdmin = false,
-  });
+  const CategoryItemDetailPage({super.key});
 
   @override
   State<CategoryItemDetailPage> createState() => _CategoryItemDetailPageState();
@@ -28,7 +31,7 @@ class _CategoryItemDetailPageState extends State<CategoryItemDetailPage>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 2, vsync: this);
   }
 
   @override
@@ -39,36 +42,59 @@ class _CategoryItemDetailPageState extends State<CategoryItemDetailPage>
 
   @override
   Widget build(BuildContext context) {
-    final entry = widget.entry;
+    return BlocBuilder<CategoryItemBloc, CategoryItemState>(
+      builder: (context, state) {
+        if (state.isLoading) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(entry.name ?? 'Thông tin danh mục'),
-        centerTitle: true,
-        bottom: TabBar(
-          controller: _tabController,
-          labelColor: Colors.white,
-          unselectedLabelColor: Colors.white60,
-          dividerColor: Colors.grey,
-          indicatorColor: Colors.white,
-          tabs: const [
-            Tab(text: 'Thông tin'),
-            Tab(text: 'Lịch sử phiên bản'),
-            Tab(text: 'Phê duyệt'),
-          ],
-        ),
-      ),
+        if (state.error != null) {
+          return Scaffold(body: Center(child: Text(state.error!)));
+        }
 
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          _InfoTab(entry: entry),
-          _HistoryTab(entry: entry),
-          _ApprovalTab(entry: entry),
-        ],
-      ),
+        if (state.entries.isEmpty) {
+          return const Scaffold(body: Center(child: Text('Không có dữ liệu')));
+        }
 
-      bottomNavigationBar: widget.isAdmin ? _AdminActions(entry: entry) : null,
+        final entry = state.entries.first;
+
+        context.read<CategoryItemVersionBloc>().add(
+          CategoryItemVersionEvent.getAll(itemId: entry.id!),
+        );
+
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(entry.name ?? 'Thông tin danh mục'),
+            centerTitle: true,
+            bottom: TabBar(
+              controller: _tabController,
+              labelColor: Colors.white,
+              unselectedLabelColor: Colors.white60,
+              dividerColor: Colors.grey,
+              indicatorColor: Colors.white,
+              tabs: const [
+                Tab(text: 'Thông tin'),
+                Tab(text: 'Lịch sử phiên bản'),
+              ],
+            ),
+          ),
+
+          body: TabBarView(
+            controller: _tabController,
+            children: [
+              _InfoTab(entry: entry),
+              _HistoryTab(entry: entry),
+            ],
+          ),
+
+          bottomNavigationBar: RoleBasedWidget(
+            permission: ['admin', 'domainOfficer'],
+            child: _BottomActions(entry: entry),
+          ),
+        );
+      },
     );
   }
 }
@@ -114,8 +140,8 @@ class _InfoTab extends StatelessWidget {
                   value: entry.description!,
                   multiline: true,
                 ),
-              _InfoRow(label: 'Lĩnh vực', value: entry.domainName),
-              _InfoRow(label: 'Nhóm danh mục', value: entry.groupName),
+              _InfoRow(label: 'Lĩnh vực', value: entry.group?.domain?.name),
+              _InfoRow(label: 'Nhóm danh mục', value: entry.group?.name),
               _InfoRow(label: 'Người tạo', value: entry.createdByName),
               _InfoRow(
                 label: 'Người cập nhật gần đây',
@@ -161,73 +187,136 @@ class _HistoryTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-      padding: const EdgeInsets.all(16),
-      itemCount: 3,
-      separatorBuilder: (context, index) => const SizedBox(height: 8),
-      itemBuilder: (context, index) {
-        return CustomCard(
-          child: ListTile(
-            leading: const Icon(Icons.history),
-            title: Text('Phiên bản ${3 - index}'),
-            subtitle: const Text('Cập nhật mô tả danh mục'),
-            trailing: Text(dateFormat(DateTime.now())),
-          ),
+    return BlocBuilder<CategoryItemVersionBloc, CategoryItemVersionState>(
+      builder: (context, state) {
+        if (state.isLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (state.error != null) {
+          return Center(child: Text(state.error!));
+        }
+
+        if (state.entries.isEmpty) {
+          return const Center(child: Text('Không có lịch sử'));
+        }
+
+        final entries = state.entries;
+
+        return ListView.separated(
+          padding: const EdgeInsets.all(16),
+          itemCount: entries.length,
+          separatorBuilder: (context, index) => const SizedBox(height: 8),
+          itemBuilder: (context, index) {
+            final indexVersion = entries.length - 1 - index;
+            final entry = entries[index];
+            return CustomCard(
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Icon(Icons.history, size: 22, color: Colors.blue),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Wrap(
+                            children: [
+                              Text(
+                                'Phiên bản ${indexVersion + 1}',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              _changeType(entry.changeType),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Text(entry.changeSummary ?? '-'),
+                          const SizedBox(height: 8),
+                          Wrap(
+                            spacing: 12,
+                            runSpacing: 4,
+                            children: [
+                              Text(
+                                'Ngày tạo: ${dateFormat(entry.createdAt)}',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey,
+                                ),
+                              ),
+
+                              if (entry.appliedAt != null)
+                                Text(
+                                  'Áp dụng: ${dateFormat(entry.appliedAt)}',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    CategoryItemStatusChip(status: entry.status ?? ''),
+                  ],
+                ),
+              ),
+            );
+          },
         );
       },
     );
   }
-}
 
-class _ApprovalTab extends StatelessWidget {
-  final CategoryItemEntry entry;
-  const _ApprovalTab({required this.entry});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: CustomCard(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: const [
-              Icon(Icons.verified, size: 40, color: Colors.green),
-              SizedBox(height: 12),
-              Text(
-                'Danh mục đã được phê duyệt',
-                style: TextStyle(fontWeight: FontWeight.w600),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+  Widget _changeType(String? changeType) {
+    switch (changeType) {
+      case 'create':
+        return Icon(Icons.add_circle, size: 16, color: Colors.green);
+      case 'update':
+        return Icon(Icons.edit, size: 16, color: Colors.blue);
+      case 'delete':
+        return Icon(Icons.delete, size: 16, color: Colors.red);
+      default:
+        return const SizedBox.shrink();
+    }
   }
 }
 
-class _AdminActions extends StatelessWidget {
+class _BottomActions extends StatelessWidget {
   final CategoryItemEntry entry;
-  const _AdminActions({required this.entry});
+  const _BottomActions({required this.entry});
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(12),
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        height: 60,
         child: Row(
           children: [
             Expanded(
-              child: OutlinedButton(
-                onPressed: () {},
-                child: const Text('Khôi phục phiên bản'),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: ElevatedButton(
-                onPressed: () {},
-                child: const Text('Chỉnh sửa'),
+              child: CustomButton(
+                onTap: () {
+                  context.pushNamed(
+                    RouterNames.categoryItemFormUpdate,
+                    pathParameters: {'id': ?entry.id},
+                  );
+                },
+                colorBackground: Colors.blue,
+                textButton: const Text(
+                  'Chỉnh sửa',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
             ),
           ],
