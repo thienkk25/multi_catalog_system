@@ -30,7 +30,7 @@ class SystemHistoryManagementDetailPage extends StatelessWidget {
             return const Center(child: Text('Xảy ra lỗi'));
           }
 
-          final entry = state.entries.firstOrNull;
+          final entry = state.entry;
           if (entry == null) {
             return const Center(child: Text('Không tìm thấy dữ liệu'));
           }

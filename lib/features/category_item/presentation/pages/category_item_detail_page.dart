@@ -54,11 +54,11 @@ class _CategoryItemDetailPageState extends State<CategoryItemDetailPage>
           return Scaffold(body: Center(child: Text(state.error!)));
         }
 
-        if (state.entries.isEmpty) {
+        final entry = state.entry;
+
+        if (entry == null) {
           return const Scaffold(body: Center(child: Text('Không có dữ liệu')));
         }
-
-        final entry = state.entries.first;
 
         context.read<CategoryItemVersionBloc>().add(
           CategoryItemVersionEvent.getAll(itemId: entry.id!),

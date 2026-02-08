@@ -8,6 +8,7 @@ abstract class CategoryItemVersionState with _$CategoryItemVersionState {
   const factory CategoryItemVersionState({
     @Default(false) bool isLoading,
     @Default([]) List<CategoryItemVersionEntry> entries,
+    CategoryItemVersionEntry? entry,
     String? error,
     String? successMessage,
   }) = _CategoryItemVersionState;
