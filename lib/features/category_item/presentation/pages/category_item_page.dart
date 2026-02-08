@@ -50,15 +50,23 @@ class _CategoryItemPageState extends State<CategoryItemPage>
     return MultiBlocListener(
       listeners: [
         BlocListener<CategoryItemBloc, CategoryItemState>(
-          listenWhen: (prev, curr) => curr.successMessage != null,
           listener: (context, state) {
-            context.read<NotificationCubit>().success(state.successMessage!);
+            if (state.error != null) {
+              context.read<NotificationCubit>().error(state.error!);
+            }
+            if (state.successMessage != null) {
+              context.read<NotificationCubit>().success(state.successMessage!);
+            }
           },
         ),
         BlocListener<CategoryItemVersionBloc, CategoryItemVersionState>(
-          listenWhen: (prev, curr) => curr.successMessage != null,
           listener: (context, state) {
-            context.read<NotificationCubit>().success(state.successMessage!);
+            if (state.error != null) {
+              context.read<NotificationCubit>().error(state.error!);
+            }
+            if (state.successMessage != null) {
+              context.read<NotificationCubit>().success(state.successMessage!);
+            }
           },
         ),
       ],

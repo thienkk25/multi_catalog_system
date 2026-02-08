@@ -100,10 +100,10 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<CategoryItemBloc, CategoryItemState>(
-      listenWhen: (previous, current) => current.entries.isNotEmpty,
       listener: (context, state) {
-        if (state.entries.isNotEmpty) {
-          _initFromEntry(state.entries.first);
+        final entry = state.entry;
+        if (entry != null) {
+          _initFromEntry(entry);
         }
       },
       child: SafeArea(

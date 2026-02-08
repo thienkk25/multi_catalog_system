@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:multi_catalog_system/core/utils/formatter/map_failure_formatter.dart';
 import 'package:multi_catalog_system/features/category_item/domain/domain.dart';
+import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_version_entry.dart';
 
 import 'category_item_version_event.dart';
 import 'category_item_version_state.dart';
@@ -14,7 +15,7 @@ class CategoryItemVersionBloc
   final DeleteCategoryItemVersionUseCase deleteVersion;
   final ApproveCategoryItemVersionUseCase approveVersion;
   final RejectCategoryItemVersionUseCase rejectVersion;
-  final DeleteByAdminCategoryItemVersionUseCase deleteByAdminVersion;
+  final DeleteOriginCategoryItemVersionUseCase deleteOrigin;
 
   CategoryItemVersionBloc({
     required this.getAll,
@@ -24,7 +25,7 @@ class CategoryItemVersionBloc
     required this.deleteVersion,
     required this.approveVersion,
     required this.rejectVersion,
-    required this.deleteByAdminVersion,
+    required this.deleteOrigin,
   }) : super(const CategoryItemVersionState()) {
     on<CategoryItemVersionEvent>(_onEvent);
   }
@@ -83,7 +84,7 @@ class CategoryItemVersionBloc
           (r) => emit(
             state.copyWith(
               isLoading: false,
-              successMessage: 'Phiên bản đã được tạo thành công',
+              successMessage: 'Gửi yêu cầu tạo thành công',
             ),
           ),
         );
@@ -104,7 +105,7 @@ class CategoryItemVersionBloc
           (r) => emit(
             state.copyWith(
               isLoading: false,
-              successMessage: 'Phiên bản đã được cập nhật thành công',
+              successMessage: 'Gửi yêu cầu cập nhật thành công',
             ),
           ),
         );
@@ -125,7 +126,7 @@ class CategoryItemVersionBloc
           (r) => emit(
             state.copyWith(
               isLoading: false,
-              successMessage: 'Xóa phiên bản thành công',
+              successMessage: 'Gửi yêu cầu xóa thành công',
             ),
           ),
         );
@@ -146,7 +147,7 @@ class CategoryItemVersionBloc
           (r) => emit(
             state.copyWith(
               isLoading: false,
-              successMessage: 'Phiên bản đã được phê duyệt',
+              successMessage: 'Phê duyệt thành công',
             ),
           ),
         );
@@ -170,30 +171,26 @@ class CategoryItemVersionBloc
           (r) => emit(
             state.copyWith(
               isLoading: false,
-              successMessage: 'Từ chối phiên bản thành công',
+              successMessage: 'Từ chối thành công',
             ),
           ),
         );
       },
       delete: (e) async {
+        final previous = List<CategoryItemVersionEntry>.from(state.entries);
         emit(
           state.copyWith(
-            isLoading: true,
+            entries: state.entries.where((d) => d.id != e.id).toList(),
             error: null,
             successMessage: null,
             entry: null,
           ),
         );
-        final result = await deleteByAdminVersion(id: e.id);
+        final result = await deleteOrigin(id: e.id);
         if (emit.isDone) return;
         result.fold(
-          (l) => emit(state.copyWith(isLoading: false, error: mapFailure(l))),
-          (r) => emit(
-            state.copyWith(
-              isLoading: false,
-              successMessage: 'Xóa phiên bản thành công',
-            ),
-          ),
+          (l) => emit(state.copyWith(entries: previous, error: mapFailure(l))),
+          (r) => emit(state.copyWith(successMessage: 'Xóa thành công')),
         );
       },
     );

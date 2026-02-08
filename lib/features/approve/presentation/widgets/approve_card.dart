@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:multi_catalog_system/core/router/router_names.dart';
+import 'package:multi_catalog_system/core/widgets/custom_alert_dialog.dart';
 import 'package:multi_catalog_system/core/widgets/custom_button.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
+import 'package:multi_catalog_system/core/widgets/custom_input.dart';
 import 'package:multi_catalog_system/core/widgets/custom_label.dart';
 import 'package:multi_catalog_system/core/widgets/role_based_widget.dart';
 import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_entry.dart';
 import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_version_entry.dart';
+import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_version_bloc.dart';
+import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_version_event.dart';
 
 class ApproveCard extends StatelessWidget {
   final CategoryItemVersionEntry version;
@@ -92,7 +99,10 @@ class ApproveCard extends StatelessWidget {
                             SizedBox(
                               width: 120,
                               child: CustomButton(
-                                onTap: () => _confirmReject(context: context),
+                                onTap: () => _confirmReject(
+                                  context: context,
+                                  id: version.id!,
+                                ),
                                 colorBackground: Colors.red,
                                 textButton: const Text(
                                   "Từ chối",
@@ -103,7 +113,10 @@ class ApproveCard extends StatelessWidget {
                             SizedBox(
                               width: 120,
                               child: CustomButton(
-                                onTap: () => _confirmApprove(context: context),
+                                onTap: () => _confirmApprove(
+                                  context: context,
+                                  id: version.id!,
+                                ),
                                 colorBackground: Colors.green,
                                 textButton: const Text(
                                   "Duyệt",
@@ -122,10 +135,13 @@ class ApproveCard extends StatelessWidget {
                             SizedBox(
                               width: 120,
                               child: CustomButton(
-                                onTap: () => _confirmReject(context: context),
+                                onTap: () => _confirmDelete(
+                                  context: context,
+                                  id: version.id!,
+                                ),
                                 colorBackground: Colors.red,
                                 textButton: const Text(
-                                  "Từ chối",
+                                  "Xóa",
                                   style: TextStyle(color: Colors.white),
                                 ),
                               ),
@@ -133,10 +149,15 @@ class ApproveCard extends StatelessWidget {
                             SizedBox(
                               width: 120,
                               child: CustomButton(
-                                onTap: () => _confirmApprove(context: context),
+                                onTap: () {
+                                  context.pushNamed(
+                                    RouterNames.categoryItemFormUpdate,
+                                    pathParameters: {'id': version.itemId!},
+                                  );
+                                },
                                 colorBackground: Colors.green,
                                 textButton: const Text(
-                                  "Duyệt",
+                                  "Chỉnh sửa",
                                   style: TextStyle(color: Colors.white),
                                 ),
                               ),
@@ -340,47 +361,84 @@ class ApproveCard extends StatelessWidget {
     return true;
   }
 
-  void _confirmApprove({required BuildContext context}) {
+  void _confirmApprove({required BuildContext context, required String id}) {
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
-        title: const Text("Xác nhận"),
-        content: const Text("Bạn chắc chắn muốn DUYỆT bản ghi này?"),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("Huỷ"),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text("Duyệt"),
-          ),
-        ],
+      builder: (_) => CustomAlertDialog(
+        title: 'Xác nhận',
+        content: 'Bạn có chắc chắn muốn DUYỆT bản ghi?',
+        confirmText: 'Duyệt',
+        onConfirm: () {
+          context.read<CategoryItemVersionBloc>().add(
+            CategoryItemVersionEvent.approveVersion(id: id),
+          );
+        },
       ),
     );
   }
 
-  void _confirmReject({required BuildContext context}) {
+  void _confirmReject({required BuildContext context, required String id}) {
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
-        title: const Text("Xác nhận"),
-        content: const Text("Bạn chắc chắn muốn TỪ CHỐI bản ghi này?"),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("Huỷ"),
+      builder: (_) {
+        final controller = TextEditingController();
+        return AlertDialog(
+          title: Text(
+            'Từ chối',
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text("Từ chối"),
+          content: CustomInput(
+            controller: controller,
+            validator: (p0) =>
+                p0 == null || p0.isEmpty ? 'Vui lòng nhập lý do' : null,
+            minLines: 5,
+            maxLines: 5,
           ),
-        ],
+          actions: [
+            OutlinedButton(
+              onPressed: () => context.pop(),
+              style: OutlinedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: const Text('Hủy'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                print(controller.text);
+                // context.read<CategoryItemVersionBloc>().add(
+                //   CategoryItemVersionEvent.rejectVersion(
+                //     id: id,
+                //     rejectReason: controller.text,
+                //   ),
+                // );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.redAccent,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: const Text('Từ chối'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _confirmDelete({required BuildContext context, required String id}) {
+    showDialog(
+      context: context,
+      builder: (_) => CustomAlertDialog(
+        onConfirm: () {
+          context.pop();
+          context.read<CategoryItemVersionBloc>().add(
+            CategoryItemVersionEvent.delete(id: id),
+          );
+        },
       ),
     );
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:multi_catalog_system/core/notifications/notification_cubit.dart';
 import 'package:multi_catalog_system/features/approve/presentation/widgets/approve_card.dart';
 import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_version_entry.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_version_bloc.dart';
@@ -24,45 +25,55 @@ class _ApprovePageState extends State<ApprovePage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Duyệt danh mục'),
-        centerTitle: true,
-        bottom: TabBar(
-          controller: _tabController,
-          labelColor: Colors.white,
-          unselectedLabelColor: Colors.white60,
-          dividerColor: Colors.grey,
-          indicatorColor: Colors.white,
-          tabs: const [
-            Tab(text: 'Chờ duyệt'),
-            Tab(text: 'Đã duyệt'),
-            Tab(text: 'Từ chối'),
-          ],
+    return BlocListener<CategoryItemVersionBloc, CategoryItemVersionState>(
+      listener: (context, state) {
+        if (state.error != null) {
+          context.read<NotificationCubit>().error(state.error!);
+        }
+        if (state.successMessage != null) {
+          context.read<NotificationCubit>().success(state.successMessage!);
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Duyệt danh mục'),
+          centerTitle: true,
+          bottom: TabBar(
+            controller: _tabController,
+            labelColor: Colors.white,
+            unselectedLabelColor: Colors.white60,
+            dividerColor: Colors.grey,
+            indicatorColor: Colors.white,
+            tabs: const [
+              Tab(text: 'Chờ duyệt'),
+              Tab(text: 'Đã duyệt'),
+              Tab(text: 'Từ chối'),
+            ],
+          ),
         ),
-      ),
-      body: BlocBuilder<CategoryItemVersionBloc, CategoryItemVersionState>(
-        builder: (context, state) {
-          if (state.isLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
+        body: BlocBuilder<CategoryItemVersionBloc, CategoryItemVersionState>(
+          builder: (context, state) {
+            if (state.isLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-          final versions = state.entries;
+            final versions = state.entries;
 
-          return SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  _buildTab("pending", versions),
-                  _buildTab("approved", versions),
-                  _buildTab("rejected", versions),
-                ],
+            return SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: TabBarView(
+                  controller: _tabController,
+                  children: [
+                    _buildTab("pending", versions),
+                    _buildTab("approved", versions),
+                    _buildTab("rejected", versions),
+                  ],
+                ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

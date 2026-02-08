@@ -38,7 +38,6 @@ class MainApp extends StatelessWidget {
                 SnackBar(
                   behavior: SnackBarBehavior.floating,
                   duration: const Duration(seconds: 3),
-                  dismissDirection: DismissDirection.down,
                   backgroundColor: bgColorNotificationSnackBar(value.type),
                   content: Text(value.message),
                 ),

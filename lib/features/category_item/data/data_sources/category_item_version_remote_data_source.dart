@@ -96,6 +96,9 @@ class CategoryItemVersionRemoteDataSourceImpl extends BaseRemoteDataSource
         '/category-item-version/$id/update',
         data: data,
       );
+      if (response.data['data'] == null) {
+        throw UnexpectedException('No data');
+      }
       return CategoryItemVersionModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);

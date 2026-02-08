@@ -36,7 +36,7 @@ void initCategoryItemVersionModule() {
     () => RejectCategoryItemVersionUseCase(repository: getIt()),
   );
   getIt.registerLazySingleton(
-    () => DeleteByAdminCategoryItemVersionUseCase(repository: getIt()),
+    () => DeleteOriginCategoryItemVersionUseCase(repository: getIt()),
   );
 
   getIt.registerFactory(
@@ -48,7 +48,7 @@ void initCategoryItemVersionModule() {
       deleteVersion: getIt<DeleteCategoryItemVersionUseCase>(),
       approveVersion: getIt<ApproveCategoryItemVersionUseCase>(),
       rejectVersion: getIt<RejectCategoryItemVersionUseCase>(),
-      deleteByAdminVersion: getIt<DeleteByAdminCategoryItemVersionUseCase>(),
+      deleteOrigin: getIt<DeleteOriginCategoryItemVersionUseCase>(),
     ),
   );
 }

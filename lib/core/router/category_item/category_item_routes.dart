@@ -2,7 +2,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/config/di/injection.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
-import 'package:multi_catalog_system/core/utils/extensions/auth_permission_extension.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/presentation.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/bloc/legal_document_bloc.dart';
 
@@ -62,17 +61,10 @@ class CategoryItemRoutes {
               name: RouterNames.categoryItemFormUpdate,
               builder: (context, state) {
                 final id = state.pathParameters['id']!;
-                final isAdmin = context.hasRole('admin');
 
-                if (isAdmin) {
-                  context.read<CategoryItemBloc>().add(
-                    CategoryItemEvent.getById(id: id),
-                  );
-                } else {
-                  context.read<CategoryItemVersionBloc>().add(
-                    CategoryItemVersionEvent.getById(id: id),
-                  );
-                }
+                context.read<CategoryItemBloc>().add(
+                  CategoryItemEvent.getById(id: id),
+                );
 
                 return const CategoryItemFormPage();
               },

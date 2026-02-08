@@ -9,7 +9,7 @@ export 'use_cases/get_all_category_item_version_use_case.dart';
 export 'use_cases/get_by_id_category_item_version_use_case.dart';
 export 'use_cases/approve_category_item_version_use_case.dart';
 export 'use_cases/reject_category_item_version_use_case.dart';
-export 'use_cases/delete_by_admin_category_item_version_use_case.dart';
+export 'use_cases/delete_origin_category_item_version_use_case.dart';
 export 'use_cases/delete_category_item_version_use_case.dart';
 export 'use_cases/create_category_item_version_use_case.dart';
 export 'use_cases/update_category_item_version_use_case.dart';
