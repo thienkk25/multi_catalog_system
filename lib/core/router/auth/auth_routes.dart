@@ -6,7 +6,7 @@ import 'package:multi_catalog_system/features/auth/presentation/presentation.dar
 class AuthRoutes {
   static List<GoRoute> routes = [
     GoRoute(
-      path: RouterPaths.login,
+      path: '/login',
       name: RouterNames.login,
       builder: (_, state) => LoginPage(),
       redirect: (context, state) {
@@ -16,7 +16,7 @@ class AuthRoutes {
           authenticated: (_) => true,
           orElse: () => false,
         )) {
-          return RouterPaths.home;
+          return '/';
         }
         return null;
       },

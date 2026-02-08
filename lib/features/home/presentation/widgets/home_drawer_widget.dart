@@ -7,8 +7,13 @@ import 'package:multi_catalog_system/features/auth/presentation/presentation.dar
 import 'package:multi_catalog_system/features/home/presentation/presentation.dart';
 
 class HomeDrawerWidget extends StatelessWidget {
+  final Function(int index) onSelectTab;
   final double? drawerWidth;
-  const HomeDrawerWidget({super.key, this.drawerWidth});
+  const HomeDrawerWidget({
+    super.key,
+    this.drawerWidth,
+    required this.onSelectTab,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +30,7 @@ class HomeDrawerWidget extends StatelessWidget {
             children: [
               _HeaderDrawer(drawerWidth: drawerWidth),
               Divider(),
-              _MainDrawer(),
+              _MainDrawer(onSelectTab: onSelectTab),
               _FooterDrawer(),
             ],
           ),
@@ -71,7 +76,7 @@ class _HeaderDrawer extends StatelessWidget {
             width: sizeW,
             child: CustomButton(
               onTap: () {
-                context.pushNamed(RouterNames.login);
+                context.goNamed(RouterNames.login);
               },
               colorBackground: Colors.blue,
               textButton: const Text(
@@ -90,7 +95,8 @@ class _HeaderDrawer extends StatelessWidget {
 }
 
 class _MainDrawer extends StatelessWidget {
-  const _MainDrawer();
+  final Function(int index) onSelectTab;
+  const _MainDrawer({required this.onSelectTab});
 
   @override
   Widget build(BuildContext context) {
@@ -104,6 +110,7 @@ class _MainDrawer extends StatelessWidget {
               icon: Icon(Icons.search, size: 20),
               title: 'Tra cứu danh mục',
               pageIndex: 0,
+              onSelectTab: onSelectTab,
             ),
             _DrawerItem(
               icon: SvgPicture.asset(
@@ -112,6 +119,7 @@ class _MainDrawer extends StatelessWidget {
               ),
               title: 'Lĩnh vực',
               pageIndex: 1,
+              onSelectTab: onSelectTab,
             ),
             _DrawerItem(
               icon: SvgPicture.asset(
@@ -120,6 +128,7 @@ class _MainDrawer extends StatelessWidget {
               ),
               title: 'Nhóm danh mục',
               pageIndex: 2,
+              onSelectTab: onSelectTab,
             ),
             _DrawerItem(
               icon: SvgPicture.asset(
@@ -128,6 +137,7 @@ class _MainDrawer extends StatelessWidget {
               ),
               title: 'Mục danh mục',
               pageIndex: 3,
+              onSelectTab: onSelectTab,
             ),
             _DrawerItem(
               icon: SvgPicture.asset(
@@ -136,6 +146,19 @@ class _MainDrawer extends StatelessWidget {
               ),
               title: 'Văn bản pháp lý',
               pageIndex: 4,
+              onSelectTab: onSelectTab,
+            ),
+            RoleBasedWidget(
+              permission: ['approver', 'domainOfficer'],
+              child: _DrawerItem(
+                icon: SvgPicture.asset(
+                  'assets/icons/approve-invoice-svgrepo-com.svg',
+                  height: 20,
+                ),
+                title: 'Duyệt danh sách danh mục',
+                pageIndex: 5,
+                onSelectTab: onSelectTab,
+              ),
             ),
             RoleBasedWidget(
               permission: ['admin', 'domainOfficer'],
@@ -145,9 +168,8 @@ class _MainDrawer extends StatelessWidget {
                   height: 20,
                 ),
                 title: 'Nhập dữ liệu File',
-                onTap: () {
-                  context.pushNamed(RouterNames.importFile, extra: 0);
-                },
+                pageIndex: 6,
+                onSelectTab: onSelectTab,
               ),
             ),
 
@@ -163,7 +185,8 @@ class _MainDrawer extends StatelessWidget {
                       height: 20,
                     ),
                     title: 'Quản lý người dùng',
-                    pageIndex: 5,
+                    pageIndex: 7,
+                    onSelectTab: onSelectTab,
                   ),
                   _DrawerItem(
                     icon: SvgPicture.asset(
@@ -171,7 +194,8 @@ class _MainDrawer extends StatelessWidget {
                       height: 20,
                     ),
                     title: 'API Key',
-                    pageIndex: 6,
+                    pageIndex: 8,
+                    onSelectTab: onSelectTab,
                   ),
                   _DrawerItem(
                     icon: SvgPicture.asset(
@@ -179,9 +203,8 @@ class _MainDrawer extends StatelessWidget {
                       height: 20,
                     ),
                     title: 'Nhật kí hệ thống',
-                    onTap: () {
-                      context.pushNamed(RouterNames.systemHistoryManagement);
-                    },
+                    pageIndex: 9,
+                    onSelectTab: onSelectTab,
                   ),
                 ],
               ),
@@ -248,35 +271,31 @@ class _FooterDrawer extends StatelessWidget {
 class _DrawerItem extends StatelessWidget {
   final Widget icon;
   final String title;
-  final int? pageIndex;
-  final VoidCallback? onTap;
+  final int pageIndex;
+  final Function(int index) onSelectTab;
 
   const _DrawerItem({
     required this.icon,
     required this.title,
-    this.pageIndex,
-    this.onTap,
+    required this.pageIndex,
+    required this.onSelectTab,
   });
 
   @override
   Widget build(BuildContext context) {
-    final selected = pageIndex != null
-        ? (context.watch<HomeBloc>().state.mapOrNull(
-                page: (value) => value.index == pageIndex,
-              ) ??
-              false)
-        : false;
+    final selected =
+        context.watch<HomeBloc>().state.mapOrNull(
+          page: (value) => value.index == pageIndex,
+        ) ??
+        false;
 
     return InkWell(
       borderRadius: BorderRadius.circular(10),
       hoverColor: Colors.blue.withValues(alpha: .2),
       onTap: () {
-        if (pageIndex != null) {
-          context.read<HomeBloc>().add(HomeEvent.changePage(pageIndex!, title));
-          context.pop();
-        } else {
-          onTap?.call();
-        }
+        context.read<HomeBloc>().add(HomeEvent.changePage(pageIndex, title));
+        context.pop();
+        onSelectTab(pageIndex);
       },
       child: ListTile(
         selected: selected,

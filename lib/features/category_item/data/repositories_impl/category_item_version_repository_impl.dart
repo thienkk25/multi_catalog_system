@@ -51,7 +51,7 @@ class CategoryItemVersionRepositoryImpl
   };
   @override
   Future<Either<Failure, List<CategoryItemVersionEntry>>> getAll({
-    required String itemId,
+    String? itemId,
     String? search,
   }) async {
     try {

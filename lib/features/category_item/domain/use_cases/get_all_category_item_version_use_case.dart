@@ -9,7 +9,7 @@ class GetAllCategoryItemVersionUseCase {
   GetAllCategoryItemVersionUseCase({required this.repository});
 
   Future<Either<Failure, List<CategoryItemVersionEntry>>> call({
-    required String itemId,
+    String? itemId,
     String? search,
   }) {
     return repository.getAll(itemId: itemId, search: search);

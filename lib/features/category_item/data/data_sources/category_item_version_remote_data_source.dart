@@ -5,7 +5,7 @@ import 'package:multi_catalog_system/features/category_item/data/models/category
 
 abstract class CategoryItemVersionRemoteDataSource {
   Future<List<CategoryItemVersionModel>> getAll({
-    required String itemId,
+    String? itemId,
     String? search,
   });
   Future<CategoryItemVersionModel> getById({required String id});
@@ -35,14 +35,14 @@ class CategoryItemVersionRemoteDataSourceImpl extends BaseRemoteDataSource
 
   @override
   Future<List<CategoryItemVersionModel>> getAll({
-    required String itemId,
+    String? itemId,
     String? search,
   }) async {
     try {
       final queryParams = <String, dynamic>{};
 
       if (search != null) queryParams['search'] = search;
-      queryParams['item_id'] = itemId;
+      if (itemId != null) queryParams['item_id'] = itemId;
 
       final response = await dio.get(
         '/category-item-version',

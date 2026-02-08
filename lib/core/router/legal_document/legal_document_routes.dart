@@ -6,43 +6,47 @@ import 'package:multi_catalog_system/features/legal_document/domain/entities/leg
 import 'package:multi_catalog_system/features/legal_document/presentation/presentation.dart';
 
 class LegalDocumentRoutes {
-  static List<GoRoute> routes = [
-    GoRoute(
-      path: RouterPaths.legalDocument,
-      name: RouterNames.legalDocument,
-      builder: (context, state) => BlocProvider(
-        create: (_) => getIt<LegalDocumentBloc>(),
-        child: const LegalDocumentPage(),
-      ),
-    ),
-    GoRoute(
-      path: RouterPaths.legalDocumentForm,
-      name: RouterNames.legalDocumentForm,
-      builder: (context, state) {
-        final data = state.extra as Map<String, dynamic>;
-        return MultiBlocProvider(
-          providers: [
-            BlocProvider.value(value: data['bloc'] as LegalDocumentBloc),
-            BlocProvider(create: (_) => getIt<DocumentFileCubit>()),
-          ],
-          child: LegalDocumentFormPage(
-            entry: data['entry'] as LegalDocumentEntry?,
-          ),
-        );
-      },
-    ),
-    GoRoute(
-      path: RouterPaths.legalDocumentDetail,
-      name: RouterNames.legalDocumentDetail,
-      builder: (context, state) {
-        final id = state.pathParameters['id']!;
+  static List<RouteBase> routes = [
+    ShellRoute(
+      builder: (context, state, child) {
         return BlocProvider(
-          create: (_) =>
-              getIt<LegalDocumentBloc>()
-                ..add(LegalDocumentEvent.getById(id: id)),
-          child: LegalDocumentDetailPage(),
+          create: (_) => getIt<LegalDocumentBloc>(),
+          child: child,
         );
       },
+      routes: [
+        GoRoute(
+          path: '/legal-document',
+          name: RouterNames.legalDocument,
+          builder: (context, state) => const LegalDocumentPage(),
+          routes: [
+            GoRoute(
+              path: '/:id',
+              name: RouterNames.legalDocumentDetail,
+              builder: (context, state) {
+                final id = state.pathParameters['id']!;
+                context.read<LegalDocumentBloc>().add(
+                  LegalDocumentEvent.getById(id: id),
+                );
+                return LegalDocumentDetailPage();
+              },
+            ),
+            GoRoute(
+              path: '/form',
+              name: RouterNames.legalDocumentForm,
+              builder: (context, state) {
+                final data = state.extra as Map<String, dynamic>;
+                return BlocProvider(
+                  create: (_) => getIt<DocumentFileCubit>(),
+                  child: LegalDocumentFormPage(
+                    entry: data['entry'] as LegalDocumentEntry?,
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ],
     ),
   ];
 }

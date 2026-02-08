@@ -6,38 +6,44 @@ import 'package:multi_catalog_system/features/domain_management/domain/entities/
 import 'package:multi_catalog_system/features/domain_management/presentation/presentation.dart';
 
 class DomainManagementRoutes {
-  static List<GoRoute> routes = [
-    GoRoute(
-      path: RouterPaths.domains,
-      name: RouterNames.domains,
-      builder: (context, state) => BlocProvider(
-        create: (context) => getIt<DomainManagementBloc>(),
-        child: const DomainManagementPage(),
-      ),
-    ),
-    GoRoute(
-      path: RouterPaths.domainForm,
-      name: RouterNames.domainForm,
-      builder: (context, state) {
-        final data = state.extra as Map<String, dynamic>;
-        return BlocProvider.value(
-          value: data['bloc'] as DomainManagementBloc,
-          child: DomainManagementFormPage(entry: data['entry'] as DomainEntry?),
-        );
-      },
-    ),
-    GoRoute(
-      path: RouterPaths.domainDetail,
-      name: RouterNames.domainDetail,
-      builder: (context, state) {
-        final id = state.pathParameters['id']!;
+  static List<RouteBase> routes = [
+    ShellRoute(
+      builder: (context, state, child) {
         return BlocProvider(
-          create: (_) =>
-              getIt<DomainManagementBloc>()
-                ..add(DomainManagementEvent.getById(id: id)),
-          child: DomainManagementDetailPage(),
+          create: (_) => getIt<DomainManagementBloc>(),
+          child: child,
         );
       },
+      routes: [
+        GoRoute(
+          path: '/domains',
+          name: RouterNames.domains,
+          builder: (context, state) => const DomainManagementPage(),
+          routes: [
+            GoRoute(
+              path: '/:id',
+              name: RouterNames.domainDetail,
+              builder: (context, state) {
+                final id = state.pathParameters['id']!;
+                context.read<DomainManagementBloc>().add(
+                  DomainManagementEvent.getById(id: id),
+                );
+                return DomainManagementDetailPage();
+              },
+            ),
+            GoRoute(
+              path: '/form',
+              name: RouterNames.domainForm,
+              builder: (context, state) {
+                final data = state.extra as Map<String, dynamic>;
+                return DomainManagementFormPage(
+                  entry: data['entry'] as DomainEntry?,
+                );
+              },
+            ),
+          ],
+        ),
+      ],
     ),
   ];
 }

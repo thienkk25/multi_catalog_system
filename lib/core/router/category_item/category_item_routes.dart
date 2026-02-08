@@ -20,63 +20,64 @@ class CategoryItemRoutes {
       },
       routes: [
         GoRoute(
-          path: RouterPaths.categoryItem,
+          path: '/category-items',
           name: RouterNames.categoryItem,
           builder: (context, state) => const CategoryItemPage(),
-        ),
+          routes: [
+            GoRoute(
+              path: '/:id',
+              name: RouterNames.categoryItemDetail,
+              builder: (context, state) {
+                final id = state.pathParameters['id']!;
 
-        GoRoute(
-          path: RouterPaths.categoryItemDetail,
-          name: RouterNames.categoryItemDetail,
-          builder: (context, state) {
-            final id = state.pathParameters['id']!;
+                context.read<CategoryItemBloc>().add(
+                  CategoryItemEvent.getById(id: id),
+                );
 
-            context.read<CategoryItemBloc>().add(
-              CategoryItemEvent.getById(id: id),
-            );
+                return CategoryItemDetailPage();
+              },
+            ),
 
-            return CategoryItemDetailPage();
-          },
-        ),
+            GoRoute(
+              path: '/form/create',
+              name: RouterNames.categoryItemFormCreate,
+              builder: (context, state) {
+                return const CategoryItemFormPage();
+              },
+            ),
 
-        GoRoute(
-          path: RouterPaths.categoryItemFormCreate,
-          name: RouterNames.categoryItemFormCreate,
-          builder: (context, state) {
-            return const CategoryItemFormPage();
-          },
-        ),
+            GoRoute(
+              path: '/form/add-legal-documents',
+              name: RouterNames.categoryItemFormAddLegalDocuments,
+              builder: (context, state) {
+                return BlocProvider(
+                  create: (_) => getIt<LegalDocumentBloc>(),
+                  child: const CategoryItemAddLegalDocumentsPage(),
+                );
+              },
+            ),
 
-        GoRoute(
-          path: RouterPaths.categoryItemFormAddLegalDocuments,
-          name: RouterNames.categoryItemFormAddLegalDocuments,
-          builder: (context, state) {
-            return BlocProvider(
-              create: (_) => getIt<LegalDocumentBloc>(),
-              child: const CategoryItemAddLegalDocumentsPage(),
-            );
-          },
-        ),
+            GoRoute(
+              path: '/form/update/:id',
+              name: RouterNames.categoryItemFormUpdate,
+              builder: (context, state) {
+                final id = state.pathParameters['id']!;
+                final isAdmin = context.hasRole('admin');
 
-        GoRoute(
-          path: RouterPaths.categoryItemFormUpdate,
-          name: RouterNames.categoryItemFormUpdate,
-          builder: (context, state) {
-            final id = state.pathParameters['id']!;
-            final isAdmin = context.hasRole('admin');
+                if (isAdmin) {
+                  context.read<CategoryItemBloc>().add(
+                    CategoryItemEvent.getById(id: id),
+                  );
+                } else {
+                  context.read<CategoryItemVersionBloc>().add(
+                    CategoryItemVersionEvent.getById(id: id),
+                  );
+                }
 
-            if (isAdmin) {
-              context.read<CategoryItemBloc>().add(
-                CategoryItemEvent.getById(id: id),
-              );
-            } else {
-              context.read<CategoryItemVersionBloc>().add(
-                CategoryItemVersionEvent.getById(id: id),
-              );
-            }
-
-            return const CategoryItemFormPage();
-          },
+                return const CategoryItemFormPage();
+              },
+            ),
+          ],
         ),
       ],
     ),

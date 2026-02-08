@@ -63,38 +63,35 @@ class CategoryItemCard extends StatelessWidget {
             ),
           ),
           _buildDeleteButton(
-            permission: ['admin', 'domainOfficer'],
+            permission: const ['admin', 'domainOfficer'],
             onTap: () {
-              final ctx = context;
-              if (context.hasRole('admin')) {
-                showDialog(
-                  context: context,
-                  builder: (context) => CustomAlertDialog(
-                    onCancel: () => context.pop(),
-                    onConfirm: () {
-                      if (entry.id == null) return;
-                      context.pop();
-                      ctx.read<CategoryItemBloc>().add(
-                        CategoryItemEvent.delete(id: entry.id!),
-                      );
-                    },
-                  ),
-                );
-              } else {
-                showDialog(
-                  context: context,
-                  builder: (context) => CustomAlertDialog(
-                    onCancel: () => context.pop(),
-                    onConfirm: () {
-                      if (entry.id == null) return;
-                      context.pop();
-                      ctx.read<CategoryItemVersionBloc>().add(
+              final parentContext = context;
+              final isAdmin = parentContext.hasRole('admin');
+
+              showDialog(
+                context: parentContext,
+                builder: (_) => CustomAlertDialog(
+                  onCancel: () => parentContext.pop(),
+                  onConfirm: () {
+                    if (entry.id == null) return;
+
+                    if (isAdmin) {
+                      final bloc = parentContext.read<CategoryItemBloc>();
+
+                      parentContext.pop();
+                      bloc.add(CategoryItemEvent.delete(id: entry.id!));
+                    } else {
+                      final bloc = parentContext
+                          .read<CategoryItemVersionBloc>();
+
+                      parentContext.pop();
+                      bloc.add(
                         CategoryItemVersionEvent.deleteVersion(id: entry.id!),
                       );
-                    },
-                  ),
-                );
-              }
+                    }
+                  },
+                ),
+              );
             },
           ),
         ],

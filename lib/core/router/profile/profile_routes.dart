@@ -6,37 +6,38 @@ import 'package:multi_catalog_system/core/domain/entities/auth/user_entry.dart';
 import 'package:multi_catalog_system/features/profile/presentation/presentation.dart';
 
 class ProfileRoutes {
-  static List<GoRoute> routes = [
-    GoRoute(
-      path: RouterPaths.profile,
-      name: RouterNames.profile,
-      builder: (context, state) => BlocProvider(
-        create: (_) =>
-            getIt<ProfileBloc>()..add(const ProfileEvent.getProfile()),
-        child: ProfilePage(),
-      ),
-    ),
-    GoRoute(
-      path: RouterPaths.profileForm,
-      name: RouterNames.profileForm,
-      builder: (context, state) {
-        final data = state.extra as Map<String, dynamic>;
-        return BlocProvider.value(
-          value: data['bloc'] as ProfileBloc,
-          child: ProfileFormPage(entry: data['entry'] as UserEntry),
-        );
+  static List<RouteBase> routes = [
+    ShellRoute(
+      builder: (context, state, child) {
+        return BlocProvider(create: (_) => getIt<ProfileBloc>(), child: child);
       },
-    ),
-    GoRoute(
-      path: RouterPaths.changePassword,
-      name: RouterNames.changePassword,
-      builder: (context, state) {
-        final bloc = state.extra as ProfileBloc;
-        return BlocProvider.value(
-          value: bloc,
-          child: ProfileChangePasswordPage(),
-        );
-      },
+      routes: [
+        GoRoute(
+          path: '/profile',
+          name: RouterNames.profile,
+          builder: (context, state) {
+            context.read<ProfileBloc>().add(const ProfileEvent.getProfile());
+            return ProfilePage();
+          },
+          routes: [
+            GoRoute(
+              path: '/form',
+              name: RouterNames.profileForm,
+              builder: (context, state) {
+                final data = state.extra as Map<String, dynamic>;
+                return ProfileFormPage(entry: data['entry'] as UserEntry);
+              },
+            ),
+            GoRoute(
+              path: '/change-password',
+              name: RouterNames.changePassword,
+              builder: (context, state) {
+                return ProfileChangePasswordPage();
+              },
+            ),
+          ],
+        ),
+      ],
     ),
   ];
 }

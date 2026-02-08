@@ -151,7 +151,7 @@ class _DomainManagementPageState extends State<DomainManagementPage>
             context.pushNamed(RouterNames.importFile, extra: 1);
           },
           onPressedAdd: () {
-            context.pushNamed(RouterNames.domainForm, extra: {'bloc': bloc});
+            context.goNamed(RouterNames.domainForm, extra: {'bloc': bloc});
           },
         ),
       ],

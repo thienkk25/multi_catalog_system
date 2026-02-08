@@ -65,102 +65,98 @@ class _DomainManagementFormPageState extends State<DomainManagementFormPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      appBar: AppBar(
-        title: Text(
-          _isUpdate ? 'Chỉnh sửa lĩnh vực' : 'Thêm lĩnh vực',
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-      ),
-      body: SafeArea(
-        child: Stack(
-          children: [
-            CustomScrollView(
-              slivers: [
-                SliverPadding(
-                  padding: const EdgeInsets.all(10),
-                  sliver: SliverList(
-                    delegate: SliverChildListDelegate([
-                      Form(
-                        key: _formKey,
-                        child: Column(
-                          spacing: 20,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            CustomCard(
-                              child: Column(
-                                spacing: 20,
+    return SafeArea(
+      child: Stack(
+        children: [
+          CustomScrollView(
+            slivers: [
+              SliverPadding(
+                padding: const EdgeInsets.all(10),
+                sliver: SliverList(
+                  delegate: SliverChildListDelegate([
+                    Text(
+                      _isUpdate ? 'Chỉnh sửa lĩnh vực' : 'Thêm lĩnh vực',
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Form(
+                      key: _formKey,
+                      child: Column(
+                        spacing: 20,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          CustomCard(
+                            child: Column(
+                              spacing: 20,
+                              children: [
+                                CustomInput(
+                                  controller: _codeController,
+                                  lable: _requiredLabel('Mã lĩnh vực'),
+                                  hintText: 'Ví dụ: CT-A,...',
+                                  validator: (p0) => p0 == null || p0.isEmpty
+                                      ? 'Vui lòng nhập mã lĩnh vực'
+                                      : null,
+                                ),
+                                CustomInput(
+                                  controller: _nameController,
+                                  lable: _requiredLabel('Tên lĩnh vực'),
+                                  hintText: 'Ví dụ: Chăn nuôi, Môi trường...',
+                                  validator: (p0) => p0 == null || p0.isEmpty
+                                      ? 'Vui lòng nhập tên lĩnh vực'
+                                      : null,
+                                ),
+                              ],
+                            ),
+                          ),
+                          CustomCard(
+                            child: CustomInput(
+                              controller: _descriptionController,
+                              lable: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  CustomInput(
-                                    controller: _codeController,
-                                    lable: _requiredLabel('Mã lĩnh vực'),
-                                    hintText: 'Ví dụ: CT-A,...',
-                                    validator: (p0) => p0 == null || p0.isEmpty
-                                        ? 'Vui lòng nhập mã lĩnh vực'
-                                        : null,
+                                  const Text(
+                                    'Mô tả chi tiết',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
-                                  CustomInput(
-                                    controller: _nameController,
-                                    lable: _requiredLabel('Tên lĩnh vực'),
-                                    hintText: 'Ví dụ: Chăn nuôi, Môi trường...',
-                                    validator: (p0) => p0 == null || p0.isEmpty
-                                        ? 'Vui lòng nhập tên lĩnh vực'
-                                        : null,
+                                  Text(
+                                    'Tùy chọn',
+                                    style: TextStyle(color: Colors.grey[500]),
                                   ),
                                 ],
                               ),
+                              hintText:
+                                  'Nhập mô tả về phạm vi, mục đích liên quan đến lĩnh vực này...',
+                              minLines: 5,
+                              maxLines: 5,
                             ),
-                            CustomCard(
-                              child: CustomInput(
-                                controller: _descriptionController,
-                                lable: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    const Text(
-                                      'Mô tả chi tiết',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    Text(
-                                      'Tùy chọn',
-                                      style: TextStyle(color: Colors.grey[500]),
-                                    ),
-                                  ],
-                                ),
-                                hintText:
-                                    'Nhập mô tả về phạm vi, mục đích liên quan đến lĩnh vực này...',
-                                minLines: 5,
-                                maxLines: 5,
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    ]),
-                  ),
+                    ),
+                  ]),
                 ),
-
-                SliverPadding(
-                  padding: EdgeInsets.only(bottom: _bottomBarHeight),
-                ),
-              ],
-            ),
-
-            BlocSelector<DomainManagementBloc, DomainManagementState, bool>(
-              selector: (state) => state.isLoading,
-              builder: (context, isLoading) => BottomFormActions(
-                isLoading: isLoading,
-                key: _bottomBarKey,
-                onCancel: () => context.pop(),
-                onSave: () => _onSave(context: context),
               ),
+
+              SliverPadding(padding: EdgeInsets.only(bottom: _bottomBarHeight)),
+            ],
+          ),
+
+          BlocSelector<DomainManagementBloc, DomainManagementState, bool>(
+            selector: (state) => state.isLoading,
+            builder: (context, isLoading) => BottomFormActions(
+              isLoading: isLoading,
+              key: _bottomBarKey,
+              onCancel: () => context.pop(),
+              onSave: () => _onSave(context: context),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

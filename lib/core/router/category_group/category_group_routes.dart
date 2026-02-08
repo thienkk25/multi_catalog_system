@@ -6,40 +6,44 @@ import 'package:multi_catalog_system/features/category_group/domain/entities/cat
 import 'package:multi_catalog_system/features/category_group/presentation/presentation.dart';
 
 class CategoryGroupRoutes {
-  static List<GoRoute> get routes => [
-    GoRoute(
-      path: RouterPaths.categoryGroups,
-      name: RouterNames.categoryGroups,
-      builder: (context, state) => BlocProvider(
-        create: (context) => getIt<CategoryGroupBloc>(),
-        child: const CategoryGroupPage(),
-      ),
-    ),
-    GoRoute(
-      path: RouterPaths.categoryGroupForm,
-      name: RouterNames.categoryGroupForm,
-      builder: (context, state) {
-        final data = state.extra as Map<String, dynamic>;
-        return BlocProvider.value(
-          value: data['bloc'] as CategoryGroupBloc,
-          child: CategoryGroupFormPage(
-            entry: data['entry'] as CategoryGroupEntry?,
-          ),
-        );
-      },
-    ),
-    GoRoute(
-      path: RouterPaths.categoryGroupDetail,
-      name: RouterNames.categoryGroupDetail,
-      builder: (context, state) {
-        final id = state.pathParameters['id']!;
+  static List<RouteBase> get routes => [
+    ShellRoute(
+      builder: (context, state, child) {
         return BlocProvider(
-          create: (context) =>
-              getIt<CategoryGroupBloc>()
-                ..add(CategoryGroupEvent.getById(id: id)),
-          child: CategoryGroupDetailPage(),
+          create: (_) => getIt<CategoryGroupBloc>(),
+          child: child,
         );
       },
+      routes: [
+        GoRoute(
+          path: '/category-groups',
+          name: RouterNames.categoryGroups,
+          builder: (context, state) => const CategoryGroupPage(),
+          routes: [
+            GoRoute(
+              path: '/:id',
+              name: RouterNames.categoryGroupDetail,
+              builder: (context, state) {
+                final id = state.pathParameters['id']!;
+                context.read<CategoryGroupBloc>().add(
+                  CategoryGroupEvent.getById(id: id),
+                );
+                return CategoryGroupDetailPage();
+              },
+            ),
+            GoRoute(
+              path: '/form',
+              name: RouterNames.categoryGroupForm,
+              builder: (context, state) {
+                final data = state.extra as Map<String, dynamic>;
+                return CategoryGroupFormPage(
+                  entry: data['entry'] as CategoryGroupEntry?,
+                );
+              },
+            ),
+          ],
+        ),
+      ],
     ),
   ];
 }

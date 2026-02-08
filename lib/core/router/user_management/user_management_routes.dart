@@ -7,44 +7,54 @@ import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/features/user_management/presentation/presentation.dart';
 
 class UserManagementRoutes {
-  static List<GoRoute> routes = [
-    GoRoute(
-      path: RouterPaths.userManagement,
-      name: RouterNames.userManagement,
-      builder: (context, state) => const UserManagementPage(),
-    ),
-    GoRoute(
-      path: RouterPaths.userManagementForm,
-      name: RouterNames.userManagementForm,
-      builder: (context, state) {
-        final data = state.extra as Map<String, dynamic>;
-        return BlocProvider.value(
-          value: data['bloc'] as UserManagementBloc,
-          child: UserManagementFormPage(entry: data['entry'] as UserEntry?),
-        );
-      },
-    ),
-    GoRoute(
-      path: RouterPaths.userManagementAddDomains,
-      name: RouterNames.userManagementAddDomains,
-      builder: (context, state) {
-        final fields = (state.extra as List?)?.cast<DomainRefEntry>() ?? [];
-
-        return UserManagementAddDomainsPage(fields: fields);
-      },
-    ),
-    GoRoute(
-      path: RouterPaths.userManagementDetail,
-      name: RouterNames.userManagementDetail,
-      builder: (context, state) {
-        final id = state.pathParameters['id']!;
+  static List<RouteBase> routes = [
+    ShellRoute(
+      builder: (context, state, child) {
         return BlocProvider(
-          create: (_) =>
-              getIt<UserManagementBloc>()
-                ..add(UserManagementEvent.getById(id: id)),
-          child: const UserManagementDetailPage(),
+          create: (_) => getIt<UserManagementBloc>(),
+          child: child,
         );
       },
+      routes: [
+        GoRoute(
+          path: '/user-management',
+          name: RouterNames.userManagement,
+          builder: (context, state) => const UserManagementPage(),
+          routes: [
+            GoRoute(
+              path: '/:id',
+              name: RouterNames.userManagementDetail,
+              builder: (context, state) {
+                final id = state.pathParameters['id']!;
+                context.read<UserManagementBloc>().add(
+                  UserManagementEvent.getById(id: id),
+                );
+                return const UserManagementDetailPage();
+              },
+            ),
+            GoRoute(
+              path: '/form',
+              name: RouterNames.userManagementForm,
+              builder: (context, state) {
+                final data = state.extra as Map<String, dynamic>;
+                return UserManagementFormPage(
+                  entry: data['entry'] as UserEntry?,
+                );
+              },
+            ),
+            GoRoute(
+              path: '/add-domains',
+              name: RouterNames.userManagementAddDomains,
+              builder: (context, state) {
+                final fields =
+                    (state.extra as List?)?.cast<DomainRefEntry>() ?? [];
+
+                return UserManagementAddDomainsPage(fields: fields);
+              },
+            ),
+          ],
+        ),
+      ],
     ),
   ];
 }

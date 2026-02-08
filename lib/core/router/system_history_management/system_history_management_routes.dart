@@ -5,28 +5,39 @@ import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/features/system_history_management/presentation/presentation.dart';
 
 class SystemHistoryManagementRoutes {
-  static List<GoRoute> routes = [
-    GoRoute(
-      path: RouterPaths.systemHistoryManagement,
-      name: RouterNames.systemHistoryManagement,
-      builder: (context, state) => BlocProvider(
-        create: (_) =>
-            getIt<SystemHistoryBloc>()..add(const SystemHistoryEvent.getAll()),
-        child: const SystemHistoryManagementPage(),
-      ),
-    ),
-    GoRoute(
-      path: RouterPaths.systemHistoryManagementDetail,
-      name: RouterNames.systemHistoryManagementDetail,
-      builder: (context, state) {
-        final id = state.pathParameters['id']!;
+  static List<RouteBase> routes = [
+    ShellRoute(
+      builder: (context, state, child) {
         return BlocProvider(
-          create: (_) =>
-              getIt<SystemHistoryBloc>()
-                ..add(SystemHistoryEvent.getById(id: id)),
-          child: SystemHistoryManagementDetailPage(),
+          create: (_) => getIt<SystemHistoryBloc>(),
+          child: child,
         );
       },
+      routes: [
+        GoRoute(
+          path: '/system-history-management',
+          name: RouterNames.systemHistoryManagement,
+          builder: (context, state) {
+            context.read<SystemHistoryBloc>().add(
+              const SystemHistoryEvent.getAll(),
+            );
+            return const SystemHistoryManagementPage();
+          },
+          routes: [
+            GoRoute(
+              path: '/:id',
+              name: RouterNames.systemHistoryManagementDetail,
+              builder: (context, state) {
+                final id = state.pathParameters['id']!;
+                context.read<SystemHistoryBloc>().add(
+                  SystemHistoryEvent.getById(id: id),
+                );
+                return SystemHistoryManagementDetailPage();
+              },
+            ),
+          ],
+        ),
+      ],
     ),
   ];
 }

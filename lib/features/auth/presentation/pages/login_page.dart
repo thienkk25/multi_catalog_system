@@ -92,7 +92,7 @@ class _LoginPageState extends State<LoginPage> {
                         context.read<NotificationCubit>().success(
                           'Đăng nhập thành công',
                         );
-                        context.go(RouterPaths.home);
+                        context.goNamed(RouterNames.home);
                       },
                       error: (state) {
                         context.read<NotificationCubit>().error(state.message);
@@ -147,7 +147,7 @@ class _LoginPageState extends State<LoginPage> {
                         context.pop();
                         return;
                       }
-                      context.go(RouterPaths.home);
+                      context.goNamed(RouterNames.home);
                     },
                     colorBackground: Colors.transparent,
                     colorBorder: Colors.blue,

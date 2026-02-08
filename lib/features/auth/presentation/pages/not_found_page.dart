@@ -33,7 +33,7 @@ class NotFoundPage extends StatelessWidget {
               const SizedBox(height: 32),
               ElevatedButton.icon(
                 onPressed: () {
-                  context.go(RouterPaths.home);
+                  context.goNamed(RouterNames.home);
                 },
                 icon: const Icon(Icons.home),
                 label: const Text('Quay lại Trang chủ'),

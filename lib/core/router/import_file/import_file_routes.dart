@@ -6,17 +6,24 @@ import 'package:multi_catalog_system/features/import_file/presentation/bloc/impo
 import 'package:multi_catalog_system/features/import_file/presentation/pages/import_file_page.dart';
 
 class ImportFileRoutes {
-  static List<GoRoute> routes = [
-    GoRoute(
-      path: RouterPaths.importFile,
-      name: RouterNames.importFile,
-      builder: (_, state) {
-        final type = state.extra as int;
+  static List<RouteBase> routes = [
+    ShellRoute(
+      builder: (context, state, child) {
         return BlocProvider(
           create: (_) => getIt<ImportFileBloc>(),
-          child: ImportFilePage(typeImport: type),
+          child: child,
         );
       },
+      routes: [
+        GoRoute(
+          path: '/import-file',
+          name: RouterNames.importFile,
+          builder: (_, state) {
+            final type = state.extra as int;
+            return ImportFilePage(typeImport: type);
+          },
+        ),
+      ],
     ),
   ];
 }

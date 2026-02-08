@@ -10,3 +10,4 @@ export 'domain/domain.dart';
 export 'widgets/widgets.dart';
 export 'notifications/notification_cubit.dart';
 export 'notifications/notification_state.dart';
+export 'navigation/navigation.dart';
