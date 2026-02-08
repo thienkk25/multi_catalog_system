@@ -11,13 +11,13 @@ import 'category_item/category_item_routes.dart';
 import 'domain_management/domain_management_routes.dart';
 import 'import_file/import_file_routes.dart';
 import 'legal_document/legal_document_routes.dart';
+import 'others/others_routes.dart';
 import 'profile/profile_routes.dart';
 import 'system_history_management/system_history_management_routes.dart';
 import 'user_management/user_management_routes.dart';
 
 class AppRouter {
   static final router = GoRouter(
-    debugLogDiagnostics: true,
     routes: [
       ...AuthRoutes.routes,
       StatefulShellRoute.indexedStack(
@@ -31,13 +31,14 @@ class AppRouter {
           StatefulShellBranch(routes: CategoryItemRoutes.routes),
           StatefulShellBranch(routes: LegalDocumentRoutes.routes),
           StatefulShellBranch(routes: ImportFileRoutes.routes),
-          StatefulShellBranch(routes: ProfileRoutes.routes),
           StatefulShellBranch(routes: UserManagementRoutes.routes),
           StatefulShellBranch(routes: ApiKeyManagementRoutes.routes),
           StatefulShellBranch(routes: SystemHistoryManagementRoutes.routes),
           StatefulShellBranch(routes: ApproveRoutes.routes),
+          StatefulShellBranch(routes: ProfileRoutes.routes),
         ],
       ),
+      ...OthersRoutes.routes,
     ],
     errorBuilder: (_, state) => const NotFoundPage(),
   );

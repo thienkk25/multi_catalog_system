@@ -2,9 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:multi_catalog_system/core/core.dart';
-import 'package:multi_catalog_system/features/auth/presentation/presentation.dart';
-import 'package:multi_catalog_system/features/home/presentation/presentation.dart';
+import 'package:multi_catalog_system/core/notifications/notification_cubit.dart';
+import 'package:multi_catalog_system/core/responsive/screen_size.dart';
+import 'package:multi_catalog_system/core/router/router_names.dart';
+import 'package:multi_catalog_system/core/widgets/custom_button.dart';
+import 'package:multi_catalog_system/core/widgets/role_based_widget.dart';
+import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_event.dart';
+import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_state.dart';
+import 'package:multi_catalog_system/features/home/presentation/bloc/home_bloc.dart';
+import 'package:multi_catalog_system/features/home/presentation/bloc/home_event.dart';
+import 'package:multi_catalog_system/features/home/presentation/bloc/home_state.dart';
 
 class HomeDrawerWidget extends StatelessWidget {
   final Function(int index) onSelectTab;
@@ -148,18 +156,7 @@ class _MainDrawer extends StatelessWidget {
               pageIndex: 4,
               onSelectTab: onSelectTab,
             ),
-            RoleBasedWidget(
-              permission: ['approver', 'domainOfficer'],
-              child: _DrawerItem(
-                icon: SvgPicture.asset(
-                  'assets/icons/approve-invoice-svgrepo-com.svg',
-                  height: 20,
-                ),
-                title: 'Duyệt danh sách danh mục',
-                pageIndex: 5,
-                onSelectTab: onSelectTab,
-              ),
-            ),
+
             RoleBasedWidget(
               permission: ['admin', 'domainOfficer'],
               child: _DrawerItem(
@@ -168,7 +165,7 @@ class _MainDrawer extends StatelessWidget {
                   height: 20,
                 ),
                 title: 'Nhập dữ liệu File',
-                pageIndex: 6,
+                pageIndex: 5,
                 onSelectTab: onSelectTab,
               ),
             ),
@@ -185,7 +182,7 @@ class _MainDrawer extends StatelessWidget {
                       height: 20,
                     ),
                     title: 'Quản lý người dùng',
-                    pageIndex: 7,
+                    pageIndex: 6,
                     onSelectTab: onSelectTab,
                   ),
                   _DrawerItem(
@@ -194,7 +191,7 @@ class _MainDrawer extends StatelessWidget {
                       height: 20,
                     ),
                     title: 'API Key',
-                    pageIndex: 8,
+                    pageIndex: 7,
                     onSelectTab: onSelectTab,
                   ),
                   _DrawerItem(
@@ -203,10 +200,22 @@ class _MainDrawer extends StatelessWidget {
                       height: 20,
                     ),
                     title: 'Nhật kí hệ thống',
-                    pageIndex: 9,
+                    pageIndex: 8,
                     onSelectTab: onSelectTab,
                   ),
                 ],
+              ),
+            ),
+            RoleBasedWidget(
+              permission: ['approver', 'domainOfficer'],
+              child: _DrawerItem(
+                icon: SvgPicture.asset(
+                  'assets/icons/approve-invoice-svgrepo-com.svg',
+                  height: 20,
+                ),
+                title: 'Duyệt danh sách danh mục',
+                pageIndex: 9,
+                onSelectTab: onSelectTab,
               ),
             ),
           ],
@@ -233,6 +242,12 @@ class _FooterDrawer extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                   hoverColor: Colors.blue.withValues(alpha: .2),
                   onTap: () {
+                    context.read<HomeBloc>().add(
+                      HomeEvent.changePage(10, 'Hồ sơ'),
+                    );
+                    if (ScreenSize.of(context).isMobile) {
+                      context.pop();
+                    }
                     context.goNamed(RouterNames.profile);
                   },
                   child: ListTile(
@@ -253,6 +268,7 @@ class _FooterDrawer extends StatelessWidget {
                       'Đăng xuất thành công',
                     );
                     context.read<AuthBloc>().add(const AuthEvent.logout());
+                    context.goNamed(RouterNames.home);
                   },
                   child: ListTile(
                     leading: Icon(Icons.exit_to_app_outlined, size: 20),
@@ -294,7 +310,9 @@ class _DrawerItem extends StatelessWidget {
       hoverColor: Colors.blue.withValues(alpha: .2),
       onTap: () {
         context.read<HomeBloc>().add(HomeEvent.changePage(pageIndex, title));
-        context.pop();
+        if (ScreenSize.of(context).isMobile) {
+          context.pop();
+        }
         onSelectTab(pageIndex);
       },
       child: ListTile(

@@ -50,142 +50,139 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Thông tin cá nhân'), centerTitle: true),
-      body: BlocBuilder<ProfileBloc, ProfileState>(
-        builder: (context, state) {
-          if (state.isLoading) {
-            return const Center(child: CustomCircularProgressScreen());
-          }
+    return BlocBuilder<ProfileBloc, ProfileState>(
+      builder: (context, state) {
+        if (state.isLoading) {
+          return const Center(child: CustomCircularProgressScreen());
+        }
 
-          if (state.error != null) {
-            return Center(
-              child: ErrorRetryWidget(
-                error: state.error!,
-                onRetry: () => bloc.add(const ProfileEvent.getProfile()),
-              ),
-            );
-          }
-
-          final entry = state.entry;
-          if (entry == null) {
-            return const Center(child: Text('Không có dữ liệu'));
-          }
-
-          return SafeArea(
-            child: Stack(
-              children: [
-                CustomScrollView(
-                  slivers: [
-                    SliverPadding(
-                      padding: const EdgeInsets.all(10),
-                      sliver: SliverList(
-                        delegate: SliverChildListDelegate([
-                          ProfileAvatarSectionWidget(entry: entry),
-                          const SizedBox(height: 24),
-                          _InfoCard(
-                            title: 'Thông tin tài khoản',
-                            children: [
-                              _InfoRow(
-                                icon: Icons.person,
-                                label: 'Họ tên',
-                                value: entry.fullName ?? 'Chưa cập nhật',
-                              ),
-                              _InfoRow(
-                                icon: Icons.email,
-                                label: 'Email',
-                                value: entry.email ?? '',
-                              ),
-                              _InfoRow(
-                                icon: Icons.phone,
-                                label: 'Số điện thoại',
-                                value: entry.phone ?? 'Chưa cập nhật',
-                              ),
-                              _InfoRow(
-                                icon: Icons.lock_outline,
-                                label: 'Trạng thái',
-                                value: _statusText(entry.status ?? ''),
-                                valueColor: _statusColor(entry.status ?? ''),
-                              ),
-                              if (entry.domains != null &&
-                                  entry.domains!.isNotEmpty)
-                                _InfoRow(
-                                  icon: Icons.domain,
-                                  label: 'Lĩnh vực quản lý',
-                                  value: entry.domains!
-                                      .map((d) => '${d.name} (${d.code})')
-                                      .join(', '),
-                                ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          _InfoCard(
-                            title: 'Thời gian',
-                            children: [
-                              _InfoRow(
-                                icon: Icons.calendar_month_outlined,
-                                label: 'Ngày tạo',
-                                value: dateTimeFormat(entry.createdAt),
-                              ),
-                              _InfoRow(
-                                icon: Icons.login_outlined,
-                                label: 'Lần cuối đăng nhập',
-                                value: dateTimeFormat(entry.lastSignInAt),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          _InfoCard(
-                            title: 'Bảo mật',
-                            children: [
-                              _ActionRow(
-                                icon: Icons.lock_outline,
-                                label: 'Đổi mật khẩu',
-                                onTap: () {
-                                  context.goNamed(
-                                    RouterNames.changePassword,
-                                    extra: bloc,
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                        ]),
-                      ),
-                    ),
-                    SliverPadding(
-                      padding: EdgeInsets.only(bottom: 60 + _bottomBarHeight),
-                    ),
-                  ],
-                ),
-                Positioned(
-                  key: _bottomBarKey,
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: Container(
-                    padding: const EdgeInsets.all(10.0),
-                    color: Colors.white,
-                    child: CustomButton(
-                      colorBackground: Colors.blue,
-                      textButton: Text(
-                        'Chỉnh sửa thông tin',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      onTap: () {
-                        context.goNamed(
-                          RouterNames.profileForm,
-                          extra: {'bloc': bloc, 'entry': entry},
-                        );
-                      },
-                    ),
-                  ),
-                ),
-              ],
+        if (state.error != null) {
+          return Center(
+            child: ErrorRetryWidget(
+              error: state.error!,
+              onRetry: () => bloc.add(const ProfileEvent.getProfile()),
             ),
           );
-        },
-      ),
+        }
+
+        final entry = state.entry;
+        if (entry == null) {
+          return const Center(child: Text('Không có dữ liệu'));
+        }
+
+        return SafeArea(
+          child: Stack(
+            children: [
+              CustomScrollView(
+                slivers: [
+                  SliverPadding(
+                    padding: const EdgeInsets.all(10),
+                    sliver: SliverList(
+                      delegate: SliverChildListDelegate([
+                        ProfileAvatarSectionWidget(entry: entry),
+                        const SizedBox(height: 24),
+                        _InfoCard(
+                          title: 'Thông tin tài khoản',
+                          children: [
+                            _InfoRow(
+                              icon: Icons.person,
+                              label: 'Họ tên',
+                              value: entry.fullName ?? 'Chưa cập nhật',
+                            ),
+                            _InfoRow(
+                              icon: Icons.email,
+                              label: 'Email',
+                              value: entry.email ?? '',
+                            ),
+                            _InfoRow(
+                              icon: Icons.phone,
+                              label: 'Số điện thoại',
+                              value: entry.phone ?? 'Chưa cập nhật',
+                            ),
+                            _InfoRow(
+                              icon: Icons.lock_outline,
+                              label: 'Trạng thái',
+                              value: _statusText(entry.status ?? ''),
+                              valueColor: _statusColor(entry.status ?? ''),
+                            ),
+                            if (entry.domains != null &&
+                                entry.domains!.isNotEmpty)
+                              _InfoRow(
+                                icon: Icons.domain,
+                                label: 'Lĩnh vực quản lý',
+                                value: entry.domains!
+                                    .map((d) => '${d.name} (${d.code})')
+                                    .join(', '),
+                              ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        _InfoCard(
+                          title: 'Thời gian',
+                          children: [
+                            _InfoRow(
+                              icon: Icons.calendar_month_outlined,
+                              label: 'Ngày tạo',
+                              value: dateTimeFormat(entry.createdAt),
+                            ),
+                            _InfoRow(
+                              icon: Icons.login_outlined,
+                              label: 'Lần cuối đăng nhập',
+                              value: dateTimeFormat(entry.lastSignInAt),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        _InfoCard(
+                          title: 'Bảo mật',
+                          children: [
+                            _ActionRow(
+                              icon: Icons.lock_outline,
+                              label: 'Đổi mật khẩu',
+                              onTap: () {
+                                context.goNamed(
+                                  RouterNames.changePassword,
+                                  extra: bloc,
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ]),
+                    ),
+                  ),
+                  SliverPadding(
+                    padding: EdgeInsets.only(bottom: 60 + _bottomBarHeight),
+                  ),
+                ],
+              ),
+              Positioned(
+                key: _bottomBarKey,
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  padding: const EdgeInsets.all(10.0),
+                  color: Colors.white,
+                  child: CustomButton(
+                    colorBackground: Colors.blue,
+                    textButton: Text(
+                      'Chỉnh sửa thông tin',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onTap: () {
+                      context.goNamed(
+                        RouterNames.profileForm,
+                        extra: {'bloc': bloc, 'entry': entry},
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 

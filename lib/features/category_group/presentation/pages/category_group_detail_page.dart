@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:multi_catalog_system/core/utils/formatter/data_time_formatter.dart';
+import 'package:multi_catalog_system/core/widgets/button_back_widget.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/core/widgets/custom_circular_progress.dart';
 import 'package:multi_catalog_system/features/category_group/presentation/bloc/category_group_bloc.dart';
@@ -11,56 +12,51 @@ class CategoryGroupDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Chi tiết nhóm danh mục'),
-        centerTitle: true,
-      ),
-      body: BlocBuilder<CategoryGroupBloc, CategoryGroupState>(
-        builder: (context, state) {
-          if (state.isLoading) {
-            return const Center(child: CustomCircularProgressScreen());
-          }
-          if (state.error != null) {
-            return const Center(child: Text('Xảy ra lỗi'));
-          }
-          final entry = state.entry;
-          if (entry == null) {
-            return const Center(child: Text('Không tìm thấy dữ liệu'));
-          }
-          return SafeArea(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  _sectionCard(
-                    title: 'Thông tin nhóm danh mục',
-                    icon: Icons.folder_outlined,
-                    children: [
-                      _infoRow(label: 'Mã nhóm', value: entry.code),
-                      _infoRow(label: 'Tên nhóm', value: entry.name),
-                      _infoRow(
-                        label: 'Mô tả',
-                        value: entry.description,
-                        isMultiLine: true,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  _sectionCard(
-                    title: 'Thông tin hệ thống',
-                    icon: Icons.info_outline,
-                    children: [
-                      _metaRow('Ngày tạo', entry.createdAt),
-                      _metaRow('Cập nhật lần cuối', entry.updatedAt),
-                    ],
-                  ),
-                ],
-              ),
+    return BlocBuilder<CategoryGroupBloc, CategoryGroupState>(
+      builder: (context, state) {
+        if (state.isLoading) {
+          return const Center(child: CustomCircularProgressScreen());
+        }
+        if (state.error != null) {
+          return const Center(child: Text('Xảy ra lỗi'));
+        }
+        final entry = state.entry;
+        if (entry == null) {
+          return const Center(child: Text('Không tìm thấy dữ liệu'));
+        }
+        return SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              spacing: 16,
+              children: [
+                _sectionCard(
+                  title: 'Thông tin nhóm danh mục',
+                  icon: Icons.folder_outlined,
+                  children: [
+                    _infoRow(label: 'Mã nhóm', value: entry.code),
+                    _infoRow(label: 'Tên nhóm', value: entry.name),
+                    _infoRow(
+                      label: 'Mô tả',
+                      value: entry.description,
+                      isMultiLine: true,
+                    ),
+                  ],
+                ),
+                _sectionCard(
+                  title: 'Thông tin hệ thống',
+                  icon: Icons.info_outline,
+                  children: [
+                    _metaRow('Ngày tạo', entry.createdAt),
+                    _metaRow('Cập nhật lần cuối', entry.updatedAt),
+                  ],
+                ),
+                ButtonBackWidget(),
+              ],
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 

@@ -68,168 +68,157 @@ class _ImportFilePageState extends State<ImportFilePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Nhập Dữ liệu từ Tệp',
-          style: TextStyle(fontWeight: FontWeight(600), fontSize: 20),
-        ),
-        centerTitle: true,
-      ),
-      body: BlocListener<ImportFileBloc, ImportFileState>(
-        listener: (context, state) {
-          if (state.error != null) {
-            context.read<NotificationCubit>().error(state.error!);
-          }
+    return BlocListener<ImportFileBloc, ImportFileState>(
+      listener: (context, state) {
+        if (state.error != null) {
+          context.read<NotificationCubit>().error(state.error!);
+        }
 
-          if (state.success != null) {
-            context.read<NotificationCubit>().success(state.success!);
-          }
-        },
-        child: SafeArea(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Chọn tệp để tải lên',
-                    style: TextStyle(fontWeight: FontWeight(600), fontSize: 24),
-                  ),
-                  Text(
-                    'Định dạng hỗ trợ: .CSV, .XLSX',
-                    style: TextStyle(color: Colors.grey[500]),
-                  ),
-                  const SizedBox(height: 20),
-                  ImportFileDashedBoderWidget(
-                    color: Colors.grey,
-                    strokeWidth: 2,
-                    child: Container(
-                      height: 220,
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(40),
-                      child: Column(
-                        spacing: 20,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(50),
-                              color: Colors.blue.withValues(alpha: .2),
-                            ),
-                            child: SvgPicture.asset(
-                              'assets/icons/upload-file-2-svgrepo-com.svg',
-                              height: 40,
-                              width: 40,
-                              colorFilter: ColorFilter.mode(
-                                Colors.blue,
-                                BlendMode.srcIn,
-                              ),
+        if (state.success != null) {
+          context.read<NotificationCubit>().success(state.success!);
+        }
+      },
+      child: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Chọn tệp để tải lên',
+                  style: TextStyle(fontWeight: FontWeight(600), fontSize: 24),
+                ),
+                Text(
+                  'Định dạng hỗ trợ: .CSV, .XLSX',
+                  style: TextStyle(color: Colors.grey[500]),
+                ),
+                const SizedBox(height: 20),
+                ImportFileDashedBoderWidget(
+                  color: Colors.grey,
+                  strokeWidth: 2,
+                  child: Container(
+                    height: 220,
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(40),
+                    child: Column(
+                      spacing: 20,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(50),
+                            color: Colors.blue.withValues(alpha: .2),
+                          ),
+                          child: SvgPicture.asset(
+                            'assets/icons/upload-file-2-svgrepo-com.svg',
+                            height: 40,
+                            width: 40,
+                            colorFilter: ColorFilter.mode(
+                              Colors.blue,
+                              BlendMode.srcIn,
                             ),
                           ),
-                          SizedBox(
-                            width: 100,
-                            child: CustomButton(
-                              onTap: () async {
-                                await importFile();
-                              },
-                              colorBackground: Colors.grey.withValues(
-                                alpha: .2,
-                              ),
-                              textButton: const Text(
-                                'Chọn Tệp',
-                                style: TextStyle(fontWeight: FontWeight(600)),
-                              ),
+                        ),
+                        SizedBox(
+                          width: 100,
+                          child: CustomButton(
+                            onTap: () async {
+                              await importFile();
+                            },
+                            colorBackground: Colors.grey.withValues(alpha: .2),
+                            textButton: const Text(
+                              'Chọn Tệp',
+                              style: TextStyle(fontWeight: FontWeight(600)),
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  if (fileInfo != null && file != null)
-                    ImportFileFileCard(
-                      fileInfo: fileInfo!,
-                      onRemove: () {
-                        setState(() {
-                          fileInfo = null;
-                          file = null;
-                        });
-                      },
+                ),
+                const SizedBox(height: 20),
+                if (fileInfo != null && file != null)
+                  ImportFileFileCard(
+                    fileInfo: fileInfo!,
+                    onRemove: () {
+                      setState(() {
+                        fileInfo = null;
+                        file = null;
+                      });
+                    },
+                  ),
+                const SizedBox(height: 20),
+                CustomDropdownButton<int>(
+                  lable: const Text(
+                    'Loại dữ liệu',
+                    style: TextStyle(fontWeight: FontWeight(600)),
+                  ),
+                  value: type,
+                  items: [
+                    const DropdownMenuItem(
+                      value: 0,
+                      child: Text('Lĩnh vực + Nhóm danh mục + Mục danh mục'),
                     ),
-                  const SizedBox(height: 20),
-                  CustomDropdownButton<int>(
-                    lable: const Text(
-                      'Loại dữ liệu',
-                      style: TextStyle(fontWeight: FontWeight(600)),
+                    const DropdownMenuItem(value: 1, child: Text('Lĩnh vực')),
+                    const DropdownMenuItem(
+                      value: 2,
+                      child: Text('Nhóm danh mục'),
                     ),
-                    value: type,
-                    items: [
-                      const DropdownMenuItem(
-                        value: 0,
-                        child: Text('Lĩnh vực + Nhóm danh mục + Mục danh mục'),
-                      ),
-                      const DropdownMenuItem(value: 1, child: Text('Lĩnh vực')),
-                      const DropdownMenuItem(
-                        value: 2,
-                        child: Text('Nhóm danh mục'),
-                      ),
-                      const DropdownMenuItem(
-                        value: 3,
-                        child: Text('Mục danh mục'),
-                      ),
-                      const DropdownMenuItem(
-                        value: 4,
-                        child: Text('Văn bản pháp lý'),
-                      ),
-                      const DropdownMenuItem(value: 5, child: Text('API Key')),
-                      const DropdownMenuItem(
-                        value: 6,
-                        child: Text('Quản lý Người dùng'),
-                      ),
-                    ],
-                    onChanged: widget.typeImport != 0
-                        ? null
-                        : (value) {
-                            setState(() {
-                              type = value!;
-                            });
-                          },
-                  ),
-                  const SizedBox(height: 20),
-                  NoteWidget(
-                    icon: Icons.info,
-                    color: Colors.blue,
-                    note: _noteInforByType(type),
-                  ),
-                  const SizedBox(height: 10),
-                  const NoteWidget(
-                    icon: Icons.warning,
-                    color: Colors.red,
-                    note:
-                        'Chú ý: Khi import bản ghi trùng mã có thể bị ghi đè dữ liệu.',
-                  ),
-                  const SizedBox(height: 40),
-                  BlocSelector<ImportFileBloc, ImportFileState, bool>(
-                    selector: (state) => state.isLoading,
-                    builder: (context, isLoading) => CustomButton(
-                      onTap: isLoading ? null : () => _onImportFile(context),
-                      colorBackground: isLoading ? Colors.grey : Colors.blue,
-                      textButton: isLoading
-                          ? const CustomCircularProgressButton()
-                          : const Text(
-                              'Nhập dữ liệu',
-                              style: TextStyle(
-                                fontWeight: FontWeight(600),
-                                color: Colors.white,
-                              ),
+                    const DropdownMenuItem(
+                      value: 3,
+                      child: Text('Mục danh mục'),
+                    ),
+                    const DropdownMenuItem(
+                      value: 4,
+                      child: Text('Văn bản pháp lý'),
+                    ),
+                    const DropdownMenuItem(value: 5, child: Text('API Key')),
+                    const DropdownMenuItem(
+                      value: 6,
+                      child: Text('Quản lý Người dùng'),
+                    ),
+                  ],
+                  onChanged: widget.typeImport != 0
+                      ? null
+                      : (value) {
+                          setState(() {
+                            type = value!;
+                          });
+                        },
+                ),
+                const SizedBox(height: 20),
+                NoteWidget(
+                  icon: Icons.info,
+                  color: Colors.blue,
+                  note: _noteInforByType(type),
+                ),
+                const SizedBox(height: 10),
+                const NoteWidget(
+                  icon: Icons.warning,
+                  color: Colors.red,
+                  note:
+                      'Chú ý: Khi import bản ghi trùng mã có thể bị ghi đè dữ liệu.',
+                ),
+                const SizedBox(height: 40),
+                BlocSelector<ImportFileBloc, ImportFileState, bool>(
+                  selector: (state) => state.isLoading,
+                  builder: (context, isLoading) => CustomButton(
+                    onTap: isLoading ? null : () => _onImportFile(context),
+                    colorBackground: isLoading ? Colors.grey : Colors.blue,
+                    textButton: isLoading
+                        ? const CustomCircularProgressButton()
+                        : const Text(
+                            'Nhập dữ liệu',
+                            style: TextStyle(
+                              fontWeight: FontWeight(600),
+                              color: Colors.white,
                             ),
-                    ),
+                          ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),

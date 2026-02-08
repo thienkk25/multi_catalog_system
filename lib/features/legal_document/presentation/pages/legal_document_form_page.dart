@@ -75,58 +75,58 @@ class _LegalDocumentFormPageState extends State<LegalDocumentFormPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: _isUpdate
-            ? const Text('Chỉnh sửa văn bản pháp lý')
-            : const Text('Tạo văn bản pháp lý'),
-        centerTitle: true,
-      ),
-      body: SafeArea(
-        child: Stack(
-          children: [
-            CustomScrollView(
-              slivers: [
-                SliverPadding(
-                  padding: const EdgeInsets.all(10),
-                  sliver: SliverList(
-                    delegate: SliverChildListDelegate([
-                      Form(
-                        key: _formKey,
-                        child: Column(
-                          spacing: 10,
-                          children: [
-                            _generalInformation(),
-                            _timeInformation(),
-                            NoteWidget(
-                              icon: Icons.warning_amber_outlined,
-                              note:
-                                  'Ngày ban hành bắt buộc. Ngày hiệu lực bắt buộc và >= ngày ban hành. Ngày hết hiệu lực không chọn là ngày hiệu lực vĩnh viễn',
-                              color: Colors.deepOrangeAccent,
-                            ),
-                            LegalDocumentImportFile(),
-                          ],
-                        ),
+    return SafeArea(
+      child: Stack(
+        children: [
+          CustomScrollView(
+            slivers: [
+              SliverPadding(
+                padding: const EdgeInsets.all(10),
+                sliver: SliverList(
+                  delegate: SliverChildListDelegate([
+                    Text(
+                      _isUpdate
+                          ? 'Cập nhật văn bản pháp lý'
+                          : 'Tạo văn bản pháp lý',
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
                       ),
-                    ]),
-                  ),
+                    ),
+                    const SizedBox(height: 10),
+                    Form(
+                      key: _formKey,
+                      child: Column(
+                        spacing: 10,
+                        children: [
+                          _generalInformation(),
+                          _timeInformation(),
+                          NoteWidget(
+                            icon: Icons.warning_amber_outlined,
+                            note:
+                                'Ngày ban hành bắt buộc. Ngày hiệu lực bắt buộc và >= ngày ban hành. Ngày hết hiệu lực không chọn là ngày hiệu lực vĩnh viễn',
+                            color: Colors.deepOrangeAccent,
+                          ),
+                          LegalDocumentImportFile(),
+                        ],
+                      ),
+                    ),
+                  ]),
                 ),
-                SliverPadding(
-                  padding: EdgeInsets.only(bottom: _bottomBarHeight),
-                ),
-              ],
-            ),
-            BlocSelector<LegalDocumentBloc, LegalDocumentState, bool>(
-              selector: (state) => state.isLoading,
-              builder: (context, isLoading) => BottomFormActions(
-                isLoading: isLoading,
-                key: _bottomBarKey,
-                onCancel: () => context.pop(),
-                onSave: () => _onSave(context),
               ),
+              SliverPadding(padding: EdgeInsets.only(bottom: _bottomBarHeight)),
+            ],
+          ),
+          BlocSelector<LegalDocumentBloc, LegalDocumentState, bool>(
+            selector: (state) => state.isLoading,
+            builder: (context, isLoading) => BottomFormActions(
+              isLoading: isLoading,
+              key: _bottomBarKey,
+              onCancel: () => context.pop(),
+              onSave: () => _onSave(context),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

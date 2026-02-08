@@ -49,112 +49,138 @@ class _UserManagementFormPageState extends State<UserManagementFormPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(_isUpdate ? 'Cập nhật người dùng' : 'Tạo người dùng'),
-        centerTitle: true,
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(10),
-          child: Form(
-            key: _formKey,
-            child: CustomCard(
-              child: Column(
-                children: [
-                  CustomInput(
-                    controller: _emailCtrl,
-                    readOnly: _isUpdate,
-                    lable: const Row(
-                      children: [
-                        Text('Email'),
-                        Text('*', style: TextStyle(color: Colors.red)),
-                      ],
-                    ),
-                    hintText: 'Nhập email của người dùng',
-                    validator: (p0) {
-                      if (p0 == null || p0.isEmpty) {
-                        return 'Vui lồng nhập email người dùng';
-                      } else if (!RegExp(AppConstant.regEmail).hasMatch(p0)) {
-                        return 'Email không hợp lệ';
-                      }
-                      return null;
-                    },
+    return SafeArea(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(10),
+        child: Form(
+          key: _formKey,
+          child: CustomCard(
+            child: Column(
+              children: [
+                Text(
+                  _isUpdate ? 'Cập nhật người dùng' : 'Tạo người dùng',
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
                   ),
-                  SizedBox(height: 16),
-                  CustomInput(
-                    controller: _fullNameCtrl,
-                    lable: const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('Họ và tên'),
-                        Text('Tùy chọn', style: TextStyle(color: Colors.grey)),
-                      ],
-                    ),
-                    hintText: 'Nhập họ và tên người dùng',
+                ),
+                const SizedBox(height: 16),
+                CustomInput(
+                  controller: _emailCtrl,
+                  readOnly: _isUpdate,
+                  lable: const Row(
+                    children: [
+                      Text('Email'),
+                      Text('*', style: TextStyle(color: Colors.red)),
+                    ],
                   ),
-                  SizedBox(height: 16),
-                  CustomInput(
-                    controller: _phoneCtrl,
-                    lable: const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('Số điện thoại'),
-                        Text('Tùy chọn', style: TextStyle(color: Colors.grey)),
-                      ],
-                    ),
-                    hintText: 'Nhập số điện thoại người dùng',
-                    validator: (p0) {
-                      if (p0!.isNotEmpty &&
-                          !RegExp(AppConstant.regPhone).hasMatch(p0)) {
-                        return 'Số điện thoại không hợp lệ';
-                      }
-                      return null;
-                    },
+                  hintText: 'Nhập email của người dùng',
+                  validator: (p0) {
+                    if (p0 == null || p0.isEmpty) {
+                      return 'Vui lồng nhập email người dùng';
+                    } else if (!RegExp(AppConstant.regEmail).hasMatch(p0)) {
+                      return 'Email không hợp lệ';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 16),
+                CustomInput(
+                  controller: _fullNameCtrl,
+                  lable: const Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Họ và tên'),
+                      Text('Tùy chọn', style: TextStyle(color: Colors.grey)),
+                    ],
                   ),
-                  SizedBox(height: 16),
-                  CustomInput(
-                    controller: _passwordCtrl,
-                    lable: const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('Mật khẩu'),
-                        Text('Tùy chọn', style: TextStyle(color: Colors.grey)),
-                      ],
-                    ),
-                    hintText: _isUpdate
-                        ? 'Để trống nếu không muốn thay đổi mật khẩu'
-                        : 'Nhập mật khẩu người dùng',
+                  hintText: 'Nhập họ và tên người dùng',
+                ),
+                SizedBox(height: 16),
+                CustomInput(
+                  controller: _phoneCtrl,
+                  lable: const Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Số điện thoại'),
+                      Text('Tùy chọn', style: TextStyle(color: Colors.grey)),
+                    ],
                   ),
-                  SizedBox(height: 16),
-                  if (!_isUpdate)
-                    NoteWidget(
-                      icon: Icons.info,
-                      note: 'Nếu mật khẩu để trống mặc định là "12345678"',
-                      color: Colors.blue,
-                    )
-                  else
-                    NoteWidget(
-                      icon: Icons.info,
-                      note:
-                          'Nhập mật khẩu mới để thay đổi, hoặc để trống để giữ nguyên mật khẩu hiện tại',
-                      color: Colors.blue,
-                    ),
+                  hintText: 'Nhập số điện thoại người dùng',
+                  validator: (p0) {
+                    if (p0!.isNotEmpty &&
+                        !RegExp(AppConstant.regPhone).hasMatch(p0)) {
+                      return 'Số điện thoại không hợp lệ';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 16),
+                CustomInput(
+                  controller: _passwordCtrl,
+                  lable: const Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Mật khẩu'),
+                      Text('Tùy chọn', style: TextStyle(color: Colors.grey)),
+                    ],
+                  ),
+                  hintText: _isUpdate
+                      ? 'Để trống nếu không muốn thay đổi mật khẩu'
+                      : 'Nhập mật khẩu người dùng',
+                ),
+                SizedBox(height: 16),
+                if (!_isUpdate)
+                  NoteWidget(
+                    icon: Icons.info,
+                    note: 'Nếu mật khẩu để trống mặc định là "12345678"',
+                    color: Colors.blue,
+                  )
+                else
+                  NoteWidget(
+                    icon: Icons.info,
+                    note:
+                        'Nhập mật khẩu mới để thay đổi, hoặc để trống để giữ nguyên mật khẩu hiện tại',
+                    color: Colors.blue,
+                  ),
 
-                  SizedBox(height: 32),
-                  BlocSelector<UserManagementBloc, UserManagementState, bool>(
-                    selector: (state) => state.isLoading,
-                    builder: (context, isLoading) => CustomButton(
-                      onTap: isLoading ? null : () => _onSubmit(context),
-                      colorBackground: isLoading ? Colors.grey : Colors.blue,
-                      textButton: Text(
-                        _isUpdate ? 'Cập nhật' : 'Tạo',
-                        style: TextStyle(color: Colors.white),
+                SizedBox(height: 32),
+                Row(
+                  spacing: 5,
+                  children: [
+                    Expanded(
+                      child: CustomButton(
+                        onTap: () => context.pop(),
+                        colorBackground: Colors.white,
+                        colorBorder: Colors.blue.withValues(alpha: .5),
+                        textButton: Text('Hủy'),
                       ),
                     ),
-                  ),
-                ],
-              ),
+                    Expanded(
+                      child:
+                          BlocSelector<
+                            UserManagementBloc,
+                            UserManagementState,
+                            bool
+                          >(
+                            selector: (state) => state.isLoading,
+                            builder: (context, isLoading) => CustomButton(
+                              onTap: isLoading
+                                  ? null
+                                  : () => _onSubmit(context),
+                              colorBackground: isLoading
+                                  ? Colors.grey
+                                  : Colors.blue,
+                              textButton: Text(
+                                _isUpdate ? 'Cập nhật' : 'Tạo',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         ),

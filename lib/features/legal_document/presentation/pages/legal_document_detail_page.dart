@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:multi_catalog_system/core/widgets/button_back_widget.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/core/widgets/custom_circular_progress.dart';
 import 'package:multi_catalog_system/core/widgets/custom_label.dart';
@@ -15,108 +16,107 @@ class LegalDocumentDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Chi tiết văn bản'), centerTitle: true),
-      body: BlocBuilder<LegalDocumentBloc, LegalDocumentState>(
-        builder: (context, state) {
-          if (state.isLoading) {
-            return const Center(child: CustomCircularProgressScreen());
-          }
-          if (state.error != null) {
-            return const Center(child: Text('Xảy ra lỗi'));
-          }
-          final entry = state.entry;
-          if (entry == null) {
-            return const Center(child: Text('Không tìm thấy dữ liệu'));
-          }
-          return SafeArea(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                children: [
-                  _HeaderCard(entry),
-                  const SizedBox(height: 12),
+    return BlocBuilder<LegalDocumentBloc, LegalDocumentState>(
+      builder: (context, state) {
+        if (state.isLoading) {
+          return const Center(child: CustomCircularProgressScreen());
+        }
+        if (state.error != null) {
+          return const Center(child: Text('Xảy ra lỗi'));
+        }
+        final entry = state.entry;
+        if (entry == null) {
+          return const Center(child: Text('Không tìm thấy dữ liệu'));
+        }
+        return SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              children: [
+                _HeaderCard(entry),
+                const SizedBox(height: 12),
 
-                  _InfoGrid(
-                    title: 'Thông tin chung',
-                    items: [
-                      _InfoData(Icons.article, 'Loại văn bản', entry.type!),
-                      _InfoData(
-                        Icons.person_2_outlined,
-                        'Người ban hành',
-                        entry.issuedByName ?? '-',
-                      ),
-                      _InfoData(
-                        Icons.calendar_today,
-                        'Ngày ban hành',
-                        _formatDate(entry.issueDate),
-                      ),
-                      _InfoData(
-                        Icons.event_available,
-                        'Ngày hiệu lực',
-                        _formatDate(entry.effectiveDate),
-                      ),
-                      _InfoData(
-                        Icons.event_busy,
-                        'Ngày hết hiệu lực',
-                        _formatDate(entry.expiryDate),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 12),
-                  _ContentCard(
-                    title: 'Mô tả văn bản',
-                    icon: Icons.description,
-                    child: Text(
-                      entry.description ?? 'Không có mô tả',
-                      style: const TextStyle(color: Colors.grey),
+                _InfoGrid(
+                  title: 'Thông tin chung',
+                  items: [
+                    _InfoData(Icons.article, 'Loại văn bản', entry.type!),
+                    _InfoData(
+                      Icons.person_2_outlined,
+                      'Người ban hành',
+                      entry.issuedByName ?? '-',
                     ),
-                  ),
+                    _InfoData(
+                      Icons.calendar_today,
+                      'Ngày ban hành',
+                      _formatDate(entry.issueDate),
+                    ),
+                    _InfoData(
+                      Icons.event_available,
+                      'Ngày hiệu lực',
+                      _formatDate(entry.effectiveDate),
+                    ),
+                    _InfoData(
+                      Icons.event_busy,
+                      'Ngày hết hiệu lực',
+                      _formatDate(entry.expiryDate),
+                    ),
+                  ],
+                ),
 
-                  const SizedBox(height: 12),
-                  if (entry.fileName != null)
-                    _ContentCard(
-                      title: 'Tài liệu đính kèm',
-                      icon: Icons.attach_file,
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(10),
-                        onTap: () async {
-                          final uri = Uri.parse(entry.fileUrl!);
-                          await launchUrl(uri);
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: Colors.grey.withValues(alpha: .15),
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(
-                              color: Colors.blue.withValues(alpha: .5),
-                            ),
+                const SizedBox(height: 12),
+                _ContentCard(
+                  title: 'Mô tả văn bản',
+                  icon: Icons.description,
+                  child: Text(
+                    entry.description ?? 'Không có mô tả',
+                    style: const TextStyle(color: Colors.grey),
+                  ),
+                ),
+
+                const SizedBox(height: 12),
+                if (entry.fileName != null)
+                  _ContentCard(
+                    title: 'Tài liệu đính kèm',
+                    icon: Icons.attach_file,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(10),
+                      onTap: () async {
+                        final uri = Uri.parse(entry.fileUrl!);
+                        await launchUrl(uri);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.withValues(alpha: .15),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: Colors.blue.withValues(alpha: .5),
                           ),
-                          child: Row(
-                            spacing: 8,
-                            children: [
-                              FileIconWidget(fileName: entry.fileName!),
-                              Expanded(
-                                child: Text(
-                                  entry.fileName!,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                        ),
+                        child: Row(
+                          spacing: 8,
+                          children: [
+                            FileIconWidget(fileName: entry.fileName!),
+                            Expanded(
+                              child: Text(
+                                entry.fileName!,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                ],
-              ),
+                  ),
+                SizedBox(height: 12),
+                ButtonBackWidget(),
+              ],
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 

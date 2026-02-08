@@ -2,7 +2,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/config/di/injection.dart';
 import 'package:multi_catalog_system/core/domain/entities/auth/user_entry.dart';
-import 'package:multi_catalog_system/core/domain/entities/domain/domain_ref_entry.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/features/user_management/presentation/presentation.dart';
 
@@ -40,16 +39,6 @@ class UserManagementRoutes {
                 return UserManagementFormPage(
                   entry: data['entry'] as UserEntry?,
                 );
-              },
-            ),
-            GoRoute(
-              path: '/add-domains',
-              name: RouterNames.userManagementAddDomains,
-              builder: (context, state) {
-                final fields =
-                    (state.extra as List?)?.cast<DomainRefEntry>() ?? [];
-
-                return UserManagementAddDomainsPage(fields: fields);
               },
             ),
           ],

@@ -19,8 +19,7 @@ class ImportFileRoutes {
           path: '/import-file',
           name: RouterNames.importFile,
           builder: (_, state) {
-            final type = state.extra as int;
-            return ImportFilePage(typeImport: type);
+            return ImportFilePage(typeImport: 0);
           },
         ),
       ],

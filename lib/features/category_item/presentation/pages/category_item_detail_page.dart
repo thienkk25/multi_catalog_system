@@ -66,8 +66,6 @@ class _CategoryItemDetailPageState extends State<CategoryItemDetailPage>
 
         return Scaffold(
           appBar: AppBar(
-            title: Text(entry.name ?? 'Thông tin danh mục'),
-            centerTitle: true,
             bottom: TabBar(
               controller: _tabController,
               labelColor: Colors.white,

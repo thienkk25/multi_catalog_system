@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:multi_catalog_system/core/domain/entities/auth/user_entry.dart';
 import 'package:multi_catalog_system/core/utils/formatter/data_time_formatter.dart';
+import 'package:multi_catalog_system/core/widgets/button_back_widget.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/core/widgets/custom_circular_progress.dart';
 import 'package:multi_catalog_system/core/widgets/custom_label.dart';
@@ -14,40 +15,37 @@ class UserManagementDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Chi tiết người dùng'),
-        centerTitle: true,
-      ),
-      body: SafeArea(
-        child: BlocBuilder<UserManagementBloc, UserManagementState>(
-          builder: (context, state) {
-            if (state.isLoading) {
-              return const Center(child: CustomCircularProgressScreen());
-            }
-            if (state.error != null) {
-              return const Center(child: Text('Xảy ra lỗi'));
-            }
-            final entry = state.entry;
-            if (entry == null) {
-              return const Center(child: Text('Không tìm thấy dữ liệu'));
-            }
-            return SafeArea(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(10),
-                child: Column(
-                  children: [
-                    _Header(entry: entry),
-                    const SizedBox(height: 16),
-                    _InfoSection(entry: entry),
-                    const SizedBox(height: 16),
-                    _SystemSection(entry: entry),
-                  ],
-                ),
+    return SafeArea(
+      child: BlocBuilder<UserManagementBloc, UserManagementState>(
+        builder: (context, state) {
+          if (state.isLoading) {
+            return const Center(child: CustomCircularProgressScreen());
+          }
+          if (state.error != null) {
+            return const Center(child: Text('Xảy ra lỗi'));
+          }
+          final entry = state.entry;
+          if (entry == null) {
+            return const Center(child: Text('Không tìm thấy dữ liệu'));
+          }
+          return SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                children: [
+                  _Header(entry: entry),
+                  const SizedBox(height: 16),
+                  _InfoSection(entry: entry),
+                  const SizedBox(height: 16),
+                  _SystemSection(entry: entry),
+
+                  const SizedBox(height: 16),
+                  ButtonBackWidget(),
+                ],
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }

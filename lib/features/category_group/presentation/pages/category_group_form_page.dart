@@ -65,138 +65,137 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      appBar: AppBar(
-        title: Text(
-          _isUpdate ? 'Chỉnh sửa nhóm danh mục' : 'Thêm nhóm danh mục',
-        ),
-        centerTitle: true,
-      ),
-      body: SafeArea(
-        child: Stack(
-          children: [
-            CustomScrollView(
-              slivers: [
-                SliverPadding(
-                  padding: const EdgeInsets.all(10),
-                  sliver: SliverList(
-                    delegate: SliverChildListDelegate([
-                      Form(
-                        key: _formKey,
-                        child: Column(
-                          spacing: 20,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            CustomCard(
-                              child: Column(
-                                spacing: 20,
-                                children: [
-                                  CustomInput(
-                                    controller: _codeController,
-                                    lable: _requiredLabel('Mã Nhóm danh mục'),
-                                    hintText: 'Nhập mã nhóm danh mục',
-                                    validator: (p0) => p0 == null || p0.isEmpty
-                                        ? 'Vui lòng nhập mã nhóm danh mục'
-                                        : null,
-                                  ),
-                                  CustomInput(
-                                    controller: _nameController,
-                                    lable: _requiredLabel('Tên Nhóm danh mục'),
-                                    hintText: 'Nhập tên nhóm danh mục',
-                                    validator: (p0) => p0 == null || p0.isEmpty
-                                        ? 'Vui lòng nhập tên nhóm danh mục'
-                                        : null,
-                                  ),
-                                  BlocSelector<
-                                    CatalogLookupBloc,
-                                    CatalogLookupState,
-                                    List<DomainRefEntry>
-                                  >(
-                                    selector: (state) => state.domainsRef,
-                                    builder: (context, domains) {
-                                      return CustomDropdownButton<String>(
-                                        lable: const Text(
-                                          'Lĩnh vực',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                          ),
+    return SafeArea(
+      child: Stack(
+        children: [
+          CustomScrollView(
+            slivers: [
+              SliverPadding(
+                padding: const EdgeInsets.all(10),
+                sliver: SliverList(
+                  delegate: SliverChildListDelegate([
+                    Text(
+                      _isUpdate
+                          ? 'Chỉnh sửa nhóm danh mục'
+                          : 'Thêm nhóm danh mục',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Form(
+                      key: _formKey,
+                      child: Column(
+                        spacing: 20,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          CustomCard(
+                            child: Column(
+                              spacing: 20,
+                              children: [
+                                CustomInput(
+                                  controller: _codeController,
+                                  lable: _requiredLabel('Mã Nhóm danh mục'),
+                                  hintText: 'Nhập mã nhóm danh mục',
+                                  validator: (p0) => p0 == null || p0.isEmpty
+                                      ? 'Vui lòng nhập mã nhóm danh mục'
+                                      : null,
+                                ),
+                                CustomInput(
+                                  controller: _nameController,
+                                  lable: _requiredLabel('Tên Nhóm danh mục'),
+                                  hintText: 'Nhập tên nhóm danh mục',
+                                  validator: (p0) => p0 == null || p0.isEmpty
+                                      ? 'Vui lòng nhập tên nhóm danh mục'
+                                      : null,
+                                ),
+                                BlocSelector<
+                                  CatalogLookupBloc,
+                                  CatalogLookupState,
+                                  List<DomainRefEntry>
+                                >(
+                                  selector: (state) => state.domainsRef,
+                                  builder: (context, domains) {
+                                    return CustomDropdownButton<String>(
+                                      lable: const Text(
+                                        'Lĩnh vực',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w600,
                                         ),
-                                        hint: 'Chọn lĩnh vực',
-                                        value: _selectedDomainId,
-                                        items: domains
-                                            .map(
-                                              (e) => DropdownMenuItem<String>(
-                                                value: e.id,
-                                                child: Text(e.name),
-                                              ),
-                                            )
-                                            .toList(),
-                                        onChanged: (value) {
-                                          if (value == null) return;
+                                      ),
+                                      hint: 'Chọn lĩnh vực',
+                                      value: _selectedDomainId,
+                                      items: domains
+                                          .map(
+                                            (e) => DropdownMenuItem<String>(
+                                              value: e.id,
+                                              child: Text(e.name),
+                                            ),
+                                          )
+                                          .toList(),
+                                      onChanged: (value) {
+                                        if (value == null) return;
 
-                                          setState(() {
-                                            _selectedDomainId = value;
-                                          });
-                                        },
-                                        validator: (p0) =>
-                                            p0 == null || p0.isEmpty
-                                            ? 'Vui lòng chọn lĩnh vực'
-                                            : null,
-                                      );
-                                    },
+                                        setState(() {
+                                          _selectedDomainId = value;
+                                        });
+                                      },
+                                      validator: (p0) =>
+                                          p0 == null || p0.isEmpty
+                                          ? 'Vui lòng chọn lĩnh vực'
+                                          : null,
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                          CustomCard(
+                            child: CustomInput(
+                              controller: _descriptionController,
+                              lable: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text(
+                                    'Mô tả chi tiết',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Tùy chọn',
+                                    style: TextStyle(color: Colors.grey),
                                   ),
                                 ],
                               ),
+                              hintText:
+                                  'Nhập mô tả chi tiết về nhóm danh mục này...',
+                              minLines: 5,
+                              maxLines: 5,
                             ),
-                            CustomCard(
-                              child: CustomInput(
-                                controller: _descriptionController,
-                                lable: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    const Text(
-                                      'Mô tả chi tiết',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    Text(
-                                      'Tùy chọn',
-                                      style: TextStyle(color: Colors.grey),
-                                    ),
-                                  ],
-                                ),
-                                hintText:
-                                    'Nhập mô tả chi tiết về nhóm danh mục này...',
-                                minLines: 5,
-                                maxLines: 5,
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    ]),
-                  ),
+                    ),
+                  ]),
                 ),
-
-                SliverPadding(
-                  padding: EdgeInsets.only(bottom: _bottomBarHeight),
-                ),
-              ],
-            ),
-            BlocSelector<CategoryGroupBloc, CategoryGroupState, bool>(
-              selector: (state) => state.isLoading,
-              builder: (context, isLoading) => BottomFormActions(
-                isLoading: isLoading,
-                key: _bottomBarKey,
-                onCancel: () => context.pop(),
-                onSave: () => _onSave(context: context),
               ),
+
+              SliverPadding(padding: EdgeInsets.only(bottom: _bottomBarHeight)),
+            ],
+          ),
+          BlocSelector<CategoryGroupBloc, CategoryGroupState, bool>(
+            selector: (state) => state.isLoading,
+            builder: (context, isLoading) => BottomFormActions(
+              isLoading: isLoading,
+              key: _bottomBarKey,
+              onCancel: () => context.pop(),
+              onSave: () => _onSave(context: context),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

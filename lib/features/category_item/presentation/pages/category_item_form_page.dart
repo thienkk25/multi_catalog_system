@@ -106,46 +106,50 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
           _initFromEntry(state.entries.first);
         }
       },
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(_isUpdate ? 'Cập nhật Mục danh mục' : 'Tạo Mục danh mục'),
-          centerTitle: true,
-        ),
-        body: SafeArea(
-          child: Stack(
-            children: [
-              CustomScrollView(
-                slivers: [
-                  SliverPadding(
-                    padding: const EdgeInsets.all(10.0),
-                    sliver: SliverList(
-                      delegate: SliverChildListDelegate([
-                        Form(
-                          key: _formKey,
-                          child: Column(
-                            spacing: 15,
-                            children: [_generalInformation(), _legalDocument()],
-                          ),
+      child: SafeArea(
+        child: Stack(
+          children: [
+            CustomScrollView(
+              slivers: [
+                SliverPadding(
+                  padding: const EdgeInsets.all(10.0),
+                  sliver: SliverList(
+                    delegate: SliverChildListDelegate([
+                      Text(
+                        _isUpdate
+                            ? 'Cập nhật Mục danh mục'
+                            : 'Tạo Mục danh mục',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 20,
                         ),
-                      ]),
-                    ),
+                      ),
+                      SizedBox(height: 10),
+                      Form(
+                        key: _formKey,
+                        child: Column(
+                          spacing: 15,
+                          children: [_generalInformation(), _legalDocument()],
+                        ),
+                      ),
+                    ]),
                   ),
-                  SliverPadding(
-                    padding: EdgeInsets.only(bottom: _bottomBarHeight),
-                  ),
-                ],
-              ),
-              BlocSelector<CategoryItemBloc, CategoryItemState, bool>(
-                selector: (state) => state.isLoading,
-                builder: (context, isLoading) => BottomFormActions(
-                  isLoading: isLoading,
-                  key: _bottomBarKey,
-                  onCancel: () => context.pop(),
-                  onSave: () => _onSave(context: context, isEdit: true),
                 ),
+                SliverPadding(
+                  padding: EdgeInsets.only(bottom: _bottomBarHeight),
+                ),
+              ],
+            ),
+            BlocSelector<CategoryItemBloc, CategoryItemState, bool>(
+              selector: (state) => state.isLoading,
+              builder: (context, isLoading) => BottomFormActions(
+                isLoading: isLoading,
+                key: _bottomBarKey,
+                onCancel: () => context.pop(),
+                onSave: () => _onSave(context: context, isEdit: true),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
