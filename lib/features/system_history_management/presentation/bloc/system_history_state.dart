@@ -9,5 +9,6 @@ abstract class SystemHistoryState with _$SystemHistoryState {
     @Default(false) bool isLoading,
     String? error,
     @Default([]) List<SystemHistoryEntry> entries,
+    SystemHistoryEntry? entry,
   }) = _SystemHistoryState;
 }

@@ -94,7 +94,7 @@ class DomainManagementBloc
         result.fold(
           (l) => emit(state.copyWith(isLoading: false, error: mapFailure(l))),
           (r) {
-            emit(state.copyWith(isLoading: false, entries: [r]));
+            emit(state.copyWith(isLoading: false, entry: r));
           },
         );
       },

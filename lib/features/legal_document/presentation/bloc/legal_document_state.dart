@@ -9,6 +9,7 @@ abstract class LegalDocumentState with _$LegalDocumentState {
     @Default(false) bool isLoading,
     @Default([]) List<LegalDocumentEntry> entries,
     @Default({}) Set<String> selectedIds,
+    LegalDocumentEntry? entry,
     String? error,
     String? successMessage,
   }) = _LegalDocumentState;

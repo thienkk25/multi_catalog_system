@@ -8,6 +8,7 @@ abstract class ApiKeyState with _$ApiKeyState {
   const factory ApiKeyState({
     @Default(false) bool isLoading,
     @Default([]) List<ApiKeyEntry> entries,
+    ApiKeyEntry? entry,
     String? error,
     String? successMessage,
     ApiKeyEntry? createdEntry,

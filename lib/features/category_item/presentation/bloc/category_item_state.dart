@@ -8,6 +8,7 @@ abstract class CategoryItemState with _$CategoryItemState {
   const factory CategoryItemState({
     @Default(false) bool isLoading,
     @Default([]) List<CategoryItemEntry> entries,
+    CategoryItemEntry? entry,
     String? error,
     String? successMessage,
   }) = _CategoryItemState;

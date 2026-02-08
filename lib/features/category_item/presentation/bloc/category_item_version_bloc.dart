@@ -53,7 +53,7 @@ class CategoryItemVersionBloc
         if (emit.isDone) return;
         result.fold(
           (l) => emit(state.copyWith(isLoading: false, error: mapFailure(l))),
-          (r) => emit(state.copyWith(isLoading: false, entries: [r])),
+          (r) => emit(state.copyWith(isLoading: false, entry: r)),
         );
       },
       createVersion: (e) async {

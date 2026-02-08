@@ -15,6 +15,8 @@ abstract class DomainManagementState with _$DomainManagementState {
 
     @Default(<DomainEntry>[]) List<DomainEntry> entries,
 
+    DomainEntry? entry,
+
     String? error,
     String? successMessage,
   }) = _DomainManagementState;

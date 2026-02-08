@@ -8,6 +8,7 @@ abstract class UserManagementState with _$UserManagementState {
   const factory UserManagementState({
     @Default(false) bool isLoading,
     @Default([]) List<UserEntry> entries,
+    UserEntry? entry,
     String? error,
     String? successMessage,
   }) = _UserManagementState;

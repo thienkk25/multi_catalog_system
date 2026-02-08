@@ -72,40 +72,40 @@ class _SystemHistoryManagementPageState
               Expanded(
                 child: BlocBuilder<SystemHistoryBloc, SystemHistoryState>(
                   builder: (context, state) {
-                    return state.when((isLoading, error, entries) {
-                      if (isLoading) {
-                        return const Center(
-                          child: CustomCircularProgressScreen(),
-                        );
-                      }
-
-                      if (error != null) {
-                        return ErrorRetryWidget(
-                          error: error,
-                          onRetry: () {
-                            bloc.add(const SystemHistoryEvent.getAll());
-                          },
-                        );
-                      }
-
-                      return ListView.separated(
-                        shrinkWrap: true,
-                        itemCount: entries.length,
-                        itemBuilder: (context, index) => GestureDetector(
-                          onTap: () => context.goNamed(
-                            RouterNames.systemHistoryManagementDetail,
-                            pathParameters: {
-                              'id': entries[index].id.toString(),
-                            },
-                          ),
-                          child: SystemHistoryManagementCard(
-                            log: entries[index],
-                          ),
-                        ),
-                        separatorBuilder: (context, index) =>
-                            const SizedBox(height: 10),
+                    if (state.isLoading) {
+                      return const Center(
+                        child: CustomCircularProgressScreen(),
                       );
-                    });
+                    }
+
+                    if (state.error != null) {
+                      return ErrorRetryWidget(
+                        error: state.error!,
+                        onRetry: () {
+                          bloc.add(const SystemHistoryEvent.getAll());
+                        },
+                      );
+                    }
+
+                    if (state.entries.isEmpty) {
+                      return const Center(child: Text('Không có dữ liệu'));
+                    }
+
+                    final entries = state.entries;
+
+                    return ListView.separated(
+                      shrinkWrap: true,
+                      itemCount: entries.length,
+                      itemBuilder: (context, index) => GestureDetector(
+                        onTap: () => context.goNamed(
+                          RouterNames.systemHistoryManagementDetail,
+                          pathParameters: {'id': entries[index].id.toString()},
+                        ),
+                        child: SystemHistoryManagementCard(log: entries[index]),
+                      ),
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: 10),
+                    );
                   },
                 ),
               ),

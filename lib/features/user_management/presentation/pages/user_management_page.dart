@@ -77,36 +77,43 @@ class _UserManagementPageState extends State<UserManagementPage>
                       context.read<NotificationCubit>().error(state.error!);
                     }
                   },
-                  builder: (context, state) =>
-                      state.when((isLoading, entries, error, successMessage) {
-                        if (isLoading) {
-                          return Center(child: CustomCircularProgressScreen());
-                        }
-                        if (error != null) {
-                          return ErrorRetryWidget(
-                            error: error,
-                            onRetry: () {
-                              bloc.add(const UserManagementEvent.getAll());
-                            },
-                          );
-                        }
-                        return ListView.separated(
-                          shrinkWrap: true,
-                          itemBuilder: (context, index) {
-                            final entry = entries[index];
-                            return GestureDetector(
-                              onTap: () => context.goNamed(
-                                RouterNames.userManagementDetail,
-                                pathParameters: {'id': ?entry.id},
-                              ),
-                              child: UserManagementCard(entry: entry),
-                            );
-                          },
-                          separatorBuilder: (context, index) =>
-                              SizedBox(height: 10),
-                          itemCount: entries.length,
+                  builder: (context, state) {
+                    if (state.isLoading) {
+                      return Center(child: CustomCircularProgressScreen());
+                    }
+
+                    if (state.error != null) {
+                      return ErrorRetryWidget(
+                        error: state.error!,
+                        onRetry: () {
+                          bloc.add(const UserManagementEvent.getAll());
+                        },
+                      );
+                    }
+
+                    if (state.entries.isEmpty) {
+                      return const Center(child: Text('Không có dữ liệu'));
+                    }
+
+                    final entries = state.entries;
+
+                    return ListView.separated(
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        final entry = entries[index];
+                        return GestureDetector(
+                          onTap: () => context.goNamed(
+                            RouterNames.userManagementDetail,
+                            pathParameters: {'id': ?entry.id},
+                          ),
+                          child: UserManagementCard(entry: entry),
                         );
-                      }),
+                      },
+                      separatorBuilder: (context, index) =>
+                          SizedBox(height: 10),
+                      itemCount: entries.length,
+                    );
+                  },
                 ),
               ),
             ],

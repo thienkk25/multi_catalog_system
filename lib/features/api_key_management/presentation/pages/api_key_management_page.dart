@@ -84,44 +84,42 @@ class _ApiKeyManagementPageState extends State<ApiKeyManagementPage>
                     }
                   },
                   builder: (context, state) {
-                    return state.when((
-                      isLoading,
-                      entries,
-                      error,
-                      successMessage,
-                      createdEntry,
-                    ) {
-                      if (isLoading) {
-                        return const Center(
-                          child: CustomCircularProgressScreen(),
-                        );
-                      }
-                      if (error != null) {
-                        return ErrorRetryWidget(
-                          error: error,
-                          onRetry: () {
-                            bloc.add(const ApiKeyEvent.getAll());
-                          },
-                        );
-                      }
-                      return ListView.separated(
-                        itemCount: entries.length,
-                        separatorBuilder: (context, index) =>
-                            const SizedBox(height: 10),
-                        itemBuilder: (context, index) {
-                          final entry = entries[index];
-                          return GestureDetector(
-                            onTap: () {
-                              context.goNamed(
-                                RouterNames.apiKeyDetail,
-                                pathParameters: {'id': ?entry.id},
-                              );
-                            },
-                            child: ApiKeyManagementCard(entry: entry),
-                          );
+                    if (state.isLoading) {
+                      return const Center(
+                        child: CustomCircularProgressScreen(),
+                      );
+                    }
+                    if (state.error != null) {
+                      return ErrorRetryWidget(
+                        error: state.error!,
+                        onRetry: () {
+                          bloc.add(const ApiKeyEvent.getAll());
                         },
                       );
-                    });
+                    }
+                    if (state.entries.isEmpty) {
+                      return Center(child: Text('Không có dữ liệu'));
+                    }
+
+                    final entries = state.entries;
+
+                    return ListView.separated(
+                      itemCount: entries.length,
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: 10),
+                      itemBuilder: (context, index) {
+                        final entry = entries[index];
+                        return GestureDetector(
+                          onTap: () {
+                            context.goNamed(
+                              RouterNames.apiKeyDetail,
+                              pathParameters: {'id': ?entry.id},
+                            );
+                          },
+                          child: ApiKeyManagementCard(entry: entry),
+                        );
+                      },
+                    );
                   },
                 ),
               ),

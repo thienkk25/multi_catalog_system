@@ -118,21 +118,15 @@ class _CategoryItemAddLegalDocumentsPageState
                   sliver: SliverList(
                     delegate: SliverChildListDelegate([
                       BlocBuilder<LegalDocumentBloc, LegalDocumentState>(
-                        builder: (context, state) => state.when((
-                          isLoading,
-                          entries,
-                          selectedIds,
-                          error,
-                          successMessage,
-                        ) {
-                          if (isLoading) {
+                        builder: (context, state) {
+                          if (state.isLoading) {
                             return const Center(
                               child: CustomCircularProgressScreen(),
                             );
                           }
-                          if (error != null) {
+                          if (state.error != null) {
                             return ErrorRetryWidget(
-                              error: error,
+                              error: state.error!,
                               onRetry: () {
                                 context.read<LegalDocumentBloc>().add(
                                   const LegalDocumentEvent.getAllHasFile(),
@@ -140,6 +134,14 @@ class _CategoryItemAddLegalDocumentsPageState
                               },
                             );
                           }
+
+                          if (state.entries.isEmpty) {
+                            return const Center(
+                              child: Text('Không có dữ liệu'),
+                            );
+                          }
+                          final entries = state.entries;
+
                           return ListView.builder(
                             shrinkWrap: true,
                             itemCount: entries.length,
@@ -179,7 +181,7 @@ class _CategoryItemAddLegalDocumentsPageState
                               );
                             },
                           );
-                        }),
+                        },
                       ),
                     ]),
                   ),

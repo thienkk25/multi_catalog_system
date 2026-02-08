@@ -8,6 +8,7 @@ abstract class CategoryGroupState with _$CategoryGroupState {
   const factory CategoryGroupState({
     @Default(false) bool isLoading,
     @Default([]) List<CategoryGroupEntry> entries,
+    CategoryGroupEntry? entry,
     String? error,
     String? successMessage,
   }) = _CategoryGroupState;
