@@ -27,7 +27,7 @@ class ApproveRoutes {
           },
           routes: [
             GoRoute(
-              path: '/:id',
+              path: '/id/:id',
               name: RouterNames.approveDetail,
               builder: (context, state) => const ApprovePage(),
             ),

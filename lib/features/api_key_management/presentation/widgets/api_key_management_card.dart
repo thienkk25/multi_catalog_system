@@ -75,7 +75,7 @@ class ApiKeyManagementCard extends StatelessWidget {
                         child: _APIKeyCardMenu(
                           onEdit: () {
                             context.pop();
-                            context.pushNamed(
+                            context.goNamed(
                               RouterNames.apiKeyForm,
                               extra: {
                                 'bloc': context.read<ApiKeyBloc>(),

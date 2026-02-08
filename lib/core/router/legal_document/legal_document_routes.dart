@@ -21,7 +21,7 @@ class LegalDocumentRoutes {
           builder: (context, state) => const LegalDocumentPage(),
           routes: [
             GoRoute(
-              path: '/:id',
+              path: '/id/:id',
               name: RouterNames.legalDocumentDetail,
               builder: (context, state) {
                 final id = state.pathParameters['id']!;

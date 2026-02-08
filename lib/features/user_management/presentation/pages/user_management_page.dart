@@ -95,7 +95,7 @@ class _UserManagementPageState extends State<UserManagementPage>
                           itemBuilder: (context, index) {
                             final entry = entries[index];
                             return GestureDetector(
-                              onTap: () => context.pushNamed(
+                              onTap: () => context.goNamed(
                                 RouterNames.userManagementDetail,
                                 pathParameters: {'id': ?entry.id},
                               ),
@@ -115,7 +115,7 @@ class _UserManagementPageState extends State<UserManagementPage>
         CustomFloatingActionButton(
           onPressedImport: () {},
           onPressedAdd: () {
-            context.pushNamed(
+            context.goNamed(
               RouterNames.userManagementForm,
               extra: {'bloc': bloc},
             );

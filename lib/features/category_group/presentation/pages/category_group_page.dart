@@ -123,10 +123,10 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
         ),
         CustomFloatingActionButton(
           onPressedImport: () {
-            context.pushNamed(RouterNames.importFile, extra: 2);
+            context.goNamed(RouterNames.importFile, extra: 2);
           },
           onPressedAdd: () {
-            context.pushNamed(
+            context.goNamed(
               RouterNames.categoryGroupForm,
               extra: {'bloc': bloc},
             );

@@ -130,7 +130,7 @@ class _ActionMenu extends StatelessWidget {
                 );
                 break;
               case _MenuAction.edit:
-                context.pushNamed(
+                context.goNamed(
                   RouterNames.userManagementForm,
                   extra: {'bloc': bloc, 'entry': entry},
                 );

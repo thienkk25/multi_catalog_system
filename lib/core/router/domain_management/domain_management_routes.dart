@@ -21,7 +21,7 @@ class DomainManagementRoutes {
           builder: (context, state) => const DomainManagementPage(),
           routes: [
             GoRoute(
-              path: '/:id',
+              path: 'id/:id',
               name: RouterNames.domainDetail,
               builder: (context, state) {
                 final id = state.pathParameters['id']!;

@@ -130,7 +130,7 @@ class LegalDocumentCard extends StatelessWidget {
                   label: 'Sửa',
                   color: const Color(0xFF2563EB),
                   onPressed: () {
-                    context.pushNamed(
+                    context.goNamed(
                       RouterNames.legalDocumentForm,
                       extra: {
                         'bloc': context.read<LegalDocumentBloc>(),

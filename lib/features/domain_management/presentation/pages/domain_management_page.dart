@@ -131,7 +131,7 @@ class _DomainManagementPageState extends State<DomainManagementPage>
 
                             final entry = entries[index];
                             return GestureDetector(
-                              onTap: () => context.pushNamed(
+                              onTap: () => context.goNamed(
                                 RouterNames.domainDetail,
                                 pathParameters: {'id': ?entry.id},
                               ),
@@ -148,7 +148,7 @@ class _DomainManagementPageState extends State<DomainManagementPage>
         CustomFloatingActionButton(
           permission: ['admin'],
           onPressedImport: () {
-            context.pushNamed(RouterNames.importFile, extra: 1);
+            context.goNamed(RouterNames.importFile, extra: 1);
           },
           onPressedAdd: () {
             context.goNamed(RouterNames.domainForm, extra: {'bloc': bloc});

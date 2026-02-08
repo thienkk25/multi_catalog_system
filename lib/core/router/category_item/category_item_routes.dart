@@ -25,7 +25,7 @@ class CategoryItemRoutes {
           builder: (context, state) => const CategoryItemPage(),
           routes: [
             GoRoute(
-              path: '/:id',
+              path: '/id/:id',
               name: RouterNames.categoryItemDetail,
               builder: (context, state) {
                 final id = state.pathParameters['id']!;

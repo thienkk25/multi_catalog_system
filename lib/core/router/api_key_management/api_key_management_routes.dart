@@ -18,7 +18,7 @@ class ApiKeyManagementRoutes {
           builder: (context, state) => const ApiKeyManagementPage(),
           routes: [
             GoRoute(
-              path: '/:id',
+              path: 'id/:id',
               name: RouterNames.apiKeyDetail,
               builder: (context, state) {
                 final id = state.pathParameters['id']!;

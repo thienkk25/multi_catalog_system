@@ -92,7 +92,7 @@ class _SystemHistoryManagementPageState
                         shrinkWrap: true,
                         itemCount: entries.length,
                         itemBuilder: (context, index) => GestureDetector(
-                          onTap: () => context.pushNamed(
+                          onTap: () => context.goNamed(
                             RouterNames.systemHistoryManagementDetail,
                             pathParameters: {
                               'id': entries[index].id.toString(),

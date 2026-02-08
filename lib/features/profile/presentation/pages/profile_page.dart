@@ -142,7 +142,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 icon: Icons.lock_outline,
                                 label: 'Đổi mật khẩu',
                                 onTap: () {
-                                  context.pushNamed(
+                                  context.goNamed(
                                     RouterNames.changePassword,
                                     extra: bloc,
                                   );
@@ -173,7 +173,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         style: TextStyle(color: Colors.white),
                       ),
                       onTap: () {
-                        context.pushNamed(
+                        context.goNamed(
                           RouterNames.profileForm,
                           extra: {'bloc': bloc, 'entry': entry},
                         );

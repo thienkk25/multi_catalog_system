@@ -233,7 +233,7 @@ class _FooterDrawer extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                   hoverColor: Colors.blue.withValues(alpha: .2),
                   onTap: () {
-                    context.pushNamed(RouterNames.profile);
+                    context.goNamed(RouterNames.profile);
                   },
                   child: ListTile(
                     leading: SvgPicture.asset(

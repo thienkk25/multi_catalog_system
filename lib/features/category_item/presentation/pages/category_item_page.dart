@@ -121,7 +121,7 @@ class _CategoryItemPageState extends State<CategoryItemPage>
                           final entry = entries[index];
                           return GestureDetector(
                             onTap: () {
-                              context.pushNamed(
+                              context.goNamed(
                                 RouterNames.categoryItemDetail,
                                 pathParameters: {'id': ?entry.id},
                               );
@@ -139,10 +139,10 @@ class _CategoryItemPageState extends State<CategoryItemPage>
 
           CustomFloatingActionButton(
             onPressedImport: () {
-              context.pushNamed(RouterNames.importFile, extra: 3);
+              context.goNamed(RouterNames.importFile, extra: 3);
             },
             onPressedAdd: () {
-              context.pushNamed(RouterNames.categoryItemFormCreate);
+              context.goNamed(RouterNames.categoryItemFormCreate);
             },
           ),
         ],

@@ -22,7 +22,7 @@ class UserManagementRoutes {
           builder: (context, state) => const UserManagementPage(),
           routes: [
             GoRoute(
-              path: '/:id',
+              path: '/id/:id',
               name: RouterNames.userManagementDetail,
               builder: (context, state) {
                 final id = state.pathParameters['id']!;

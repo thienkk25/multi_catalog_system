@@ -112,7 +112,7 @@ class _ApiKeyManagementPageState extends State<ApiKeyManagementPage>
                           final entry = entries[index];
                           return GestureDetector(
                             onTap: () {
-                              context.pushNamed(
+                              context.goNamed(
                                 RouterNames.apiKeyDetail,
                                 pathParameters: {'id': ?entry.id},
                               );
@@ -131,7 +131,7 @@ class _ApiKeyManagementPageState extends State<ApiKeyManagementPage>
         CustomFloatingActionButton(
           onPressedImport: () {},
           onPressedAdd: () {
-            context.pushNamed(RouterNames.apiKeyForm, extra: {'bloc': bloc});
+            context.goNamed(RouterNames.apiKeyForm, extra: {'bloc': bloc});
           },
         ),
       ],

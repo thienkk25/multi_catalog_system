@@ -100,7 +100,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
                         final entry = entries[index];
                         return GestureDetector(
                           onTap: () {
-                            context.pushNamed(
+                            context.goNamed(
                               RouterNames.legalDocumentDetail,
                               pathParameters: {'id': ?entry.id},
                             );
@@ -119,7 +119,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
           permission: ['admin'],
           onPressedImport: () {},
           onPressedAdd: () {
-            context.pushNamed(
+            context.goNamed(
               RouterNames.legalDocumentForm,
               extra: {'bloc': bloc},
             );

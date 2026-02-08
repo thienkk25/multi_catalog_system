@@ -304,7 +304,7 @@ class _BottomActions extends StatelessWidget {
             Expanded(
               child: CustomButton(
                 onTap: () {
-                  context.pushNamed(
+                  context.goNamed(
                     RouterNames.categoryItemFormUpdate,
                     pathParameters: {'id': ?entry.id},
                   );

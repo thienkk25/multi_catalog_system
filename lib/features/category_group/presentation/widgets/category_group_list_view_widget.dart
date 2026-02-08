@@ -130,7 +130,7 @@ class CategoryGroupListViewWidget extends StatelessWidget {
     required BuildContext context,
     required CategoryGroupEntry entry,
   }) {
-    context.pushNamed(
+    context.goNamed(
       RouterNames.categoryGroupDetail,
       pathParameters: {'id': ?entry.id},
     );
@@ -141,7 +141,7 @@ class CategoryGroupListViewWidget extends StatelessWidget {
     required CategoryGroupBloc bloc,
     required CategoryGroupEntry entry,
   }) {
-    context.pushNamed(
+    context.goNamed(
       RouterNames.categoryGroupForm,
       extra: {'bloc': bloc, 'entry': entry},
     );

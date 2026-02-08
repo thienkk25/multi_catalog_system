@@ -75,7 +75,7 @@ class DomainManagementCard extends StatelessWidget {
   void _onUpdate({required BuildContext context}) {
     final bloc = context.read<DomainManagementBloc>();
     context.pop();
-    context.pushNamed(
+    context.goNamed(
       RouterNames.domainForm,
       extra: {'bloc': bloc, 'entry': entry},
     );
