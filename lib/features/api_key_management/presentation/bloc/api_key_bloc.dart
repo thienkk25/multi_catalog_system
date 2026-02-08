@@ -30,6 +30,7 @@ class ApiKeyBloc extends Bloc<ApiKeyEvent, ApiKeyState> {
             isLoading: true,
             error: null,
             successMessage: null,
+            entry: null,
             createdEntry: null,
           ),
         );
@@ -49,6 +50,7 @@ class ApiKeyBloc extends Bloc<ApiKeyEvent, ApiKeyState> {
             isLoading: true,
             error: null,
             successMessage: null,
+            entry: null,
             createdEntry: null,
           ),
         );
@@ -70,6 +72,7 @@ class ApiKeyBloc extends Bloc<ApiKeyEvent, ApiKeyState> {
             isLoading: true,
             error: null,
             successMessage: null,
+            entry: null,
             createdEntry: null,
           ),
         );
@@ -95,6 +98,7 @@ class ApiKeyBloc extends Bloc<ApiKeyEvent, ApiKeyState> {
             isLoading: true,
             error: null,
             successMessage: null,
+            entry: null,
             createdEntry: null,
           ),
         );

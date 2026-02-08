@@ -29,7 +29,12 @@ class CategoryItemBloc extends Bloc<CategoryItemEvent, CategoryItemState> {
     await event.map(
       getAll: (e) async {
         emit(
-          state.copyWith(isLoading: true, error: null, successMessage: null),
+          state.copyWith(
+            isLoading: true,
+            error: null,
+            successMessage: null,
+            entry: null,
+          ),
         );
 
         final result = await getAll(search: e.search);
@@ -43,7 +48,12 @@ class CategoryItemBloc extends Bloc<CategoryItemEvent, CategoryItemState> {
 
       getById: (e) async {
         emit(
-          state.copyWith(isLoading: true, error: null, successMessage: null),
+          state.copyWith(
+            isLoading: true,
+            error: null,
+            successMessage: null,
+            entry: null,
+          ),
         );
 
         final result = await getById(id: e.id);
@@ -59,7 +69,12 @@ class CategoryItemBloc extends Bloc<CategoryItemEvent, CategoryItemState> {
 
       create: (e) async {
         emit(
-          state.copyWith(isLoading: true, error: null, successMessage: null),
+          state.copyWith(
+            isLoading: true,
+            error: null,
+            successMessage: null,
+            entry: null,
+          ),
         );
 
         final result = await create(entry: e.entry);
@@ -79,7 +94,12 @@ class CategoryItemBloc extends Bloc<CategoryItemEvent, CategoryItemState> {
 
       update: (e) async {
         emit(
-          state.copyWith(isLoading: true, error: null, successMessage: null),
+          state.copyWith(
+            isLoading: true,
+            error: null,
+            successMessage: null,
+            entry: null,
+          ),
         );
 
         final result = await update(entry: e.entry);

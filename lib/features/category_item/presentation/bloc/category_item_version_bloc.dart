@@ -36,7 +36,12 @@ class CategoryItemVersionBloc
     await event.map(
       getAll: (e) async {
         emit(
-          state.copyWith(isLoading: true, error: null, successMessage: null),
+          state.copyWith(
+            isLoading: true,
+            error: null,
+            successMessage: null,
+            entry: null,
+          ),
         );
         final result = await getAll(itemId: e.itemId, search: e.search);
         if (emit.isDone) return;
@@ -47,7 +52,12 @@ class CategoryItemVersionBloc
       },
       getById: (e) async {
         emit(
-          state.copyWith(isLoading: true, error: null, successMessage: null),
+          state.copyWith(
+            isLoading: true,
+            error: null,
+            successMessage: null,
+            entry: null,
+          ),
         );
         final result = await getById(id: e.id);
         if (emit.isDone) return;
@@ -58,7 +68,12 @@ class CategoryItemVersionBloc
       },
       createVersion: (e) async {
         emit(
-          state.copyWith(isLoading: true, error: null, successMessage: null),
+          state.copyWith(
+            isLoading: true,
+            error: null,
+            successMessage: null,
+            entry: null,
+          ),
         );
 
         final result = await createVersion(entry: e.entry);
@@ -75,7 +90,12 @@ class CategoryItemVersionBloc
       },
       updateVersion: (e) async {
         emit(
-          state.copyWith(isLoading: true, error: null, successMessage: null),
+          state.copyWith(
+            isLoading: true,
+            error: null,
+            successMessage: null,
+            entry: null,
+          ),
         );
         final result = await updateVersion(entry: e.entry);
         if (emit.isDone) return;
@@ -91,7 +111,12 @@ class CategoryItemVersionBloc
       },
       deleteVersion: (e) async {
         emit(
-          state.copyWith(isLoading: true, error: null, successMessage: null),
+          state.copyWith(
+            isLoading: true,
+            error: null,
+            successMessage: null,
+            entry: null,
+          ),
         );
         final result = await deleteVersion(id: e.id);
         if (emit.isDone) return;
@@ -107,7 +132,12 @@ class CategoryItemVersionBloc
       },
       approveVersion: (e) async {
         emit(
-          state.copyWith(isLoading: true, error: null, successMessage: null),
+          state.copyWith(
+            isLoading: true,
+            error: null,
+            successMessage: null,
+            entry: null,
+          ),
         );
         final result = await approveVersion(id: e.id);
         if (emit.isDone) return;
@@ -123,7 +153,12 @@ class CategoryItemVersionBloc
       },
       rejectVersion: (e) async {
         emit(
-          state.copyWith(isLoading: true, error: null, successMessage: null),
+          state.copyWith(
+            isLoading: true,
+            error: null,
+            successMessage: null,
+            entry: null,
+          ),
         );
         final result = await rejectVersion(
           id: e.id,
@@ -142,7 +177,12 @@ class CategoryItemVersionBloc
       },
       delete: (e) async {
         emit(
-          state.copyWith(isLoading: true, error: null, successMessage: null),
+          state.copyWith(
+            isLoading: true,
+            error: null,
+            successMessage: null,
+            entry: null,
+          ),
         );
         final result = await deleteByAdminVersion(id: e.id);
         if (emit.isDone) return;

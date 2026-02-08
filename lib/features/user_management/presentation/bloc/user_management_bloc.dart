@@ -37,7 +37,12 @@ class UserManagementBloc
     await event.map(
       getAll: (e) async {
         emit(
-          state.copyWith(isLoading: true, error: null, successMessage: null),
+          state.copyWith(
+            isLoading: true,
+            error: null,
+            successMessage: null,
+            entry: null,
+          ),
         );
 
         final result = await getAll(search: e.search);
@@ -49,7 +54,12 @@ class UserManagementBloc
       },
       getById: (e) async {
         emit(
-          state.copyWith(isLoading: true, error: null, successMessage: null),
+          state.copyWith(
+            isLoading: true,
+            error: null,
+            successMessage: null,
+            entry: null,
+          ),
         );
 
         final result = await getById(id: e.id);
@@ -61,7 +71,12 @@ class UserManagementBloc
       },
       create: (e) async {
         emit(
-          state.copyWith(isLoading: true, error: null, successMessage: null),
+          state.copyWith(
+            isLoading: true,
+            error: null,
+            successMessage: null,
+            entry: null,
+          ),
         );
 
         final result = await create(entry: e.entry);
@@ -79,7 +94,12 @@ class UserManagementBloc
       },
       update: (e) async {
         emit(
-          state.copyWith(isLoading: true, error: null, successMessage: null),
+          state.copyWith(
+            isLoading: true,
+            error: null,
+            successMessage: null,
+            entry: null,
+          ),
         );
 
         final result = await update(entry: e.entry);
@@ -125,7 +145,12 @@ class UserManagementBloc
       },
       activate: (e) async {
         emit(
-          state.copyWith(isLoading: true, error: null, successMessage: null),
+          state.copyWith(
+            isLoading: true,
+            error: null,
+            successMessage: null,
+            entry: null,
+          ),
         );
 
         final result = await activate(id: e.id);
@@ -150,7 +175,12 @@ class UserManagementBloc
       },
       deactivate: (e) async {
         emit(
-          state.copyWith(isLoading: true, error: null, successMessage: null),
+          state.copyWith(
+            isLoading: true,
+            error: null,
+            successMessage: null,
+            entry: null,
+          ),
         );
 
         final result = await deactivate(id: e.id);
@@ -175,7 +205,12 @@ class UserManagementBloc
       },
       grantAccess: (e) async {
         emit(
-          state.copyWith(isLoading: true, error: null, successMessage: null),
+          state.copyWith(
+            isLoading: true,
+            error: null,
+            successMessage: null,
+            entry: null,
+          ),
         );
 
         final result = await grantAccess(entry: e.entry);

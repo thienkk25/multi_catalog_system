@@ -31,7 +31,12 @@ class LegalDocumentBloc extends Bloc<LegalDocumentEvent, LegalDocumentState> {
     await event.map(
       getAll: (v) async {
         emit(
-          state.copyWith(isLoading: true, error: null, successMessage: null),
+          state.copyWith(
+            isLoading: true,
+            error: null,
+            successMessage: null,
+            entry: null,
+          ),
         );
 
         final result = await getAll(search: v.search);
@@ -44,7 +49,12 @@ class LegalDocumentBloc extends Bloc<LegalDocumentEvent, LegalDocumentState> {
       },
       getAllHasFile: (v) async {
         emit(
-          state.copyWith(isLoading: true, error: null, successMessage: null),
+          state.copyWith(
+            isLoading: true,
+            error: null,
+            successMessage: null,
+            entry: null,
+          ),
         );
 
         final result = await getAllHasFile(search: v.search);
@@ -58,7 +68,12 @@ class LegalDocumentBloc extends Bloc<LegalDocumentEvent, LegalDocumentState> {
 
       getById: (e) async {
         emit(
-          state.copyWith(isLoading: true, error: null, successMessage: null),
+          state.copyWith(
+            isLoading: true,
+            error: null,
+            successMessage: null,
+            entry: null,
+          ),
         );
 
         final result = await getById(id: e.id);
@@ -74,7 +89,12 @@ class LegalDocumentBloc extends Bloc<LegalDocumentEvent, LegalDocumentState> {
 
       create: (e) async {
         emit(
-          state.copyWith(isLoading: true, error: null, successMessage: null),
+          state.copyWith(
+            isLoading: true,
+            error: null,
+            successMessage: null,
+            entry: null,
+          ),
         );
 
         final result = await create(entry: e.entry, file: e.file);
@@ -94,7 +114,12 @@ class LegalDocumentBloc extends Bloc<LegalDocumentEvent, LegalDocumentState> {
 
       update: (e) async {
         emit(
-          state.copyWith(isLoading: true, error: null, successMessage: null),
+          state.copyWith(
+            isLoading: true,
+            error: null,
+            successMessage: null,
+            entry: null,
+          ),
         );
 
         final result = await update(entry: e.entry, file: e.file);

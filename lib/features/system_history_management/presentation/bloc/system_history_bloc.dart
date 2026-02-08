@@ -22,7 +22,7 @@ class SystemHistoryBloc extends Bloc<SystemHistoryEvent, SystemHistoryState> {
   ) async {
     await event.map(
       getAll: (v) async {
-        emit(state.copyWith(isLoading: true, error: null));
+        emit(state.copyWith(isLoading: true, error: null, entry: null));
 
         final result = await getAll(search: v.search);
         if (emit.isDone) return;
@@ -33,7 +33,7 @@ class SystemHistoryBloc extends Bloc<SystemHistoryEvent, SystemHistoryState> {
         );
       },
       getById: (e) async {
-        emit(state.copyWith(isLoading: true, error: null));
+        emit(state.copyWith(isLoading: true, error: null, entry: null));
 
         final result = await getById(id: e.id);
         if (emit.isDone) return;
