@@ -16,6 +16,7 @@ abstract class CategoryItemVersionRepository {
   });
   Future<Either<Failure, CategoryItemVersionEntry>> updateVersion({
     required CategoryItemEntry entry,
+    int? type,
   });
   Future<Either<Failure, void>> deleteVersion({required String id});
 

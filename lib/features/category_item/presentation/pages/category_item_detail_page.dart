@@ -305,6 +305,7 @@ class _BottomActions extends StatelessWidget {
                   context.goNamed(
                     RouterNames.categoryItemFormUpdate,
                     pathParameters: {'id': ?entry.id},
+                    queryParameters: {'type': '0'},
                   );
                 },
                 colorBackground: Colors.blue,

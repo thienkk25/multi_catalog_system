@@ -19,6 +19,7 @@ class CategoryItemVersionEvent with _$CategoryItemVersionEvent {
 
   const factory CategoryItemVersionEvent.updateVersion({
     required CategoryItemEntry entry,
+    int? type,
   }) = UpdateVersion;
   const factory CategoryItemVersionEvent.deleteVersion({required String id}) =
       DeleteVersion;

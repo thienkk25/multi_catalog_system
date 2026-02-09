@@ -98,15 +98,12 @@ class CategoryItemVersionBloc
             entry: null,
           ),
         );
-        final result = await updateVersion(entry: e.entry);
+        final result = await updateVersion(type: e.type, entry: e.entry);
         if (emit.isDone) return;
         result.fold(
           (l) => emit(state.copyWith(isLoading: false, error: mapFailure(l))),
           (r) => emit(
-            state.copyWith(
-              isLoading: false,
-              successMessage: 'Gửi yêu cầu cập nhật thành công',
-            ),
+            state.copyWith(isLoading: false, successMessage: 'Thành công'),
           ),
         );
       },

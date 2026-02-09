@@ -66,7 +66,9 @@ class CategoryItemRoutes {
                   CategoryItemEvent.getById(id: id),
                 );
 
-                return const CategoryItemFormPage();
+                final type = state.uri.queryParameters['type']!;
+
+                return CategoryItemFormPage(type: int.parse(type));
               },
             ),
           ],

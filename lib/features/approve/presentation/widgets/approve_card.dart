@@ -153,6 +153,7 @@ class ApproveCard extends StatelessWidget {
                                   context.pushNamed(
                                     RouterNames.categoryItemFormUpdate,
                                     pathParameters: {'id': version.itemId!},
+                                    queryParameters: {'type': '1'},
                                   );
                                 },
                                 colorBackground: Colors.green,

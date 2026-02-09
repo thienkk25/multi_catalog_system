@@ -39,7 +39,8 @@ class CategoryItemVersionRepositoryImpl
     'legal_document_ids': entry.legalDocuments?.map((e) => e.id).toList(),
   };
 
-  Map<String, dynamic> _updatePayload(CategoryItemEntry entry) => {
+  Map<String, dynamic> _updatePayload(int? type, CategoryItemEntry entry) => {
+    if (type != null) 'version_type': type,
     'version_data': {
       if (entry.group?.id != null) 'group_id': entry.group?.id,
       if (entry.code != null) 'code': entry.code,
@@ -100,11 +101,12 @@ class CategoryItemVersionRepositoryImpl
   @override
   Future<Either<Failure, CategoryItemVersionEntry>> updateVersion({
     required CategoryItemEntry entry,
+    int? type,
   }) async {
     try {
       final model = await remoteDataSource.updateVersion(
         id: entry.id!,
-        data: _updatePayload(entry),
+        data: _updatePayload(type, entry),
       );
       return Right(_toEntity(model));
     } on AppException catch (e) {

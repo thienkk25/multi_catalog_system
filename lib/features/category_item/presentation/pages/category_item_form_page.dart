@@ -21,7 +21,8 @@ import 'package:multi_catalog_system/features/category_item/presentation/bloc/ca
 import 'package:multi_catalog_system/features/legal_document/domain/entities/legal_document_entry.dart';
 
 class CategoryItemFormPage extends StatefulWidget {
-  const CategoryItemFormPage({super.key});
+  final int? type;
+  const CategoryItemFormPage({super.key, this.type = 0});
 
   @override
   State<CategoryItemFormPage> createState() => _CategoryItemFormPageState();
@@ -376,7 +377,10 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
         );
       } else {
         context.read<CategoryItemVersionBloc>().add(
-          CategoryItemVersionEvent.updateVersion(entry: updateEntry),
+          CategoryItemVersionEvent.updateVersion(
+            type: widget.type,
+            entry: updateEntry,
+          ),
         );
       }
     } else {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:multi_catalog_system/core/notifications/notification_cubit.dart';
+import 'package:multi_catalog_system/core/responsive/screen_size.dart';
 import 'package:multi_catalog_system/features/approve/presentation/widgets/approve_card.dart';
 import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_version_entry.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_version_bloc.dart';
@@ -80,21 +81,46 @@ class _ApprovePageState extends State<ApprovePage>
 
   Widget _buildTab(String status, List<CategoryItemVersionEntry> versions) {
     final data = versions.where((e) => e.status == status).toList();
-
     if (data.isEmpty) {
       return const Center(child: Text("Không có dữ liệu"));
     }
 
-    return ListView.builder(
-      itemCount: data.length,
-      itemBuilder: (_, i) {
-        final version = data[i];
-        return _buildGovApproveCard(version);
+    final isMobile = ScreenSize.of(context).isMobile;
+    final isTablet = ScreenSize.of(context).isTablet;
+
+    if (isMobile || isTablet) {
+      return ListView.builder(
+        itemCount: data.length,
+        itemBuilder: (_, i) {
+          final version = data[i];
+          return _buildGovApproveCard(version);
+        },
+      );
+    }
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final crossAxisCount = (constraints.maxWidth / 600).floor();
+
+        return SingleChildScrollView(
+          child: Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            children: data.map((version) {
+              return SizedBox(
+                width: constraints.maxWidth / crossAxisCount - 10,
+                child: _buildGovApproveCard(version),
+              );
+            }).toList(),
+          ),
+        );
       },
     );
   }
 
   Widget _buildGovApproveCard(CategoryItemVersionEntry version) {
-    return ApproveCard(version: version);
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: ApproveCard(version: version),
+    );
   }
 }

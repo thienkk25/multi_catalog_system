@@ -11,7 +11,8 @@ class UpdateCategoryItemVersionUseCase {
 
   Future<Either<Failure, CategoryItemVersionEntry>> call({
     required CategoryItemEntry entry,
+    int? type,
   }) {
-    return repository.updateVersion(entry: entry);
+    return repository.updateVersion(entry: entry, type: type);
   }
 }
