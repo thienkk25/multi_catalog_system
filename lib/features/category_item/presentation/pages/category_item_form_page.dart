@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:multi_catalog_system/core/extensions/bloc_extension.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/core/utils/extensions/auth_permission_extension.dart';
 import 'package:multi_catalog_system/core/widgets/bottom_form_actions.dart';
@@ -56,34 +57,32 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
 
   CategoryItemEntry? _entry;
 
-  bool get _isUpdate => _entry != null;
+  bool get _isCreate => widget.mode == CategoryItemFormMode.create;
+  bool get _isUpdateItem => widget.mode == CategoryItemFormMode.updateItem;
   bool get _isAdmin => context.hasRole('admin');
 
   @override
   void initState() {
     super.initState();
 
-    context.read<CatalogLookupBloc>().add(
-      const CatalogLookupEvent.getDomainsRef(),
-    );
+    context.lookupBloc.add(const CatalogLookupEvent.getDomainsRef());
 
     _loadData();
   }
 
   void _loadData() {
-    final blocI = context.read<CategoryItemBloc>();
-    final blocIV = context.read<CategoryItemVersionBloc>();
-
     switch (widget.mode) {
       case CategoryItemFormMode.create:
         return;
 
       case CategoryItemFormMode.updateItem:
-        blocI.add(CategoryItemEvent.getById(id: widget.itemId!));
+        context.itemBloc.add(CategoryItemEvent.getById(id: widget.itemId!));
         break;
 
       case CategoryItemFormMode.updateVersion:
-        blocIV.add(CategoryItemVersionEvent.getById(id: widget.versionId!));
+        context.itemVersionBloc.add(
+          CategoryItemVersionEvent.getById(id: widget.versionId!),
+        );
         break;
     }
   }
@@ -103,7 +102,7 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
     _selectedDomainId = domainId;
 
     if (domainId != null) {
-      context.read<CatalogLookupBloc>().add(
+      context.lookupBloc.add(
         CatalogLookupEvent.getCategoryGroupsRef(domainId: domainId),
       );
     }
@@ -119,6 +118,13 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
     if (_didInit) return;
 
     final json = version.newValue ?? {};
+
+    _entry = CategoryItemEntry(
+      name: json['name'],
+      code: json['code'],
+      description: json['description'],
+      group: CategoryGroupRefEntry(id: json['group_id']),
+    );
 
     _codeController.text = json['code'] ?? '';
     _nameController.text = json['name'] ?? '';
@@ -187,9 +193,11 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
                   sliver: SliverList(
                     delegate: SliverChildListDelegate([
                       Text(
-                        _isUpdate
+                        _isCreate
+                            ? 'Tạo Mục danh mục'
+                            : _entry != null
                             ? 'Cập nhật Mục danh mục'
-                            : 'Tạo Mục danh mục',
+                            : 'Cập nhật Version Mục danh mục',
                         style: const TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 20,
@@ -280,7 +288,7 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
                     _selectedCategoryGroupId = null;
                   });
 
-                  context.read<CatalogLookupBloc>().add(
+                  context.lookupBloc.add(
                     CatalogLookupEvent.getCategoryGroupsRef(domainId: value),
                   );
                 },
@@ -290,8 +298,6 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
             },
           ),
           BlocBuilder<CatalogLookupBloc, CatalogLookupState>(
-            buildWhen: (prev, curr) =>
-                prev.categoryGroupRef != curr.categoryGroupRef,
             builder: (context, state) {
               final categoryGroups = state.categoryGroupRef;
 
@@ -426,7 +432,24 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
 
   void _onSave({required BuildContext context, required bool isEdit}) {
     if (!_formKey.currentState!.validate()) return;
-    if (_isUpdate) {
+    if (_isCreate) {
+      final createEntry = CategoryItemEntry(
+        name: _nameController.text,
+        code: _codeController.text,
+        description: _descriptionController.text.isNotEmpty
+            ? _descriptionController.text
+            : null,
+        group: CategoryGroupRefEntry(id: _selectedCategoryGroupId),
+        legalDocuments: _legalDocuments,
+      );
+      if (_isAdmin) {
+        context.itemBloc.add(CategoryItemEvent.create(entry: createEntry));
+      } else {
+        context.itemVersionBloc.add(
+          CategoryItemVersionEvent.createVersion(entry: createEntry),
+        );
+      }
+    } else if (_isUpdateItem) {
       final updateEntry = CategoryItemEntry(
         id: _entry!.id,
         name: _entry?.name != _nameController.text
@@ -442,36 +465,38 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
         legalDocuments: _legalDocuments,
       );
       if (_isAdmin) {
-        context.read<CategoryItemBloc>().add(
-          CategoryItemEvent.update(entry: updateEntry),
-        );
+        context.itemBloc.add(CategoryItemEvent.update(entry: updateEntry));
       } else {
-        // context.read<CategoryItemVersionBloc>().add(
-        //   CategoryItemVersionEvent.updateVersion(
-        //     type: widget.type,
-        //     entry: updateEntry,
-        //   ),
-        // );
+        context.itemVersionBloc.add(
+          CategoryItemVersionEvent.updateVersion(
+            id: _entry!.id!,
+            type: 0,
+            entry: updateEntry,
+          ),
+        );
       }
     } else {
-      final createEntry = CategoryItemEntry(
-        name: _nameController.text,
-        code: _codeController.text,
-        description: _descriptionController.text.isNotEmpty
+      final updateEntry = CategoryItemEntry(
+        name: _entry?.name != _nameController.text
+            ? _nameController.text
+            : _entry?.name,
+        code: _entry?.code != _codeController.text
+            ? _codeController.text
+            : _entry?.code,
+        description: _entry?.description != _descriptionController.text
             ? _descriptionController.text
-            : null,
+            : _entry?.description,
         group: CategoryGroupRefEntry(id: _selectedCategoryGroupId),
         legalDocuments: _legalDocuments,
       );
-      if (_isAdmin) {
-        context.read<CategoryItemBloc>().add(
-          CategoryItemEvent.create(entry: createEntry),
-        );
-      } else {
-        context.read<CategoryItemVersionBloc>().add(
-          CategoryItemVersionEvent.createVersion(entry: createEntry),
-        );
-      }
+
+      context.itemVersionBloc.add(
+        CategoryItemVersionEvent.updateVersion(
+          id: widget.versionId!,
+          type: 1,
+          entry: updateEntry,
+        ),
+      );
     }
     context.pop();
   }

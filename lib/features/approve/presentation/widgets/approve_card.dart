@@ -150,7 +150,7 @@ class ApproveCard extends StatelessWidget {
                               width: 120,
                               child: CustomButton(
                                 onTap: () {
-                                  context.pushNamed(
+                                  context.goNamed(
                                     RouterNames.categoryItemForm,
                                     queryParameters: {
                                       'mode': 'updateVersion',

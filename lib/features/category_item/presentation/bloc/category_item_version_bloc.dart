@@ -98,7 +98,11 @@ class CategoryItemVersionBloc
             entry: null,
           ),
         );
-        final result = await updateVersion(type: e.type, entry: e.entry);
+        final result = await updateVersion(
+          type: e.type,
+          entry: e.entry,
+          id: e.id,
+        );
         if (emit.isDone) return;
         result.fold(
           (l) => emit(state.copyWith(isLoading: false, error: mapFailure(l))),

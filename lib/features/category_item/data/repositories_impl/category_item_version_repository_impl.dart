@@ -101,11 +101,12 @@ class CategoryItemVersionRepositoryImpl
   @override
   Future<Either<Failure, CategoryItemVersionEntry>> updateVersion({
     required CategoryItemEntry entry,
+    required String id,
     int? type,
   }) async {
     try {
       final model = await remoteDataSource.updateVersion(
-        id: entry.id!,
+        id: id,
         data: _updatePayload(type, entry),
       );
       return Right(_toEntity(model));
