@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:multi_catalog_system/core/extensions/bloc_extension.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/core/widgets/custom_alert_dialog.dart';
 import 'package:multi_catalog_system/core/widgets/custom_button.dart';
@@ -10,7 +10,6 @@ import 'package:multi_catalog_system/core/widgets/custom_label.dart';
 import 'package:multi_catalog_system/core/widgets/role_based_widget.dart';
 import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_entry.dart';
 import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_version_entry.dart';
-import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_version_bloc.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_version_event.dart';
 
 class ApproveCard extends StatelessWidget {
@@ -372,7 +371,7 @@ class ApproveCard extends StatelessWidget {
         content: 'Bạn có chắc chắn muốn DUYỆT bản ghi?',
         confirmText: 'Duyệt',
         onConfirm: () {
-          context.read<CategoryItemVersionBloc>().add(
+          context.itemVersionBloc.add(
             CategoryItemVersionEvent.approveVersion(id: id),
           );
         },
@@ -385,48 +384,67 @@ class ApproveCard extends StatelessWidget {
       context: context,
       builder: (_) {
         final controller = TextEditingController();
-        return AlertDialog(
-          title: Text(
-            'Từ chối',
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-          content: CustomInput(
-            controller: controller,
-            validator: (p0) =>
-                p0 == null || p0.isEmpty ? 'Vui lòng nhập lý do' : null,
-            minLines: 5,
-            maxLines: 5,
-          ),
-          actions: [
-            OutlinedButton(
-              onPressed: () => context.pop(),
-              style: OutlinedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+        final formKey = GlobalKey<FormState>();
+        return Form(
+          key: formKey,
+          child: AlertDialog(
+            title: Text(
+              'Từ chối',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            content: CustomInput(
+              controller: controller,
+              lable: RichText(
+                text: TextSpan(
+                  children: [
+                    const TextSpan(
+                      text: 'Lý do từ chối: ',
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    TextSpan(
+                      text: '*',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ],
                 ),
               ),
-              child: const Text('Hủy'),
+              validator: (p0) =>
+                  p0 == null || p0.isEmpty ? 'Vui lòng nhập lý do' : null,
+              minLines: 5,
+              maxLines: 5,
             ),
-            ElevatedButton(
-              onPressed: () {
-                print(controller.text);
-                // context.read<CategoryItemVersionBloc>().add(
-                //   CategoryItemVersionEvent.rejectVersion(
-                //     id: id,
-                //     rejectReason: controller.text,
-                //   ),
-                // );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.redAccent,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+            actions: [
+              OutlinedButton(
+                onPressed: () => context.pop(),
+                style: OutlinedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
+                child: const Text('Hủy'),
               ),
-              child: const Text('Từ chối'),
-            ),
-          ],
+              ElevatedButton(
+                onPressed: () {
+                  if (!formKey.currentState!.validate()) return;
+                  context.itemVersionBloc.add(
+                    CategoryItemVersionEvent.rejectVersion(
+                      id: id,
+                      rejectReason: controller.text,
+                    ),
+                  );
+                  context.pop();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.redAccent,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: const Text('Từ chối'),
+              ),
+            ],
+          ),
         );
       },
     );
@@ -437,10 +455,8 @@ class ApproveCard extends StatelessWidget {
       context: context,
       builder: (_) => CustomAlertDialog(
         onConfirm: () {
+          context.itemVersionBloc.add(CategoryItemVersionEvent.delete(id: id));
           context.pop();
-          context.read<CategoryItemVersionBloc>().add(
-            CategoryItemVersionEvent.delete(id: id),
-          );
         },
       ),
     );

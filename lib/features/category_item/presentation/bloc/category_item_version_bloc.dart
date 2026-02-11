@@ -85,6 +85,7 @@ class CategoryItemVersionBloc
             state.copyWith(
               isLoading: false,
               successMessage: 'Gửi yêu cầu tạo thành công',
+              entries: [r, ...state.entries],
             ),
           ),
         );
@@ -106,9 +107,22 @@ class CategoryItemVersionBloc
         if (emit.isDone) return;
         result.fold(
           (l) => emit(state.copyWith(isLoading: false, error: mapFailure(l))),
-          (r) => emit(
-            state.copyWith(isLoading: false, successMessage: 'Thành công'),
-          ),
+          (r) {
+            final index = state.entries.indexWhere((d) => d.id == r.id);
+
+            if (index == -1 || state.entries[index] == r) return;
+
+            final updated = List.of(state.entries);
+            updated[index] = r;
+
+            emit(
+              state.copyWith(
+                isLoading: false,
+                successMessage: 'Thành công',
+                entries: updated,
+              ),
+            );
+          },
         );
       },
       deleteVersion: (e) async {

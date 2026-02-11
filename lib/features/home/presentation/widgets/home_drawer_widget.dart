@@ -215,7 +215,9 @@ class _MainDrawer extends StatelessWidget {
                 ),
                 title: 'Duyệt danh sách danh mục',
                 pageIndex: 9,
-                onSelectTab: onSelectTab,
+                onTap: () {
+                  context.goNamed(RouterNames.approve);
+                },
               ),
             ),
           ],
@@ -287,14 +289,16 @@ class _FooterDrawer extends StatelessWidget {
 class _DrawerItem extends StatelessWidget {
   final Widget icon;
   final String title;
-  final int pageIndex;
-  final Function(int index) onSelectTab;
+  final int? pageIndex;
+  final VoidCallback? onTap;
+  final Function(int index)? onSelectTab;
 
   const _DrawerItem({
     required this.icon,
     required this.title,
-    required this.pageIndex,
-    required this.onSelectTab,
+    this.pageIndex,
+    this.onSelectTab,
+    this.onTap,
   });
 
   @override
@@ -309,11 +313,14 @@ class _DrawerItem extends StatelessWidget {
       borderRadius: BorderRadius.circular(10),
       hoverColor: Colors.blue.withValues(alpha: .2),
       onTap: () {
-        context.read<HomeBloc>().add(HomeEvent.changePage(pageIndex, title));
+        context.read<HomeBloc>().add(
+          HomeEvent.changePage(pageIndex ?? 0, title),
+        );
         if (ScreenSize.of(context).isMobile) {
           context.pop();
         }
-        onSelectTab(pageIndex);
+        onTap?.call();
+        onSelectTab?.call(pageIndex ?? 0);
       },
       child: ListTile(
         selected: selected,

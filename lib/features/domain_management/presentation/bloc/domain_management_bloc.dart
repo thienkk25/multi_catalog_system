@@ -99,7 +99,13 @@ class DomainManagementBloc
         result.fold(
           (l) => emit(state.copyWith(isLoading: false, error: mapFailure(l))),
           (r) {
-            emit(state.copyWith(isLoading: false, entry: r));
+            final index = state.entries.indexWhere((d) => d.id == r.id);
+
+            if (index == -1 || state.entries[index] == r) return;
+
+            final updated = List.of(state.entries);
+            updated[index] = r;
+            emit(state.copyWith(isLoading: false, entry: r, entries: updated));
           },
         );
       },
@@ -145,10 +151,12 @@ class DomainManagementBloc
         result.fold(
           (l) => emit(state.copyWith(isLoading: false, error: mapFailure(l))),
           (r) {
-            final updated = [
-              for (final d in state.entries)
-                if (d.id == r.id) r else d,
-            ];
+            final index = state.entries.indexWhere((d) => d.id == r.id);
+
+            if (index == -1 || state.entries[index] == r) return;
+
+            final updated = List.of(state.entries);
+            updated[index] = r;
             emit(
               state.copyWith(
                 isLoading: false,

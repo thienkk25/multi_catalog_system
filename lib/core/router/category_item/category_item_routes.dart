@@ -65,6 +65,23 @@ class CategoryItemRoutes {
             ),
           ],
         ),
+        GoRoute(
+          path: '/approve',
+          name: RouterNames.approve,
+          builder: (context, state) {
+            context.read<CategoryItemVersionBloc>().add(
+              const CategoryItemVersionEvent.getAll(),
+            );
+            return const ApprovePage();
+          },
+          routes: [
+            GoRoute(
+              path: '/id/:id',
+              name: RouterNames.approveDetail,
+              builder: (context, state) => const ApprovePage(),
+            ),
+          ],
+        ),
       ],
     ),
   ];
