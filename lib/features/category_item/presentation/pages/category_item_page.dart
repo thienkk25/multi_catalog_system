@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/extensions/bloc_extension.dart';
+import 'package:multi_catalog_system/core/responsive/screen_size.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/core/widgets/custom_circular_progress.dart';
 import 'package:multi_catalog_system/core/widgets/custom_floating_action_button.dart';
@@ -120,20 +121,36 @@ class _CategoryItemPageState extends State<CategoryItemPage>
                       if (entries.isEmpty) {
                         return const Center(child: Text('Không có dữ liệu'));
                       }
-                      return ListView.separated(
-                        itemCount: entries.length,
-                        separatorBuilder: (context, index) =>
-                            const SizedBox(height: 10),
-                        itemBuilder: (context, index) {
-                          final entry = entries[index];
-                          return GestureDetector(
-                            onTap: () {
-                              context.goNamed(
-                                RouterNames.categoryItemDetail,
-                                pathParameters: {'id': ?entry.id},
-                              );
-                            },
-                            child: CategoryItemCard(entry: entry),
+                      if (ScreenSize.of(context).isMobile ||
+                          ScreenSize.of(context).isTablet) {
+                        return ListView.separated(
+                          itemCount: entries.length,
+                          separatorBuilder: (context, index) =>
+                              const SizedBox(height: 10),
+                          itemBuilder: (context, index) {
+                            final entry = entries[index];
+                            return CategoryItemCard(entry: entry);
+                          },
+                        );
+                      }
+                      return LayoutBuilder(
+                        builder: (context, constraints) {
+                          final crossAxisCount = (constraints.maxWidth / 600)
+                              .floor();
+
+                          return SingleChildScrollView(
+                            child: Wrap(
+                              spacing: 10,
+                              runSpacing: 10,
+                              children: entries.map((entry) {
+                                return SizedBox(
+                                  width:
+                                      constraints.maxWidth / crossAxisCount -
+                                      10,
+                                  child: CategoryItemCard(entry: entry),
+                                );
+                              }).toList(),
+                            ),
                           );
                         },
                       );

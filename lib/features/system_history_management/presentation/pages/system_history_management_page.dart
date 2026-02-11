@@ -2,9 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/extensions/bloc_extension.dart';
-import 'package:multi_catalog_system/core/router/router_names.dart';
+import 'package:multi_catalog_system/core/responsive/screen_size.dart';
 import 'package:multi_catalog_system/core/widgets/custom_circular_progress.dart';
 import 'package:multi_catalog_system/core/widgets/custom_input.dart';
 import 'package:multi_catalog_system/core/widgets/error_retry_widget.dart';
@@ -94,19 +93,38 @@ class _SystemHistoryManagementPageState
                     }
 
                     final entries = state.entries;
+                    if (ScreenSize.of(context).isMobile ||
+                        ScreenSize.of(context).isTablet) {
+                      return ListView.separated(
+                        shrinkWrap: true,
+                        itemCount: entries.length,
+                        itemBuilder: (context, index) {
+                          final entry = entries[index];
+                          return SystemHistoryManagementCard(log: entry);
+                        },
+                        separatorBuilder: (context, index) =>
+                            const SizedBox(height: 10),
+                      );
+                    }
+                    return LayoutBuilder(
+                      builder: (context, constraints) {
+                        final crossAxisCount = (constraints.maxWidth / 600)
+                            .floor();
 
-                    return ListView.separated(
-                      shrinkWrap: true,
-                      itemCount: entries.length,
-                      itemBuilder: (context, index) => GestureDetector(
-                        onTap: () => context.goNamed(
-                          RouterNames.systemHistoryManagementDetail,
-                          pathParameters: {'id': entries[index].id.toString()},
-                        ),
-                        child: SystemHistoryManagementCard(log: entries[index]),
-                      ),
-                      separatorBuilder: (context, index) =>
-                          const SizedBox(height: 10),
+                        return SingleChildScrollView(
+                          child: Wrap(
+                            spacing: 10,
+                            runSpacing: 10,
+                            children: entries.map((entry) {
+                              return SizedBox(
+                                width:
+                                    constraints.maxWidth / crossAxisCount - 10,
+                                child: SystemHistoryManagementCard(log: entry),
+                              );
+                            }).toList(),
+                          ),
+                        );
+                      },
                     );
                   },
                 ),

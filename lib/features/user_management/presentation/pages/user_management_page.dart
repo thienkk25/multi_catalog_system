@@ -94,22 +94,38 @@ class _UserManagementPageState extends State<UserManagementPage>
                     }
 
                     final entries = state.entries;
+                    if (ScreenSize.of(context).isMobile ||
+                        ScreenSize.of(context).isTablet) {
+                      return ListView.separated(
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          final entry = entries[index];
+                          return UserManagementCard(entry: entry);
+                        },
+                        separatorBuilder: (context, index) =>
+                            SizedBox(height: 10),
+                        itemCount: entries.length,
+                      );
+                    }
+                    return LayoutBuilder(
+                      builder: (context, constraints) {
+                        final crossAxisCount = (constraints.maxWidth / 600)
+                            .floor();
 
-                    return ListView.separated(
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        final entry = entries[index];
-                        return GestureDetector(
-                          onTap: () => context.goNamed(
-                            RouterNames.userManagementDetail,
-                            pathParameters: {'id': ?entry.id},
+                        return SingleChildScrollView(
+                          child: Wrap(
+                            spacing: 10,
+                            runSpacing: 10,
+                            children: entries.map((entry) {
+                              return SizedBox(
+                                width:
+                                    constraints.maxWidth / crossAxisCount - 10,
+                                child: UserManagementCard(entry: entry),
+                              );
+                            }).toList(),
                           ),
-                          child: UserManagementCard(entry: entry),
                         );
                       },
-                      separatorBuilder: (context, index) =>
-                          SizedBox(height: 10),
-                      itemCount: entries.length,
                     );
                   },
                 ),

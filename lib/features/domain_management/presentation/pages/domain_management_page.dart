@@ -110,12 +110,17 @@ class _DomainManagementPageState extends State<DomainManagementPage>
                         if (entries.isEmpty) {
                           return const Center(child: Text('Không có dữ liệu'));
                         }
+                        final crossAxisCount = ScreenSize.of(context).isMobile
+                            ? 2
+                            : ScreenSize.of(context).isTablet
+                            ? 3
+                            : 4;
                         return GridView.builder(
                           controller: _scrollController,
                           shrinkWrap: true,
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
+                                crossAxisCount: crossAxisCount,
                                 mainAxisSpacing: 10,
                                 crossAxisSpacing: 10,
                               ),
@@ -133,7 +138,7 @@ class _DomainManagementPageState extends State<DomainManagementPage>
                             return GestureDetector(
                               onTap: () => context.goNamed(
                                 RouterNames.domainDetail,
-                                pathParameters: {'id': ?entry.id},
+                                pathParameters: {'id': entry.id!},
                               ),
                               child: DomainManagementCard(entry: entry),
                             );
@@ -151,7 +156,7 @@ class _DomainManagementPageState extends State<DomainManagementPage>
             context.goNamed(RouterNames.importFile, extra: 1);
           },
           onPressedAdd: () {
-            context.goNamed(RouterNames.domainForm, extra: {'bloc': bloc});
+            context.goNamed(RouterNames.domainForm);
           },
         ),
       ],

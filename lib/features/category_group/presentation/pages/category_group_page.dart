@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/core.dart';
 import 'package:multi_catalog_system/features/category_group/presentation/presentation.dart';
+import 'package:multi_catalog_system/features/category_group/presentation/widgets/category_group_card.dart';
 
 class CategoryGroupPage extends StatefulWidget {
   const CategoryGroupPage({super.key});
@@ -112,7 +113,38 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
                     if (entries.isEmpty) {
                       return const Center(child: Text('Không có dữ liệu'));
                     }
-                    return CategoryGroupListViewWidget(categoryGroup: entries);
+                    if (ScreenSize.of(context).isMobile ||
+                        ScreenSize.of(context).isTablet) {
+                      return ListView.separated(
+                        itemCount: entries.length,
+                        separatorBuilder: (context, index) =>
+                            SizedBox(height: 10),
+                        itemBuilder: (context, index) {
+                          final entry = entries[index];
+                          return CategoryGroupCard(entry: entry);
+                        },
+                      );
+                    }
+                    return LayoutBuilder(
+                      builder: (context, constraints) {
+                        final crossAxisCount = (constraints.maxWidth / 600)
+                            .floor();
+
+                        return SingleChildScrollView(
+                          child: Wrap(
+                            spacing: 10,
+                            runSpacing: 10,
+                            children: entries.map((entry) {
+                              return SizedBox(
+                                width:
+                                    constraints.maxWidth / crossAxisCount - 10,
+                                child: CategoryGroupCard(entry: entry),
+                              );
+                            }).toList(),
+                          ),
+                        );
+                      },
+                    );
                   },
                 ),
               ),
@@ -124,10 +156,7 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
             context.goNamed(RouterNames.importFile, extra: 2);
           },
           onPressedAdd: () {
-            context.goNamed(
-              RouterNames.categoryGroupForm,
-              extra: {'bloc': bloc},
-            );
+            context.goNamed(RouterNames.categoryGroupForm);
           },
         ),
       ],

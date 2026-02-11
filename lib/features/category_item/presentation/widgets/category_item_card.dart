@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/core/utils/extensions/auth_permission_extension.dart';
 import 'package:multi_catalog_system/core/utils/formatter/data_time_formatter.dart';
 import 'package:multi_catalog_system/core/widgets/custom_alert_dialog.dart';
@@ -20,81 +21,89 @@ class CategoryItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Text(
-                  entry.name!,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    color: Colors.blue,
+    return GestureDetector(
+      onTap: () {
+        context.goNamed(
+          RouterNames.categoryItemDetail,
+          pathParameters: {'id': entry.id!},
+        );
+      },
+      child: CustomCard(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Text(
+                    entry.name!,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.blue,
+                    ),
                   ),
                 ),
+                CategoryItemStatusChip(status: entry.status ?? '-'),
+              ],
+            ),
+
+            const SizedBox(height: 12),
+
+            _InfoRow(label: 'Mã mục', value: entry.code),
+            _InfoRow(label: 'Lĩnh vực', value: entry.group?.domain?.name),
+            _InfoRow(label: 'Nhóm', value: entry.group?.name),
+
+            if (entry.description?.isNotEmpty == true) ...[
+              const SizedBox(height: 8),
+              Text(
+                'Mô tả: ${entry.description}',
+                style: TextStyle(color: Colors.grey.shade700),
               ),
-              CategoryItemStatusChip(status: entry.status ?? '-'),
             ],
-          ),
 
-          const SizedBox(height: 12),
+            const SizedBox(height: 12),
+            Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                'Tạo ngày ${dateFormat(entry.createdAt!)}',
+                style: TextStyle(color: Colors.grey.shade600),
+              ),
+            ),
+            _buildDeleteButton(
+              permission: const ['admin', 'domainOfficer'],
+              onTap: () {
+                final parentContext = context;
+                final isAdmin = parentContext.hasRole('admin');
 
-          _InfoRow(label: 'Mã mục', value: entry.code),
-          _InfoRow(label: 'Lĩnh vực', value: entry.group?.domain?.name),
-          _InfoRow(label: 'Nhóm', value: entry.group?.name),
+                showDialog(
+                  context: parentContext,
+                  builder: (_) => CustomAlertDialog(
+                    onCancel: () => parentContext.pop(),
+                    onConfirm: () {
+                      if (entry.id == null) return;
 
-          if (entry.description?.isNotEmpty == true) ...[
-            const SizedBox(height: 8),
-            Text(
-              'Mô tả: ${entry.description}',
-              style: TextStyle(color: Colors.grey.shade700),
+                      if (isAdmin) {
+                        final bloc = parentContext.read<CategoryItemBloc>();
+
+                        parentContext.pop();
+                        bloc.add(CategoryItemEvent.delete(id: entry.id!));
+                      } else {
+                        final bloc = parentContext
+                            .read<CategoryItemVersionBloc>();
+
+                        parentContext.pop();
+                        bloc.add(
+                          CategoryItemVersionEvent.deleteVersion(id: entry.id!),
+                        );
+                      }
+                    },
+                  ),
+                );
+              },
             ),
           ],
-
-          const SizedBox(height: 12),
-          Align(
-            alignment: Alignment.centerRight,
-            child: Text(
-              'Tạo ngày ${dateFormat(entry.createdAt!)}',
-              style: TextStyle(color: Colors.grey.shade600),
-            ),
-          ),
-          _buildDeleteButton(
-            permission: const ['admin', 'domainOfficer'],
-            onTap: () {
-              final parentContext = context;
-              final isAdmin = parentContext.hasRole('admin');
-
-              showDialog(
-                context: parentContext,
-                builder: (_) => CustomAlertDialog(
-                  onCancel: () => parentContext.pop(),
-                  onConfirm: () {
-                    if (entry.id == null) return;
-
-                    if (isAdmin) {
-                      final bloc = parentContext.read<CategoryItemBloc>();
-
-                      parentContext.pop();
-                      bloc.add(CategoryItemEvent.delete(id: entry.id!));
-                    } else {
-                      final bloc = parentContext
-                          .read<CategoryItemVersionBloc>();
-
-                      parentContext.pop();
-                      bloc.add(
-                        CategoryItemVersionEvent.deleteVersion(id: entry.id!),
-                      );
-                    }
-                  },
-                ),
-              );
-            },
-          ),
-        ],
+        ),
       ),
     );
   }

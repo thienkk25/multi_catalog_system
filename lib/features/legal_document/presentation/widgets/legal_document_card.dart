@@ -19,146 +19,156 @@ class LegalDocumentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomCard(
-      color: Colors.white,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Text(
-                  entry.title!,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFF111827),
+    return GestureDetector(
+      onTap: () {
+        context.goNamed(
+          RouterNames.legalDocumentDetail,
+          pathParameters: {'id': entry.id!},
+        );
+      },
+      child: CustomCard(
+        color: Colors.white,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Text(
+                    entry.title!,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF111827),
+                    ),
                   ),
                 ),
-              ),
-              CustomLabel(
-                text: _statusText(entry.status),
-                color: _statusColor(entry.status),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 6),
-
-          Row(
-            children: [
-              _TypeChip(type: entry.type!),
-              const SizedBox(width: 8),
-              Text(
-                entry.code!,
-                style: const TextStyle(
-                  color: Color(0xFF2563EB),
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-
-          const Divider(height: 24, thickness: 1, color: Color(0xFFD1D5DB)),
-
-          _InfoRow(
-            icon: Icons.person_2_outlined,
-            label: 'Người ban hành',
-            value: entry.issuedByName ?? '-',
-          ),
-          _InfoRow(
-            icon: Icons.event_note_outlined,
-            label: 'Ngày ban hành',
-            value: _formatDate(entry.issueDate),
-          ),
-          _InfoRow(
-            icon: Icons.flash_on_outlined,
-            label: 'Hiệu lực',
-            value:
-                '${_formatDate(entry.effectiveDate)} → ${_formatDate(entry.expiryDate)}',
-          ),
-
-          if ((entry.description ?? '').isNotEmpty) ...[
-            const SizedBox(height: 12),
-            Text(
-              entry.description!,
-              style: const TextStyle(color: Color(0xFF4B5563), height: 1.4),
-            ),
-          ],
-
-          const SizedBox(height: 16),
-
-          if (entry.fileUrl != null && entry.fileName != null)
-            InkWell(
-              borderRadius: BorderRadius.circular(10),
-              onTap: () async {
-                final uri = Uri.parse(entry.fileUrl!);
-                await launchUrl(uri);
-              },
-              child: Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: Colors.grey.withValues(alpha: .15),
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.blue.withValues(alpha: .5)),
-                ),
-                child: Row(
-                  spacing: 8,
-                  children: [
-                    FileIconWidget(fileName: entry.fileName!),
-                    Expanded(
-                      child: Text(
-                        entry.fileName!,
-                        style: const TextStyle(fontWeight: FontWeight.w600),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          const SizedBox(height: 10),
-          RoleBasedWidget(
-            permission: ['admin'],
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              spacing: 8,
-              children: [
-                _ActionButton(
-                  icon: Icons.edit_outlined,
-                  label: 'Sửa',
-                  color: const Color(0xFF2563EB),
-                  onPressed: () {
-                    context.goNamed(
-                      RouterNames.legalDocumentForm,
-                      extra: {
-                        'bloc': context.legalDocumentBloc,
-                        'entry': entry,
-                      },
-                    );
-                  },
-                ),
-                _ActionButton(
-                  icon: Icons.delete_outline,
-                  label: 'Xóa',
-                  color: const Color(0xFFDC2626),
-                  onPressed: () {
-                    final bloc = context.legalDocumentBloc;
-                    showDialog(
-                      context: context,
-                      builder: (context) => CustomAlertDialog(
-                        onConfirm: () {
-                          context.pop();
-                          bloc.add(LegalDocumentEvent.delete(id: entry.id!));
-                        },
-                      ),
-                    );
-                  },
+                CustomLabel(
+                  text: _statusText(entry.status),
+                  color: _statusColor(entry.status),
                 ),
               ],
             ),
-          ),
-        ],
+
+            const SizedBox(height: 6),
+
+            Row(
+              children: [
+                _TypeChip(type: entry.type!),
+                const SizedBox(width: 8),
+                Text(
+                  entry.code!,
+                  style: const TextStyle(
+                    color: Color(0xFF2563EB),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+
+            const Divider(height: 24, thickness: 1, color: Color(0xFFD1D5DB)),
+
+            _InfoRow(
+              icon: Icons.person_2_outlined,
+              label: 'Người ban hành',
+              value: entry.issuedByName ?? '-',
+            ),
+            _InfoRow(
+              icon: Icons.event_note_outlined,
+              label: 'Ngày ban hành',
+              value: _formatDate(entry.issueDate),
+            ),
+            _InfoRow(
+              icon: Icons.flash_on_outlined,
+              label: 'Hiệu lực',
+              value:
+                  '${_formatDate(entry.effectiveDate)} → ${_formatDate(entry.expiryDate)}',
+            ),
+
+            if ((entry.description ?? '').isNotEmpty) ...[
+              const SizedBox(height: 12),
+              Text(
+                entry.description!,
+                style: const TextStyle(color: Color(0xFF4B5563), height: 1.4),
+              ),
+            ],
+
+            const SizedBox(height: 16),
+
+            if (entry.fileUrl != null && entry.fileName != null)
+              InkWell(
+                borderRadius: BorderRadius.circular(10),
+                onTap: () async {
+                  final uri = Uri.parse(entry.fileUrl!);
+                  await launchUrl(uri);
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.withValues(alpha: .15),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: Colors.blue.withValues(alpha: .5),
+                    ),
+                  ),
+                  child: Row(
+                    spacing: 8,
+                    children: [
+                      FileIconWidget(fileName: entry.fileName!),
+                      Expanded(
+                        child: Text(
+                          entry.fileName!,
+                          style: const TextStyle(fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            const SizedBox(height: 10),
+            RoleBasedWidget(
+              permission: ['admin'],
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                spacing: 8,
+                children: [
+                  _ActionButton(
+                    icon: Icons.edit_outlined,
+                    label: 'Sửa',
+                    color: const Color(0xFF2563EB),
+                    onPressed: () {
+                      context.goNamed(
+                        RouterNames.legalDocumentForm,
+                        extra: {
+                          'bloc': context.legalDocumentBloc,
+                          'entry': entry,
+                        },
+                      );
+                    },
+                  ),
+                  _ActionButton(
+                    icon: Icons.delete_outline,
+                    label: 'Xóa',
+                    color: const Color(0xFFDC2626),
+                    onPressed: () {
+                      final bloc = context.legalDocumentBloc;
+                      showDialog(
+                        context: context,
+                        builder: (context) => CustomAlertDialog(
+                          onConfirm: () {
+                            context.pop();
+                            bloc.add(LegalDocumentEvent.delete(id: entry.id!));
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

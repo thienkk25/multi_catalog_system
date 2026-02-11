@@ -90,20 +90,35 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
                     if (entries.isEmpty) {
                       return const Center(child: Text('Không có văn bản nào'));
                     }
-                    return ListView.separated(
-                      itemCount: entries.length,
-                      separatorBuilder: (context, index) =>
-                          const SizedBox(height: 10),
-                      itemBuilder: (context, index) {
-                        final entry = entries[index];
-                        return GestureDetector(
-                          onTap: () {
-                            context.goNamed(
-                              RouterNames.legalDocumentDetail,
-                              pathParameters: {'id': ?entry.id},
-                            );
-                          },
-                          child: LegalDocumentCard(entry: entry),
+                    if (ScreenSize.of(context).isMobile ||
+                        ScreenSize.of(context).isTablet) {
+                      return ListView.separated(
+                        itemCount: entries.length,
+                        separatorBuilder: (context, index) =>
+                            const SizedBox(height: 10),
+                        itemBuilder: (context, index) {
+                          final entry = entries[index];
+                          return LegalDocumentCard(entry: entry);
+                        },
+                      );
+                    }
+                    return LayoutBuilder(
+                      builder: (context, constraints) {
+                        final crossAxisCount = (constraints.maxWidth / 600)
+                            .floor();
+
+                        return SingleChildScrollView(
+                          child: Wrap(
+                            spacing: 10,
+                            runSpacing: 10,
+                            children: entries.map((entry) {
+                              return SizedBox(
+                                width:
+                                    constraints.maxWidth / crossAxisCount - 10,
+                                child: LegalDocumentCard(entry: entry),
+                              );
+                            }).toList(),
+                          ),
                         );
                       },
                     );

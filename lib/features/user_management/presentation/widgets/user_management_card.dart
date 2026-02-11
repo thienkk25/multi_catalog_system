@@ -23,14 +23,20 @@ class UserManagementCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _Header(entry: entry),
-          const SizedBox(height: 12),
-          _MetaInfo(entry: entry),
-        ],
+    return GestureDetector(
+      onTap: () => context.goNamed(
+        RouterNames.userManagementDetail,
+        pathParameters: {'id': entry.id!},
+      ),
+      child: CustomCard(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _Header(entry: entry),
+            const SizedBox(height: 12),
+            _MetaInfo(entry: entry),
+          ],
+        ),
       ),
     );
   }

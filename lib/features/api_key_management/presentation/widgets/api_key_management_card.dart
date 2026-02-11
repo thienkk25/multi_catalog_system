@@ -16,125 +16,136 @@ class ApiKeyManagementCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Stack(
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    spacing: 5,
-                    children: [
-                      Text(
-                        _getHintKey(entry.key!),
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      GestureDetector(
-                        onTap: () => _copyToClipboard(context, entry.key!),
-                        child: Padding(
-                          padding: const EdgeInsets.all(5.0),
-                          child: SvgPicture.asset(
-                            'assets/icons/copy-svgrepo-com.svg',
-                            height: 20,
-                            width: 20,
-                            colorFilter: ColorFilter.mode(
-                              Colors.blueAccent,
-                              BlendMode.srcIn,
+    return GestureDetector(
+      onTap: () {
+        context.goNamed(
+          RouterNames.apiKeyDetail,
+          pathParameters: {'id': entry.id!},
+        );
+      },
+      child: CustomCard(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Stack(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      spacing: 5,
+                      children: [
+                        Text(
+                          _getHintKey(entry.key!),
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        GestureDetector(
+                          onTap: () => _copyToClipboard(context, entry.key!),
+                          child: Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: SvgPicture.asset(
+                              'assets/icons/copy-svgrepo-com.svg',
+                              height: 20,
+                              width: 20,
+                              colorFilter: ColorFilter.mode(
+                                Colors.blueAccent,
+                                BlendMode.srcIn,
+                              ),
                             ),
                           ),
                         ),
+                      ],
+                    ),
+                    SizedBox(height: 10),
+                    Text('Tên: ${entry.systemName}'),
+                    Text(
+                      'Quyền: ${entry.allowedDomains}',
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  ],
+                ),
+                RoleBasedWidget(
+                  permission: ['admin', 'domainOfficer'],
+                  child: Positioned(
+                    right: 0,
+                    top: 0,
+                    child: PopupMenuButton(
+                      icon: SvgPicture.asset(
+                        'assets/icons/menu-vertical-menu-dots-more-svgrepo-com.svg',
+                        width: 20,
+                        height: 20,
                       ),
+                      itemBuilder: (context) => [
+                        PopupMenuItem(
+                          child: _APIKeyCardMenu(
+                            onEdit: () {
+                              context.pop();
+                              context.goNamed(
+                                RouterNames.apiKeyForm,
+                                extra: {
+                                  'bloc': context.apiKeyBloc,
+                                  'entry': entry,
+                                },
+                              );
+                            },
+                            onDelete: () {
+                              context.pop();
+                              context.apiKeyBloc.add(
+                                ApiKeyEvent.delete(id: entry.id!),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Divider(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Tạo bởi: ${entry.createdBy ?? 'System'}'),
+                      Text('Ngày tạo: ${dateFormat(entry.createdAt!)}'),
                     ],
                   ),
-                  SizedBox(height: 10),
-                  Text('Tên: ${entry.systemName}'),
-                  Text(
-                    'Quyền: ${entry.allowedDomains}',
-                    style: TextStyle(color: Colors.grey),
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 12.0,
+                    vertical: 8.0,
                   ),
-                ],
-              ),
-              RoleBasedWidget(
-                permission: ['admin', 'domainOfficer'],
-                child: Positioned(
-                  right: 0,
-                  top: 0,
-                  child: PopupMenuButton(
-                    icon: SvgPicture.asset(
-                      'assets/icons/menu-vertical-menu-dots-more-svgrepo-com.svg',
-                      width: 20,
-                      height: 20,
-                    ),
-                    itemBuilder: (context) => [
-                      PopupMenuItem(
-                        child: _APIKeyCardMenu(
-                          onEdit: () {
-                            context.pop();
-                            context.goNamed(
-                              RouterNames.apiKeyForm,
-                              extra: {
-                                'bloc': context.apiKeyBloc,
-                                'entry': entry,
-                              },
-                            );
-                          },
-                          onDelete: () {
-                            context.pop();
-                            context.apiKeyBloc.add(
-                              ApiKeyEvent.delete(id: entry.id!),
-                            );
-                          },
+                  decoration: BoxDecoration(
+                    color: _actionColor(entry.status!).withValues(alpha: .2),
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  child: Row(
+                    spacing: 5,
+                    children: [
+                      CircleAvatar(
+                        radius: 5,
+                        backgroundColor: _actionColor(entry.status!),
+                      ),
+                      Text(
+                        _actionText(entry.status!),
+                        style: TextStyle(
+                          color: _actionColor(entry.status!),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ],
                   ),
                 ),
-              ),
-            ],
-          ),
-          Divider(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Tạo bởi: ${entry.createdBy ?? 'System'}'),
-                    Text('Ngày tạo: ${dateFormat(entry.createdAt!)}'),
-                  ],
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-                decoration: BoxDecoration(
-                  color: _actionColor(entry.status!).withValues(alpha: .2),
-                  borderRadius: BorderRadius.circular(50),
-                ),
-                child: Row(
-                  spacing: 5,
-                  children: [
-                    CircleAvatar(
-                      radius: 5,
-                      backgroundColor: _actionColor(entry.status!),
-                    ),
-                    Text(
-                      _actionText(entry.status!),
-                      style: TextStyle(
-                        color: _actionColor(entry.status!),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

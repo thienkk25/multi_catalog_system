@@ -100,21 +100,35 @@ class _ApiKeyManagementPageState extends State<ApiKeyManagementPage>
                     }
 
                     final entries = state.entries;
+                    if (ScreenSize.of(context).isMobile ||
+                        ScreenSize.of(context).isTablet) {
+                      return ListView.separated(
+                        itemCount: entries.length,
+                        separatorBuilder: (context, index) =>
+                            const SizedBox(height: 10),
+                        itemBuilder: (context, index) {
+                          final entry = entries[index];
+                          return ApiKeyManagementCard(entry: entry);
+                        },
+                      );
+                    }
+                    return LayoutBuilder(
+                      builder: (context, constraints) {
+                        final crossAxisCount = (constraints.maxWidth / 600)
+                            .floor();
 
-                    return ListView.separated(
-                      itemCount: entries.length,
-                      separatorBuilder: (context, index) =>
-                          const SizedBox(height: 10),
-                      itemBuilder: (context, index) {
-                        final entry = entries[index];
-                        return GestureDetector(
-                          onTap: () {
-                            context.goNamed(
-                              RouterNames.apiKeyDetail,
-                              pathParameters: {'id': ?entry.id},
-                            );
-                          },
-                          child: ApiKeyManagementCard(entry: entry),
+                        return SingleChildScrollView(
+                          child: Wrap(
+                            spacing: 10,
+                            runSpacing: 10,
+                            children: entries.map((entry) {
+                              return SizedBox(
+                                width:
+                                    constraints.maxWidth / crossAxisCount - 10,
+                                child: ApiKeyManagementCard(entry: entry),
+                              );
+                            }).toList(),
+                          ),
                         );
                       },
                     );
