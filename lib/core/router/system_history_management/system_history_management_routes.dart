@@ -19,7 +19,6 @@ class SystemHistoryManagementRoutes {
           path: '/system-history-management',
           name: RouterNames.systemHistoryManagement,
           builder: (context, state) {
-            context.systemHistoryBloc.add(const SystemHistoryEvent.getAll());
             return const SystemHistoryManagementPage();
           },
           routes: [

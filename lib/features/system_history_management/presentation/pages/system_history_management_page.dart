@@ -28,6 +28,7 @@ class _SystemHistoryManagementPageState
   void initState() {
     super.initState();
     bloc = context.systemHistoryBloc;
+    bloc.add(const SystemHistoryEvent.getAll());
   }
 
   @override
