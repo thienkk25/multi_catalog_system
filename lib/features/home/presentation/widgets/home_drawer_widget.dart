@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:multi_catalog_system/core/notifications/notification_cubit.dart';
+import 'package:multi_catalog_system/core/extensions/bloc_extension.dart';
 import 'package:multi_catalog_system/core/responsive/screen_size.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/core/widgets/custom_button.dart';
@@ -244,9 +244,7 @@ class _FooterDrawer extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                   hoverColor: Colors.blue.withValues(alpha: .2),
                   onTap: () {
-                    context.read<HomeBloc>().add(
-                      HomeEvent.changePage(10, 'Hồ sơ'),
-                    );
+                    context.homeBloc.add(HomeEvent.changePage(10, 'Hồ sơ'));
                     if (ScreenSize.of(context).isMobile) {
                       context.pop();
                     }
@@ -266,10 +264,8 @@ class _FooterDrawer extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                   hoverColor: Colors.blue.withValues(alpha: .2),
                   onTap: () {
-                    context.read<NotificationCubit>().success(
-                      'Đăng xuất thành công',
-                    );
-                    context.read<AuthBloc>().add(const AuthEvent.logout());
+                    context.notificationCubit.success('Đăng xuất thành công');
+                    context.authBloc.add(const AuthEvent.logout());
                     context.goNamed(RouterNames.home);
                   },
                   child: ListTile(
@@ -313,9 +309,7 @@ class _DrawerItem extends StatelessWidget {
       borderRadius: BorderRadius.circular(10),
       hoverColor: Colors.blue.withValues(alpha: .2),
       onTap: () {
-        context.read<HomeBloc>().add(
-          HomeEvent.changePage(pageIndex ?? 0, title),
-        );
+        context.homeBloc.add(HomeEvent.changePage(pageIndex ?? 0, title));
         if (ScreenSize.of(context).isMobile) {
           context.pop();
         }

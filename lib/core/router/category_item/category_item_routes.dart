@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/config/di/injection.dart';
+import 'package:multi_catalog_system/core/extensions/bloc_extension.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/presentation.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/bloc/legal_document_bloc.dart';
@@ -29,9 +30,7 @@ class CategoryItemRoutes {
               builder: (context, state) {
                 final id = state.pathParameters['id']!;
 
-                context.read<CategoryItemBloc>().add(
-                  CategoryItemEvent.getById(id: id),
-                );
+                context.itemBloc.add(CategoryItemEvent.getById(id: id));
 
                 return CategoryItemDetailPage();
               },
@@ -69,7 +68,7 @@ class CategoryItemRoutes {
           path: '/approve',
           name: RouterNames.approve,
           builder: (context, state) {
-            context.read<CategoryItemVersionBloc>().add(
+            context.itemVersionBloc.add(
               const CategoryItemVersionEvent.getAll(),
             );
             return const ApprovePage();

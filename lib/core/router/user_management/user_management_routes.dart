@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/config/di/injection.dart';
 import 'package:multi_catalog_system/core/domain/entities/auth/user_entry.dart';
+import 'package:multi_catalog_system/core/extensions/bloc_extension.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/features/user_management/presentation/presentation.dart';
 
@@ -25,7 +26,7 @@ class UserManagementRoutes {
               name: RouterNames.userManagementDetail,
               builder: (context, state) {
                 final id = state.pathParameters['id']!;
-                context.read<UserManagementBloc>().add(
+                context.userManagementBloc.add(
                   UserManagementEvent.getById(id: id),
                 );
                 return const UserManagementDetailPage();

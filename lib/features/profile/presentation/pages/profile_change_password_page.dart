@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:multi_catalog_system/core/notifications/notification_cubit.dart';
+import 'package:multi_catalog_system/core/extensions/bloc_extension.dart';
 import 'package:multi_catalog_system/core/widgets/button_back_widget.dart';
 import 'package:multi_catalog_system/core/widgets/custom_button.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
@@ -48,11 +48,11 @@ class _ProfileChangePasswordPageState extends State<ProfileChangePasswordPage> {
     return BlocListener<ProfileBloc, ProfileState>(
       listener: (context, state) {
         if (state.error != null) {
-          context.read<NotificationCubit>().error(state.error!);
+          context.notificationCubit.error(state.error!);
         }
 
         if (state.successMessage != null) {
-          context.read<NotificationCubit>().success(state.successMessage!);
+          context.notificationCubit.success(state.successMessage!);
           context.pop();
         }
       },
@@ -130,7 +130,7 @@ class _ProfileChangePasswordPageState extends State<ProfileChangePasswordPage> {
                                     if (!_formKey.currentState!.validate()) {
                                       return;
                                     }
-                                    context.read<ProfileBloc>().add(
+                                    context.profileBloc.add(
                                       ProfileEvent.changePassword(
                                         newPassword:
                                             _newPasswordController.text,

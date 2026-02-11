@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:multi_catalog_system/core/extensions/bloc_extension.dart';
 
-import 'package:multi_catalog_system/core/notifications/notification_cubit.dart';
 import 'package:multi_catalog_system/core/utils/formatter/data_time_formatter.dart';
 import 'package:multi_catalog_system/core/widgets/custom_button.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
@@ -87,7 +87,7 @@ class ApiKeyManagementDetailPage extends StatelessWidget {
   Future<void> _copyToClipboard(BuildContext context, String text) async {
     await Clipboard.setData(ClipboardData(text: text));
     if (!context.mounted) return;
-    context.read<NotificationCubit>().success('Sao chép API Key thành công');
+    context.notificationCubit.success('Sao chép API Key thành công');
   }
 
   Color _actionColor(String action) {

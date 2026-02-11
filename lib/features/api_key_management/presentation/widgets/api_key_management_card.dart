@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:multi_catalog_system/core/notifications/notification_cubit.dart';
+import 'package:multi_catalog_system/core/extensions/bloc_extension.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/core/utils/formatter/data_time_formatter.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/core/widgets/role_based_widget.dart';
 import 'package:multi_catalog_system/features/api_key_management/domain/entities/api_key_entry.dart';
-import 'package:multi_catalog_system/features/api_key_management/presentation/bloc/api_key_bloc.dart';
 import 'package:multi_catalog_system/features/api_key_management/presentation/bloc/api_key_event.dart';
 
 class ApiKeyManagementCard extends StatelessWidget {
@@ -78,14 +76,14 @@ class ApiKeyManagementCard extends StatelessWidget {
                             context.goNamed(
                               RouterNames.apiKeyForm,
                               extra: {
-                                'bloc': context.read<ApiKeyBloc>(),
+                                'bloc': context.apiKeyBloc,
                                 'entry': entry,
                               },
                             );
                           },
                           onDelete: () {
                             context.pop();
-                            context.read<ApiKeyBloc>().add(
+                            context.apiKeyBloc.add(
                               ApiKeyEvent.delete(id: entry.id!),
                             );
                           },
@@ -144,7 +142,7 @@ class ApiKeyManagementCard extends StatelessWidget {
   Future<void> _copyToClipboard(BuildContext context, String text) async {
     await Clipboard.setData(ClipboardData(text: text));
     if (!context.mounted) return;
-    context.read<NotificationCubit>().success('Sao chép API Key thành công');
+    context.notificationCubit.success('Sao chép API Key thành công');
   }
 
   Color _actionColor(String action) {

@@ -101,15 +101,13 @@ class _LoginPageState extends State<LoginPage> {
                     listener: (context, state) {
                       state.mapOrNull(
                         authenticated: (_) {
-                          context.read<NotificationCubit>().success(
+                          context.notificationCubit.success(
                             'Đăng nhập thành công',
                           );
                           context.goNamed(RouterNames.home);
                         },
                         error: (state) {
-                          context.read<NotificationCubit>().error(
-                            state.message,
-                          );
+                          context.notificationCubit.error(state.message);
                         },
                       );
                     },
@@ -127,7 +125,7 @@ class _LoginPageState extends State<LoginPage> {
                                 ? null
                                 : () {
                                     if (formKey.currentState!.validate()) {
-                                      context.read<AuthBloc>().add(
+                                      context.authBloc.add(
                                         AuthEvent.login(
                                           email: emailController.text,
                                           pass: passwordController.text,

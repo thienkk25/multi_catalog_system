@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/core.dart';
 import 'package:multi_catalog_system/features/legal_document/domain/entities/legal_document_entry.dart';
-import 'package:multi_catalog_system/features/legal_document/presentation/bloc/document_file_cubit.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/bloc/legal_document_bloc.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/bloc/legal_document_event.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/bloc/legal_document_state.dart';
@@ -44,7 +43,7 @@ class _LegalDocumentFormPageState extends State<LegalDocumentFormPage> {
       _expiryDate = widget.entry!.expiryDate;
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<DocumentFileCubit>().setRemoteFile(widget.entry?.fileName);
+      context.documentFileCubit.setRemoteFile(widget.entry?.fileName);
     });
   }
 
@@ -261,22 +260,22 @@ class _LegalDocumentFormPageState extends State<LegalDocumentFormPage> {
   Future<void> _onSave(BuildContext context) async {
     if (!_formKey.currentState!.validate()) return;
     if (_issueDate == null) {
-      context.read<NotificationCubit>().warning('Vui lọc nhập ngày phát hành');
+      context.notificationCubit.warning('Vui lọc nhập ngày phát hành');
       return;
     }
     if (_effectiveDate == null) {
-      context.read<NotificationCubit>().warning('Vui lọc nhập ngày hiệu lực');
+      context.notificationCubit.warning('Vui lọc nhập ngày hiệu lực');
       return;
     }
     if (_effectiveDate != null && _effectiveDate!.isBefore(_issueDate!)) {
-      context.read<NotificationCubit>().warning(
+      context.notificationCubit.warning(
         'Ngày hiệu lực phải lớn hơn hoặc bằng ngày phát hành',
       );
       return;
     }
     if (_expiryDate != null &&
         _expiryDate!.isBefore(_effectiveDate!.add(const Duration(days: 1)))) {
-      context.read<NotificationCubit>().warning(
+      context.notificationCubit.warning(
         'Ngày hết hiệu lực phải sau ngày hiệu lực',
       );
       return;
@@ -300,10 +299,10 @@ class _LegalDocumentFormPageState extends State<LegalDocumentFormPage> {
         fileName: widget.entry?.fileName,
         fileUrl: widget.entry?.fileUrl,
       );
-      context.read<LegalDocumentBloc>().add(
+      context.legalDocumentBloc.add(
         LegalDocumentEvent.update(
           entry: data,
-          file: context.read<DocumentFileCubit>().state.file,
+          file: context.documentFileCubit.state.file,
         ),
       );
     } else {
@@ -318,10 +317,10 @@ class _LegalDocumentFormPageState extends State<LegalDocumentFormPage> {
             ? _descriptionController.text
             : null,
       );
-      context.read<LegalDocumentBloc>().add(
+      context.legalDocumentBloc.add(
         LegalDocumentEvent.create(
           entry: data,
-          file: context.read<DocumentFileCubit>().state.file,
+          file: context.documentFileCubit.state.file,
         ),
       );
     }

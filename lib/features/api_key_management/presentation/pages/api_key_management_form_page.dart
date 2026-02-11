@@ -193,7 +193,7 @@ class _ApiKeyManagementFormPageState extends State<ApiKeyManagementFormPage> {
         status: _selectedAction,
         allowedDomains: _allowedDomains,
       );
-      context.read<ApiKeyBloc>().add(ApiKeyEvent.update(entry: entry));
+      context.apiKeyBloc.add(ApiKeyEvent.update(entry: entry));
     } else {
       final entry = ApiKeyEntry(
         systemName: _systemNameController.text.isNotEmpty
@@ -202,7 +202,7 @@ class _ApiKeyManagementFormPageState extends State<ApiKeyManagementFormPage> {
         status: _selectedAction,
         allowedDomains: _allowedDomains,
       );
-      context.read<ApiKeyBloc>().add(ApiKeyEvent.create(entry: entry));
+      context.apiKeyBloc.add(ApiKeyEvent.create(entry: entry));
     }
     context.pop();
   }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:multi_catalog_system/core/extensions/bloc_extension.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/core/widgets/custom_alert_dialog.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
@@ -9,7 +9,6 @@ import 'package:multi_catalog_system/core/widgets/custom_label.dart';
 import 'package:multi_catalog_system/core/widgets/file_icon_widget.dart';
 import 'package:multi_catalog_system/core/widgets/role_based_widget.dart';
 import 'package:multi_catalog_system/features/legal_document/domain/entities/legal_document_entry.dart';
-import 'package:multi_catalog_system/features/legal_document/presentation/bloc/legal_document_bloc.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/bloc/legal_document_event.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -133,7 +132,7 @@ class LegalDocumentCard extends StatelessWidget {
                     context.goNamed(
                       RouterNames.legalDocumentForm,
                       extra: {
-                        'bloc': context.read<LegalDocumentBloc>(),
+                        'bloc': context.legalDocumentBloc,
                         'entry': entry,
                       },
                     );
@@ -144,7 +143,7 @@ class LegalDocumentCard extends StatelessWidget {
                   label: 'Xóa',
                   color: const Color(0xFFDC2626),
                   onPressed: () {
-                    final bloc = context.read<LegalDocumentBloc>();
+                    final bloc = context.legalDocumentBloc;
                     showDialog(
                       context: context,
                       builder: (context) => CustomAlertDialog(

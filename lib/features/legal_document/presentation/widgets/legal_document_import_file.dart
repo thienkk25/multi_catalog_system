@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:multi_catalog_system/core/extensions/bloc_extension.dart';
 import 'package:multi_catalog_system/core/utils/formatter/file_size_formatter.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/core/widgets/file_icon_widget.dart';
@@ -43,7 +44,7 @@ class LegalDocumentImportFile extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                       onTap: state.isLoading
                           ? null
-                          : () => context.read<DocumentFileCubit>().pickFile(),
+                          : () => context.documentFileCubit.pickFile(),
                       child: Container(
                         width: double.infinity,
                         padding: const EdgeInsets.symmetric(
@@ -138,7 +139,7 @@ class LegalDocumentImportFile extends StatelessWidget {
                           ),
                           IconButton(
                             onPressed: () {
-                              context.read<DocumentFileCubit>().clear();
+                              context.documentFileCubit.clear();
                             },
                             icon: Icon(Icons.close),
                           ),

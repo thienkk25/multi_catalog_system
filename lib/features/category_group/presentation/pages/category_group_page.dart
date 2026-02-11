@@ -25,7 +25,7 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      bloc = context.read<CategoryGroupBloc>();
+      bloc = context.groupBloc;
       bloc.add(const CategoryGroupEvent.getAll());
     });
   }
@@ -91,9 +91,7 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
                 child: BlocConsumer<CategoryGroupBloc, CategoryGroupState>(
                   listener: (context, state) {
                     if (state.successMessage != null) {
-                      context.read<NotificationCubit>().success(
-                        state.successMessage!,
-                      );
+                      context.notificationCubit.success(state.successMessage!);
                     }
                   },
                   builder: (context, state) {

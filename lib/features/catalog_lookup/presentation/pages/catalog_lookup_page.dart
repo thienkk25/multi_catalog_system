@@ -88,7 +88,7 @@ class _CategoryLookupPageState extends State<CategoryLookupPage>
                               _selectedCategoryGroupId = null;
                             });
 
-                            context.read<CatalogLookupBloc>().add(
+                            context.lookupBloc.add(
                               CatalogLookupEvent.getCategoryGroupsRef(
                                 domainId: value,
                               ),
@@ -127,7 +127,7 @@ class _CategoryLookupPageState extends State<CategoryLookupPage>
                           onTap: () {
                             if (!_formKey.currentState!.validate()) return;
 
-                            // context.read<CatalogLookupBloc>().add(
+                            // context.lookupBloc.add(
                             //       CatalogLookupEvent.searchCatalog(
                             //         domainId: _selectedDomainId,
                             //         categoryGroupId: _selectedCategoryGroupId,

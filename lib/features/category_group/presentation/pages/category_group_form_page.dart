@@ -236,9 +236,7 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
             ? _descriptionController.text
             : widget.entry?.description,
       );
-      context.read<CategoryGroupBloc>().add(
-        CategoryGroupEvent.update(entry: entry),
-      );
+      context.groupBloc.add(CategoryGroupEvent.update(entry: entry));
     } else {
       final entry = CategoryGroupEntry(
         domainId: _selectedDomainId,
@@ -248,9 +246,7 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
             ? _descriptionController.text
             : null,
       );
-      context.read<CategoryGroupBloc>().add(
-        CategoryGroupEvent.create(entry: entry),
-      );
+      context.groupBloc.add(CategoryGroupEvent.create(entry: entry));
     }
     context.pop();
   }

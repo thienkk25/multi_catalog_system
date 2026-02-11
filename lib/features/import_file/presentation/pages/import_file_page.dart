@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:multi_catalog_system/core/data/models/picked_document_file/picked_document_file.dart';
-import 'package:multi_catalog_system/core/notifications/notification_cubit.dart';
+import 'package:multi_catalog_system/core/extensions/bloc_extension.dart';
 import 'package:multi_catalog_system/core/widgets/custom_button.dart';
 import 'package:multi_catalog_system/core/widgets/custom_circular_progress.dart';
 import 'package:multi_catalog_system/core/widgets/custom_dropdown_button.dart';
@@ -71,11 +71,11 @@ class _ImportFilePageState extends State<ImportFilePage> {
     return BlocListener<ImportFileBloc, ImportFileState>(
       listener: (context, state) {
         if (state.error != null) {
-          context.read<NotificationCubit>().error(state.error!);
+          context.notificationCubit.error(state.error!);
         }
 
         if (state.success != null) {
-          context.read<NotificationCubit>().success(state.success!);
+          context.notificationCubit.success(state.success!);
         }
       },
       child: SafeArea(
@@ -257,7 +257,7 @@ class _ImportFilePageState extends State<ImportFilePage> {
   void _onImportFile(BuildContext context) {
     if (fileInfo == null || file == null) return;
     if (type == 0) {
-      context.read<ImportFileBloc>().add(
+      context.importFileBloc.add(
         ImportFileEvent.importSingleFile(
           file: PickedDocumentFile(
             file: kIsWeb ? null : file!,
@@ -270,7 +270,7 @@ class _ImportFilePageState extends State<ImportFilePage> {
         ),
       );
     } else {
-      context.read<ImportFileBloc>().add(
+      context.importFileBloc.add(
         ImportFileEvent.importSingleFile(
           file: PickedDocumentFile(
             file: kIsWeb ? null : file!,

@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/config/di/injection.dart';
+import 'package:multi_catalog_system/core/extensions/bloc_extension.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/features/domain_management/domain/entities/domain_entry.dart';
 import 'package:multi_catalog_system/features/domain_management/presentation/presentation.dart';
@@ -25,7 +26,7 @@ class DomainManagementRoutes {
               name: RouterNames.domainDetail,
               builder: (context, state) {
                 final id = state.pathParameters['id']!;
-                context.read<DomainManagementBloc>().add(
+                context.domainManagementBloc.add(
                   DomainManagementEvent.getById(id: id),
                 );
                 return DomainManagementDetailPage();

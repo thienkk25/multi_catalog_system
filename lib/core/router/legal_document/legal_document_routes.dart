@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/config/di/injection.dart';
+import 'package:multi_catalog_system/core/extensions/bloc_extension.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/features/legal_document/domain/entities/legal_document_entry.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/presentation.dart';
@@ -25,7 +26,7 @@ class LegalDocumentRoutes {
               name: RouterNames.legalDocumentDetail,
               builder: (context, state) {
                 final id = state.pathParameters['id']!;
-                context.read<LegalDocumentBloc>().add(
+                context.legalDocumentBloc.add(
                   LegalDocumentEvent.getById(id: id),
                 );
                 return LegalDocumentDetailPage();

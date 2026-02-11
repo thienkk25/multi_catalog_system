@@ -31,9 +31,7 @@ class _CategoryItemAddLegalDocumentsPageState
   @override
   void initState() {
     super.initState();
-    context.read<LegalDocumentBloc>().add(
-      const LegalDocumentEvent.getAllHasFile(),
-    );
+    context.legalDocumentBloc.add(const LegalDocumentEvent.getAllHasFile());
     _legalDocuments = widget.legalDocuments ?? [];
   }
 
@@ -101,11 +99,11 @@ class _CategoryItemAddLegalDocumentsPageState
                       }
                       _debounce = Timer(const Duration(milliseconds: 500), () {
                         if (search.isEmpty) {
-                          context.read<LegalDocumentBloc>().add(
+                          context.legalDocumentBloc.add(
                             const LegalDocumentEvent.getAllHasFile(),
                           );
                         } else {
-                          context.read<LegalDocumentBloc>().add(
+                          context.legalDocumentBloc.add(
                             LegalDocumentEvent.getAllHasFile(search: search),
                           );
                         }
@@ -128,7 +126,7 @@ class _CategoryItemAddLegalDocumentsPageState
                             return ErrorRetryWidget(
                               error: state.error!,
                               onRetry: () {
-                                context.read<LegalDocumentBloc>().add(
+                                context.legalDocumentBloc.add(
                                   const LegalDocumentEvent.getAllHasFile(),
                                 );
                               },
@@ -164,7 +162,7 @@ class _CategoryItemAddLegalDocumentsPageState
                                       entry: entry,
                                       isSelected: isSelected,
                                       onChanged: (_) {
-                                        context.read<LegalDocumentBloc>().add(
+                                        context.legalDocumentBloc.add(
                                           LegalDocumentEvent.toggleSelect(
                                             entry.id!,
                                           ),

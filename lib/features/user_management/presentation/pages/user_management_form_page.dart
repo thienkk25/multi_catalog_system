@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/config/constants/app_constant.dart';
 import 'package:multi_catalog_system/core/domain/entities/auth/user_entry.dart';
+import 'package:multi_catalog_system/core/extensions/bloc_extension.dart';
 import 'package:multi_catalog_system/core/widgets/custom_button.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/core/widgets/custom_input.dart';
@@ -199,7 +200,7 @@ class _UserManagementFormPageState extends State<UserManagementFormPage> {
         phone: widget.entry!.phone != _phoneCtrl.text ? _phoneCtrl.text : null,
       );
 
-      context.read<UserManagementBloc>().add(
+      context.userManagementBloc.add(
         UserManagementEvent.update(entry: entry, id: entry.id!),
       );
     } else {
@@ -209,9 +210,7 @@ class _UserManagementFormPageState extends State<UserManagementFormPage> {
         phone: _phoneCtrl.text.isNotEmpty ? _phoneCtrl.text : null,
         password: _passwordCtrl.text.isNotEmpty ? _passwordCtrl.text : null,
       );
-      context.read<UserManagementBloc>().add(
-        UserManagementEvent.create(entry: entry),
-      );
+      context.userManagementBloc.add(UserManagementEvent.create(entry: entry));
     }
     context.pop();
   }

@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:multi_catalog_system/core/notifications/notification_cubit.dart';
+import 'package:multi_catalog_system/core/extensions/bloc_extension.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/core/widgets/custom_circular_progress.dart';
 import 'package:multi_catalog_system/core/widgets/custom_floating_action_button.dart';
@@ -35,7 +35,7 @@ class _CategoryItemPageState extends State<CategoryItemPage>
   @override
   void initState() {
     super.initState();
-    context.read<CategoryItemBloc>().add(const CategoryItemEvent.getAll());
+    context.itemBloc.add(const CategoryItemEvent.getAll());
   }
 
   @override
@@ -53,20 +53,20 @@ class _CategoryItemPageState extends State<CategoryItemPage>
         BlocListener<CategoryItemBloc, CategoryItemState>(
           listener: (context, state) {
             if (state.error != null) {
-              context.read<NotificationCubit>().error(state.error!);
+              context.notificationCubit.error(state.error!);
             }
             if (state.successMessage != null) {
-              context.read<NotificationCubit>().success(state.successMessage!);
+              context.notificationCubit.success(state.successMessage!);
             }
           },
         ),
         BlocListener<CategoryItemVersionBloc, CategoryItemVersionState>(
           listener: (context, state) {
             if (state.error != null) {
-              context.read<NotificationCubit>().error(state.error!);
+              context.notificationCubit.error(state.error!);
             }
             if (state.successMessage != null) {
-              context.read<NotificationCubit>().success(state.successMessage!);
+              context.notificationCubit.success(state.successMessage!);
             }
           },
         ),
@@ -88,11 +88,9 @@ class _CategoryItemPageState extends State<CategoryItemPage>
                     }
                     _debounce = Timer(const Duration(milliseconds: 500), () {
                       if (search.isEmpty) {
-                        context.read<CategoryItemBloc>().add(
-                          const CategoryItemEvent.getAll(),
-                        );
+                        context.itemBloc.add(const CategoryItemEvent.getAll());
                       } else {
-                        context.read<CategoryItemBloc>().add(
+                        context.itemBloc.add(
                           CategoryItemEvent.getAll(search: search),
                         );
                       }
@@ -111,7 +109,7 @@ class _CategoryItemPageState extends State<CategoryItemPage>
                         return ErrorRetryWidget(
                           error: state.error!,
                           onRetry: () {
-                            context.read<CategoryItemBloc>().add(
+                            context.itemBloc.add(
                               const CategoryItemEvent.getAll(),
                             );
                           },

@@ -27,7 +27,7 @@ class _DomainManagementPageState extends State<DomainManagementPage>
   void initState() {
     super.initState();
 
-    bloc = context.read<DomainManagementBloc>();
+    bloc = context.domainManagementBloc;
     bloc.add(const DomainManagementEvent.getAll());
 
     _scrollController.addListener(_onScroll);
@@ -87,7 +87,7 @@ class _DomainManagementPageState extends State<DomainManagementPage>
                     BlocConsumer<DomainManagementBloc, DomainManagementState>(
                       listener: (context, state) {
                         if (state.successMessage != null) {
-                          context.read<NotificationCubit>().success(
+                          context.notificationCubit.success(
                             state.successMessage!,
                           );
                         }

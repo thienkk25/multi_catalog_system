@@ -196,7 +196,7 @@ class _DomainManagementFormPageState extends State<DomainManagementFormPage> {
             ? _descriptionController.text
             : widget.entry?.description,
       );
-      context.read<DomainManagementBloc>().add(
+      context.domainManagementBloc.add(
         DomainManagementEvent.update(entry: entry),
       );
     } else {
@@ -207,7 +207,7 @@ class _DomainManagementFormPageState extends State<DomainManagementFormPage> {
             ? _descriptionController.text
             : null,
       );
-      context.read<DomainManagementBloc>().add(
+      context.domainManagementBloc.add(
         DomainManagementEvent.create(entry: entry),
       );
     }

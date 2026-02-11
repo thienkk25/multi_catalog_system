@@ -31,7 +31,7 @@ class _ApiKeyManagementPageState extends State<ApiKeyManagementPage>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      bloc = context.read<ApiKeyBloc>();
+      bloc = context.apiKeyBloc;
       bloc.add(const ApiKeyEvent.getAll());
     });
   }
@@ -78,9 +78,7 @@ class _ApiKeyManagementPageState extends State<ApiKeyManagementPage>
                       _showSuccessDialog(context, state.createdEntry!.key!);
                     }
                     if (state.successMessage != null) {
-                      context.read<NotificationCubit>().success(
-                        state.successMessage!,
-                      );
+                      context.notificationCubit.success(state.successMessage!);
                     }
                   },
                   builder: (context, state) {
@@ -139,7 +137,7 @@ class _ApiKeyManagementPageState extends State<ApiKeyManagementPage>
   Future<void> _copyToClipboard(BuildContext context, String text) async {
     await Clipboard.setData(ClipboardData(text: text));
     if (!context.mounted) return;
-    context.read<NotificationCubit>().success('Sao chép API Key thành công');
+    context.notificationCubit.success('Sao chép API Key thành công');
   }
 
   void _showSuccessDialog(BuildContext context, String apiKey) {

@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:multi_catalog_system/core/extensions/bloc_extension.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/core/widgets/custom_alert_dialog.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/core/widgets/role_based_widget.dart';
 import 'package:multi_catalog_system/features/domain_management/domain/entities/domain_entry.dart';
-import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_management_bloc.dart';
 import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_management_event.dart';
 
 class DomainManagementCard extends StatelessWidget {
@@ -73,7 +72,7 @@ class DomainManagementCard extends StatelessWidget {
   }
 
   void _onUpdate({required BuildContext context}) {
-    final bloc = context.read<DomainManagementBloc>();
+    final bloc = context.domainManagementBloc;
     context.pop();
     context.goNamed(
       RouterNames.domainForm,
@@ -82,7 +81,7 @@ class DomainManagementCard extends StatelessWidget {
   }
 
   void _onRemove({required BuildContext context}) {
-    final bloc = context.read<DomainManagementBloc>();
+    final bloc = context.domainManagementBloc;
     context.pop();
     showDialog(
       context: context,

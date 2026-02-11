@@ -27,7 +27,7 @@ class _UserManagementPageState extends State<UserManagementPage>
   @override
   void initState() {
     super.initState();
-    bloc = context.read<UserManagementBloc>();
+    bloc = context.userManagementBloc;
     bloc.add(const UserManagementEvent.getAll());
   }
 
@@ -69,12 +69,10 @@ class _UserManagementPageState extends State<UserManagementPage>
                 child: BlocConsumer<UserManagementBloc, UserManagementState>(
                   listener: (context, state) {
                     if (state.successMessage != null) {
-                      context.read<NotificationCubit>().success(
-                        state.successMessage!,
-                      );
+                      context.notificationCubit.success(state.successMessage!);
                     }
                     if (state.error != null) {
-                      context.read<NotificationCubit>().error(state.error!);
+                      context.notificationCubit.error(state.error!);
                     }
                   },
                   builder: (context, state) {

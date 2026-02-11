@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:multi_catalog_system/core/notifications/notification_cubit.dart';
+import 'package:multi_catalog_system/core/extensions/bloc_extension.dart';
 import 'package:multi_catalog_system/core/responsive/screen_size.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/widgets/approve_card.dart';
 import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_version_entry.dart';
@@ -29,10 +29,10 @@ class _ApprovePageState extends State<ApprovePage>
     return BlocListener<CategoryItemVersionBloc, CategoryItemVersionState>(
       listener: (context, state) {
         if (state.error != null) {
-          context.read<NotificationCubit>().error(state.error!);
+          context.notificationCubit.error(state.error!);
         }
         if (state.successMessage != null) {
-          context.read<NotificationCubit>().success(state.successMessage!);
+          context.notificationCubit.success(state.successMessage!);
         }
       },
       child: Scaffold(

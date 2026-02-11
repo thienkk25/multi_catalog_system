@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/domain/entities/auth/user_entry.dart';
 import 'package:multi_catalog_system/core/domain/entities/domain/domain_ref_entry.dart';
 import 'package:multi_catalog_system/core/domain/entities/role/role_entry.dart';
-import 'package:multi_catalog_system/core/notifications/notification_cubit.dart';
+import 'package:multi_catalog_system/core/extensions/bloc_extension.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/core/widgets/custom_button.dart';
 import 'package:multi_catalog_system/core/widgets/custom_dropdown_button.dart';
@@ -117,7 +116,7 @@ class _UserManagementDialogGrantAccessState
                     onTap: () {
                       if (_selectedRole == null) return;
                       if (_selectedRole != 1 && _domains.isEmpty) {
-                        context.read<NotificationCubit>().warning(
+                        context.notificationCubit.warning(
                           'Vui lòng chọn ít nhất một lĩnh vực được phân quyền',
                         );
                         return;

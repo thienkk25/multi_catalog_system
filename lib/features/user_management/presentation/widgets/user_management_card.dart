@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/domain/entities/auth/user_entry.dart';
+import 'package:multi_catalog_system/core/extensions/bloc_extension.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/core/utils/formatter/data_time_formatter.dart';
 import 'package:multi_catalog_system/core/utils/formatter/phone_number_fomatter.dart';
@@ -10,7 +11,6 @@ import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/core/widgets/custom_label.dart';
 import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_state.dart';
-import 'package:multi_catalog_system/features/user_management/presentation/bloc/user_management_bloc.dart';
 import 'package:multi_catalog_system/features/user_management/presentation/bloc/user_management_event.dart';
 import 'package:multi_catalog_system/features/user_management/presentation/widgets/user_management_avatar_section_widget.dart';
 
@@ -112,7 +112,7 @@ class _ActionMenu extends StatelessWidget {
         return PopupMenuButton<_MenuAction>(
           icon: const Icon(Icons.more_vert, size: 20),
           onSelected: (action) {
-            final bloc = context.read<UserManagementBloc>();
+            final bloc = context.userManagementBloc;
 
             switch (action) {
               case _MenuAction.lock:

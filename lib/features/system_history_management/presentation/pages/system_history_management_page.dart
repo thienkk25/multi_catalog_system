@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:multi_catalog_system/core/extensions/bloc_extension.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/core/widgets/custom_circular_progress.dart';
 import 'package:multi_catalog_system/core/widgets/custom_input.dart';
@@ -26,7 +27,7 @@ class _SystemHistoryManagementPageState
   @override
   void initState() {
     super.initState();
-    bloc = context.read<SystemHistoryBloc>();
+    bloc = context.systemHistoryBloc;
   }
 
   @override

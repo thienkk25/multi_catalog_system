@@ -45,7 +45,7 @@ class MainApp extends StatelessWidget {
             },
           );
 
-          context.read<NotificationCubit>().clear();
+          context.notificationCubit.clear();
         },
         child: BlocBuilder<AuthBloc, AuthState>(
           buildWhen: (previous, current) {

@@ -13,7 +13,7 @@ class CategoryGroupListViewWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bloc = context.read<CategoryGroupBloc>();
+    final bloc = context.groupBloc;
     return ListView.separated(
       itemCount: categoryGroup.length,
       separatorBuilder: (context, index) => SizedBox(height: 10),

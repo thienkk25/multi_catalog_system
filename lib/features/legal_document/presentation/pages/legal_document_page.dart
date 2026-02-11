@@ -26,7 +26,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
   @override
   void initState() {
     super.initState();
-    bloc = context.read<LegalDocumentBloc>();
+    bloc = context.legalDocumentBloc;
     bloc.add(const LegalDocumentEvent.getAll());
   }
 
@@ -68,9 +68,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
                 child: BlocConsumer<LegalDocumentBloc, LegalDocumentState>(
                   listener: (context, state) {
                     if (state.successMessage != null) {
-                      context.read<NotificationCubit>().success(
-                        state.successMessage!,
-                      );
+                      context.notificationCubit.success(state.successMessage!);
                     }
                   },
                   builder: (context, state) {
