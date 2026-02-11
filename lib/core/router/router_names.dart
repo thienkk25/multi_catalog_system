@@ -39,8 +39,7 @@ class RouterNames {
 
   // category_item
   static const String categoryItem = 'categoryItem';
-  static const String categoryItemFormCreate = 'categoryItemFormCreate';
-  static const String categoryItemFormUpdate = 'categoryItemFormUpdate';
+  static const String categoryItemForm = 'categoryItemForm';
   static const String categoryItemDetail = 'categoryItemDetail';
   static const String categoryItemFormAddLegalDocuments =
       'categoryItemFormAddLegalDocuments';

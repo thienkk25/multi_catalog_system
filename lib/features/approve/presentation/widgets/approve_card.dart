@@ -151,9 +151,11 @@ class ApproveCard extends StatelessWidget {
                               child: CustomButton(
                                 onTap: () {
                                   context.pushNamed(
-                                    RouterNames.categoryItemFormUpdate,
-                                    pathParameters: {'id': version.itemId!},
-                                    queryParameters: {'type': '1'},
+                                    RouterNames.categoryItemForm,
+                                    queryParameters: {
+                                      'mode': 'updateVersion',
+                                      'versionId': version.id.toString(),
+                                    },
                                   );
                                 },
                                 colorBackground: Colors.green,

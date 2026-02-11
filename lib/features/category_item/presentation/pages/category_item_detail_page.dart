@@ -303,9 +303,11 @@ class _BottomActions extends StatelessWidget {
               child: CustomButton(
                 onTap: () {
                   context.goNamed(
-                    RouterNames.categoryItemFormUpdate,
-                    pathParameters: {'id': ?entry.id},
-                    queryParameters: {'type': '0'},
+                    RouterNames.categoryItemForm,
+                    queryParameters: {
+                      'mode': 'updateItem',
+                      'itemId': entry.id.toString(),
+                    },
                   );
                 },
                 colorBackground: Colors.blue,

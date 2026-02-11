@@ -38,10 +38,18 @@ class CategoryItemRoutes {
             ),
 
             GoRoute(
-              path: '/form/create',
-              name: RouterNames.categoryItemFormCreate,
+              path: '/form',
+              name: RouterNames.categoryItemForm,
               builder: (context, state) {
-                return const CategoryItemFormPage();
+                final mode = state.uri.queryParameters['mode']!;
+                final itemId = state.uri.queryParameters['itemId'];
+                final versionId = state.uri.queryParameters['versionId'];
+
+                return CategoryItemFormPage(
+                  mode: CategoryItemFormMode.values.byName(mode),
+                  itemId: itemId,
+                  versionId: versionId,
+                );
               },
             ),
 
@@ -53,22 +61,6 @@ class CategoryItemRoutes {
                   create: (_) => getIt<LegalDocumentBloc>(),
                   child: const CategoryItemAddLegalDocumentsPage(),
                 );
-              },
-            ),
-
-            GoRoute(
-              path: '/form/update/:id',
-              name: RouterNames.categoryItemFormUpdate,
-              builder: (context, state) {
-                final id = state.pathParameters['id']!;
-
-                context.read<CategoryItemBloc>().add(
-                  CategoryItemEvent.getById(id: id),
-                );
-
-                final type = state.uri.queryParameters['type']!;
-
-                return CategoryItemFormPage(type: int.parse(type));
               },
             ),
           ],

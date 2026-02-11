@@ -14,6 +14,7 @@ import 'package:multi_catalog_system/features/category_item/presentation/bloc/ca
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_state.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_version_bloc.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_version_state.dart';
+import 'package:multi_catalog_system/features/category_item/presentation/pages/category_item_form_page.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/widgets/category_item_card.dart';
 
 class CategoryItemPage extends StatefulWidget {
@@ -150,7 +151,10 @@ class _CategoryItemPageState extends State<CategoryItemPage>
               context.goNamed(RouterNames.importFile, extra: 3);
             },
             onPressedAdd: () {
-              context.goNamed(RouterNames.categoryItemFormCreate);
+              context.goNamed(
+                RouterNames.categoryItemForm,
+                queryParameters: {'mode': CategoryItemFormMode.create.name},
+              );
             },
           ),
         ],

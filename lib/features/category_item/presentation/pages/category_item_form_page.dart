@@ -13,16 +13,28 @@ import 'package:multi_catalog_system/features/catalog_lookup/presentation/bloc/c
 import 'package:multi_catalog_system/features/catalog_lookup/presentation/bloc/catalog_lookup_state.dart';
 import 'package:multi_catalog_system/features/category_item/domain/entities/category_group_ref_entry.dart';
 import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_entry.dart';
+import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_version_entry.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_bloc.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_event.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_state.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_version_bloc.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_version_event.dart';
+import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_version_state.dart';
 import 'package:multi_catalog_system/features/legal_document/domain/entities/legal_document_entry.dart';
 
+enum CategoryItemFormMode { create, updateItem, updateVersion }
+
 class CategoryItemFormPage extends StatefulWidget {
-  final int? type;
-  const CategoryItemFormPage({super.key, this.type = 0});
+  final CategoryItemFormMode mode;
+  final String? itemId;
+  final String? versionId;
+
+  const CategoryItemFormPage({
+    super.key,
+    required this.mode,
+    this.itemId,
+    this.versionId,
+  });
 
   @override
   State<CategoryItemFormPage> createState() => _CategoryItemFormPageState();
@@ -50,12 +62,33 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
   @override
   void initState() {
     super.initState();
+
     context.read<CatalogLookupBloc>().add(
       const CatalogLookupEvent.getDomainsRef(),
     );
+
+    _loadData();
   }
 
-  void _initFromEntry(CategoryItemEntry entry) {
+  void _loadData() {
+    final blocI = context.read<CategoryItemBloc>();
+    final blocIV = context.read<CategoryItemVersionBloc>();
+
+    switch (widget.mode) {
+      case CategoryItemFormMode.create:
+        return;
+
+      case CategoryItemFormMode.updateItem:
+        blocI.add(CategoryItemEvent.getById(id: widget.itemId!));
+        break;
+
+      case CategoryItemFormMode.updateVersion:
+        blocIV.add(CategoryItemVersionEvent.getById(id: widget.versionId!));
+        break;
+    }
+  }
+
+  Future<void> _initFromItem(CategoryItemEntry entry) async {
     if (_didInit) return;
 
     _entry = entry;
@@ -63,14 +96,35 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
     _codeController.text = entry.code ?? '';
     _nameController.text = entry.name ?? '';
     _descriptionController.text = entry.description ?? '';
-    _selectedDomainId = entry.group?.domain?.id ?? '';
-    if (_selectedDomainId != null) {
+
+    final domainId = entry.group?.domain?.id;
+    final groupId = entry.group?.id;
+
+    _selectedDomainId = domainId;
+
+    if (domainId != null) {
       context.read<CatalogLookupBloc>().add(
-        CatalogLookupEvent.getCategoryGroupsRef(domainId: _selectedDomainId!),
+        CatalogLookupEvent.getCategoryGroupsRef(domainId: domainId),
       );
     }
-    _selectedCategoryGroupId = entry.group?.id ?? '';
+
+    _selectedCategoryGroupId = groupId;
+
     _legalDocuments = entry.legalDocuments ?? [];
+
+    _didInit = true;
+  }
+
+  void _initFromVersion(CategoryItemVersionEntry version) {
+    if (_didInit) return;
+
+    final json = version.newValue ?? {};
+
+    _codeController.text = json['code'] ?? '';
+    _nameController.text = json['name'] ?? '';
+    _descriptionController.text = json['description'] ?? '';
+
+    _selectedCategoryGroupId = json['group_id'];
 
     _didInit = true;
   }
@@ -100,13 +154,29 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<CategoryItemBloc, CategoryItemState>(
-      listener: (context, state) {
-        final entry = state.entry;
-        if (entry != null) {
-          _initFromEntry(entry);
-        }
-      },
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<CategoryItemBloc, CategoryItemState>(
+          listenWhen: (prev, curr) =>
+              prev.entry?.id != curr.entry?.id && curr.entry != null,
+          listener: (context, state) {
+            final entry = state.entry;
+            if (entry != null) {
+              _initFromItem(entry);
+            }
+          },
+        ),
+        BlocListener<CategoryItemVersionBloc, CategoryItemVersionState>(
+          listenWhen: (prev, curr) =>
+              prev.entry?.id != curr.entry?.id && curr.entry != null,
+          listener: (context, state) {
+            final entry = state.entry;
+            if (entry != null) {
+              _initFromVersion(entry);
+            }
+          },
+        ),
+      ],
       child: SafeArea(
         child: Stack(
           children: [
@@ -376,12 +446,12 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
           CategoryItemEvent.update(entry: updateEntry),
         );
       } else {
-        context.read<CategoryItemVersionBloc>().add(
-          CategoryItemVersionEvent.updateVersion(
-            type: widget.type,
-            entry: updateEntry,
-          ),
-        );
+        // context.read<CategoryItemVersionBloc>().add(
+        //   CategoryItemVersionEvent.updateVersion(
+        //     type: widget.type,
+        //     entry: updateEntry,
+        //   ),
+        // );
       }
     } else {
       final createEntry = CategoryItemEntry(
