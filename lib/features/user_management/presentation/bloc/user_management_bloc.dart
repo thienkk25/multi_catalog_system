@@ -67,13 +67,7 @@ class UserManagementBloc
         result.fold(
           (l) => emit(state.copyWith(isLoading: false, error: mapFailure(l))),
           (r) {
-            final index = state.entries.indexWhere((d) => d.id == r.id);
-
-            if (index == -1 || state.entries[index] == r) return;
-
-            final updated = List.of(state.entries);
-            updated[index] = r;
-            emit(state.copyWith(isLoading: false, entry: r, entries: updated));
+            emit(state.copyWith(isLoading: false, entry: r));
           },
         );
       },
@@ -154,14 +148,7 @@ class UserManagementBloc
         );
       },
       activate: (e) async {
-        emit(
-          state.copyWith(
-            isLoading: true,
-            error: null,
-            successMessage: null,
-            entry: null,
-          ),
-        );
+        emit(state.copyWith(error: null, successMessage: null, entry: null));
 
         final result = await activate(id: e.id);
         if (emit.isDone) return;
@@ -177,7 +164,6 @@ class UserManagementBloc
             updated[index] = r;
             emit(
               state.copyWith(
-                isLoading: false,
                 entries: updated,
                 successMessage: 'Mở khóa thành công',
               ),
@@ -186,14 +172,7 @@ class UserManagementBloc
         );
       },
       deactivate: (e) async {
-        emit(
-          state.copyWith(
-            isLoading: true,
-            error: null,
-            successMessage: null,
-            entry: null,
-          ),
-        );
+        emit(state.copyWith(error: null, successMessage: null, entry: null));
 
         final result = await deactivate(id: e.id);
         if (emit.isDone) return;
@@ -209,7 +188,6 @@ class UserManagementBloc
             updated[index] = r;
             emit(
               state.copyWith(
-                isLoading: false,
                 entries: updated,
                 successMessage: 'Khóa thành công',
               ),
@@ -218,14 +196,7 @@ class UserManagementBloc
         );
       },
       grantAccess: (e) async {
-        emit(
-          state.copyWith(
-            isLoading: true,
-            error: null,
-            successMessage: null,
-            entry: null,
-          ),
-        );
+        emit(state.copyWith(error: null, successMessage: null, entry: null));
 
         final result = await grantAccess(entry: e.entry);
         if (emit.isDone) return;
@@ -241,7 +212,6 @@ class UserManagementBloc
             updated[index] = r;
             emit(
               state.copyWith(
-                isLoading: false,
                 entries: updated,
                 successMessage: 'Cập nhật thành công',
               ),
