@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/core.dart';
 import 'package:multi_catalog_system/features/category_group/presentation/presentation.dart';
-import 'package:multi_catalog_system/features/category_group/presentation/widgets/category_group_card.dart';
 
 class CategoryGroupPage extends StatefulWidget {
   const CategoryGroupPage({super.key});

@@ -7,6 +7,8 @@ import 'package:multi_catalog_system/features/domain_management/presentation/blo
 import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_management_event.dart';
 import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_management_state.dart';
 
+enum DomainManagementFormType { create, update }
+
 class DomainManagementFormPage extends StatefulWidget {
   const DomainManagementFormPage({super.key, this.entry});
 

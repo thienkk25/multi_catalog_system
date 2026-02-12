@@ -74,6 +74,15 @@ class ApproveCard extends StatelessWidget {
             _infoRow("ID Người gửi", version.changeBy),
             _infoRow("Nội dung", version.changeSummary),
 
+            version.status == 'rejected'
+                ? Column(
+                    children: [
+                      const Divider(),
+                      _infoRow("Lý do", version.rejectReason),
+                    ],
+                  )
+                : const SizedBox.shrink(),
+
             const SizedBox(height: 10),
 
             ExpansionTile(

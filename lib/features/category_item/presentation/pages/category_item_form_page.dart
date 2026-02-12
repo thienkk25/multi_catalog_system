@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -224,7 +225,15 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
               builder: (context, isLoading) => BottomFormActions(
                 isLoading: isLoading,
                 key: _bottomBarKey,
-                onCancel: () => context.pop(),
+                onCancel: () {
+                  if (!kIsWeb) {
+                    context.pop();
+                  } else {
+                    widget.itemId != null
+                        ? context.goNamed(RouterNames.categoryItem)
+                        : context.goNamed(RouterNames.approve);
+                  }
+                },
                 onSave: () => _onSave(context: context, isEdit: true),
               ),
             ),

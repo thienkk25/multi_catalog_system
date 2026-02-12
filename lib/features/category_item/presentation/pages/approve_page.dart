@@ -15,7 +15,10 @@ class ApprovePage extends StatefulWidget {
 }
 
 class _ApprovePageState extends State<ApprovePage>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   late final TabController _tabController;
 
   @override
@@ -26,6 +29,7 @@ class _ApprovePageState extends State<ApprovePage>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return BlocListener<CategoryItemVersionBloc, CategoryItemVersionState>(
       listener: (context, state) {
         if (state.error != null) {
@@ -37,9 +41,7 @@ class _ApprovePageState extends State<ApprovePage>
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Duyệt danh mục'),
-          centerTitle: true,
-          bottom: TabBar(
+          title: TabBar(
             controller: _tabController,
             labelColor: Colors.white,
             unselectedLabelColor: Colors.white60,

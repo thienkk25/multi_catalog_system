@@ -17,7 +17,10 @@ class ProfilePage extends StatefulWidget {
   State<ProfilePage> createState() => _ProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class _ProfilePageState extends State<ProfilePage>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
   late final ProfileBloc bloc;
   final GlobalKey _bottomBarKey = GlobalKey();
   double _bottomBarHeight = 0;
@@ -51,6 +54,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return BlocBuilder<ProfileBloc, ProfileState>(
       builder: (context, state) {
         if (state.isLoading) {

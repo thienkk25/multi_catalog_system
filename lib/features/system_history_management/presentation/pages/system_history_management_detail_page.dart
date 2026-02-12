@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:multi_catalog_system/core/utils/formatter/data_time_formatter.dart';
+import 'package:multi_catalog_system/core/widgets/button_back_widget.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/core/widgets/custom_circular_progress.dart';
 import 'package:multi_catalog_system/features/system_history_management/domain/entities/system_history_entry.dart';
@@ -12,59 +13,52 @@ class SystemHistoryManagementDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Chi tiết lịch sử hệ thống',
-          style: TextStyle(fontWeight: FontWeight.w600),
-        ),
-        centerTitle: true,
-      ),
-      body: BlocBuilder<SystemHistoryBloc, SystemHistoryState>(
-        builder: (context, state) {
-          if (state.isLoading) {
-            return const Center(child: CustomCircularProgressScreen());
-          }
+    return BlocBuilder<SystemHistoryBloc, SystemHistoryState>(
+      builder: (context, state) {
+        if (state.isLoading) {
+          return const Center(child: CustomCircularProgressScreen());
+        }
 
-          if (state.error != null) {
-            return const Center(child: Text('Xảy ra lỗi'));
-          }
+        if (state.error != null) {
+          return const Center(child: Text('Xảy ra lỗi'));
+        }
 
-          final entry = state.entry;
-          if (entry == null) {
-            return const Center(child: Text('Không tìm thấy dữ liệu'));
-          }
+        final entry = state.entry;
+        if (entry == null) {
+          return const Center(child: Text('Không tìm thấy dữ liệu'));
+        }
 
-          final oldData =
-              (entry.metadata['old'] as Map<String, dynamic>?) ?? const {};
-          final newData =
-              (entry.metadata['new'] as Map<String, dynamic>?) ?? const {};
+        final oldData =
+            (entry.metadata['old'] as Map<String, dynamic>?) ?? const {};
+        final newData =
+            (entry.metadata['new'] as Map<String, dynamic>?) ?? const {};
 
-          final changedKeys = {
-            ...oldData.keys,
-            ...newData.keys,
-          }.where((k) => oldData[k]?.toString() != newData[k]?.toString());
+        final changedKeys = {
+          ...oldData.keys,
+          ...newData.keys,
+        }.where((k) => oldData[k]?.toString() != newData[k]?.toString());
 
-          return SafeArea(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildHeaderCard(entry),
-                  const SizedBox(height: 16),
-                  _buildDiffCard(
-                    entry: entry,
-                    oldData: oldData,
-                    newData: newData,
-                    changedKeys: changedKeys,
-                  ),
-                ],
-              ),
+        return SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeaderCard(entry),
+                const SizedBox(height: 16),
+                _buildDiffCard(
+                  entry: entry,
+                  oldData: oldData,
+                  newData: newData,
+                  changedKeys: changedKeys,
+                ),
+                const SizedBox(height: 16),
+                Center(child: ButtonBackWidget()),
+              ],
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -73,6 +67,8 @@ class SystemHistoryManagementDetailPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Text('Thông tin chi tiết'),
+          const SizedBox(height: 12),
           _buildActionBadge(entry),
           const SizedBox(height: 12),
           _buildInfoRow('Endpoint', entry.endpoint),

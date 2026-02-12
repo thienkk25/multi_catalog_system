@@ -39,98 +39,86 @@ class _SystemHistoryManagementPageState
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Nhật kí hệ thống',
-          style: TextStyle(fontWeight: FontWeight(600), fontSize: 20),
-        ),
-        centerTitle: true,
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Column(
-            spacing: 10,
-            children: [
-              CustomInput(
-                hintText: 'Tìm kiếm...',
-                suffixIcon: const Icon(Icons.search),
-                onChanged: (value) {
-                  final search = value.trim();
-                  if (_debounce?.isActive ?? false) {
-                    _debounce?.cancel();
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          spacing: 10,
+          children: [
+            CustomInput(
+              hintText: 'Tìm kiếm...',
+              suffixIcon: const Icon(Icons.search),
+              onChanged: (value) {
+                final search = value.trim();
+                if (_debounce?.isActive ?? false) {
+                  _debounce?.cancel();
+                }
+                _debounce = Timer(const Duration(milliseconds: 500), () {
+                  if (search.isEmpty) {
+                    bloc.add(const SystemHistoryEvent.getAll());
+                  } else {
+                    bloc.add(SystemHistoryEvent.getAll(search: search));
                   }
-                  _debounce = Timer(const Duration(milliseconds: 500), () {
-                    if (search.isEmpty) {
-                      bloc.add(const SystemHistoryEvent.getAll());
-                    } else {
-                      bloc.add(SystemHistoryEvent.getAll(search: search));
-                    }
-                  });
-                },
-              ),
-              Expanded(
-                child: BlocBuilder<SystemHistoryBloc, SystemHistoryState>(
-                  builder: (context, state) {
-                    if (state.isLoading) {
-                      return const Center(
-                        child: CustomCircularProgressScreen(),
-                      );
-                    }
+                });
+              },
+            ),
+            Expanded(
+              child: BlocBuilder<SystemHistoryBloc, SystemHistoryState>(
+                builder: (context, state) {
+                  if (state.isLoading) {
+                    return const Center(child: CustomCircularProgressScreen());
+                  }
 
-                    if (state.error != null) {
-                      return ErrorRetryWidget(
-                        error: state.error!,
-                        onRetry: () {
-                          bloc.add(const SystemHistoryEvent.getAll());
-                        },
-                      );
-                    }
-
-                    if (state.entries.isEmpty) {
-                      return const Center(child: Text('Không có dữ liệu'));
-                    }
-
-                    final entries = state.entries;
-                    if (ScreenSize.of(context).isMobile ||
-                        ScreenSize.of(context).isTablet) {
-                      return ListView.separated(
-                        shrinkWrap: true,
-                        itemCount: entries.length,
-                        itemBuilder: (context, index) {
-                          final entry = entries[index];
-                          return SystemHistoryManagementCard(log: entry);
-                        },
-                        separatorBuilder: (context, index) =>
-                            const SizedBox(height: 10),
-                      );
-                    }
-                    return LayoutBuilder(
-                      builder: (context, constraints) {
-                        final crossAxisCount = (constraints.maxWidth / 600)
-                            .floor();
-
-                        return SingleChildScrollView(
-                          child: Wrap(
-                            spacing: 10,
-                            runSpacing: 10,
-                            children: entries.map((entry) {
-                              return SizedBox(
-                                width:
-                                    constraints.maxWidth / crossAxisCount - 10,
-                                child: SystemHistoryManagementCard(log: entry),
-                              );
-                            }).toList(),
-                          ),
-                        );
+                  if (state.error != null) {
+                    return ErrorRetryWidget(
+                      error: state.error!,
+                      onRetry: () {
+                        bloc.add(const SystemHistoryEvent.getAll());
                       },
                     );
-                  },
-                ),
+                  }
+
+                  if (state.entries.isEmpty) {
+                    return const Center(child: Text('Không có dữ liệu'));
+                  }
+
+                  final entries = state.entries;
+                  if (ScreenSize.of(context).isMobile ||
+                      ScreenSize.of(context).isTablet) {
+                    return ListView.separated(
+                      shrinkWrap: true,
+                      itemCount: entries.length,
+                      itemBuilder: (context, index) {
+                        final entry = entries[index];
+                        return SystemHistoryManagementCard(log: entry);
+                      },
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: 10),
+                    );
+                  }
+                  return LayoutBuilder(
+                    builder: (context, constraints) {
+                      final crossAxisCount = (constraints.maxWidth / 600)
+                          .floor();
+
+                      return SingleChildScrollView(
+                        child: Wrap(
+                          spacing: 10,
+                          runSpacing: 10,
+                          children: entries.map((entry) {
+                            return SizedBox(
+                              width: constraints.maxWidth / crossAxisCount - 10,
+                              child: SystemHistoryManagementCard(log: entry),
+                            );
+                          }).toList(),
+                        ),
+                      );
+                    },
+                  );
+                },
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

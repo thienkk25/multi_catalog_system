@@ -67,7 +67,8 @@ class _CategoryItemDetailPageState extends State<CategoryItemDetailPage>
 
         return Scaffold(
           appBar: AppBar(
-            bottom: TabBar(
+            automaticallyImplyLeading: false,
+            title: TabBar(
               controller: _tabController,
               labelColor: Colors.white,
               unselectedLabelColor: Colors.white60,
@@ -299,7 +300,21 @@ class _BottomActions extends StatelessWidget {
         padding: const EdgeInsets.all(10),
         height: 60,
         child: Row(
+          spacing: 5,
           children: [
+            Expanded(
+              child: CustomButton(
+                onTap: () {
+                  context.pop();
+                },
+                colorBackground: Colors.transparent,
+                colorBorder: Colors.blue.withValues(alpha: .5),
+                textButton: const Text(
+                  'Quay lại',
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+              ),
+            ),
             Expanded(
               child: CustomButton(
                 onTap: () {
