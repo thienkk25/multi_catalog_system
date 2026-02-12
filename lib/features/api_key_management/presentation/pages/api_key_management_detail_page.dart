@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:multi_catalog_system/core/extensions/bloc_extension.dart';
 
 import 'package:multi_catalog_system/core/utils/formatter/data_time_formatter.dart';
+import 'package:multi_catalog_system/core/widgets/button_back_widget.dart';
 import 'package:multi_catalog_system/core/widgets/custom_button.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/core/widgets/custom_circular_progress.dart';
@@ -15,72 +16,71 @@ class ApiKeyManagementDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text(
-          'Chi tiết API Key',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
-      body: BlocBuilder<ApiKeyBloc, ApiKeyState>(
-        builder: (context, state) {
-          if (state.isLoading) {
-            return const Center(child: CustomCircularProgressScreen());
-          }
-          if (state.error != null) {
-            return const Center(child: Text('Xảy ra lỗi'));
-          }
-          final entry = state.entry;
-          if (entry == null) {
-            return const Center(child: Text('Không tìm thấy dữ liệu'));
-          }
-          return SafeArea(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _ApiKeyBox(apiKey: entry.key ?? ''),
-                  const SizedBox(height: 16),
-                  CustomCard(
-                    child: Column(
-                      children: [
-                        _InfoRow(label: 'Tên', value: entry.systemName ?? '-'),
-                        _InfoRow(
-                          label: 'Trạng thái',
-                          value: _actionText(entry.status ?? '-'),
-                          valueColor: _actionColor(entry.status ?? ''),
-                        ),
-                        _InfoRow(
-                          label: 'Lĩnh vực cho phép',
-                          value: (entry.allowedDomains ?? []).join(', '),
-                        ),
-                        _InfoRow(
-                          label: 'Ngày tạo',
-                          value: dateTimeFormatFull(entry.createdAt),
-                        ),
-                      ],
-                    ),
+    return BlocBuilder<ApiKeyBloc, ApiKeyState>(
+      builder: (context, state) {
+        if (state.isLoading) {
+          return const Center(child: CustomCircularProgressScreen());
+        }
+        if (state.error != null) {
+          return const Center(child: Text('Xảy ra lỗi'));
+        }
+        final entry = state.entry;
+        if (entry == null) {
+          return const Center(child: Text('Không tìm thấy dữ liệu'));
+        }
+        return SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _ApiKeyBox(apiKey: entry.key ?? ''),
+                const SizedBox(height: 16),
+                CustomCard(
+                  child: Column(
+                    children: [
+                      _InfoRow(label: 'Tên', value: entry.systemName ?? '-'),
+                      _InfoRow(
+                        label: 'Trạng thái',
+                        value: _actionText(entry.status ?? '-'),
+                        valueColor: _actionColor(entry.status ?? ''),
+                      ),
+                      _InfoRow(
+                        label: 'Lĩnh vực cho phép',
+                        value: (entry.allowedDomains ?? []).join(', '),
+                      ),
+                      _InfoRow(
+                        label: 'Ngày tạo',
+                        value: dateTimeFormatFull(entry.createdAt),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 12),
-                  CustomButton(
-                    colorBackground: Colors.blue,
-                    textButton: const Text(
-                      'Sao chép API Key',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  spacing: 5,
+                  children: [
+                    Expanded(child: ButtonBackWidget()),
+                    Expanded(
+                      child: CustomButton(
+                        colorBackground: Colors.blue,
+                        textButton: const Text(
+                          'Sao chép API Key',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        onTap: () => _copyToClipboard(context, entry.key ?? ''),
                       ),
                     ),
-                    onTap: () => _copyToClipboard(context, entry.key ?? ''),
-                  ),
-                ],
-              ),
+                  ],
+                ),
+              ],
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 
