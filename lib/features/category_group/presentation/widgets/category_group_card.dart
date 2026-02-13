@@ -115,7 +115,10 @@ class CategoryGroupCard extends StatelessWidget {
   }
 
   void _onUpdate({required BuildContext context}) {
-    context.goNamed(RouterNames.categoryGroupForm);
+    context.goNamed(
+      RouterNames.categoryGroupForm,
+      queryParameters: {'mode': 'update', 'id': entry.id},
+    );
   }
 
   void _onRemove({required BuildContext context, required String id}) {

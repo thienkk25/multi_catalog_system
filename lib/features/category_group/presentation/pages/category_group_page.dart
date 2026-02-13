@@ -155,7 +155,10 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
             context.goNamed(RouterNames.importFile, extra: 2);
           },
           onPressedAdd: () {
-            context.goNamed(RouterNames.categoryGroupForm);
+            context.goNamed(
+              RouterNames.categoryGroupForm,
+              queryParameters: {'mode': 'create'},
+            );
           },
         ),
       ],
