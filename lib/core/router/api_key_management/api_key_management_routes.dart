@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/config/di/injection.dart';
 import 'package:multi_catalog_system/core/extensions/bloc_extension.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
-import 'package:multi_catalog_system/features/api_key_management/domain/entities/api_key_entry.dart';
 import 'package:multi_catalog_system/features/api_key_management/presentation/presentation.dart';
 
 class ApiKeyManagementRoutes {
@@ -31,9 +30,11 @@ class ApiKeyManagementRoutes {
               path: '/form',
               name: RouterNames.apiKeyForm,
               builder: (context, state) {
-                final data = state.extra as Map<String, dynamic>;
+                final mode = state.uri.queryParameters['mode']!;
+                final id = state.uri.queryParameters['id'];
                 return ApiKeyManagementFormPage(
-                  entry: data['entry'] as ApiKeyEntry?,
+                  mode: ApiKeyManagementFormType.values.byName(mode),
+                  id: id,
                 );
               },
               routes: [

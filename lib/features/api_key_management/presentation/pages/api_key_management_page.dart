@@ -141,7 +141,10 @@ class _ApiKeyManagementPageState extends State<ApiKeyManagementPage>
         CustomFloatingActionButton(
           onPressedImport: () {},
           onPressedAdd: () {
-            context.goNamed(RouterNames.apiKeyForm, extra: {'bloc': bloc});
+            context.goNamed(
+              RouterNames.apiKeyForm,
+              queryParameters: {'mode': 'create'},
+            );
           },
         ),
       ],

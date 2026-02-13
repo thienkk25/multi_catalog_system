@@ -82,9 +82,9 @@ class ApiKeyManagementCard extends StatelessWidget {
                               context.pop();
                               context.goNamed(
                                 RouterNames.apiKeyForm,
-                                extra: {
-                                  'bloc': context.apiKeyBloc,
-                                  'entry': entry,
+                                queryParameters: {
+                                  'mode': 'update',
+                                  'id': entry.id!,
                                 },
                               );
                             },

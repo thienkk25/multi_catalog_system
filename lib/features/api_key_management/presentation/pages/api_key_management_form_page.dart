@@ -8,10 +8,12 @@ import 'package:multi_catalog_system/features/api_key_management/domain/entities
 import 'package:multi_catalog_system/features/api_key_management/presentation/presentation.dart';
 import 'package:multi_catalog_system/features/api_key_management/presentation/widgets/api_key_management_permission_field_widget.dart';
 
-class ApiKeyManagementFormPage extends StatefulWidget {
-  const ApiKeyManagementFormPage({super.key, this.entry});
+enum ApiKeyManagementFormType { create, update }
 
-  final ApiKeyEntry? entry;
+class ApiKeyManagementFormPage extends StatefulWidget {
+  final ApiKeyManagementFormType mode;
+  final String? id;
+  const ApiKeyManagementFormPage({super.key, required this.mode, this.id});
 
   @override
   State<ApiKeyManagementFormPage> createState() =>
@@ -28,25 +30,42 @@ class _ApiKeyManagementFormPageState extends State<ApiKeyManagementFormPage> {
   final GlobalKey _bottomBarKey = GlobalKey();
   double _bottomBarHeight = 0;
 
-  bool get _isUpdate => widget.entry != null;
+  ApiKeyEntry? _entry;
+
+  bool get _isUpdate => widget.mode == ApiKeyManagementFormType.update;
+
+  bool _didInit = false;
 
   @override
   void initState() {
     super.initState();
-    if (widget.entry != null) {
-      _keyController.text = widget.entry!.key!;
-      _systemNameController.text = widget.entry!.systemName!;
-      _selectedAction = widget.entry!.status;
-      _allowedDomains = List<String>.from(widget.entry?.allowedDomains ?? []);
+    _loadData();
+  }
+
+  void _loadData() {
+    switch (widget.mode) {
+      case ApiKeyManagementFormType.create:
+        break;
+      case ApiKeyManagementFormType.update:
+        context.apiKeyBloc.add(ApiKeyEvent.getById(id: widget.id!));
+        break;
     }
+  }
+
+  void _initFromData(ApiKeyEntry entry) {
+    if (_didInit) return;
+    _entry = entry;
+    _keyController.text = entry.key!;
+    _systemNameController.text = entry.systemName!;
+    _selectedAction = entry.status;
+    _allowedDomains = List<String>.from(entry.allowedDomains ?? []);
+    _didInit = true;
   }
 
   @override
   void dispose() {
     _keyController.dispose();
     _systemNameController.dispose();
-    _formKey.currentState?.dispose();
-    _bottomBarKey.currentState?.dispose();
     super.dispose();
   }
 
@@ -67,16 +86,18 @@ class _ApiKeyManagementFormPageState extends State<ApiKeyManagementFormPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      appBar: AppBar(
-        title: Text(
-          _isUpdate ? 'Chỉnh sửa API Key' : 'Thêm API Key mới',
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-      ),
-      body: SafeArea(
+    return BlocConsumer<ApiKeyBloc, ApiKeyState>(
+      listenWhen: (previous, current) =>
+          previous.entry?.id != current.entry?.id && current.entry != null,
+      listener: (context, state) {
+        final entry = state.entry;
+        if (entry != null) {
+          _initFromData(entry);
+        }
+      },
+      buildWhen: (previous, current) =>
+          previous.entry?.id != current.entry?.id && current.entry != null,
+      builder: (context, state) => SafeArea(
         child: Stack(
           children: [
             CustomScrollView(
@@ -85,6 +106,14 @@ class _ApiKeyManagementFormPageState extends State<ApiKeyManagementFormPage> {
                   padding: const EdgeInsets.all(10),
                   sliver: SliverList(
                     delegate: SliverChildListDelegate([
+                      Text(
+                        _isUpdate ? 'Chỉnh sửa API Key' : 'Thêm API Key mới',
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
                       Form(
                         key: _formKey,
                         child: CustomCard(
@@ -116,9 +145,7 @@ class _ApiKeyManagementFormPageState extends State<ApiKeyManagementFormPage> {
                                 ],
 
                                 onChanged: (value) {
-                                  setState(() {
-                                    _selectedAction = value;
-                                  });
+                                  _selectedAction = value;
                                 },
                                 validator: (p0) =>
                                     p0 == null ? 'Bắt buộc' : null,
@@ -186,10 +213,10 @@ class _ApiKeyManagementFormPageState extends State<ApiKeyManagementFormPage> {
     if (!_formKey.currentState!.validate()) return;
     if (_isUpdate) {
       final entry = ApiKeyEntry(
-        id: widget.entry!.id,
-        systemName: widget.entry?.systemName != _systemNameController.text
+        id: _entry!.id,
+        systemName: _entry?.systemName != _systemNameController.text
             ? _systemNameController.text
-            : widget.entry?.systemName,
+            : _entry?.systemName,
         status: _selectedAction,
         allowedDomains: _allowedDomains,
       );
