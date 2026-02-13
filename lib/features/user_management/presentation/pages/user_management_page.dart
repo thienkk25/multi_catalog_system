@@ -138,7 +138,7 @@ class _UserManagementPageState extends State<UserManagementPage>
           onPressedAdd: () {
             context.goNamed(
               RouterNames.userManagementForm,
-              extra: {'bloc': bloc},
+              queryParameters: {'mode': 'create'},
             );
           },
         ),

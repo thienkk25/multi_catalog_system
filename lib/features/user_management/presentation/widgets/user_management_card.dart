@@ -138,7 +138,7 @@ class _ActionMenu extends StatelessWidget {
               case _MenuAction.edit:
                 context.goNamed(
                   RouterNames.userManagementForm,
-                  extra: {'bloc': bloc, 'entry': entry},
+                  queryParameters: {'mode': 'update', 'id': entry.id},
                 );
                 break;
               case _MenuAction.delete:
