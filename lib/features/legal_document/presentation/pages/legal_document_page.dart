@@ -134,7 +134,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
           onPressedAdd: () {
             context.goNamed(
               RouterNames.legalDocumentForm,
-              extra: {'bloc': bloc},
+              queryParameters: {'mode': 'create'},
             );
           },
         ),

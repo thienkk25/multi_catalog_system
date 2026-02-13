@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/config/di/injection.dart';
 import 'package:multi_catalog_system/core/extensions/bloc_extension.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
-import 'package:multi_catalog_system/features/legal_document/domain/entities/legal_document_entry.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/presentation.dart';
 
 class LegalDocumentRoutes {
@@ -36,11 +35,13 @@ class LegalDocumentRoutes {
               path: '/form',
               name: RouterNames.legalDocumentForm,
               builder: (context, state) {
-                final data = state.extra as Map<String, dynamic>;
+                final mode = state.uri.queryParameters['mode']!;
+                final id = state.uri.queryParameters['id'];
                 return BlocProvider(
                   create: (_) => getIt<DocumentFileCubit>(),
                   child: LegalDocumentFormPage(
-                    entry: data['entry'] as LegalDocumentEntry?,
+                    mode: LegalDocumentFormType.values.byName(mode),
+                    id: id,
                   ),
                 );
               },

@@ -140,10 +140,7 @@ class LegalDocumentCard extends StatelessWidget {
                     onPressed: () {
                       context.goNamed(
                         RouterNames.legalDocumentForm,
-                        extra: {
-                          'bloc': context.legalDocumentBloc,
-                          'entry': entry,
-                        },
+                        queryParameters: {'mode': 'update', 'id': entry.id},
                       );
                     },
                   ),

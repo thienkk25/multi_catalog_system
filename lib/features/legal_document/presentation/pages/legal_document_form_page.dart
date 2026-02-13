@@ -8,9 +8,12 @@ import 'package:multi_catalog_system/features/legal_document/presentation/bloc/l
 import 'package:multi_catalog_system/features/legal_document/presentation/bloc/legal_document_state.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/widgets/legal_document_import_file.dart';
 
+enum LegalDocumentFormType { create, update }
+
 class LegalDocumentFormPage extends StatefulWidget {
-  final LegalDocumentEntry? entry;
-  const LegalDocumentFormPage({super.key, this.entry});
+  final LegalDocumentFormType mode;
+  final String? id;
+  const LegalDocumentFormPage({super.key, required this.mode, this.id});
 
   @override
   State<LegalDocumentFormPage> createState() => _LegalDocumentFormPageState();
@@ -28,23 +31,42 @@ class _LegalDocumentFormPageState extends State<LegalDocumentFormPage> {
   final GlobalKey _bottomBarKey = GlobalKey();
   double _bottomBarHeight = 0;
 
-  bool get _isUpdate => widget.entry != null;
+  LegalDocumentEntry? _entry;
+
+  bool get _isUpdate => widget.mode == LegalDocumentFormType.update;
+
+  bool _didInit = false;
 
   @override
   void initState() {
     super.initState();
-    if (widget.entry != null) {
-      _codeController.text = widget.entry!.code ?? '';
-      _nameController.text = widget.entry!.title ?? '';
-      _type = widget.entry!.type;
-      _descriptionController.text = widget.entry!.description ?? '';
-      _issueDate = widget.entry!.issueDate;
-      _effectiveDate = widget.entry!.effectiveDate;
-      _expiryDate = widget.entry!.expiryDate;
+    _loadData();
+  }
+
+  void _loadData() {
+    switch (widget.mode) {
+      case LegalDocumentFormType.create:
+        break;
+      case LegalDocumentFormType.update:
+        context.legalDocumentBloc.add(
+          LegalDocumentEvent.getById(id: widget.id!),
+        );
+        break;
     }
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.documentFileCubit.setRemoteFile(widget.entry?.fileName);
-    });
+  }
+
+  void _initFromData(LegalDocumentEntry entry) {
+    if (_didInit) return;
+    _entry = entry;
+    _codeController.text = entry.code ?? '';
+    _nameController.text = entry.title ?? '';
+    _type = entry.type;
+    _descriptionController.text = entry.description ?? '';
+    _issueDate = entry.issueDate;
+    _effectiveDate = entry.effectiveDate;
+    _expiryDate = entry.expiryDate;
+
+    _didInit = true;
   }
 
   @override
@@ -64,68 +86,81 @@ class _LegalDocumentFormPageState extends State<LegalDocumentFormPage> {
 
   @override
   void dispose() {
-    _formKey.currentState?.dispose();
     _codeController.dispose();
     _nameController.dispose();
     _descriptionController.dispose();
-    _bottomBarKey.currentState?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Stack(
-        children: [
-          CustomScrollView(
-            slivers: [
-              SliverPadding(
-                padding: const EdgeInsets.all(10),
-                sliver: SliverList(
-                  delegate: SliverChildListDelegate([
-                    Text(
-                      _isUpdate
-                          ? 'Cập nhật văn bản pháp lý'
-                          : 'Tạo văn bản pháp lý',
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+    return BlocConsumer<LegalDocumentBloc, LegalDocumentState>(
+      listenWhen: (previous, current) =>
+          previous.entry?.id != current.entry?.id && current.entry != null,
+      listener: (context, state) {
+        final entry = state.entry;
+        if (entry != null) {
+          _initFromData(entry);
+          context.documentFileCubit.setRemoteFile(entry.fileName);
+        }
+      },
+      buildWhen: (previous, current) =>
+          previous.entry?.id != current.entry?.id && current.entry != null,
+      builder: (context, state) => SafeArea(
+        child: Stack(
+          children: [
+            CustomScrollView(
+              slivers: [
+                SliverPadding(
+                  padding: const EdgeInsets.all(10),
+                  sliver: SliverList(
+                    delegate: SliverChildListDelegate([
+                      Text(
+                        _isUpdate
+                            ? 'Cập nhật văn bản pháp lý'
+                            : 'Tạo văn bản pháp lý',
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 10),
-                    Form(
-                      key: _formKey,
-                      child: Column(
-                        spacing: 10,
-                        children: [
-                          _generalInformation(),
-                          _timeInformation(),
-                          NoteWidget(
-                            icon: Icons.warning_amber_outlined,
-                            note:
-                                'Ngày ban hành bắt buộc. Ngày hiệu lực bắt buộc và >= ngày ban hành. Ngày hết hiệu lực không chọn là ngày hiệu lực vĩnh viễn',
-                            color: Colors.deepOrangeAccent,
-                          ),
-                          LegalDocumentImportFile(),
-                        ],
+                      const SizedBox(height: 10),
+                      Form(
+                        key: _formKey,
+                        child: Column(
+                          spacing: 10,
+                          children: [
+                            _generalInformation(),
+                            _timeInformation(),
+                            NoteWidget(
+                              icon: Icons.warning_amber_outlined,
+                              note:
+                                  'Ngày ban hành bắt buộc. Ngày hiệu lực bắt buộc và >= ngày ban hành. Ngày hết hiệu lực không chọn là ngày hiệu lực vĩnh viễn',
+                              color: Colors.deepOrangeAccent,
+                            ),
+                            LegalDocumentImportFile(),
+                          ],
+                        ),
                       ),
-                    ),
-                  ]),
+                    ]),
+                  ),
                 ),
-              ),
-              SliverPadding(padding: EdgeInsets.only(bottom: _bottomBarHeight)),
-            ],
-          ),
-          BlocSelector<LegalDocumentBloc, LegalDocumentState, bool>(
-            selector: (state) => state.isLoading,
-            builder: (context, isLoading) => BottomFormActions(
-              isLoading: isLoading,
-              key: _bottomBarKey,
-              onCancel: () => context.pop(),
-              onSave: () => _onSave(context),
+                SliverPadding(
+                  padding: EdgeInsets.only(bottom: _bottomBarHeight),
+                ),
+              ],
             ),
-          ),
-        ],
+            BlocSelector<LegalDocumentBloc, LegalDocumentState, bool>(
+              selector: (state) => state.isLoading,
+              builder: (context, isLoading) => BottomFormActions(
+                isLoading: isLoading,
+                key: _bottomBarKey,
+                onCancel: () => context.pop(),
+                onSave: () => _onSave(context),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -282,22 +317,22 @@ class _LegalDocumentFormPageState extends State<LegalDocumentFormPage> {
     }
     if (_isUpdate) {
       final data = LegalDocumentEntry(
-        id: widget.entry!.id,
-        code: widget.entry?.code == _codeController.text
+        id: _entry!.id,
+        code: _entry?.code == _codeController.text
             ? _codeController.text
-            : widget.entry?.code,
-        title: widget.entry?.title == _nameController.text
+            : _entry?.code,
+        title: _entry?.title == _nameController.text
             ? _nameController.text
-            : widget.entry?.title,
-        type: _type ?? widget.entry?.type,
-        issueDate: _issueDate ?? widget.entry?.issueDate,
-        effectiveDate: _effectiveDate ?? widget.entry?.effectiveDate,
-        expiryDate: _expiryDate ?? widget.entry?.expiryDate,
-        description: widget.entry?.description == _descriptionController.text
+            : _entry?.title,
+        type: _type ?? _entry?.type,
+        issueDate: _issueDate ?? _entry?.issueDate,
+        effectiveDate: _effectiveDate ?? _entry?.effectiveDate,
+        expiryDate: _expiryDate ?? _entry?.expiryDate,
+        description: _entry?.description == _descriptionController.text
             ? _descriptionController.text
-            : widget.entry?.description,
-        fileName: widget.entry?.fileName,
-        fileUrl: widget.entry?.fileUrl,
+            : _entry?.description,
+        fileName: _entry?.fileName,
+        fileUrl: _entry?.fileUrl,
       );
       context.legalDocumentBloc.add(
         LegalDocumentEvent.update(
