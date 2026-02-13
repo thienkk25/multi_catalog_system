@@ -14,4 +14,4 @@ export 'navigation/navigation.dart';
 export 'responsive/breakpoints.dart';
 export 'responsive/screen_size.dart';
 export 'responsive/responsive_builder.dart';
-export 'extensions/bloc_extension.dart';
+export 'utils/extensions/bloc_extension.dart';
