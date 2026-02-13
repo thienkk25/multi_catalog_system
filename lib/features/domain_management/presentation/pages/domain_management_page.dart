@@ -156,7 +156,10 @@ class _DomainManagementPageState extends State<DomainManagementPage>
             context.goNamed(RouterNames.importFile, extra: 1);
           },
           onPressedAdd: () {
-            context.goNamed(RouterNames.domainForm);
+            context.goNamed(
+              RouterNames.domainForm,
+              queryParameters: {'mode': 'create'},
+            );
           },
         ),
       ],

@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/config/di/injection.dart';
 import 'package:multi_catalog_system/core/extensions/bloc_extension.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
-import 'package:multi_catalog_system/features/domain_management/domain/entities/domain_entry.dart';
 import 'package:multi_catalog_system/features/domain_management/presentation/presentation.dart';
 
 class DomainManagementRoutes {
@@ -36,9 +35,11 @@ class DomainManagementRoutes {
               path: '/form',
               name: RouterNames.domainForm,
               builder: (context, state) {
-                final data = state.extra as Map<String, dynamic>;
+                final mode = state.uri.queryParameters['mode']!;
+                final id = state.uri.queryParameters['id'];
                 return DomainManagementFormPage(
-                  entry: data['entry'] as DomainEntry?,
+                  mode: DomainManagementFormType.values.byName(mode),
+                  id: id,
                 );
               },
             ),
