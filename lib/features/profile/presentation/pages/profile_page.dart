@@ -48,7 +48,6 @@ class _ProfilePageState extends State<ProfilePage>
 
   @override
   void dispose() {
-    _bottomBarKey.currentState?.dispose();
     super.dispose();
   }
 
@@ -176,10 +175,7 @@ class _ProfilePageState extends State<ProfilePage>
                       style: TextStyle(color: Colors.white),
                     ),
                     onTap: () {
-                      context.goNamed(
-                        RouterNames.profileForm,
-                        extra: {'bloc': bloc, 'entry': entry},
-                      );
+                      context.goNamed(RouterNames.profileForm);
                     },
                   ),
                 ),

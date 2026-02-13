@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/config/di/injection.dart';
 import 'package:multi_catalog_system/core/extensions/bloc_extension.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
-import 'package:multi_catalog_system/core/domain/entities/auth/user_entry.dart';
 import 'package:multi_catalog_system/features/profile/presentation/presentation.dart';
 
 class ProfileRoutes {
@@ -25,8 +24,8 @@ class ProfileRoutes {
               path: '/form',
               name: RouterNames.profileForm,
               builder: (context, state) {
-                final data = state.extra as Map<String, dynamic>;
-                return ProfileFormPage(entry: data['entry'] as UserEntry);
+                context.profileBloc.add(const ProfileEvent.getProfile());
+                return ProfileFormPage();
               },
             ),
             GoRoute(

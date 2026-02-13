@@ -36,7 +36,6 @@ class _ProfileChangePasswordPageState extends State<ProfileChangePasswordPage> {
 
   @override
   void dispose() {
-    _formKey.currentState?.dispose();
     _newPasswordController.dispose();
     _confirmPasswordController.dispose();
     _focusNodeConfirmPassword.dispose();

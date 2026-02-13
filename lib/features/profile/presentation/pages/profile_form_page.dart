@@ -13,25 +13,36 @@ import 'package:multi_catalog_system/features/profile/presentation/bloc/profile_
 import 'package:multi_catalog_system/features/profile/presentation/bloc/profile_state.dart';
 
 class ProfileFormPage extends StatefulWidget {
-  final UserEntry entry;
-  const ProfileFormPage({super.key, required this.entry});
+  const ProfileFormPage({super.key});
 
   @override
   State<ProfileFormPage> createState() => _ProfileFormPageState();
 }
 
 class _ProfileFormPageState extends State<ProfileFormPage> {
+  UserEntry? _entry;
+
   final _formKey = GlobalKey<FormState>();
   final _fullNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
 
+  bool _didInit = false;
+
   @override
   void initState() {
     super.initState();
-    _emailController.text = widget.entry.email ?? '';
-    _fullNameController.text = widget.entry.fullName ?? '';
-    _phoneController.text = widget.entry.phone ?? '';
+  }
+
+  void _initFromData(UserEntry entry) {
+    if (_didInit) return;
+
+    _entry = entry;
+    _fullNameController.text = entry.fullName ?? '';
+    _emailController.text = entry.email ?? '';
+    _phoneController.text = entry.phone ?? '';
+
+    _didInit = true;
   }
 
   @override
@@ -39,13 +50,12 @@ class _ProfileFormPageState extends State<ProfileFormPage> {
     _fullNameController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
-    _formKey.currentState?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<ProfileBloc, ProfileState>(
+    return BlocConsumer<ProfileBloc, ProfileState>(
       listener: (context, state) {
         if (state.error != null) {
           context.notificationCubit.error(state.error!);
@@ -54,8 +64,11 @@ class _ProfileFormPageState extends State<ProfileFormPage> {
         if (state.successMessage != null) {
           context.notificationCubit.success(state.successMessage!);
         }
+        if (state.entry != null) {
+          _initFromData(state.entry!);
+        }
       },
-      child: SafeArea(
+      builder: (context, state) => SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Form(
@@ -81,7 +94,7 @@ class _ProfileFormPageState extends State<ProfileFormPage> {
                       ),
                       alignment: Alignment.center,
                       child: Text(
-                        widget.entry.fullName?[0].toUpperCase() ?? '?',
+                        _entry?.fullName?[0].toUpperCase() ?? '?',
                         style: TextStyle(
                           fontSize: 48,
                           color: Colors.white,
@@ -179,10 +192,10 @@ class _ProfileFormPageState extends State<ProfileFormPage> {
     if (!_formKey.currentState!.validate()) return;
 
     final updated = UserEntry(
-      fullName: widget.entry.fullName != _fullNameController.text
+      fullName: _entry?.fullName != _fullNameController.text
           ? _fullNameController.text
           : null,
-      phone: widget.entry.phone != _phoneController.text
+      phone: _entry?.phone != _phoneController.text
           ? _phoneController.text
           : null,
     );
