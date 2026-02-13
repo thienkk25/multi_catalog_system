@@ -10,6 +10,7 @@ import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/core/widgets/custom_dropdown_button.dart';
 import 'package:multi_catalog_system/core/widgets/custom_input.dart';
 import 'package:multi_catalog_system/core/widgets/file_icon_widget.dart';
+import 'package:multi_catalog_system/core/widgets/role_based_widget.dart';
 import 'package:multi_catalog_system/features/catalog_lookup/presentation/bloc/catalog_lookup_bloc.dart';
 import 'package:multi_catalog_system/features/catalog_lookup/presentation/bloc/catalog_lookup_event.dart';
 import 'package:multi_catalog_system/features/catalog_lookup/presentation/bloc/catalog_lookup_state.dart';
@@ -50,6 +51,7 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
   List<LegalDocumentEntry> _legalDocuments = [];
   String? _selectedDomainId;
   String? _selectedCategoryGroupId;
+  String? _selectedStatus;
 
   final GlobalKey _bottomBarKey = GlobalKey();
   double _bottomBarHeight = 0;
@@ -125,6 +127,7 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
       code: json['code'],
       description: json['description'],
       group: CategoryGroupRefEntry(id: json['group_id']),
+      status: json['status'],
     );
 
     _codeController.text = json['code'] ?? '';
@@ -132,6 +135,7 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
     _descriptionController.text = json['description'] ?? '';
 
     _selectedCategoryGroupId = json['group_id'];
+    _selectedStatus = json['status'];
 
     _didInit = true;
   }
@@ -338,6 +342,32 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
               );
             },
           ),
+          RoleBasedWidget(
+            permission: ['domainOfficer'],
+            child: CustomDropdownButton<String>(
+              lable: const Text(
+                'Trạng thái',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
+              hint: 'Chọn trạng thái',
+              value: _selectedStatus,
+              items: [
+                DropdownMenuItem<String>(
+                  value: 'active',
+                  child: Text('Hoạt động'),
+                ),
+                DropdownMenuItem<String>(
+                  value: 'inactive',
+                  child: Text('Ngừng hoạt động'),
+                ),
+              ],
+              onChanged: (value) {
+                setState(() {
+                  _selectedStatus = value;
+                });
+              },
+            ),
+          ),
           CustomInput(
             controller: _descriptionController,
             lable: Row(
@@ -449,6 +479,7 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
             ? _descriptionController.text
             : null,
         group: CategoryGroupRefEntry(id: _selectedCategoryGroupId),
+        status: _selectedStatus,
         legalDocuments: _legalDocuments,
       );
       if (_isAdmin) {
@@ -471,6 +502,7 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
             ? _descriptionController.text
             : _entry?.description,
         group: CategoryGroupRefEntry(id: _selectedCategoryGroupId),
+        status: _selectedStatus,
         legalDocuments: _legalDocuments,
       );
       if (_isAdmin) {
@@ -496,6 +528,7 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
             ? _descriptionController.text
             : _entry?.description,
         group: CategoryGroupRefEntry(id: _selectedCategoryGroupId),
+        status: _selectedStatus,
         legalDocuments: _legalDocuments,
       );
 

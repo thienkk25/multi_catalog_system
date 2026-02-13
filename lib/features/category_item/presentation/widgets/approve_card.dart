@@ -383,6 +383,7 @@ class ApproveCard extends StatelessWidget {
           context.itemVersionBloc.add(
             CategoryItemVersionEvent.approveVersion(id: id),
           );
+          context.pop();
         },
       ),
     );
