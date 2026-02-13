@@ -2,11 +2,14 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:multi_catalog_system/features/auth/data/data_sources/auth_local_data_source.dart';
 import 'package:multi_catalog_system/features/auth/domain/repositories/auth_repository.dart';
+import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_event.dart';
 
 class AuthInterceptor extends Interceptor {
   final Dio dio;
   final AuthLocalDataSource authLocal;
   final AuthRepository authRepository;
+  final AuthBloc authBloc;
 
   Completer<bool>? _refreshCompleter;
 
@@ -14,6 +17,7 @@ class AuthInterceptor extends Interceptor {
     required this.dio,
     required this.authLocal,
     required this.authRepository,
+    required this.authBloc,
   });
 
   // ================= REQUEST =================
@@ -55,7 +59,8 @@ class AuthInterceptor extends Interceptor {
         }
 
         if (refreshed != true) {
-          await authRepository.logout();
+          authBloc.add(AuthEvent.logout());
+          // await authRepository.logout();
           return handler.reject(err);
         }
       }
@@ -63,7 +68,8 @@ class AuthInterceptor extends Interceptor {
       final newToken = await authLocal.getCachedAuthToken();
 
       if (newToken == null || newToken.isEmpty) {
-        await authRepository.logout();
+        authBloc.add(AuthEvent.logout());
+        // await authRepository.logout();
         return handler.reject(err);
       }
 

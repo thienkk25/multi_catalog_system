@@ -62,10 +62,13 @@ Future<void> init() async {
       dio: getIt<Dio>(),
       authLocal: getIt<AuthLocalDataSource>(),
       authRepository: getIt<AuthRepository>(),
+      authBloc: getIt<AuthBloc>(),
     ),
   );
 
   getIt<Dio>().interceptors.add(getIt<AuthInterceptor>());
+
+  getIt.registerFactory(() => HomeBloc());
 
   initCatalogLookupModule();
 
@@ -88,6 +91,4 @@ Future<void> init() async {
   initUserManagementModule();
 
   initImportFileModule();
-
-  getIt.registerFactory(() => HomeBloc());
 }
