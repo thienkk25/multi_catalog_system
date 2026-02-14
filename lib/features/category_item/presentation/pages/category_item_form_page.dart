@@ -10,7 +10,6 @@ import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/core/widgets/custom_dropdown_button.dart';
 import 'package:multi_catalog_system/core/widgets/custom_input.dart';
 import 'package:multi_catalog_system/core/widgets/file_icon_widget.dart';
-import 'package:multi_catalog_system/core/widgets/role_based_widget.dart';
 import 'package:multi_catalog_system/features/catalog_lookup/presentation/bloc/catalog_lookup_bloc.dart';
 import 'package:multi_catalog_system/features/catalog_lookup/presentation/bloc/catalog_lookup_event.dart';
 import 'package:multi_catalog_system/features/catalog_lookup/presentation/bloc/catalog_lookup_state.dart';
@@ -98,6 +97,7 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
     _codeController.text = entry.code ?? '';
     _nameController.text = entry.name ?? '';
     _descriptionController.text = entry.description ?? '';
+    _selectedStatus = entry.status;
 
     final domainId = entry.group?.domain?.id;
     final groupId = entry.group?.id;
@@ -188,60 +188,62 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
           },
         ),
       ],
-      child: SafeArea(
-        child: Stack(
-          children: [
-            CustomScrollView(
-              slivers: [
-                SliverPadding(
-                  padding: const EdgeInsets.all(10.0),
-                  sliver: SliverList(
-                    delegate: SliverChildListDelegate([
-                      Text(
-                        _isCreate
-                            ? 'Tạo Mục danh mục'
-                            : _entry != null
-                            ? 'Cập nhật Mục danh mục'
-                            : 'Cập nhật Version Mục danh mục',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 20,
+      child: BlocBuilder<CategoryItemBloc, CategoryItemState>(
+        builder: (context, state) => SafeArea(
+          child: Stack(
+            children: [
+              CustomScrollView(
+                slivers: [
+                  SliverPadding(
+                    padding: const EdgeInsets.all(10.0),
+                    sliver: SliverList(
+                      delegate: SliverChildListDelegate([
+                        Text(
+                          _isCreate
+                              ? 'Tạo Mục danh mục'
+                              : _entry != null
+                              ? 'Cập nhật Mục danh mục'
+                              : 'Cập nhật Version Mục danh mục',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 20,
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 10),
-                      Form(
-                        key: _formKey,
-                        child: Column(
-                          spacing: 15,
-                          children: [_generalInformation(), _legalDocument()],
+                        SizedBox(height: 10),
+                        Form(
+                          key: _formKey,
+                          child: Column(
+                            spacing: 15,
+                            children: [_generalInformation(), _legalDocument()],
+                          ),
                         ),
-                      ),
-                    ]),
+                      ]),
+                    ),
                   ),
-                ),
-                SliverPadding(
-                  padding: EdgeInsets.only(bottom: _bottomBarHeight),
-                ),
-              ],
-            ),
-            BlocSelector<CategoryItemBloc, CategoryItemState, bool>(
-              selector: (state) => state.isLoading,
-              builder: (context, isLoading) => BottomFormActions(
-                isLoading: isLoading,
-                key: _bottomBarKey,
-                onCancel: () {
-                  if (!kIsWeb) {
-                    context.pop();
-                  } else {
-                    widget.itemId != null
-                        ? context.goNamed(RouterNames.categoryItem)
-                        : context.goNamed(RouterNames.approve);
-                  }
-                },
-                onSave: () => _onSave(context: context, isEdit: true),
+                  SliverPadding(
+                    padding: EdgeInsets.only(bottom: _bottomBarHeight),
+                  ),
+                ],
               ),
-            ),
-          ],
+              BlocSelector<CategoryItemBloc, CategoryItemState, bool>(
+                selector: (state) => state.isLoading,
+                builder: (context, isLoading) => BottomFormActions(
+                  isLoading: isLoading,
+                  key: _bottomBarKey,
+                  onCancel: () {
+                    if (!kIsWeb) {
+                      context.pop();
+                    } else {
+                      widget.itemId != null
+                          ? context.goNamed(RouterNames.categoryItem)
+                          : context.goNamed(RouterNames.approve);
+                    }
+                  },
+                  onSave: () => _onSave(context: context, isEdit: true),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -342,31 +344,28 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
               );
             },
           ),
-          RoleBasedWidget(
-            permission: ['domainOfficer'],
-            child: CustomDropdownButton<String>(
-              lable: const Text(
-                'Trạng thái',
-                style: TextStyle(fontWeight: FontWeight.w600),
-              ),
-              hint: 'Chọn trạng thái',
-              value: _selectedStatus,
-              items: [
-                DropdownMenuItem<String>(
-                  value: 'active',
-                  child: Text('Hoạt động'),
-                ),
-                DropdownMenuItem<String>(
-                  value: 'inactive',
-                  child: Text('Ngừng hoạt động'),
-                ),
-              ],
-              onChanged: (value) {
-                setState(() {
-                  _selectedStatus = value;
-                });
-              },
+          CustomDropdownButton<String>(
+            lable: const Text(
+              'Trạng thái',
+              style: TextStyle(fontWeight: FontWeight.w600),
             ),
+            hint: 'Chọn trạng thái',
+            value: _selectedStatus,
+            items: [
+              DropdownMenuItem<String>(
+                value: 'active',
+                child: Text('Hoạt động'),
+              ),
+              DropdownMenuItem<String>(
+                value: 'inactive',
+                child: Text('Ngừng hoạt động'),
+              ),
+            ],
+            onChanged: (value) {
+              setState(() {
+                _selectedStatus = value;
+              });
+            },
           ),
           CustomInput(
             controller: _descriptionController,

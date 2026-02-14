@@ -34,6 +34,7 @@ class CategoryItemVersionRepositoryImpl
       'group_id': entry.group?.id,
       'code': entry.code,
       'name': entry.name,
+      'status': entry.status,
       if (entry.description != null) 'description': entry.description,
     },
     'legal_document_ids': entry.legalDocuments?.map((e) => e.id).toList(),
@@ -45,6 +46,7 @@ class CategoryItemVersionRepositoryImpl
       if (entry.group?.id != null) 'group_id': entry.group?.id,
       if (entry.code != null) 'code': entry.code,
       if (entry.name != null) 'name': entry.name,
+      if (entry.status != null) 'status': entry.status,
       if (entry.description != null) 'description': entry.description,
     },
     if (entry.legalDocuments != null && entry.legalDocuments!.isNotEmpty)

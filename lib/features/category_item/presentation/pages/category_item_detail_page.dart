@@ -120,7 +120,7 @@ class _InfoTab extends StatelessWidget {
                     style: TextStyle(fontWeight: FontWeight.w500),
                   ),
                   const Spacer(),
-                  CategoryItemStatusChip(status: entry.status!),
+                  CategoryItemStatusChip(status: entry.status ?? '-'),
                 ],
               ),
             ],

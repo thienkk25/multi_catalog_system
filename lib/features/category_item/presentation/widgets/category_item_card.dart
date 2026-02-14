@@ -73,26 +73,24 @@ class CategoryItemCard extends StatelessWidget {
             _buildDeleteButton(
               permission: const ['admin', 'domainOfficer'],
               onTap: () {
-                final parentContext = context;
-                final isAdmin = parentContext.hasRole('admin');
+                final isAdmin = context.hasRole('admin');
 
                 showDialog(
-                  context: parentContext,
+                  context: context,
                   builder: (_) => CustomAlertDialog(
-                    onCancel: () => parentContext.pop(),
+                    onCancel: () => context.pop(),
                     onConfirm: () {
                       if (entry.id == null) return;
 
                       if (isAdmin) {
-                        final bloc = parentContext.read<CategoryItemBloc>();
+                        final bloc = context.read<CategoryItemBloc>();
 
-                        parentContext.pop();
+                        context.pop();
                         bloc.add(CategoryItemEvent.delete(id: entry.id!));
                       } else {
-                        final bloc = parentContext
-                            .read<CategoryItemVersionBloc>();
+                        final bloc = context.read<CategoryItemVersionBloc>();
 
-                        parentContext.pop();
+                        context.pop();
                         bloc.add(
                           CategoryItemVersionEvent.deleteVersion(id: entry.id!),
                         );
