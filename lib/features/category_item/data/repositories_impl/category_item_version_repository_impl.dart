@@ -120,10 +120,12 @@ class CategoryItemVersionRepositoryImpl
   }
 
   @override
-  Future<Either<Failure, Unit>> deleteVersion({required String id}) async {
+  Future<Either<Failure, CategoryItemVersionEntry>> deleteVersion({
+    required String id,
+  }) async {
     try {
-      await remoteDataSource.deleteVersion(id: id);
-      return const Right(unit);
+      final model = await remoteDataSource.deleteVersion(id: id);
+      return Right(_toEntity(model));
     } on AppException catch (e) {
       return Left(mapExceptionToFailure(e));
     } catch (e) {
@@ -132,10 +134,12 @@ class CategoryItemVersionRepositoryImpl
   }
 
   @override
-  Future<Either<Failure, Unit>> approveVersion({required String id}) async {
+  Future<Either<Failure, CategoryItemVersionEntry>> approveVersion({
+    required String id,
+  }) async {
     try {
-      await remoteDataSource.approveVersion(id: id);
-      return const Right(unit);
+      final model = await remoteDataSource.approveVersion(id: id);
+      return Right(_toEntity(model));
     } on AppException catch (e) {
       return Left(mapExceptionToFailure(e));
     } catch (e) {
@@ -144,13 +148,16 @@ class CategoryItemVersionRepositoryImpl
   }
 
   @override
-  Future<Either<Failure, Unit>> rejectVersion({
+  Future<Either<Failure, CategoryItemVersionEntry>> rejectVersion({
     required String id,
     required String rejectReason,
   }) async {
     try {
-      await remoteDataSource.rejectVersion(id: id, rejectReason: rejectReason);
-      return const Right(unit);
+      final model = await remoteDataSource.rejectVersion(
+        id: id,
+        rejectReason: rejectReason,
+      );
+      return Right(_toEntity(model));
     } on AppException catch (e) {
       return Left(mapExceptionToFailure(e));
     } catch (e) {

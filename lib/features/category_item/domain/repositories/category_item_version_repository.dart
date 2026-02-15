@@ -19,10 +19,14 @@ abstract class CategoryItemVersionRepository {
     required String id,
     int? type,
   });
-  Future<Either<Failure, void>> deleteVersion({required String id});
+  Future<Either<Failure, CategoryItemVersionEntry>> deleteVersion({
+    required String id,
+  });
 
-  Future<Either<Failure, void>> approveVersion({required String id});
-  Future<Either<Failure, void>> rejectVersion({
+  Future<Either<Failure, CategoryItemVersionEntry>> approveVersion({
+    required String id,
+  });
+  Future<Either<Failure, CategoryItemVersionEntry>> rejectVersion({
     required String id,
     required String rejectReason,
   });

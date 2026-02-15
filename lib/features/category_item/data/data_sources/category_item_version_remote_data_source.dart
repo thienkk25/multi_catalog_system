@@ -17,10 +17,10 @@ abstract class CategoryItemVersionRemoteDataSource {
     required String id,
     required Map<String, dynamic> data,
   });
-  Future<void> deleteVersion({required String id});
+  Future<CategoryItemVersionModel> deleteVersion({required String id});
 
-  Future<void> approveVersion({required String id});
-  Future<void> rejectVersion({
+  Future<CategoryItemVersionModel> approveVersion({required String id});
+  Future<CategoryItemVersionModel> rejectVersion({
     required String id,
     required String rejectReason,
   });
@@ -108,9 +108,13 @@ class CategoryItemVersionRemoteDataSourceImpl extends BaseRemoteDataSource
   }
 
   @override
-  Future<void> deleteVersion({required String id}) async {
+  Future<CategoryItemVersionModel> deleteVersion({required String id}) async {
     try {
-      await dio.post('/category-item-version/$id/delete');
+      final response = await dio.post('/category-item-version/$id/delete');
+      if (response.data['data'] == null) {
+        throw UnexpectedException('No data');
+      }
+      return CategoryItemVersionModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);
     } catch (e) {
@@ -119,9 +123,13 @@ class CategoryItemVersionRemoteDataSourceImpl extends BaseRemoteDataSource
   }
 
   @override
-  Future<void> approveVersion({required String id}) async {
+  Future<CategoryItemVersionModel> approveVersion({required String id}) async {
     try {
-      await dio.post('/category-item-version/$id/approve');
+      final response = await dio.post('/category-item-version/$id/approve');
+      if (response.data['data'] == null) {
+        throw UnexpectedException('No data');
+      }
+      return CategoryItemVersionModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);
     } catch (e) {
@@ -130,15 +138,19 @@ class CategoryItemVersionRemoteDataSourceImpl extends BaseRemoteDataSource
   }
 
   @override
-  Future<void> rejectVersion({
+  Future<CategoryItemVersionModel> rejectVersion({
     required String id,
     required String rejectReason,
   }) async {
     try {
-      await dio.post(
+      final response = await dio.post(
         '/category-item-version/$id/reject',
         data: {'reject_reason': rejectReason},
       );
+      if (response.data['data'] == null) {
+        throw UnexpectedException('No data');
+      }
+      return CategoryItemVersionModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);
     } catch (e) {

@@ -133,7 +133,6 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
     _codeController.text = json['code'] ?? '';
     _nameController.text = json['name'] ?? '';
     _descriptionController.text = json['description'] ?? '';
-
     _selectedCategoryGroupId = json['group_id'];
     _selectedStatus = json['status'];
 
@@ -233,10 +232,12 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
                   onCancel: () {
                     if (!kIsWeb) {
                       context.pop();
-                    } else {
+                    } else if (!_isCreate) {
                       widget.itemId != null
                           ? context.goNamed(RouterNames.categoryItem)
                           : context.goNamed(RouterNames.approve);
+                    } else {
+                      context.goNamed(RouterNames.categoryItem);
                     }
                   },
                   onSave: () => _onSave(context: context, isEdit: true),
@@ -275,75 +276,84 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
             validator: (v) =>
                 v == null || v.isEmpty ? 'Vui nhập tên danh mục' : null,
           ),
-          BlocBuilder<CatalogLookupBloc, CatalogLookupState>(
-            builder: (context, state) {
-              final domains = state.domainsRef;
+          if (_isCreate)
+            Column(
+              spacing: 10,
+              children: [
+                BlocBuilder<CatalogLookupBloc, CatalogLookupState>(
+                  builder: (context, state) {
+                    final domains = state.domainsRef;
 
-              return CustomDropdownButton<String>(
-                lable: const Text(
-                  'Lĩnh vực',
-                  style: TextStyle(fontWeight: FontWeight.w600),
-                ),
-                hint: 'Chọn lĩnh vực',
-                value: _selectedDomainId,
-                items: domains
-                    .map(
-                      (e) => DropdownMenuItem<String>(
-                        value: e.id,
-                        child: Text(e.name),
+                    return CustomDropdownButton<String>(
+                      lable: const Text(
+                        'Lĩnh vực',
+                        style: TextStyle(fontWeight: FontWeight.w600),
                       ),
-                    )
-                    .toList(),
+                      hint: 'Chọn lĩnh vực',
+                      value: _selectedDomainId,
+                      items: domains
+                          .map(
+                            (e) => DropdownMenuItem<String>(
+                              value: e.id,
+                              child: Text(e.name),
+                            ),
+                          )
+                          .toList(),
 
-                onChanged: (value) {
-                  if (value == null) return;
+                      onChanged: (value) {
+                        if (value == null) return;
 
-                  setState(() {
-                    _selectedDomainId = value;
-                    _selectedCategoryGroupId = null;
-                  });
-
-                  context.lookupBloc.add(
-                    CatalogLookupEvent.getCategoryGroupsRef(domainId: value),
-                  );
-                },
-                validator: (v) =>
-                    v == null || v.isEmpty ? 'Vui lòng chọn lĩnh vực' : null,
-              );
-            },
-          ),
-          BlocBuilder<CatalogLookupBloc, CatalogLookupState>(
-            builder: (context, state) {
-              final categoryGroups = state.categoryGroupRef;
-
-              return CustomDropdownButton<String>(
-                lable: const Text(
-                  'Nhóm danh mục',
-                  style: TextStyle(fontWeight: FontWeight.w600),
-                ),
-                hint: 'Chọn nhóm danh mục',
-                value: _selectedCategoryGroupId,
-                items: categoryGroups
-                    .map(
-                      (e) => DropdownMenuItem<String>(
-                        value: e.id,
-                        child: Text(e.name),
-                      ),
-                    )
-                    .toList(),
-                onChanged: categoryGroups.isEmpty
-                    ? null
-                    : (value) {
                         setState(() {
-                          _selectedCategoryGroupId = value;
+                          _selectedDomainId = value;
+                          _selectedCategoryGroupId = null;
                         });
+
+                        context.lookupBloc.add(
+                          CatalogLookupEvent.getCategoryGroupsRef(
+                            domainId: value,
+                          ),
+                        );
                       },
-                validator: (v) => v == null || v.isEmpty
-                    ? 'Vui lòng chọn nhóm danh mục'
-                    : null,
-              );
-            },
-          ),
+                      validator: (v) => v == null || v.isEmpty
+                          ? 'Vui lòng chọn lĩnh vực'
+                          : null,
+                    );
+                  },
+                ),
+                BlocBuilder<CatalogLookupBloc, CatalogLookupState>(
+                  builder: (context, state) {
+                    final categoryGroups = state.categoryGroupRef;
+
+                    return CustomDropdownButton<String>(
+                      lable: const Text(
+                        'Nhóm danh mục',
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      hint: 'Chọn nhóm danh mục',
+                      value: _selectedCategoryGroupId,
+                      items: categoryGroups
+                          .map(
+                            (e) => DropdownMenuItem<String>(
+                              value: e.id,
+                              child: Text(e.name),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: categoryGroups.isEmpty
+                          ? null
+                          : (value) {
+                              setState(() {
+                                _selectedCategoryGroupId = value;
+                              });
+                            },
+                      validator: (v) => v == null || v.isEmpty
+                          ? 'Vui lòng chọn nhóm danh mục'
+                          : null,
+                    );
+                  },
+                ),
+              ],
+            ),
           CustomDropdownButton<String>(
             lable: const Text(
               'Trạng thái',
@@ -539,6 +549,10 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
         ),
       );
     }
-    context.pop();
+    if (_isCreate || _isUpdateItem) {
+      context.pop();
+    } else {
+      context.goNamed(RouterNames.approve);
+    }
   }
 }

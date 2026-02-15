@@ -138,12 +138,22 @@ class CategoryItemVersionBloc
         if (emit.isDone) return;
         result.fold(
           (l) => emit(state.copyWith(isLoading: false, error: mapFailure(l))),
-          (r) => emit(
-            state.copyWith(
-              isLoading: false,
-              successMessage: 'Gửi yêu cầu xóa thành công',
-            ),
-          ),
+          (r) {
+            final index = state.entries.indexWhere((d) => d.id == r.id);
+
+            if (index == -1 || state.entries[index] == r) return;
+
+            final updated = List.of(state.entries);
+            updated[index] = r;
+
+            emit(
+              state.copyWith(
+                isLoading: false,
+                successMessage: 'Gửi yêu cầu xóa thông tin',
+                entries: updated,
+              ),
+            );
+          },
         );
       },
       approveVersion: (e) async {
@@ -159,12 +169,22 @@ class CategoryItemVersionBloc
         if (emit.isDone) return;
         result.fold(
           (l) => emit(state.copyWith(isLoading: false, error: mapFailure(l))),
-          (r) => emit(
-            state.copyWith(
-              isLoading: false,
-              successMessage: 'Phê duyệt thành công',
-            ),
-          ),
+          (r) {
+            final index = state.entries.indexWhere((d) => d.id == r.id);
+
+            if (index == -1 || state.entries[index] == r) return;
+
+            final updated = List.of(state.entries);
+            updated[index] = r;
+
+            emit(
+              state.copyWith(
+                isLoading: false,
+                successMessage: 'Phê duyệt thành công',
+                entries: updated,
+              ),
+            );
+          },
         );
       },
       rejectVersion: (e) async {
@@ -183,12 +203,21 @@ class CategoryItemVersionBloc
         if (emit.isDone) return;
         result.fold(
           (l) => emit(state.copyWith(isLoading: false, error: mapFailure(l))),
-          (r) => emit(
-            state.copyWith(
-              isLoading: false,
-              successMessage: 'Từ chối thành công',
-            ),
-          ),
+          (r) {
+            final index = state.entries.indexWhere((d) => d.id == r.id);
+
+            if (index == -1 || state.entries[index] == r) return;
+
+            final updated = List.of(state.entries);
+            updated[index] = r;
+            emit(
+              state.copyWith(
+                isLoading: false,
+                successMessage: 'Từ chối thành công',
+                entries: updated,
+              ),
+            );
+          },
         );
       },
       delete: (e) async {
