@@ -154,25 +154,26 @@ class ApproveCard extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            SizedBox(
-                              width: 120,
-                              child: CustomButton(
-                                onTap: () {
-                                  context.goNamed(
-                                    RouterNames.categoryItemForm,
-                                    queryParameters: {
-                                      'mode': 'updateVersion',
-                                      'versionId': version.id.toString(),
-                                    },
-                                  );
-                                },
-                                colorBackground: Colors.green,
-                                textButton: const Text(
-                                  "Chỉnh sửa",
-                                  style: TextStyle(color: Colors.white),
+                            if (version.changeType != 'delete')
+                              SizedBox(
+                                width: 120,
+                                child: CustomButton(
+                                  onTap: () {
+                                    context.goNamed(
+                                      RouterNames.categoryItemForm,
+                                      queryParameters: {
+                                        'mode': 'updateVersion',
+                                        'versionId': version.id.toString(),
+                                      },
+                                    );
+                                  },
+                                  colorBackground: Colors.green,
+                                  textButton: const Text(
+                                    "Chỉnh sửa",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
                                 ),
                               ),
-                            ),
                           ],
                         ),
                       ),
