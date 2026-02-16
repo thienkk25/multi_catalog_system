@@ -110,19 +110,8 @@ class CategoryItemVersionBloc
         result.fold(
           (l) => emit(state.copyWith(isLoading: false, error: mapFailure(l))),
           (r) {
-            final index = state.entries.indexWhere((d) => d.id == r.id);
-
-            if (index == -1 || state.entries[index] == r) return;
-
-            final updated = List.of(state.entries);
-            updated[index] = r;
-
             emit(
-              state.copyWith(
-                isLoading: false,
-                successMessage: 'Thành công',
-                entries: updated,
-              ),
+              state.copyWith(isLoading: false, successMessage: 'Thành công'),
             );
           },
         );
@@ -141,18 +130,11 @@ class CategoryItemVersionBloc
         result.fold(
           (l) => emit(state.copyWith(isLoading: false, error: mapFailure(l))),
           (r) {
-            final index = state.entries.indexWhere((d) => d.id == r.id);
-
-            if (index == -1 || state.entries[index] == r) return;
-
-            final updated = List.of(state.entries);
-            updated[index] = r;
-
             emit(
               state.copyWith(
                 isLoading: false,
-                successMessage: 'Gửi yêu cầu xóa thông tin',
-                entries: updated,
+                successMessage: 'Gửi yêu cầu thành công',
+                // entries: updated,
               ),
             );
           },

@@ -15,7 +15,7 @@ class ApprovePage extends StatefulWidget {
 }
 
 class _ApprovePageState extends State<ApprovePage>
-    with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
+    with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
 

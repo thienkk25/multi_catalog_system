@@ -25,7 +25,11 @@ class ImportFilePage extends StatefulWidget {
   State<ImportFilePage> createState() => _ImportFilePageState();
 }
 
-class _ImportFilePageState extends State<ImportFilePage> {
+class _ImportFilePageState extends State<ImportFilePage>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   Map<String, dynamic>? fileInfo;
   dynamic file;
 
@@ -68,6 +72,7 @@ class _ImportFilePageState extends State<ImportFilePage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return BlocListener<ImportFileBloc, ImportFileState>(
       listener: (context, state) {
         if (state.error != null) {

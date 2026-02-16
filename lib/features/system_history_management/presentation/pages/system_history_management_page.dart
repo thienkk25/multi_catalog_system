@@ -18,7 +18,11 @@ class SystemHistoryManagementPage extends StatefulWidget {
 }
 
 class _SystemHistoryManagementPageState
-    extends State<SystemHistoryManagementPage> {
+    extends State<SystemHistoryManagementPage>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   final TextEditingController _searchController = TextEditingController();
   Timer? _debounce;
   late final SystemHistoryBloc bloc;
@@ -39,6 +43,7 @@ class _SystemHistoryManagementPageState
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.all(10.0),
