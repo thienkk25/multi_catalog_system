@@ -176,4 +176,16 @@ class CategoryItemVersionRepositoryImpl
       return Left(UnexpectedFailure(e.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, Unit>> rollbackVersion({required String id}) async {
+    try {
+      await remoteDataSource.rollbackVersion(id: id);
+      return const Right(unit);
+    } on AppException catch (e) {
+      return Left(mapExceptionToFailure(e));
+    } catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
+    }
+  }
 }

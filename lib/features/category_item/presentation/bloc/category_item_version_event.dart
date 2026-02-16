@@ -34,4 +34,7 @@ class CategoryItemVersionEvent with _$CategoryItemVersionEvent {
   }) = RejectVersion;
 
   const factory CategoryItemVersionEvent.delete({required String id}) = Delete;
+
+  const factory CategoryItemVersionEvent.rollbackVersion({required String id}) =
+      RollbackVersion;
 }

@@ -60,7 +60,6 @@ class AuthInterceptor extends Interceptor {
 
         if (refreshed != true) {
           authBloc.add(AuthEvent.logout());
-          // await authRepository.logout();
           return handler.reject(err);
         }
       }
@@ -69,7 +68,6 @@ class AuthInterceptor extends Interceptor {
 
       if (newToken == null || newToken.isEmpty) {
         authBloc.add(AuthEvent.logout());
-        // await authRepository.logout();
         return handler.reject(err);
       }
 

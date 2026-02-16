@@ -26,6 +26,7 @@ abstract class CategoryItemVersionRemoteDataSource {
   });
 
   Future<void> delete({required String id});
+  Future<void> rollbackVersion({required String id});
 }
 
 class CategoryItemVersionRemoteDataSourceImpl extends BaseRemoteDataSource
@@ -162,6 +163,17 @@ class CategoryItemVersionRemoteDataSourceImpl extends BaseRemoteDataSource
   Future<void> delete({required String id}) async {
     try {
       await dio.delete('/category-item-version/$id');
+    } on DioException catch (e) {
+      handleDioError(e);
+    } catch (e) {
+      throw UnexpectedException(e.toString());
+    }
+  }
+
+  @override
+  Future<void> rollbackVersion({required String id}) async {
+    try {
+      await dio.delete('/category-item-version/$id/rollback');
     } on DioException catch (e) {
       handleDioError(e);
     } catch (e) {

@@ -73,13 +73,6 @@ class CategoryItemRoutes {
             );
             return const ApprovePage();
           },
-          routes: [
-            GoRoute(
-              path: '/id/:id',
-              name: RouterNames.approveDetail,
-              builder: (context, state) => const ApprovePage(),
-            ),
-          ],
         ),
       ],
     ),

@@ -15,6 +15,7 @@ import 'package:multi_catalog_system/features/category_item/presentation/bloc/ca
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_version_event.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_version_state.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/widgets/category_item_status_chip.dart';
+import 'package:multi_catalog_system/features/category_item/presentation/widgets/category_item_version_history_card.dart';
 import 'package:multi_catalog_system/features/legal_document/domain/entities/legal_document_entry.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -44,6 +45,7 @@ class _CategoryItemDetailPageState extends State<CategoryItemDetailPage>
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CategoryItemBloc, CategoryItemState>(
+      buildWhen: (previous, current) => previous.entries != current.entries,
       builder: (context, state) {
         if (state.isLoading) {
           return const Scaffold(
@@ -196,12 +198,11 @@ class _HistoryTab extends StatelessWidget {
         if (state.error != null) {
           return Center(child: Text(state.error!));
         }
+        final entries = state.entries;
 
-        if (state.entries.isEmpty) {
+        if (entries.isEmpty) {
           return const Center(child: Text('Không có lịch sử'));
         }
-
-        final entries = state.entries;
 
         return ListView.separated(
           padding: const EdgeInsets.all(16),
@@ -210,82 +211,14 @@ class _HistoryTab extends StatelessWidget {
           itemBuilder: (context, index) {
             final indexVersion = entries.length - 1 - index;
             final entry = entries[index];
-            return CustomCard(
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Icon(Icons.history, size: 22, color: Colors.blue),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Wrap(
-                            children: [
-                              Text(
-                                'Phiên bản ${indexVersion + 1}',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              _changeType(entry.changeType),
-                            ],
-                          ),
-                          const SizedBox(height: 4),
-                          Text(entry.changeSummary ?? '-'),
-                          const SizedBox(height: 8),
-                          Wrap(
-                            spacing: 12,
-                            runSpacing: 4,
-                            children: [
-                              Text(
-                                'Ngày tạo: ${dateFormat(entry.createdAt)}',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey,
-                                ),
-                              ),
-
-                              if (entry.appliedAt != null)
-                                Text(
-                                  'Áp dụng: ${dateFormat(entry.appliedAt)}',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    CategoryItemStatusChip(status: entry.status ?? ''),
-                  ],
-                ),
-              ),
+            return CategoryItemVersionHistoryCard(
+              entry: entry,
+              indexVersion: indexVersion,
             );
           },
         );
       },
     );
-  }
-
-  Widget _changeType(String? changeType) {
-    switch (changeType) {
-      case 'create':
-        return Icon(Icons.add_circle, size: 16, color: Colors.green);
-      case 'update':
-        return Icon(Icons.edit, size: 16, color: Colors.blue);
-      case 'delete':
-        return Icon(Icons.delete, size: 16, color: Colors.red);
-      default:
-        return const SizedBox.shrink();
-    }
   }
 }
 

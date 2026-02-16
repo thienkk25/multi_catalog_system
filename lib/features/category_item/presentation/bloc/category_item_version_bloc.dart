@@ -16,6 +16,7 @@ class CategoryItemVersionBloc
   final ApproveCategoryItemVersionUseCase approveVersion;
   final RejectCategoryItemVersionUseCase rejectVersion;
   final DeleteOriginCategoryItemVersionUseCase deleteOrigin;
+  final RollbackCategoryItemVersionUseCase rollbackVersion;
 
   CategoryItemVersionBloc({
     required this.getAll,
@@ -26,6 +27,7 @@ class CategoryItemVersionBloc
     required this.approveVersion,
     required this.rejectVersion,
     required this.deleteOrigin,
+    required this.rollbackVersion,
   }) : super(const CategoryItemVersionState()) {
     on<CategoryItemVersionEvent>(_onEvent);
   }
@@ -235,6 +237,27 @@ class CategoryItemVersionBloc
         result.fold(
           (l) => emit(state.copyWith(entries: previous, error: mapFailure(l))),
           (r) => emit(state.copyWith(successMessage: 'Xóa thành công')),
+        );
+      },
+      rollbackVersion: (e) async {
+        emit(
+          state.copyWith(
+            isLoading: true,
+            error: null,
+            successMessage: null,
+            entry: null,
+          ),
+        );
+        final result = await rollbackVersion(id: e.id);
+        if (emit.isDone) return;
+        result.fold(
+          (l) => emit(state.copyWith(isLoading: false, error: mapFailure(l))),
+          (r) => emit(
+            state.copyWith(
+              isLoading: false,
+              successMessage: 'Khôi phục thành công',
+            ),
+          ),
         );
       },
     );

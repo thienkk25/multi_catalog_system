@@ -21,6 +21,7 @@ class CategoryItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isAdmin = context.hasRole('admin');
     return GestureDetector(
       onTap: () {
         context.goNamed(
@@ -70,36 +71,41 @@ class CategoryItemCard extends StatelessWidget {
                 style: TextStyle(color: Colors.grey.shade600),
               ),
             ),
-            _buildDeleteButton(
-              permission: const ['admin', 'domainOfficer'],
-              onTap: () {
-                final isAdmin = context.hasRole('admin');
+            if (isAdmin || entry.status == 'active')
+              _buildDeleteButton(
+                context: context,
+                permission: const ['admin', 'domainOfficer'],
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (_) => CustomAlertDialog(
+                      title: 'Xác nhận vô hiệu hóa',
+                      content: 'Bạn có chắc chắn muốn vô hiệu hóa bản ghi?',
+                      onCancel: () => context.pop(),
+                      confirmText: 'Vô hiệu hóa',
+                      onConfirm: () {
+                        if (entry.id == null) return;
 
-                showDialog(
-                  context: context,
-                  builder: (_) => CustomAlertDialog(
-                    onCancel: () => context.pop(),
-                    onConfirm: () {
-                      if (entry.id == null) return;
+                        if (isAdmin) {
+                          final bloc = context.read<CategoryItemBloc>();
 
-                      if (isAdmin) {
-                        final bloc = context.read<CategoryItemBloc>();
+                          context.pop();
+                          bloc.add(CategoryItemEvent.delete(id: entry.id!));
+                        } else {
+                          final bloc = context.read<CategoryItemVersionBloc>();
 
-                        context.pop();
-                        bloc.add(CategoryItemEvent.delete(id: entry.id!));
-                      } else {
-                        final bloc = context.read<CategoryItemVersionBloc>();
-
-                        context.pop();
-                        bloc.add(
-                          CategoryItemVersionEvent.deleteVersion(id: entry.id!),
-                        );
-                      }
-                    },
-                  ),
-                );
-              },
-            ),
+                          context.pop();
+                          bloc.add(
+                            CategoryItemVersionEvent.deleteVersion(
+                              id: entry.id!,
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                  );
+                },
+              ),
           ],
         ),
       ),
@@ -107,9 +113,11 @@ class CategoryItemCard extends StatelessWidget {
   }
 
   Widget _buildDeleteButton({
+    required BuildContext context,
     required List<String> permission,
     required VoidCallback onTap,
   }) {
+    final isAdmin = context.hasRole('admin');
     return RoleBasedWidget(
       permission: permission,
       child: Align(
@@ -121,9 +129,12 @@ class CategoryItemCard extends StatelessWidget {
             const SizedBox(height: 12),
             GestureDetector(
               onTap: onTap,
-              child: const Padding(
+              child: Padding(
                 padding: EdgeInsets.all(10),
-                child: Icon(Icons.delete, color: Colors.red),
+                child: Icon(
+                  isAdmin ? Icons.delete : Icons.block,
+                  color: Colors.red,
+                ),
               ),
             ),
           ],

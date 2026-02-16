@@ -15,3 +15,4 @@ export 'use_cases/create_category_item_version_use_case.dart';
 export 'use_cases/update_category_item_version_use_case.dart';
 export 'repositories/category_item_version_repository.dart';
 export 'entities/category_group_ref_entry.dart';
+export 'use_cases/rollback_category_item_version_use_case.dart';
