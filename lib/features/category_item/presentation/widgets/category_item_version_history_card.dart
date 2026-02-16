@@ -207,7 +207,7 @@ class _InfoBottomSheet extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  onTap: () => _confirmRollback(context),
+                  onTap: () async => _confirmRollback(context),
                 ),
             ],
           ),
@@ -313,8 +313,8 @@ class _InfoBottomSheet extends StatelessWidget {
     }
   }
 
-  void _confirmRollback(BuildContext context) {
-    showDialog(
+  Future<void> _confirmRollback(BuildContext context) async {
+    await showDialog(
       context: context,
       builder: (_) => CustomAlertDialog(
         title: 'Xác nhận khôi phục',
@@ -328,5 +328,7 @@ class _InfoBottomSheet extends StatelessWidget {
         },
       ),
     );
+    if (!context.mounted) return;
+    context.pop();
   }
 }

@@ -26,7 +26,7 @@ abstract class CategoryItemVersionRemoteDataSource {
   });
 
   Future<void> delete({required String id});
-  Future<void> rollbackVersion({required String id});
+  Future<CategoryItemVersionModel> rollbackVersion({required String id});
 }
 
 class CategoryItemVersionRemoteDataSourceImpl extends BaseRemoteDataSource
@@ -171,9 +171,13 @@ class CategoryItemVersionRemoteDataSourceImpl extends BaseRemoteDataSource
   }
 
   @override
-  Future<void> rollbackVersion({required String id}) async {
+  Future<CategoryItemVersionModel> rollbackVersion({required String id}) async {
     try {
-      await dio.delete('/category-item-version/$id/rollback');
+      final response = await dio.post('/category-item-version/$id/rollback');
+      if (response.data['data'] == null) {
+        throw UnexpectedException('No data');
+      }
+      return CategoryItemVersionModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);
     } catch (e) {

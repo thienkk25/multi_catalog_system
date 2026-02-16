@@ -33,5 +33,7 @@ abstract class CategoryItemVersionRepository {
 
   Future<Either<Failure, void>> delete({required String id});
 
-  Future<Either<Failure, void>> rollbackVersion({required String id});
+  Future<Either<Failure, CategoryItemVersionEntry>> rollbackVersion({
+    required String id,
+  });
 }

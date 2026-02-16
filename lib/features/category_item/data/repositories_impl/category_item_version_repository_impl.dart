@@ -178,10 +178,12 @@ class CategoryItemVersionRepositoryImpl
   }
 
   @override
-  Future<Either<Failure, Unit>> rollbackVersion({required String id}) async {
+  Future<Either<Failure, CategoryItemVersionEntry>> rollbackVersion({
+    required String id,
+  }) async {
     try {
-      await remoteDataSource.rollbackVersion(id: id);
-      return const Right(unit);
+      final model = await remoteDataSource.rollbackVersion(id: id);
+      return Right(_toEntity(model));
     } on AppException catch (e) {
       return Left(mapExceptionToFailure(e));
     } catch (e) {

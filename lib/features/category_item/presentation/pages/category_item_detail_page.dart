@@ -45,7 +45,6 @@ class _CategoryItemDetailPageState extends State<CategoryItemDetailPage>
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CategoryItemBloc, CategoryItemState>(
-      buildWhen: (previous, current) => previous.entries != current.entries,
       builder: (context, state) {
         if (state.isLoading) {
           return const Scaffold(

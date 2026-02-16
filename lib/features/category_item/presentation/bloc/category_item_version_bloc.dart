@@ -255,6 +255,7 @@ class CategoryItemVersionBloc
           (r) => emit(
             state.copyWith(
               isLoading: false,
+              entries: [r, ...state.entries],
               successMessage: 'Khôi phục thành công',
             ),
           ),
