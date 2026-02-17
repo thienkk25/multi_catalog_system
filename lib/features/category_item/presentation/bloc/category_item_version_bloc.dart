@@ -44,9 +44,17 @@ class CategoryItemVersionBloc
             error: null,
             successMessage: null,
             entry: null,
+            page: 1,
+            hasMore: true,
+            entries: [],
           ),
         );
-        final result = await getAll(itemId: e.itemId, search: e.search);
+        final result = await getAll(
+          itemId: e.itemId,
+          search: e.search,
+          page: 1,
+          limit: state.limit,
+        );
         if (emit.isDone) return;
         result.fold(
           (l) => emit(state.copyWith(isLoading: false, error: mapFailure(l))),

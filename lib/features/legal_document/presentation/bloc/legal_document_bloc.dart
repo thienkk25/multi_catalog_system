@@ -36,10 +36,17 @@ class LegalDocumentBloc extends Bloc<LegalDocumentEvent, LegalDocumentState> {
             error: null,
             successMessage: null,
             entry: null,
+            page: 1,
+            hasMore: true,
+            entries: [],
           ),
         );
 
-        final result = await getAll(search: v.search);
+        final result = await getAll(
+          search: v.search,
+          page: 1,
+          limit: state.limit,
+        );
         if (emit.isDone) return;
 
         result.fold(

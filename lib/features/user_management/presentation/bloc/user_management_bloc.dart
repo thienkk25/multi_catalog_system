@@ -42,10 +42,17 @@ class UserManagementBloc
             error: null,
             successMessage: null,
             entry: null,
+            page: 1,
+            hasMore: true,
+            entries: [],
           ),
         );
 
-        final result = await getAll(search: e.search);
+        final result = await getAll(
+          search: e.search,
+          page: 1,
+          limit: state.limit,
+        );
         if (emit.isDone) return;
         result.fold(
           (l) => emit(state.copyWith(isLoading: false, error: mapFailure(l))),

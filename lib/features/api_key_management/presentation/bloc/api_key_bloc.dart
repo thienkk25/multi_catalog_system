@@ -32,10 +32,17 @@ class ApiKeyBloc extends Bloc<ApiKeyEvent, ApiKeyState> {
             successMessage: null,
             entry: null,
             createdEntry: null,
+            page: 1,
+            hasMore: true,
+            entries: [],
           ),
         );
 
-        final result = await getAll(search: v.search);
+        final result = await getAll(
+          search: v.search,
+          page: 1,
+          limit: state.limit,
+        );
         if (emit.isDone) return;
 
         result.fold(
