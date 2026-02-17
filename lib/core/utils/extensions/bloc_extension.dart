@@ -8,7 +8,6 @@ import 'package:multi_catalog_system/features/category_group/presentation/bloc/c
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_bloc.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_version_bloc.dart';
 import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_management_bloc.dart';
-import 'package:multi_catalog_system/features/home/presentation/bloc/home_bloc.dart';
 import 'package:multi_catalog_system/features/import_file/presentation/bloc/import_file_bloc.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/bloc/document_file_cubit.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/bloc/legal_document_bloc.dart';
@@ -26,7 +25,6 @@ extension BlocX on BuildContext {
   CategoryItemVersionBloc get itemVersionBloc =>
       read<CategoryItemVersionBloc>();
   DomainManagementBloc get domainManagementBloc => read<DomainManagementBloc>();
-  HomeBloc get homeBloc => read<HomeBloc>();
   ImportFileBloc get importFileBloc => read<ImportFileBloc>();
   LegalDocumentBloc get legalDocumentBloc => read<LegalDocumentBloc>();
   DocumentFileCubit get documentFileCubit => read<DocumentFileCubit>();

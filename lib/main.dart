@@ -5,7 +5,6 @@ import 'package:multi_catalog_system/core/config/app/url_strategy.dart'
 import 'core/core.dart';
 import 'features/auth/presentation/presentation.dart';
 import 'features/catalog_lookup/presentation/presentation.dart';
-import 'features/home/presentation/presentation.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -70,7 +69,6 @@ class MainApp extends StatelessWidget {
             return MultiBlocProvider(
               key: ValueKey(isAuthenticated),
               providers: [
-                BlocProvider(create: (_) => getIt<HomeBloc>()),
                 BlocProvider(
                   create: (_) =>
                       getIt<CatalogLookupBloc>()

@@ -16,6 +16,10 @@ class HomeShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return HomePage(body: navigationShell, onSelectTab: _goTab);
+    return HomePage(
+      currentIndex: navigationShell.currentIndex,
+      body: navigationShell,
+      onSelectTab: _goTab,
+    );
   }
 }

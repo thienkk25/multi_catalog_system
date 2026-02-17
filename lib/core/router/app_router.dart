@@ -3,6 +3,7 @@ import 'package:multi_catalog_system/core/navigation/shells/home_shell.dart';
 import 'package:multi_catalog_system/features/features.dart';
 
 import 'api_key_management/api_key_management_routes.dart';
+import 'approve/approve_routes.dart';
 import 'auth/auth_routes.dart';
 import 'catalog_lookup/catalog_lookup_routes.dart';
 import 'category_group/category_group_routes.dart';
@@ -30,6 +31,7 @@ class AppRouter {
           StatefulShellBranch(routes: CategoryItemRoutes.routes),
           StatefulShellBranch(routes: LegalDocumentRoutes.routes),
           StatefulShellBranch(routes: ImportFileRoutes.routes),
+          StatefulShellBranch(routes: ApproveRoutes.routes),
           StatefulShellBranch(routes: UserManagementRoutes.routes),
           StatefulShellBranch(routes: ApiKeyManagementRoutes.routes),
           StatefulShellBranch(routes: SystemHistoryManagementRoutes.routes),

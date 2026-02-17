@@ -5,7 +5,6 @@ import 'package:get_it/get_it.dart';
 import 'package:multi_catalog_system/core/config/config.dart';
 import 'package:multi_catalog_system/core/notifications/notification_cubit.dart';
 import 'package:multi_catalog_system/features/auth/auth.dart';
-import 'package:multi_catalog_system/features/home/presentation/bloc/home_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'api_key_management/api_key_injection.dart';
@@ -67,8 +66,6 @@ Future<void> init() async {
   );
 
   getIt<Dio>().interceptors.add(getIt<AuthInterceptor>());
-
-  getIt.registerFactory(() => HomeBloc());
 
   initCatalogLookupModule();
 

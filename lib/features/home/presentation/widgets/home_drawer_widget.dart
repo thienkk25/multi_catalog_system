@@ -10,17 +10,16 @@ import 'package:multi_catalog_system/core/widgets/role_based_widget.dart';
 import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_event.dart';
 import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_state.dart';
-import 'package:multi_catalog_system/features/home/presentation/bloc/home_bloc.dart';
-import 'package:multi_catalog_system/features/home/presentation/bloc/home_event.dart';
-import 'package:multi_catalog_system/features/home/presentation/bloc/home_state.dart';
 
 class HomeDrawerWidget extends StatelessWidget {
+  final int currentIndex;
   final Function(int index) onSelectTab;
   final double? drawerWidth;
   const HomeDrawerWidget({
     super.key,
     this.drawerWidth,
     required this.onSelectTab,
+    required this.currentIndex,
   });
 
   @override
@@ -38,8 +37,11 @@ class HomeDrawerWidget extends StatelessWidget {
             children: [
               _HeaderDrawer(drawerWidth: drawerWidth),
               Divider(),
-              _MainDrawer(onSelectTab: onSelectTab),
-              _FooterDrawer(),
+              _MainDrawer(currentIndex: currentIndex, onSelectTab: onSelectTab),
+              _FooterDrawer(
+                currentIndex: currentIndex,
+                onSelectTab: onSelectTab,
+              ),
             ],
           ),
         ),
@@ -103,8 +105,9 @@ class _HeaderDrawer extends StatelessWidget {
 }
 
 class _MainDrawer extends StatelessWidget {
+  final int currentIndex;
   final Function(int index) onSelectTab;
-  const _MainDrawer({required this.onSelectTab});
+  const _MainDrawer({required this.onSelectTab, required this.currentIndex});
 
   @override
   Widget build(BuildContext context) {
@@ -119,6 +122,7 @@ class _MainDrawer extends StatelessWidget {
               title: 'Tra cứu danh mục',
               pageIndex: 0,
               onSelectTab: onSelectTab,
+              selected: currentIndex == 0,
             ),
             _DrawerItem(
               icon: SvgPicture.asset(
@@ -128,6 +132,7 @@ class _MainDrawer extends StatelessWidget {
               title: 'Lĩnh vực',
               pageIndex: 1,
               onSelectTab: onSelectTab,
+              selected: currentIndex == 1,
             ),
             _DrawerItem(
               icon: SvgPicture.asset(
@@ -137,6 +142,7 @@ class _MainDrawer extends StatelessWidget {
               title: 'Nhóm danh mục',
               pageIndex: 2,
               onSelectTab: onSelectTab,
+              selected: currentIndex == 2,
             ),
             _DrawerItem(
               icon: SvgPicture.asset(
@@ -146,6 +152,7 @@ class _MainDrawer extends StatelessWidget {
               title: 'Mục danh mục',
               pageIndex: 3,
               onSelectTab: onSelectTab,
+              selected: currentIndex == 3,
             ),
             _DrawerItem(
               icon: SvgPicture.asset(
@@ -155,6 +162,7 @@ class _MainDrawer extends StatelessWidget {
               title: 'Văn bản pháp lý',
               pageIndex: 4,
               onSelectTab: onSelectTab,
+              selected: currentIndex == 4,
             ),
 
             RoleBasedWidget(
@@ -167,9 +175,22 @@ class _MainDrawer extends StatelessWidget {
                 title: 'Nhập dữ liệu File',
                 pageIndex: 5,
                 onSelectTab: onSelectTab,
+                selected: currentIndex == 5,
               ),
             ),
-
+            RoleBasedWidget(
+              permission: ['approver', 'domainOfficer'],
+              child: _DrawerItem(
+                icon: SvgPicture.asset(
+                  'assets/icons/approve-invoice-svgrepo-com.svg',
+                  height: 20,
+                ),
+                title: 'Duyệt danh sách danh mục',
+                pageIndex: 6,
+                selected: currentIndex == 6,
+                onSelectTab: onSelectTab,
+              ),
+            ),
             RoleBasedWidget(
               permission: ['admin'],
               child: Column(
@@ -182,8 +203,9 @@ class _MainDrawer extends StatelessWidget {
                       height: 20,
                     ),
                     title: 'Quản lý người dùng',
-                    pageIndex: 6,
+                    pageIndex: 7,
                     onSelectTab: onSelectTab,
+                    selected: currentIndex == 7,
                   ),
                   _DrawerItem(
                     icon: SvgPicture.asset(
@@ -191,8 +213,9 @@ class _MainDrawer extends StatelessWidget {
                       height: 20,
                     ),
                     title: 'API Key',
-                    pageIndex: 7,
+                    pageIndex: 8,
                     onSelectTab: onSelectTab,
+                    selected: currentIndex == 8,
                   ),
                   _DrawerItem(
                     icon: SvgPicture.asset(
@@ -200,24 +223,11 @@ class _MainDrawer extends StatelessWidget {
                       height: 20,
                     ),
                     title: 'Nhật kí hệ thống',
-                    pageIndex: 8,
+                    pageIndex: 9,
                     onSelectTab: onSelectTab,
+                    selected: currentIndex == 9,
                   ),
                 ],
-              ),
-            ),
-            RoleBasedWidget(
-              permission: ['approver', 'domainOfficer'],
-              child: _DrawerItem(
-                icon: SvgPicture.asset(
-                  'assets/icons/approve-invoice-svgrepo-com.svg',
-                  height: 20,
-                ),
-                title: 'Duyệt danh sách danh mục',
-                pageIndex: 9,
-                onTap: () {
-                  context.goNamed(RouterNames.approve);
-                },
               ),
             ),
           ],
@@ -228,7 +238,9 @@ class _MainDrawer extends StatelessWidget {
 }
 
 class _FooterDrawer extends StatelessWidget {
-  const _FooterDrawer();
+  final int currentIndex;
+  final Function(int index) onSelectTab;
+  const _FooterDrawer({required this.currentIndex, required this.onSelectTab});
 
   @override
   Widget build(BuildContext context) {
@@ -244,13 +256,14 @@ class _FooterDrawer extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                   hoverColor: Colors.blue.withValues(alpha: .2),
                   onTap: () {
-                    context.homeBloc.add(HomeEvent.changePage(10, 'Hồ sơ'));
                     if (ScreenSize.of(context).isMobile) {
                       context.pop();
                     }
-                    context.goNamed(RouterNames.profile);
+                    onSelectTab(10);
                   },
                   child: ListTile(
+                    selected: currentIndex == 10,
+                    selectedColor: const Color(0xFF1976D2),
                     leading: SvgPicture.asset(
                       'assets/icons/profile-circle-svgrepo-com.svg',
                       height: 20,
@@ -286,34 +299,26 @@ class _DrawerItem extends StatelessWidget {
   final Widget icon;
   final String title;
   final int? pageIndex;
-  final VoidCallback? onTap;
   final Function(int index)? onSelectTab;
+  final bool selected;
 
   const _DrawerItem({
     required this.icon,
     required this.title,
     this.pageIndex,
     this.onSelectTab,
-    this.onTap,
+    required this.selected,
   });
 
   @override
   Widget build(BuildContext context) {
-    final selected =
-        context.watch<HomeBloc>().state.mapOrNull(
-          page: (value) => value.index == pageIndex,
-        ) ??
-        false;
-
     return InkWell(
       borderRadius: BorderRadius.circular(10),
       hoverColor: Colors.blue.withValues(alpha: .2),
       onTap: () {
-        context.homeBloc.add(HomeEvent.changePage(pageIndex ?? 0, title));
         if (ScreenSize.of(context).isMobile) {
           context.pop();
         }
-        onTap?.call();
         onSelectTab?.call(pageIndex ?? 0);
       },
       child: ListTile(
