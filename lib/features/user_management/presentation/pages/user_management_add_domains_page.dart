@@ -228,26 +228,28 @@ class _UserManagementAddDomainsPageState
                 e.code.toLowerCase().contains(_keyword);
           }).toList();
 
-          return ListView.separated(
+          return ListView.builder(
             padding: const EdgeInsets.symmetric(horizontal: 12),
             itemCount: items.length,
-            separatorBuilder: (_, _) => const SizedBox(height: 8),
             itemBuilder: (context, index) {
               final domain = items[index];
               final checked = _selected.contains(domain);
 
-              return ListTile(
-                contentPadding: const EdgeInsets.symmetric(vertical: 6),
-                title: Text(
-                  domain.name,
-                  style: const TextStyle(fontWeight: FontWeight.w600),
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ListTile(
+                  contentPadding: const EdgeInsets.symmetric(vertical: 6),
+                  title: Text(
+                    domain.name,
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  subtitle: Text(domain.code),
+                  trailing: Icon(
+                    checked ? Icons.check_circle : Icons.radio_button_unchecked,
+                    color: checked ? Colors.blue : Colors.grey,
+                  ),
+                  onTap: () => _toggle(domain),
                 ),
-                subtitle: Text(domain.code),
-                trailing: Icon(
-                  checked ? Icons.check_circle : Icons.radio_button_unchecked,
-                  color: checked ? Colors.blue : Colors.grey,
-                ),
-                onTap: () => _toggle(domain),
               );
             },
           );

@@ -203,16 +203,18 @@ class _HistoryTab extends StatelessWidget {
           return const Center(child: Text('Không có lịch sử'));
         }
 
-        return ListView.separated(
+        return ListView.builder(
           padding: const EdgeInsets.all(16),
           itemCount: entries.length,
-          separatorBuilder: (context, index) => const SizedBox(height: 8),
           itemBuilder: (context, index) {
             final indexVersion = entries.length - 1 - index;
             final entry = entries[index];
-            return CategoryItemVersionHistoryCard(
-              entry: entry,
-              indexVersion: indexVersion,
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: CategoryItemVersionHistoryCard(
+                entry: entry,
+                indexVersion: indexVersion,
+              ),
             );
           },
         );

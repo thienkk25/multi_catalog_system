@@ -106,7 +106,7 @@ class _SystemHistoryManagementPageState
                   final entries = state.entries;
                   if (ScreenSize.of(context).isMobile ||
                       ScreenSize.of(context).isTablet) {
-                    return ListView.separated(
+                    return ListView.builder(
                       controller: _scrollController,
                       shrinkWrap: true,
                       itemCount: entries.length + (state.isLoadingMore ? 1 : 0),
@@ -120,10 +120,11 @@ class _SystemHistoryManagementPageState
                           );
                         }
                         final entry = entries[index];
-                        return SystemHistoryManagementCard(log: entry);
+                        return Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: SystemHistoryManagementCard(log: entry),
+                        );
                       },
-                      separatorBuilder: (context, index) =>
-                          const SizedBox(height: 10),
                     );
                   }
                   return LayoutBuilder(

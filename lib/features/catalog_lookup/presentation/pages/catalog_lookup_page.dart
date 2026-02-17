@@ -154,22 +154,23 @@ class _CategoryLookupPageState extends State<CategoryLookupPage>
                               fontSize: 16,
                             ),
                           ),
-                          ListView.separated(
+                          ListView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
                             itemCount: state.catalog.length,
                             itemBuilder: (context, index) {
                               // TODO: implement   final catalog = state.catalog[index];
-                              return CatalogLookupInforCardWidget(
-                                subDomain: '',
-                                title: '',
-                                subGroup: '',
-                                subDocument: '',
-                                dateTime: DateTime.now(),
+                              return Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: CatalogLookupInforCardWidget(
+                                  subDomain: '',
+                                  title: '',
+                                  subGroup: '',
+                                  subDocument: '',
+                                  dateTime: DateTime.now(),
+                                ),
                               );
                             },
-                            separatorBuilder: (context, index) =>
-                                const SizedBox(height: 10),
                           ),
                         ],
                       ),

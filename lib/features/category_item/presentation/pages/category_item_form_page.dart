@@ -429,16 +429,15 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
             ],
           ),
           _legalDocuments.isNotEmpty
-              ? ListView.separated(
+              ? ListView.builder(
                   padding: const EdgeInsets.all(16),
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: _legalDocuments.length,
-                  separatorBuilder: (context, index) =>
-                      const SizedBox(height: 10),
                   itemBuilder: (context, index) {
                     final entry = _legalDocuments[index];
                     return Container(
+                      margin: EdgeInsets.all(10),
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
                         color: Colors.grey.withValues(alpha: .15),

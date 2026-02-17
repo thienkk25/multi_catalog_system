@@ -117,12 +117,10 @@ class _ApiKeyManagementPageState extends State<ApiKeyManagementPage>
                     final entries = state.entries;
                     if (ScreenSize.of(context).isMobile ||
                         ScreenSize.of(context).isTablet) {
-                      return ListView.separated(
+                      return ListView.builder(
                         controller: _scrollController,
                         itemCount:
                             entries.length + (state.isLoadingMore ? 1 : 0),
-                        separatorBuilder: (context, index) =>
-                            const SizedBox(height: 10),
                         itemBuilder: (context, index) {
                           if (index >= entries.length) {
                             return const Padding(
@@ -134,7 +132,10 @@ class _ApiKeyManagementPageState extends State<ApiKeyManagementPage>
                           }
 
                           final entry = entries[index];
-                          return ApiKeyManagementCard(entry: entry);
+                          return Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: ApiKeyManagementCard(entry: entry),
+                          );
                         },
                       );
                     }

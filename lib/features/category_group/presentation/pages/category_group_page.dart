@@ -129,12 +129,10 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
                     }
                     if (ScreenSize.of(context).isMobile ||
                         ScreenSize.of(context).isTablet) {
-                      return ListView.separated(
+                      return ListView.builder(
                         controller: _scrollController,
                         itemCount:
                             entries.length + (state.isLoadingMore ? 1 : 0),
-                        separatorBuilder: (context, index) =>
-                            SizedBox(height: 10),
                         itemBuilder: (context, index) {
                           if (index >= entries.length) {
                             return const Padding(
@@ -145,7 +143,10 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
                             );
                           }
                           final entry = entries[index];
-                          return CategoryGroupCard(entry: entry);
+                          return Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: CategoryGroupCard(entry: entry),
+                          );
                         },
                       );
                     }

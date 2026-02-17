@@ -112,7 +112,7 @@ class _UserManagementPageState extends State<UserManagementPage>
                     final entries = state.entries;
                     if (ScreenSize.of(context).isMobile ||
                         ScreenSize.of(context).isTablet) {
-                      return ListView.separated(
+                      return ListView.builder(
                         controller: _scrollController,
                         shrinkWrap: true,
                         itemBuilder: (context, index) {
@@ -125,10 +125,11 @@ class _UserManagementPageState extends State<UserManagementPage>
                             );
                           }
                           final entry = entries[index];
-                          return UserManagementCard(entry: entry);
+                          return Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: UserManagementCard(entry: entry),
+                          );
                         },
-                        separatorBuilder: (context, index) =>
-                            SizedBox(height: 10),
                         itemCount:
                             entries.length + (state.isLoadingMore ? 1 : 0),
                       );
