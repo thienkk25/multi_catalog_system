@@ -28,6 +28,7 @@ class _ProfilePageState extends State<ProfilePage>
   void initState() {
     super.initState();
     bloc = context.profileBloc;
+    bloc.add(const ProfileEvent.getProfile());
   }
 
   @override

@@ -21,6 +21,7 @@ class _UserManagementPageState extends State<UserManagementPage>
   @override
   bool get wantKeepAlive => true;
   final TextEditingController _searchController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
   Timer? _debounce;
   late final UserManagementBloc bloc;
 
@@ -29,11 +30,26 @@ class _UserManagementPageState extends State<UserManagementPage>
     super.initState();
     bloc = context.userManagementBloc;
     bloc.add(const UserManagementEvent.getAll());
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (!_scrollController.hasClients) return;
+    if (!bloc.state.hasMore) return;
+    if (bloc.state.isLoadingMore) return;
+
+    final position = _scrollController.position;
+    if (position.maxScrollExtent <= 0) return;
+
+    if (position.pixels >= position.maxScrollExtent - 200) {
+      bloc.add(const UserManagementEvent.loadMore());
+    }
   }
 
   @override
   void dispose() {
     _searchController.dispose();
+    _scrollController.dispose();
     _debounce?.cancel();
     super.dispose();
   }
@@ -97,32 +113,58 @@ class _UserManagementPageState extends State<UserManagementPage>
                     if (ScreenSize.of(context).isMobile ||
                         ScreenSize.of(context).isTablet) {
                       return ListView.separated(
+                        controller: _scrollController,
                         shrinkWrap: true,
                         itemBuilder: (context, index) {
+                          if (index >= entries.length) {
+                            return const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 20),
+                              child: Center(
+                                child: CustomCircularProgressLoadMore(),
+                              ),
+                            );
+                          }
                           final entry = entries[index];
                           return UserManagementCard(entry: entry);
                         },
                         separatorBuilder: (context, index) =>
                             SizedBox(height: 10),
-                        itemCount: entries.length,
+                        itemCount:
+                            entries.length + (state.isLoadingMore ? 1 : 0),
                       );
                     }
                     return LayoutBuilder(
                       builder: (context, constraints) {
                         final crossAxisCount = (constraints.maxWidth / 600)
-                            .floor();
+                            .floor()
+                            .clamp(1, 6);
+
+                        final itemWidth =
+                            constraints.maxWidth / crossAxisCount - 10;
 
                         return SingleChildScrollView(
-                          child: Wrap(
-                            spacing: 10,
-                            runSpacing: 10,
-                            children: entries.map((entry) {
-                              return SizedBox(
-                                width:
-                                    constraints.maxWidth / crossAxisCount - 10,
-                                child: UserManagementCard(entry: entry),
-                              );
-                            }).toList(),
+                          controller: _scrollController,
+                          child: Column(
+                            children: [
+                              Wrap(
+                                spacing: 10,
+                                runSpacing: 10,
+                                children: [
+                                  ...entries.map(
+                                    (entry) => SizedBox(
+                                      width: itemWidth,
+                                      child: UserManagementCard(entry: entry),
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              if (state.isLoadingMore)
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 24),
+                                  child: CustomCircularProgressLoadMore(),
+                                ),
+                            ],
                           ),
                         );
                       },

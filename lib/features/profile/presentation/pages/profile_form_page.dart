@@ -32,6 +32,7 @@ class _ProfileFormPageState extends State<ProfileFormPage> {
   @override
   void initState() {
     super.initState();
+    context.profileBloc.add(const ProfileEvent.getProfile());
   }
 
   void _initFromData(UserEntry entry) {

@@ -19,6 +19,8 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
   bool get wantKeepAlive => true;
 
   final TextEditingController _searchController = TextEditingController();
+
+  final ScrollController _scrollController = ScrollController();
   Timer? _debounce;
 
   late final LegalDocumentBloc bloc;
@@ -28,11 +30,26 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
     super.initState();
     bloc = context.legalDocumentBloc;
     bloc.add(const LegalDocumentEvent.getAll());
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (!_scrollController.hasClients) return;
+    if (!bloc.state.hasMore) return;
+    if (bloc.state.isLoadingMore) return;
+
+    final position = _scrollController.position;
+    if (position.maxScrollExtent <= 0) return;
+
+    if (position.pixels >= position.maxScrollExtent - 200) {
+      bloc.add(const LegalDocumentEvent.loadMore());
+    }
   }
 
   @override
   void dispose() {
     _searchController.dispose();
+    _scrollController.dispose();
     _debounce?.cancel();
     super.dispose();
   }
@@ -93,10 +110,20 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
                     if (ScreenSize.of(context).isMobile ||
                         ScreenSize.of(context).isTablet) {
                       return ListView.separated(
-                        itemCount: entries.length,
+                        controller: _scrollController,
+                        itemCount:
+                            entries.length + (state.isLoadingMore ? 1 : 0),
                         separatorBuilder: (context, index) =>
                             const SizedBox(height: 10),
                         itemBuilder: (context, index) {
+                          if (index >= entries.length) {
+                            return const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 20),
+                              child: Center(
+                                child: CustomCircularProgressLoadMore(),
+                              ),
+                            );
+                          }
                           final entry = entries[index];
                           return LegalDocumentCard(entry: entry);
                         },
@@ -105,19 +132,35 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
                     return LayoutBuilder(
                       builder: (context, constraints) {
                         final crossAxisCount = (constraints.maxWidth / 600)
-                            .floor();
+                            .floor()
+                            .clamp(1, 6);
+
+                        final itemWidth =
+                            constraints.maxWidth / crossAxisCount - 10;
 
                         return SingleChildScrollView(
-                          child: Wrap(
-                            spacing: 10,
-                            runSpacing: 10,
-                            children: entries.map((entry) {
-                              return SizedBox(
-                                width:
-                                    constraints.maxWidth / crossAxisCount - 10,
-                                child: LegalDocumentCard(entry: entry),
-                              );
-                            }).toList(),
+                          controller: _scrollController,
+                          child: Column(
+                            children: [
+                              Wrap(
+                                spacing: 10,
+                                runSpacing: 10,
+                                children: [
+                                  ...entries.map(
+                                    (entry) => SizedBox(
+                                      width: itemWidth,
+                                      child: LegalDocumentCard(entry: entry),
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              if (state.isLoadingMore)
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 24),
+                                  child: CustomCircularProgressLoadMore(),
+                                ),
+                            ],
                           ),
                         );
                       },

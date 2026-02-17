@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:multi_catalog_system/core/utils/extensions/bloc_extension.dart';
 import 'package:multi_catalog_system/core/responsive/screen_size.dart';
+import 'package:multi_catalog_system/core/widgets/custom_circular_progress.dart';
+import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_version_event.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/widgets/approve_card.dart';
 import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_version_entry.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_version_bloc.dart';
@@ -21,10 +23,35 @@ class _ApprovePageState extends State<ApprovePage>
 
   late final TabController _tabController;
 
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+    context.itemVersionBloc.add(const CategoryItemVersionEvent.getAll());
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    final bloc = context.itemVersionBloc;
+    if (!_scrollController.hasClients) return;
+    if (!bloc.state.hasMore) return;
+    if (bloc.state.isLoadingMore) return;
+
+    final position = _scrollController.position;
+    if (position.maxScrollExtent <= 0) return;
+
+    if (position.pixels >= position.maxScrollExtent - 200) {
+      bloc.add(const CategoryItemVersionEvent.loadMore());
+    }
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -92,8 +119,16 @@ class _ApprovePageState extends State<ApprovePage>
 
     if (isMobile || isTablet) {
       return ListView.builder(
-        itemCount: data.length,
+        controller: _scrollController,
+        itemCount:
+            data.length + (context.itemVersionBloc.state.isLoadingMore ? 1 : 0),
         itemBuilder: (_, i) {
+          if (i >= data.length) {
+            return const Padding(
+              padding: EdgeInsets.symmetric(vertical: 20),
+              child: Center(child: CustomCircularProgressLoadMore()),
+            );
+          }
           final version = data[i];
           return _buildGovApproveCard(version);
         },
@@ -101,18 +136,33 @@ class _ApprovePageState extends State<ApprovePage>
     }
     return LayoutBuilder(
       builder: (context, constraints) {
-        final crossAxisCount = (constraints.maxWidth / 600).floor();
+        final crossAxisCount = (constraints.maxWidth / 600).floor().clamp(1, 6);
+
+        final itemWidth = constraints.maxWidth / crossAxisCount - 10;
 
         return SingleChildScrollView(
-          child: Wrap(
-            spacing: 10,
-            runSpacing: 10,
-            children: data.map((version) {
-              return SizedBox(
-                width: constraints.maxWidth / crossAxisCount - 10,
-                child: _buildGovApproveCard(version),
-              );
-            }).toList(),
+          controller: _scrollController,
+          child: Column(
+            children: [
+              Wrap(
+                spacing: 10,
+                runSpacing: 10,
+                children: [
+                  ...data.map(
+                    (entry) => SizedBox(
+                      width: itemWidth,
+                      child: _buildGovApproveCard(entry),
+                    ),
+                  ),
+                ],
+              ),
+
+              if (context.itemVersionBloc.state.isLoadingMore)
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 24),
+                  child: CustomCircularProgressLoadMore(),
+                ),
+            ],
           ),
         );
       },
