@@ -2,6 +2,8 @@ import 'package:dartz/dartz.dart';
 import 'package:multi_catalog_system/core/data/models/auth/user_profile_model.dart';
 import 'package:multi_catalog_system/core/domain/entities/auth/user_entry.dart';
 import 'package:multi_catalog_system/core/domain/entities/domain/domain_ref_entry.dart';
+import 'package:multi_catalog_system/core/domain/entities/page/page_entry.dart';
+import 'package:multi_catalog_system/core/domain/entities/page/pagination_entry.dart';
 import 'package:multi_catalog_system/core/domain/entities/role/role_entry.dart';
 import 'package:multi_catalog_system/core/error/exception_mapper.dart';
 import 'package:multi_catalog_system/core/error/exceptions.dart';
@@ -75,10 +77,31 @@ class UserManagementRepositoryImpl implements UserManagementRepository {
   }
 
   @override
-  Future<Either<Failure, List<UserEntry>>> getAll({String? search}) async {
+  Future<Either<Failure, PageEntry<UserEntry>>> getAll({
+    String? search,
+    int? page,
+    int? limit,
+    Map<String, dynamic>? filter,
+  }) async {
     try {
-      final models = await remoteDataSource.getAll(search: search);
-      return Right(models.map((m) => _toEntity(m)).toList());
+      final models = await remoteDataSource.getAll(
+        search: search,
+        page: page,
+        limit: limit,
+        filter: filter,
+      );
+      return Right(
+        PageEntry<UserEntry>(
+          entries: models.data.map((m) => _toEntity(m)).toList(),
+          pagination: PaginationEntry(
+            page: models.pagination.page,
+            limit: models.pagination.limit,
+            total: models.pagination.total,
+            totalPages: models.pagination.totalPages,
+            hasMore: models.pagination.hasMore,
+          ),
+        ),
+      );
     } on AppException catch (e) {
       return Left(mapExceptionToFailure(e));
     } catch (e) {

@@ -7,6 +7,11 @@ part 'api_key_state.freezed.dart';
 abstract class ApiKeyState with _$ApiKeyState {
   const factory ApiKeyState({
     @Default(false) bool isLoading,
+    @Default(false) bool isLoadingMore,
+    @Default(false) bool hasMore,
+
+    @Default(1) int page,
+    @Default(20) int limit,
     @Default([]) List<ApiKeyEntry> entries,
     ApiKeyEntry? entry,
     String? error,

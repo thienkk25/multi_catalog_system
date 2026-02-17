@@ -9,6 +9,7 @@ class LegalDocumentEvent with _$LegalDocumentEvent {
   const factory LegalDocumentEvent.getAll({String? search}) = _GetAll;
   const factory LegalDocumentEvent.getAllHasFile({String? search}) =
       _GetAllHasFile;
+  const factory LegalDocumentEvent.loadMore() = _LoadMore;
   const factory LegalDocumentEvent.getById({required String id}) = _GetById;
 
   const factory LegalDocumentEvent.create({

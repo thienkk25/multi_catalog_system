@@ -1,10 +1,16 @@
 import 'package:dio/dio.dart';
 import 'package:multi_catalog_system/core/config/networks/base_remote_data_source.dart';
+import 'package:multi_catalog_system/core/data/models/page/page_model.dart';
 import 'package:multi_catalog_system/core/error/exceptions.dart';
 import 'package:multi_catalog_system/features/category_group/data/models/category_group_model.dart';
 
 abstract class CategoryGroupRemoteDataSource {
-  Future<List<CategoryGroupModel>> getAll({String? search});
+  Future<PageModel<CategoryGroupModel>> getAll({
+    String? search,
+    int? page,
+    int? limit,
+    Map<String, dynamic>? filter,
+  });
   Future<CategoryGroupModel> getById({required String id});
   Future<CategoryGroupModel> create({required Map<String, dynamic> data});
   Future<CategoryGroupModel> update({
@@ -21,19 +27,31 @@ class CategoryGroupRemoteDataSourceImpl extends BaseRemoteDataSource
   CategoryGroupRemoteDataSourceImpl({required this.dio});
 
   @override
-  Future<List<CategoryGroupModel>> getAll({String? search}) async {
+  Future<PageModel<CategoryGroupModel>> getAll({
+    String? search,
+    int? page,
+    int? limit,
+    Map<String, dynamic>? filter,
+  }) async {
     try {
       final queryParams = <String, dynamic>{};
 
       if (search != null) queryParams['search'] = search;
+      if (page != null) queryParams['page'] = page;
+      if (limit != null) queryParams['limit'] = limit;
+      if (filter != null) queryParams['filter'] = filter;
 
       final response = await dio.get(
         '/category-group',
         queryParameters: queryParams,
       );
 
-      final List<dynamic> jsonList = response.data['data']['data'];
-      return jsonList.map((json) => CategoryGroupModel.fromJson(json)).toList();
+      final data = response.data['data'];
+
+      return PageModel<CategoryGroupModel>.fromJson(
+        data,
+        (e) => CategoryGroupModel.fromJson(e as Map<String, dynamic>),
+      );
     } on DioException catch (e) {
       handleDioError(e);
     } catch (e) {

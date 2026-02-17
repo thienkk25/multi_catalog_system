@@ -1,12 +1,16 @@
 import 'package:dartz/dartz.dart';
+import 'package:multi_catalog_system/core/domain/entities/page/page_entry.dart';
 import 'package:multi_catalog_system/core/error/failures.dart';
 import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_entry.dart';
 import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_version_entry.dart';
 
 abstract class CategoryItemVersionRepository {
-  Future<Either<Failure, List<CategoryItemVersionEntry>>> getAll({
+  Future<Either<Failure, PageEntry<CategoryItemVersionEntry>>> getAll({
     String? itemId,
     String? search,
+    int? page,
+    int? limit,
+    Map<String, dynamic>? filter,
   });
   Future<Either<Failure, CategoryItemVersionEntry>> getById({
     required String id,

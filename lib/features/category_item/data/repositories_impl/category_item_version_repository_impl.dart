@@ -1,4 +1,6 @@
 import 'package:dartz/dartz.dart';
+import 'package:multi_catalog_system/core/domain/entities/page/page_entry.dart';
+import 'package:multi_catalog_system/core/domain/entities/page/pagination_entry.dart';
 import 'package:multi_catalog_system/core/error/exception_mapper.dart';
 import 'package:multi_catalog_system/core/error/exceptions.dart';
 import 'package:multi_catalog_system/core/error/failures.dart';
@@ -53,16 +55,33 @@ class CategoryItemVersionRepositoryImpl
       'legal_document_ids': entry.legalDocuments?.map((e) => e.id).toList(),
   };
   @override
-  Future<Either<Failure, List<CategoryItemVersionEntry>>> getAll({
+  Future<Either<Failure, PageEntry<CategoryItemVersionEntry>>> getAll({
     String? itemId,
     String? search,
+    int? page,
+    int? limit,
+    Map<String, dynamic>? filter,
   }) async {
     try {
       final models = await remoteDataSource.getAll(
         itemId: itemId,
         search: search,
+        page: page,
+        limit: limit,
+        filter: filter,
       );
-      return Right(models.map((m) => _toEntity(m)).toList());
+      return Right(
+        PageEntry<CategoryItemVersionEntry>(
+          entries: models.data.map((m) => _toEntity(m)).toList(),
+          pagination: PaginationEntry(
+            page: models.pagination.page,
+            limit: models.pagination.limit,
+            total: models.pagination.total,
+            totalPages: models.pagination.totalPages,
+            hasMore: models.pagination.hasMore,
+          ),
+        ),
+      );
     } on AppException catch (e) {
       return Left(mapExceptionToFailure(e));
     } catch (e) {

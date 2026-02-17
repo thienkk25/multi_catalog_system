@@ -9,7 +9,7 @@ class CategoryItemVersionEvent with _$CategoryItemVersionEvent {
     String? itemId,
     String? search,
   }) = GetAll;
-
+  const factory CategoryItemVersionEvent.loadMore() = LoadMore;
   const factory CategoryItemVersionEvent.getById({required String id}) =
       GetById;
 

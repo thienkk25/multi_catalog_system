@@ -1,4 +1,6 @@
 import 'package:dartz/dartz.dart';
+import 'package:multi_catalog_system/core/domain/entities/page/page_entry.dart';
+import 'package:multi_catalog_system/core/domain/entities/page/pagination_entry.dart';
 import 'package:multi_catalog_system/core/error/exception_mapper.dart';
 import 'package:multi_catalog_system/core/error/exceptions.dart';
 import 'package:multi_catalog_system/core/error/failures.dart';
@@ -23,12 +25,31 @@ class SystemHistoryRepositoryImpl implements SystemHistoryRepository {
   );
 
   @override
-  Future<Either<Failure, List<SystemHistoryEntry>>> getAll({
+  Future<Either<Failure, PageEntry<SystemHistoryEntry>>> getAll({
     String? search,
+    int? page,
+    int? limit,
+    Map<String, dynamic>? filter,
   }) async {
     try {
-      final models = await remoteDataSource.getAll(search: search);
-      return Right(models.map((m) => _toEntity(m)).toList());
+      final models = await remoteDataSource.getAll(
+        search: search,
+        page: page,
+        limit: limit,
+        filter: filter,
+      );
+      return Right(
+        PageEntry<SystemHistoryEntry>(
+          entries: models.data.map((m) => _toEntity(m)).toList(),
+          pagination: PaginationEntry(
+            page: models.pagination.page,
+            limit: models.pagination.limit,
+            total: models.pagination.total,
+            totalPages: models.pagination.totalPages,
+            hasMore: models.pagination.hasMore,
+          ),
+        ),
+      );
     } on AppException catch (e) {
       return Left(mapExceptionToFailure(e));
     } catch (e) {

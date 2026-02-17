@@ -1,10 +1,16 @@
 import 'package:dio/dio.dart';
 import 'package:multi_catalog_system/core/config/networks/base_remote_data_source.dart';
+import 'package:multi_catalog_system/core/data/models/page/page_model.dart';
 import 'package:multi_catalog_system/core/error/exceptions.dart';
 import 'package:multi_catalog_system/features/api_key_management/data/models/api_key_model.dart';
 
 abstract class ApiKeyRemoteDataSource {
-  Future<List<ApiKeyModel>> getAll({String? search});
+  Future<PageModel<ApiKeyModel>> getAll({
+    String? search,
+    int? page,
+    int? limit,
+    Map<String, dynamic>? filter,
+  });
   Future<ApiKeyModel> getById({required String id});
   Future<ApiKeyModel> create({required Map<String, dynamic> data});
   Future<ApiKeyModel> update({
@@ -21,16 +27,28 @@ class ApiKeyRemoteDataSourceImpl extends BaseRemoteDataSource
   ApiKeyRemoteDataSourceImpl({required this.dio});
 
   @override
-  Future<List<ApiKeyModel>> getAll({String? search}) async {
+  Future<PageModel<ApiKeyModel>> getAll({
+    String? search,
+    int? page,
+    int? limit,
+    Map<String, dynamic>? filter,
+  }) async {
     try {
       final queryParams = <String, dynamic>{};
 
       if (search != null) queryParams['search'] = search;
+      if (page != null) queryParams['page'] = page;
+      if (limit != null) queryParams['limit'] = limit;
+      if (filter != null) queryParams['filter'] = filter;
 
       final response = await dio.get('/api-key', queryParameters: queryParams);
 
-      final List<dynamic> jsonList = response.data['data']['data'];
-      return jsonList.map((json) => ApiKeyModel.fromJson(json)).toList();
+      final data = response.data['data'];
+
+      return PageModel<ApiKeyModel>.fromJson(
+        data,
+        (e) => ApiKeyModel.fromJson(e as Map<String, dynamic>),
+      );
     } on DioException catch (e) {
       handleDioError(e);
     } catch (e) {

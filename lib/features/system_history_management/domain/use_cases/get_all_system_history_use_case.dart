@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:multi_catalog_system/core/domain/entities/page/page_entry.dart';
 import 'package:multi_catalog_system/core/error/failures.dart';
 import 'package:multi_catalog_system/features/system_history_management/domain/entities/system_history_entry.dart';
 import 'package:multi_catalog_system/features/system_history_management/domain/repositories/system_history_repository.dart';
@@ -8,7 +9,17 @@ class GetAllSystemHistoryUseCase {
 
   GetAllSystemHistoryUseCase({required this.repository});
 
-  Future<Either<Failure, List<SystemHistoryEntry>>> call({String? search}) {
-    return repository.getAll(search: search);
+  Future<Either<Failure, PageEntry<SystemHistoryEntry>>> call({
+    String? search,
+    int? page,
+    int? limit,
+    Map<String, dynamic>? filter,
+  }) {
+    return repository.getAll(
+      search: search,
+      page: page,
+      limit: limit,
+      filter: filter,
+    );
   }
 }

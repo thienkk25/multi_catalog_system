@@ -115,34 +115,40 @@ class _DomainManagementPageState extends State<DomainManagementPage>
                             : ScreenSize.of(context).isTablet
                             ? 3
                             : 4;
-                        return GridView.builder(
+                        return CustomScrollView(
                           controller: _scrollController,
-                          shrinkWrap: true,
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: crossAxisCount,
-                                mainAxisSpacing: 10,
-                                crossAxisSpacing: 10,
-                              ),
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          itemCount:
-                              entries.length + (state.isLoadingMore ? 1 : 0),
-                          itemBuilder: (context, index) {
-                            if (index == entries.length) {
-                              return const Center(
-                                child: CustomCircularProgressLoadMore(),
-                              );
-                            }
+                          slivers: [
+                            SliverGrid.builder(
+                              itemCount: entries.length,
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: crossAxisCount,
+                                    mainAxisSpacing: 10,
+                                    crossAxisSpacing: 10,
+                                  ),
+                              itemBuilder: (context, index) {
+                                final entry = entries[index];
 
-                            final entry = entries[index];
-                            return GestureDetector(
-                              onTap: () => context.goNamed(
-                                RouterNames.domainDetail,
-                                pathParameters: {'id': entry.id!},
+                                return GestureDetector(
+                                  onTap: () => context.goNamed(
+                                    RouterNames.domainDetail,
+                                    pathParameters: {'id': entry.id!},
+                                  ),
+                                  child: DomainManagementCard(entry: entry),
+                                );
+                              },
+                            ),
+
+                            if (state.isLoadingMore)
+                              const SliverToBoxAdapter(
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 24),
+                                  child: Center(
+                                    child: CustomCircularProgressLoadMore(),
+                                  ),
+                                ),
                               ),
-                              child: DomainManagementCard(entry: entry),
-                            );
-                          },
+                          ],
                         );
                       },
                     ),

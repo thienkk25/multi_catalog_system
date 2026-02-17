@@ -1,12 +1,16 @@
 import 'package:dio/dio.dart';
 import 'package:multi_catalog_system/core/config/networks/base_remote_data_source.dart';
+import 'package:multi_catalog_system/core/data/models/page/page_model.dart';
 import 'package:multi_catalog_system/core/error/exceptions.dart';
 import 'package:multi_catalog_system/features/category_item/data/models/category_item_version_model.dart';
 
 abstract class CategoryItemVersionRemoteDataSource {
-  Future<List<CategoryItemVersionModel>> getAll({
+  Future<PageModel<CategoryItemVersionModel>> getAll({
     String? itemId,
     String? search,
+    int? page,
+    int? limit,
+    Map<String, dynamic>? filter,
   });
   Future<CategoryItemVersionModel> getById({required String id});
 
@@ -35,25 +39,32 @@ class CategoryItemVersionRemoteDataSourceImpl extends BaseRemoteDataSource
   CategoryItemVersionRemoteDataSourceImpl({required this.dio});
 
   @override
-  Future<List<CategoryItemVersionModel>> getAll({
+  Future<PageModel<CategoryItemVersionModel>> getAll({
     String? itemId,
     String? search,
+    int? page,
+    int? limit,
+    Map<String, dynamic>? filter,
   }) async {
     try {
       final queryParams = <String, dynamic>{};
 
       if (search != null) queryParams['search'] = search;
       if (itemId != null) queryParams['item_id'] = itemId;
+      if (page != null) queryParams['page'] = page;
+      if (limit != null) queryParams['limit'] = limit;
+      if (filter != null) queryParams['filter'] = filter;
 
       final response = await dio.get(
         '/category-item-version',
         queryParameters: queryParams,
       );
 
-      final List<dynamic> jsonList = response.data['data']['data'];
-      return jsonList
-          .map((json) => CategoryItemVersionModel.fromJson(json))
-          .toList();
+      final data = response.data['data'];
+      return PageModel<CategoryItemVersionModel>.fromJson(
+        data,
+        (e) => CategoryItemVersionModel.fromJson(e as Map<String, dynamic>),
+      );
     } on DioException catch (e) {
       handleDioError(e);
     } catch (e) {

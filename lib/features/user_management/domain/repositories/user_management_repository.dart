@@ -1,9 +1,15 @@
 import 'package:dartz/dartz.dart';
 import 'package:multi_catalog_system/core/domain/entities/auth/user_entry.dart';
+import 'package:multi_catalog_system/core/domain/entities/page/page_entry.dart';
 import 'package:multi_catalog_system/core/error/failures.dart';
 
 abstract class UserManagementRepository {
-  Future<Either<Failure, List<UserEntry>>> getAll({String? search});
+  Future<Either<Failure, PageEntry<UserEntry>>> getAll({
+    String? search,
+    int? page,
+    int? limit,
+    Map<String, dynamic>? filter,
+  });
   Future<Either<Failure, UserEntry>> getById({required String id});
   Future<Either<Failure, UserEntry>> create({required UserEntry entry});
   Future<Either<Failure, UserEntry>> update({required UserEntry entry});

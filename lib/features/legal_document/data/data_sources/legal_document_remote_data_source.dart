@@ -1,10 +1,16 @@
 import 'package:dio/dio.dart';
 import 'package:multi_catalog_system/core/config/networks/base_remote_data_source.dart';
+import 'package:multi_catalog_system/core/data/models/page/page_model.dart';
 import 'package:multi_catalog_system/core/error/exceptions.dart';
 import 'package:multi_catalog_system/features/legal_document/data/models/legal_document_model.dart';
 
 abstract class LegalDocumentRemoteDataSource {
-  Future<List<LegalDocumentModel>> getAll({String? search});
+  Future<PageModel<LegalDocumentModel>> getAll({
+    String? search,
+    int? page,
+    int? limit,
+    Map<String, dynamic>? filter,
+  });
   Future<List<LegalDocumentModel>> getAllHasFile({String? search});
   Future<LegalDocumentModel> getById({required String id});
   Future<LegalDocumentModel> create({required FormData data});
@@ -22,19 +28,30 @@ class LegalDocumentRemoteDataSourceImpl extends BaseRemoteDataSource
   LegalDocumentRemoteDataSourceImpl({required this.dio});
 
   @override
-  Future<List<LegalDocumentModel>> getAll({String? search}) async {
+  Future<PageModel<LegalDocumentModel>> getAll({
+    String? search,
+    int? page,
+    int? limit,
+    Map<String, dynamic>? filter,
+  }) async {
     try {
       final queryParams = <String, dynamic>{};
 
       if (search != null) queryParams['search'] = search;
+      if (page != null) queryParams['page'] = page;
+      if (limit != null) queryParams['limit'] = limit;
+      if (filter != null) queryParams['filter'] = filter;
 
       final response = await dio.get(
         '/legal-document',
         queryParameters: queryParams,
       );
 
-      final List<dynamic> jsonList = response.data['data']['data'];
-      return jsonList.map((json) => LegalDocumentModel.fromJson(json)).toList();
+      final data = response.data['data'];
+      return PageModel<LegalDocumentModel>.fromJson(
+        data,
+        (e) => LegalDocumentModel.fromJson(e as Map<String, dynamic>),
+      );
     } on DioException catch (e) {
       handleDioError(e);
     } catch (e) {

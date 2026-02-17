@@ -7,6 +7,11 @@ part 'user_management_state.freezed.dart';
 abstract class UserManagementState with _$UserManagementState {
   const factory UserManagementState({
     @Default(false) bool isLoading,
+    @Default(false) bool isLoadingMore,
+    @Default(false) bool hasMore,
+
+    @Default(1) int page,
+    @Default(20) int limit,
     @Default([]) List<UserEntry> entries,
     UserEntry? entry,
     String? error,

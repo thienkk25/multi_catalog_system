@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
-import 'package:multi_catalog_system/core/domain/entities/pagination/pagination_entry.dart';
+import 'package:multi_catalog_system/core/domain/entities/page/page_entry.dart';
+import 'package:multi_catalog_system/core/domain/entities/page/pagination_entry.dart';
 import 'package:multi_catalog_system/core/error/exception_mapper.dart';
 import 'package:multi_catalog_system/core/error/exceptions.dart';
 import 'package:multi_catalog_system/core/error/failures.dart';
@@ -60,19 +61,21 @@ class DomainRepositoryImpl implements DomainRepository {
   }
 
   @override
-  Future<Either<Failure, DomainPageEntry>> getAll({
+  Future<Either<Failure, PageEntry<DomainEntry>>> getAll({
     String? search,
     int? page,
     int? limit,
+    Map<String, dynamic>? filter,
   }) async {
     try {
       final models = await remoteDataSource.getAll(
         search: search,
         page: page,
         limit: limit,
+        filter: filter,
       );
       return Right(
-        DomainPageEntry(
+        PageEntry<DomainEntry>(
           entries: models.data.map((m) => _toEntity(m)).toList(),
           pagination: PaginationEntry(
             page: models.pagination.page,

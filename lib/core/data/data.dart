@@ -8,3 +8,5 @@ export 'models/auth/identity_data_model.dart';
 export 'models/auth/app_metadata_model.dart';
 export 'models/auth/user_metadata_model.dart';
 export 'models/picked_document_file/picked_document_file.dart';
+export 'models/page/page_model.dart';
+export 'models/page/pagination_model.dart';

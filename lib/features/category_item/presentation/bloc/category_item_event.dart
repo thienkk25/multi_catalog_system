@@ -6,6 +6,7 @@ part 'category_item_event.freezed.dart';
 @freezed
 class CategoryItemEvent with _$CategoryItemEvent {
   const factory CategoryItemEvent.getAll({String? search}) = _GetAll;
+  const factory CategoryItemEvent.loadMore() = _LoadMore;
   const factory CategoryItemEvent.getById({required String id}) = _GetById;
 
   const factory CategoryItemEvent.create({required CategoryItemEntry entry}) =

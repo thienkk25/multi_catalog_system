@@ -1,10 +1,16 @@
 import 'package:dio/dio.dart';
 import 'package:multi_catalog_system/core/config/networks/base_remote_data_source.dart';
 import 'package:multi_catalog_system/core/data/models/auth/user_profile_model.dart';
+import 'package:multi_catalog_system/core/data/models/page/page_model.dart';
 import 'package:multi_catalog_system/core/error/exceptions.dart';
 
 abstract class UserManagementRemoteDataSource {
-  Future<List<UserProfileModel>> getAll({String? search});
+  Future<PageModel<UserProfileModel>> getAll({
+    String? search,
+    int? page,
+    int? limit,
+    Map<String, dynamic>? filter,
+  });
   Future<UserProfileModel> create({required Map<String, dynamic> data});
   Future<UserProfileModel> update({
     required String id,
@@ -24,18 +30,29 @@ class UserManagementRemoteDataSourceImpl extends BaseRemoteDataSource
   UserManagementRemoteDataSourceImpl({required this.dio});
 
   @override
-  Future<List<UserProfileModel>> getAll({String? search}) async {
+  Future<PageModel<UserProfileModel>> getAll({
+    String? search,
+    int? page,
+    int? limit,
+    Map<String, dynamic>? filter,
+  }) async {
     try {
       final queryParams = <String, dynamic>{};
 
       if (search != null) queryParams['search'] = search;
+      if (page != null) queryParams['page'] = page;
+      if (limit != null) queryParams['limit'] = limit;
+      if (filter != null) queryParams['filter'] = filter;
 
       final response = await dio.get(
         '/admin/users',
         queryParameters: queryParams,
       );
-      final List<dynamic> jsonList = response.data['data']['data'];
-      return jsonList.map((json) => UserProfileModel.fromJson(json)).toList();
+      final data = response.data['data'];
+      return PageModel<UserProfileModel>.fromJson(
+        data,
+        (e) => UserProfileModel.fromJson(e as Map<String, dynamic>),
+      );
     } on DioException catch (e) {
       handleDioError(e);
     } catch (e) {

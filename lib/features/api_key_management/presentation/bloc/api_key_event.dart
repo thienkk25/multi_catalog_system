@@ -6,6 +6,7 @@ part 'api_key_event.freezed.dart';
 @freezed
 class ApiKeyEvent with _$ApiKeyEvent {
   const factory ApiKeyEvent.getAll({String? search}) = _GetAll;
+  const factory ApiKeyEvent.loadMore() = _LoadMore;
   const factory ApiKeyEvent.getById({required String id}) = _GetById;
 
   const factory ApiKeyEvent.create({required ApiKeyEntry entry}) = _Create;

@@ -7,6 +7,11 @@ part 'category_item_version_state.freezed.dart';
 abstract class CategoryItemVersionState with _$CategoryItemVersionState {
   const factory CategoryItemVersionState({
     @Default(false) bool isLoading,
+    @Default(false) bool isLoadingMore,
+    @Default(false) bool hasMore,
+
+    @Default(1) int page,
+    @Default(20) int limit,
     @Default([]) List<CategoryItemVersionEntry> entries,
     CategoryItemVersionEntry? entry,
     String? error,

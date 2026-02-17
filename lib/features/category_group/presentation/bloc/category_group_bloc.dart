@@ -42,10 +42,32 @@ class CategoryGroupBloc extends Bloc<CategoryGroupEvent, CategoryGroupState> {
 
         result.fold(
           (l) => emit(state.copyWith(isLoading: false, error: mapFailure(l))),
-          (r) => emit(state.copyWith(isLoading: false, entries: r)),
+          (r) =>
+              emit(state.copyWith(isLoading: false, entries: r.entries ?? [])),
         );
       },
+      loadMore: (_) async {
+        if (state.isLoadingMore || !state.hasMore) return;
 
+        emit(state.copyWith(isLoadingMore: true));
+
+        final result = await getAll(page: state.page + 1, limit: state.limit);
+
+        if (emit.isDone) return;
+
+        result.fold(
+          (l) =>
+              emit(state.copyWith(isLoadingMore: false, error: mapFailure(l))),
+          (r) => emit(
+            state.copyWith(
+              isLoadingMore: false,
+              page: r.pagination?.page ?? 1,
+              hasMore: r.pagination?.hasMore ?? false,
+              entries: [...state.entries, ...r.entries ?? []],
+            ),
+          ),
+        );
+      },
       getById: (e) async {
         emit(
           state.copyWith(

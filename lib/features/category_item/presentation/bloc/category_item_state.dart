@@ -7,6 +7,11 @@ part 'category_item_state.freezed.dart';
 abstract class CategoryItemState with _$CategoryItemState {
   const factory CategoryItemState({
     @Default(false) bool isLoading,
+    @Default(false) bool isLoadingMore,
+    @Default(false) bool hasMore,
+
+    @Default(1) int page,
+    @Default(20) int limit,
     @Default([]) List<CategoryItemEntry> entries,
     CategoryItemEntry? entry,
     String? error,

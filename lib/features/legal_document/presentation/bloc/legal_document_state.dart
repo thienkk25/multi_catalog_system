@@ -7,6 +7,11 @@ part 'legal_document_state.freezed.dart';
 abstract class LegalDocumentState with _$LegalDocumentState {
   const factory LegalDocumentState({
     @Default(false) bool isLoading,
+    @Default(false) bool isLoadingMore,
+    @Default(false) bool hasMore,
+
+    @Default(1) int page,
+    @Default(20) int limit,
     @Default([]) List<LegalDocumentEntry> entries,
     @Default({}) Set<String> selectedIds,
     LegalDocumentEntry? entry,
