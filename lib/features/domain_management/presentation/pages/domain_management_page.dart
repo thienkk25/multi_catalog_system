@@ -91,6 +91,9 @@ class _DomainManagementPageState extends State<DomainManagementPage>
                             state.successMessage!,
                           );
                         }
+                        if (state.error != null) {
+                          context.notificationCubit.error(state.error!);
+                        }
                       },
                       builder: (context, state) {
                         if (state.isLoading) {

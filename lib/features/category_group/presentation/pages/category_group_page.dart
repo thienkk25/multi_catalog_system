@@ -108,6 +108,9 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
                     if (state.successMessage != null) {
                       context.notificationCubit.success(state.successMessage!);
                     }
+                    if (state.error != null) {
+                      context.notificationCubit.error(state.error!);
+                    }
                   },
                   builder: (context, state) {
                     if (state.isLoading) {
