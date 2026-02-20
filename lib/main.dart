@@ -4,7 +4,6 @@ import 'package:multi_catalog_system/core/config/app/url_strategy.dart'
     if (dart.library.html) 'package:multi_catalog_system/core/config/app/url_strategy_web.dart';
 import 'core/core.dart';
 import 'features/auth/presentation/presentation.dart';
-import 'features/catalog_lookup/presentation/presentation.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,11 +21,11 @@ class MainApp extends StatelessWidget {
         GlobalKey<ScaffoldMessengerState>();
     return MultiBlocProvider(
       providers: [
+        BlocProvider(create: (_) => getIt<NotificationCubit>()),
         BlocProvider(
           create: (_) =>
               getIt<AuthBloc>()..add(const AuthEvent.checkAuthenticated()),
         ),
-        BlocProvider(create: (_) => getIt<NotificationCubit>()),
       ],
       child: BlocListener<NotificationCubit, NotificationState>(
         listener: (context, state) {
@@ -46,50 +45,18 @@ class MainApp extends StatelessWidget {
 
           context.notificationCubit.clear();
         },
-        child: BlocBuilder<AuthBloc, AuthState>(
-          buildWhen: (previous, current) {
-            final prevAuth = previous.mapOrNull(
-              authenticated: (_) => true,
-              unauthenticated: (_) => false,
-            );
-
-            final currAuth = current.mapOrNull(
-              authenticated: (_) => true,
-              unauthenticated: (_) => false,
-            );
-
-            return prevAuth != currAuth;
-          },
-          builder: (context, authState) {
-            final isAuthenticated = authState.mapOrNull(
-              authenticated: (_) => true,
-              unauthenticated: (_) => false,
-            );
-
-            return MultiBlocProvider(
-              key: ValueKey(isAuthenticated),
-              providers: [
-                BlocProvider(
-                  create: (_) =>
-                      getIt<CatalogLookupBloc>()
-                        ..add(const CatalogLookupEvent.getDomainsRef()),
-                ),
-              ],
-              child: MaterialApp.router(
-                title: AppConstant.appName,
-                scaffoldMessengerKey: scaffoldMessengerKey,
-                theme: ThemeData(
-                  scaffoldBackgroundColor: Color(0xFFF5F7FA),
-                  appBarTheme: AppBarTheme(
-                    backgroundColor: Colors.blue,
-                    foregroundColor: Colors.white,
-                  ),
-                ),
-                routerConfig: AppRouter.router,
-                debugShowCheckedModeBanner: false,
-              ),
-            );
-          },
+        child: MaterialApp.router(
+          title: AppConstant.appName,
+          scaffoldMessengerKey: scaffoldMessengerKey,
+          theme: ThemeData(
+            scaffoldBackgroundColor: Color(0xFFF5F7FA),
+            appBarTheme: AppBarTheme(
+              backgroundColor: Colors.blue,
+              foregroundColor: Colors.white,
+            ),
+          ),
+          routerConfig: AppRouter.router,
+          debugShowCheckedModeBanner: false,
         ),
       ),
     );

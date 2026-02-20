@@ -118,21 +118,14 @@ class _MainDrawer extends StatelessWidget {
           spacing: 10,
           children: [
             _DrawerItem(
-              icon: Icon(Icons.search, size: 20),
-              title: 'Tra cứu danh mục',
-              pageIndex: 0,
-              onSelectTab: onSelectTab,
-              selected: currentIndex == 0,
-            ),
-            _DrawerItem(
               icon: SvgPicture.asset(
                 'assets/icons/folder-favourites-svgrepo-com.svg',
                 height: 20,
               ),
               title: 'Lĩnh vực',
-              pageIndex: 1,
+              pageIndex: 0,
               onSelectTab: onSelectTab,
-              selected: currentIndex == 1,
+              selected: currentIndex == 0,
             ),
             _DrawerItem(
               icon: SvgPicture.asset(
@@ -140,9 +133,9 @@ class _MainDrawer extends StatelessWidget {
                 height: 20,
               ),
               title: 'Nhóm danh mục',
-              pageIndex: 2,
+              pageIndex: 1,
               onSelectTab: onSelectTab,
-              selected: currentIndex == 2,
+              selected: currentIndex == 1,
             ),
             _DrawerItem(
               icon: SvgPicture.asset(
@@ -150,9 +143,9 @@ class _MainDrawer extends StatelessWidget {
                 height: 20,
               ),
               title: 'Mục danh mục',
-              pageIndex: 3,
+              pageIndex: 2,
               onSelectTab: onSelectTab,
-              selected: currentIndex == 3,
+              selected: currentIndex == 2,
             ),
             _DrawerItem(
               icon: SvgPicture.asset(
@@ -160,9 +153,9 @@ class _MainDrawer extends StatelessWidget {
                 height: 20,
               ),
               title: 'Văn bản pháp lý',
-              pageIndex: 4,
+              pageIndex: 3,
               onSelectTab: onSelectTab,
-              selected: currentIndex == 4,
+              selected: currentIndex == 3,
             ),
 
             RoleBasedWidget(
@@ -173,9 +166,9 @@ class _MainDrawer extends StatelessWidget {
                   height: 20,
                 ),
                 title: 'Nhập dữ liệu File',
-                pageIndex: 5,
+                pageIndex: 4,
                 onSelectTab: onSelectTab,
-                selected: currentIndex == 5,
+                selected: currentIndex == 4,
               ),
             ),
             RoleBasedWidget(
@@ -186,8 +179,8 @@ class _MainDrawer extends StatelessWidget {
                   height: 20,
                 ),
                 title: 'Duyệt danh sách danh mục',
-                pageIndex: 6,
-                selected: currentIndex == 6,
+                pageIndex: 5,
+                selected: currentIndex == 5,
                 onSelectTab: onSelectTab,
               ),
             ),
@@ -203,9 +196,9 @@ class _MainDrawer extends StatelessWidget {
                       height: 20,
                     ),
                     title: 'Quản lý người dùng',
-                    pageIndex: 7,
+                    pageIndex: 6,
                     onSelectTab: onSelectTab,
-                    selected: currentIndex == 7,
+                    selected: currentIndex == 6,
                   ),
                   _DrawerItem(
                     icon: SvgPicture.asset(
@@ -213,9 +206,9 @@ class _MainDrawer extends StatelessWidget {
                       height: 20,
                     ),
                     title: 'API Key',
-                    pageIndex: 8,
+                    pageIndex: 7,
                     onSelectTab: onSelectTab,
-                    selected: currentIndex == 8,
+                    selected: currentIndex == 7,
                   ),
                   _DrawerItem(
                     icon: SvgPicture.asset(
@@ -223,9 +216,9 @@ class _MainDrawer extends StatelessWidget {
                       height: 20,
                     ),
                     title: 'Nhật kí hệ thống',
-                    pageIndex: 9,
+                    pageIndex: 8,
                     onSelectTab: onSelectTab,
-                    selected: currentIndex == 9,
+                    selected: currentIndex == 8,
                   ),
                 ],
               ),
@@ -259,10 +252,10 @@ class _FooterDrawer extends StatelessWidget {
                     if (ScreenSize.of(context).isMobile) {
                       context.pop();
                     }
-                    onSelectTab(10);
+                    onSelectTab(9);
                   },
                   child: ListTile(
-                    selected: currentIndex == 10,
+                    selected: currentIndex == 9,
                     selectedColor: const Color(0xFF1976D2),
                     leading: SvgPicture.asset(
                       'assets/icons/profile-circle-svgrepo-com.svg',

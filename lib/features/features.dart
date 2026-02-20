@@ -2,7 +2,6 @@ export 'api_key_management/api_key_management.dart';
 export 'auth/auth.dart';
 export 'category_group/category_group.dart';
 export 'category_item/category_item.dart';
-export 'catalog_lookup/catalog_lookup.dart';
 export 'domain_management/domain_management.dart';
 export 'home/home.dart';
 export 'import_file/import_file.dart';

@@ -1,11 +1,12 @@
 import 'package:go_router/go_router.dart';
+import 'package:multi_catalog_system/core/config/di/injection.dart';
 import 'package:multi_catalog_system/core/navigation/shells/home_shell.dart';
+import 'package:multi_catalog_system/core/utils/extensions/bloc_extension.dart';
 import 'package:multi_catalog_system/features/features.dart';
 
 import 'api_key_management/api_key_management_routes.dart';
 import 'approve/approve_routes.dart';
 import 'auth/auth_routes.dart';
-import 'catalog_lookup/catalog_lookup_routes.dart';
 import 'category_group/category_group_routes.dart';
 import 'category_item/category_item_routes.dart';
 import 'domain_management/domain_management_routes.dart';
@@ -18,6 +19,7 @@ import 'user_management/user_management_routes.dart';
 
 class AppRouter {
   static final router = GoRouter(
+    initialLocation: '/',
     routes: [
       ...AuthRoutes.routes,
       StatefulShellRoute.indexedStack(
@@ -25,7 +27,6 @@ class AppRouter {
           return HomeShell(navigationShell: navigationShell);
         },
         branches: [
-          StatefulShellBranch(routes: CatalogLookupRoutes.routes),
           StatefulShellBranch(routes: DomainManagementRoutes.routes),
           StatefulShellBranch(routes: CategoryGroupRoutes.routes),
           StatefulShellBranch(routes: CategoryItemRoutes.routes),
@@ -40,6 +41,18 @@ class AppRouter {
       ),
       ...OthersRoutes.routes,
     ],
+    redirect: (context, state) {
+      getIt<AuthBloc>().add(const AuthEvent.checkAuthenticated());
+      final authState = context.authBloc.state;
+      if (authState.maybeMap(
+        authenticated: (_) => true,
+        unauthenticated: (_) => false,
+        orElse: () => false,
+      )) {
+        return '/';
+      }
+      return '/login';
+    },
     errorBuilder: (_, state) => const NotFoundPage(),
   );
 }

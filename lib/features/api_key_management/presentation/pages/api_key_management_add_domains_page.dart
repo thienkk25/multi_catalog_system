@@ -8,9 +8,9 @@ import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/core/widgets/custom_circular_progress.dart';
 import 'package:multi_catalog_system/core/widgets/custom_input.dart';
 import 'package:multi_catalog_system/core/widgets/error_retry_widget.dart';
-import 'package:multi_catalog_system/features/catalog_lookup/presentation/bloc/catalog_lookup_bloc.dart';
-import 'package:multi_catalog_system/features/catalog_lookup/presentation/bloc/catalog_lookup_event.dart';
-import 'package:multi_catalog_system/features/catalog_lookup/presentation/bloc/catalog_lookup_state.dart';
+import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_management_bloc.dart';
+import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_management_event.dart';
+import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_management_state.dart';
 
 class ApiKeyManagementAddDomainsPage extends StatefulWidget {
   final List<String> fields;
@@ -70,9 +70,9 @@ class _ApiKeyManagementAddDomainsPageState
         title: const Text('Chọn lĩnh vực'),
         centerTitle: true,
         actions: [
-          BlocBuilder<CatalogLookupBloc, CatalogLookupState>(
+          BlocBuilder<DomainManagementBloc, DomainManagementState>(
             builder: (context, state) {
-              final allCodes = state.domainsRef.map((e) => e.code).toList();
+              final allCodes = state.entries.map((e) => e.code!).toList();
               final isAll = _isAllSelected(allCodes);
 
               return TextButton(
@@ -203,7 +203,7 @@ class _ApiKeyManagementAddDomainsPageState
 
   Widget _buildList() {
     return CustomCard(
-      child: BlocBuilder<CatalogLookupBloc, CatalogLookupState>(
+      child: BlocBuilder<DomainManagementBloc, DomainManagementState>(
         builder: (context, state) {
           if (state.isLoading) {
             return const Center(child: CustomCircularProgressScreen());
@@ -213,16 +213,16 @@ class _ApiKeyManagementAddDomainsPageState
             return ErrorRetryWidget(
               error: state.error!,
               onRetry: () {
-                context.lookupBloc.add(
-                  const CatalogLookupEvent.getDomainsRef(),
+                context.domainManagementBloc.add(
+                  const DomainManagementEvent.getAll(),
                 );
               },
             );
           }
 
-          final items = state.domainsRef.where((e) {
-            return e.name.toLowerCase().contains(_keyword) ||
-                e.code.toLowerCase().contains(_keyword);
+          final items = state.entries.where((e) {
+            return e.name!.toLowerCase().contains(_keyword) ||
+                e.code!.toLowerCase().contains(_keyword);
           }).toList();
 
           return ListView.builder(
@@ -237,15 +237,15 @@ class _ApiKeyManagementAddDomainsPageState
                 child: ListTile(
                   contentPadding: const EdgeInsets.symmetric(vertical: 6),
                   title: Text(
-                    domain.name,
+                    domain.name!,
                     style: const TextStyle(fontWeight: FontWeight.w600),
                   ),
-                  subtitle: Text(domain.code),
+                  subtitle: Text(domain.code!),
                   trailing: Icon(
                     checked ? Icons.check_circle : Icons.radio_button_unchecked,
                     color: checked ? Colors.blue : Colors.grey,
                   ),
-                  onTap: () => _toggle(domain.code),
+                  onTap: () => _toggle(domain.code!),
                 ),
               );
             },
