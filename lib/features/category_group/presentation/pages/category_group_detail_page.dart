@@ -31,7 +31,7 @@ class CategoryGroupDetailPage extends StatelessWidget {
               spacing: 16,
               children: [
                 _sectionCard(
-                  title: 'Thông tin nhóm danh mục',
+                  title: 'Thông tin nhóm danh mục (${entry.domain?.name})',
                   icon: Icons.folder_outlined,
                   children: [
                     _infoRow(label: 'Mã nhóm', value: entry.code),

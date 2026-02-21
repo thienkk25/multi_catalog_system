@@ -18,6 +18,12 @@ abstract class CategoryGroupRemoteDataSource {
     required Map<String, dynamic> data,
   });
   Future<void> delete({required String id});
+
+  Future<PageModel<CategoryGroupModel>> lookup({
+    required String domainId,
+    int? page,
+    int? limit,
+  });
 }
 
 class CategoryGroupRemoteDataSourceImpl extends BaseRemoteDataSource
@@ -104,6 +110,32 @@ class CategoryGroupRemoteDataSourceImpl extends BaseRemoteDataSource
   Future<void> delete({required String id}) async {
     try {
       await dio.delete('/category-group/$id');
+    } on DioException catch (e) {
+      handleDioError(e);
+    } catch (e) {
+      throw UnexpectedException(e.toString());
+    }
+  }
+
+  @override
+  Future<PageModel<CategoryGroupModel>> lookup({
+    required String domainId,
+    int? page,
+    int? limit,
+  }) async {
+    try {
+      final queryParams = <String, dynamic>{};
+      if (page != null) queryParams['page'] = page;
+
+      if (limit != null) queryParams['limit'] = limit;
+      final response = await dio.get(
+        '/category-group/lookup',
+        queryParameters: queryParams,
+      );
+      return PageModel<CategoryGroupModel>.fromJson(
+        response.data['data'],
+        (e) => CategoryGroupModel.fromJson(e as Map<String, dynamic>),
+      );
     } on DioException catch (e) {
       handleDioError(e);
     } catch (e) {

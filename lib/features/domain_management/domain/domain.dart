@@ -5,3 +5,4 @@ export 'use_cases/delete_domain_use_case.dart';
 export 'use_cases/get_all_domain_use_case.dart';
 export 'use_cases/get_by_id_domain_use_case.dart';
 export 'use_cases/update_domain_use_case.dart';
+export 'use_cases/get_domain_lookup_use_case.dart';

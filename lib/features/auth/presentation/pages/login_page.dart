@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/core.dart';
 import 'package:multi_catalog_system/features/auth/presentation/presentation.dart';
 
@@ -83,28 +82,12 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   SizedBox(height: 5),
                   BlocListener<AuthBloc, AuthState>(
-                    listenWhen: (previous, current) {
-                      final wasAuth = previous.maybeMap(
-                        authenticated: (_) => true,
-                        error: (_) => true,
-                        orElse: () => false,
-                      );
-
-                      final isAuth = current.maybeMap(
-                        authenticated: (_) => true,
-                        error: (_) => true,
-                        orElse: () => false,
-                      );
-
-                      return wasAuth != isAuth;
-                    },
                     listener: (context, state) {
                       state.mapOrNull(
                         authenticated: (_) {
                           context.notificationCubit.success(
                             'Đăng nhập thành công',
                           );
-                          context.goNamed(RouterNames.home);
                         },
                         error: (state) {
                           context.notificationCubit.error(state.message);
@@ -147,25 +130,6 @@ class _LoginPageState extends State<LoginPage> {
                                   ),
                           );
                         },
-                      ),
-                    ),
-                  ),
-
-                  SizedBox(
-                    width: sizeW,
-                    child: CustomButton(
-                      onTap: () {
-                        if (context.canPop()) {
-                          context.pop();
-                          return;
-                        }
-                        context.goNamed(RouterNames.home);
-                      },
-                      colorBackground: Colors.transparent,
-                      colorBorder: Colors.blue,
-                      textButton: Text(
-                        'Quay lại',
-                        style: TextStyle(fontWeight: FontWeight(600)),
                       ),
                     ),
                   ),

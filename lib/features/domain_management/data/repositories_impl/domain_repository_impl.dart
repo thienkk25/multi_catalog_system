@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:multi_catalog_system/core/domain/entities/domain/domain_ref_entry.dart';
 import 'package:multi_catalog_system/core/domain/entities/page/page_entry.dart';
 import 'package:multi_catalog_system/core/domain/entities/page/pagination_entry.dart';
 import 'package:multi_catalog_system/core/error/exception_mapper.dart';
@@ -115,6 +116,34 @@ class DomainRepositoryImpl implements DomainRepository {
     try {
       await remoteDataSource.delete(id: id);
       return const Right(unit);
+    } on AppException catch (e) {
+      return Left(mapExceptionToFailure(e));
+    } catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, PageEntry<DomainRefEntry>>> lookup({
+    int? page,
+    int? limit,
+  }) async {
+    try {
+      final models = await remoteDataSource.lookup(page: page, limit: limit);
+      return Right(
+        PageEntry<DomainRefEntry>(
+          entries: models.data
+              .map((m) => DomainRefEntry(id: m.id, code: m.code, name: m.name))
+              .toList(),
+          pagination: PaginationEntry(
+            page: models.pagination.page,
+            limit: models.pagination.limit,
+            total: models.pagination.total,
+            totalPages: models.pagination.totalPages,
+            hasMore: models.pagination.hasMore,
+          ),
+        ),
+      );
     } on AppException catch (e) {
       return Left(mapExceptionToFailure(e));
     } catch (e) {

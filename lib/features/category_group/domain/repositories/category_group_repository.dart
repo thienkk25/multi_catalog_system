@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:multi_catalog_system/core/domain/entities/category_group/category_group_ref_entry.dart';
 import 'package:multi_catalog_system/core/domain/entities/page/page_entry.dart';
 import 'package:multi_catalog_system/core/error/failures.dart';
 import 'package:multi_catalog_system/features/category_group/domain/entities/category_group_entry.dart';
@@ -18,4 +19,10 @@ abstract class CategoryGroupRepository {
     required CategoryGroupEntry entry,
   });
   Future<Either<Failure, void>> delete({required String id});
+
+  Future<Either<Failure, PageEntry<CategoryGroupRefEntry>>> lookup({
+    required String domainId,
+    int? page,
+    int? limit,
+  });
 }

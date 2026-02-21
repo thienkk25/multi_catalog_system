@@ -1,5 +1,4 @@
 import 'package:go_router/go_router.dart';
-import 'package:multi_catalog_system/core/config/di/injection.dart';
 import 'package:multi_catalog_system/core/navigation/shells/home_shell.dart';
 import 'package:multi_catalog_system/core/utils/extensions/bloc_extension.dart';
 import 'package:multi_catalog_system/features/features.dart';
@@ -19,7 +18,7 @@ import 'user_management/user_management_routes.dart';
 
 class AppRouter {
   static final router = GoRouter(
-    initialLocation: '/',
+    initialLocation: '/domains',
     routes: [
       ...AuthRoutes.routes,
       StatefulShellRoute.indexedStack(
@@ -42,16 +41,24 @@ class AppRouter {
       ...OthersRoutes.routes,
     ],
     redirect: (context, state) {
-      getIt<AuthBloc>().add(const AuthEvent.checkAuthenticated());
       final authState = context.authBloc.state;
-      if (authState.maybeMap(
+      final isLoggedIn = authState.maybeMap(
         authenticated: (_) => true,
         unauthenticated: (_) => false,
         orElse: () => false,
-      )) {
-        return '/';
+      );
+
+      final isLoginRoute = state.matchedLocation == '/login';
+
+      if (!isLoggedIn && !isLoginRoute) {
+        return '/login';
       }
-      return '/login';
+
+      if (isLoggedIn && isLoginRoute) {
+        return '/domains';
+      }
+
+      return null;
     },
     errorBuilder: (_, state) => const NotFoundPage(),
   );

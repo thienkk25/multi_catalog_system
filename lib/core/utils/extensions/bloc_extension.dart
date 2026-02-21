@@ -4,8 +4,10 @@ import 'package:multi_catalog_system/core/notifications/notification_cubit.dart'
 import 'package:multi_catalog_system/features/api_key_management/presentation/bloc/api_key_bloc.dart';
 import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:multi_catalog_system/features/category_group/presentation/bloc/category_group_bloc.dart';
+import 'package:multi_catalog_system/features/category_group/presentation/bloc/category_group_lookup_bloc.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_bloc.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_version_bloc.dart';
+import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_lookup_bloc.dart';
 import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_management_bloc.dart';
 import 'package:multi_catalog_system/features/import_file/presentation/bloc/import_file_bloc.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/bloc/document_file_cubit.dart';
@@ -29,4 +31,7 @@ extension BlocX on BuildContext {
   ProfileBloc get profileBloc => read<ProfileBloc>();
   SystemHistoryBloc get systemHistoryBloc => read<SystemHistoryBloc>();
   UserManagementBloc get userManagementBloc => read<UserManagementBloc>();
+  DomainLookupBloc get domainLookupBloc => read<DomainLookupBloc>();
+  CategoryGroupLookupBloc get categoryGroupLookupBloc =>
+      read<CategoryGroupLookupBloc>();
 }

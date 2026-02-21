@@ -141,7 +141,7 @@ class _InfoTab extends StatelessWidget {
                   value: entry.description!,
                   multiline: true,
                 ),
-              _InfoRow(label: 'Lĩnh vực', value: entry.group?.domain?.name),
+              _InfoRow(label: 'Lĩnh vực', value: entry.domain?.name),
               _InfoRow(label: 'Nhóm danh mục', value: entry.group?.name),
               _InfoRow(label: 'Người tạo', value: entry.createdByName),
               _InfoRow(

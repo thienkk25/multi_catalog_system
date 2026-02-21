@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:multi_catalog_system/core/data/models/domain/domain_ref_model.dart';
 
 part 'category_group_model.freezed.dart';
 part 'category_group_model.g.dart';
@@ -7,10 +8,10 @@ part 'category_group_model.g.dart';
 abstract class CategoryGroupModel with _$CategoryGroupModel {
   const factory CategoryGroupModel({
     required String id,
-    @JsonKey(name: 'domain_id') required String domainId,
     required String code,
     required String name,
     required String description,
+    required DomainRefModel domain,
     @JsonKey(name: 'created_at') required DateTime createdAt,
     @JsonKey(name: 'updated_at') DateTime? updatedAt,
   }) = _CategoryGroupModel;

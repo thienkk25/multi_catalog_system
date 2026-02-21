@@ -27,6 +27,10 @@ void initCategoryGroupModule() {
     () => GetAllCategoryGroupUseCase(repository: getIt()),
   );
 
+  getIt.registerLazySingleton(
+    () => GetCategoryGroupLookupUseCase(repository: getIt()),
+  );
+
   getIt.registerFactory(
     () => CategoryGroupBloc(
       create: getIt<CreateCategoryGroupUseCase>(),
@@ -35,5 +39,10 @@ void initCategoryGroupModule() {
       getById: getIt<GetByIdCategoryGroupUseCase>(),
       getAll: getIt<GetAllCategoryGroupUseCase>(),
     ),
+  );
+
+  getIt.registerFactory(
+    () =>
+        CategoryGroupLookupBloc(lookup: getIt<GetCategoryGroupLookupUseCase>()),
   );
 }

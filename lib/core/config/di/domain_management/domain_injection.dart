@@ -17,6 +17,10 @@ void initDomainModule() {
   getIt.registerLazySingleton(() => GetByIdDomainUseCase(repository: getIt()));
   getIt.registerLazySingleton(() => GetAllDomainUseCase(repository: getIt()));
 
+  getIt.registerLazySingleton(
+    () => GetDomainLookupUseCase(repository: getIt()),
+  );
+
   getIt.registerFactory(
     () => DomainManagementBloc(
       create: getIt<CreateDomainUseCase>(),
@@ -25,5 +29,9 @@ void initDomainModule() {
       getById: getIt<GetByIdDomainUseCase>(),
       getAll: getIt<GetAllDomainUseCase>(),
     ),
+  );
+
+  getIt.registerFactory(
+    () => DomainLookupBloc(lookup: getIt<GetDomainLookupUseCase>()),
   );
 }

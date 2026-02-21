@@ -26,11 +26,12 @@ class CategoryItemRepositoryImpl implements CategoryItemRepository {
         group: CategoryGroupRefEntry(
           id: model.group.id,
           name: model.group.name,
-          domain: DomainRefEntry(
-            id: model.group.domain.id,
-            name: model.group.domain.name,
-            code: model.group.domain.code,
-          ),
+          code: model.group.code,
+        ),
+        domain: DomainRefEntry(
+          id: model.domain.id,
+          name: model.domain.name,
+          code: model.domain.code,
         ),
         legalDocuments: model.legalDocuments
             ?.map((e) => _toEntityLegalDocument(e))

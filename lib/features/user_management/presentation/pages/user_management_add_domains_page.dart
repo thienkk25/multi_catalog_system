@@ -10,6 +10,9 @@ import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/core/widgets/custom_circular_progress.dart';
 import 'package:multi_catalog_system/core/widgets/custom_input.dart';
 import 'package:multi_catalog_system/core/widgets/error_retry_widget.dart';
+import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_lookup_bloc.dart';
+import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_lookup_event.dart';
+import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_lookup_state.dart';
 
 class UserManagementAddDomainsPage extends StatefulWidget {
   final List<DomainRefEntry> fields;
@@ -68,9 +71,9 @@ class _UserManagementAddDomainsPageState
         title: const Text('Chọn lĩnh vực'),
         centerTitle: true,
         actions: [
-          BlocBuilder<CatalogLookupBloc, CatalogLookupState>(
+          BlocBuilder<DomainLookupBloc, DomainLookupState>(
             builder: (context, state) {
-              final domains = state.domainsRef;
+              final domains = state.entries;
               final isAll = _isAllSelected(domains);
 
               return TextButton(
@@ -159,7 +162,7 @@ class _UserManagementAddDomainsPageState
                 padding: const EdgeInsets.only(right: 8),
                 child: Chip(
                   label: Text(
-                    domain.name,
+                    domain.name!,
                     style: const TextStyle(
                       color: Colors.blue,
                       fontWeight: FontWeight.w500,
@@ -203,7 +206,7 @@ class _UserManagementAddDomainsPageState
 
   Widget _buildList() {
     return CustomCard(
-      child: BlocBuilder<CatalogLookupBloc, CatalogLookupState>(
+      child: BlocBuilder<DomainLookupBloc, DomainLookupState>(
         builder: (context, state) {
           if (state.isLoading) {
             return const Center(child: CustomCircularProgressScreen());
@@ -213,16 +216,14 @@ class _UserManagementAddDomainsPageState
             return ErrorRetryWidget(
               error: state.error!,
               onRetry: () {
-                context.lookupBloc.add(
-                  const CatalogLookupEvent.getDomainsRef(),
-                );
+                context.domainLookupBloc.add(const DomainLookupEvent.lookup());
               },
             );
           }
 
-          final items = state.domainsRef.where((e) {
-            return e.name.toLowerCase().contains(_keyword) ||
-                e.code.toLowerCase().contains(_keyword);
+          final items = state.entries.where((e) {
+            return e.name!.toLowerCase().contains(_keyword) ||
+                e.code!.toLowerCase().contains(_keyword);
           }).toList();
 
           return ListView.builder(
@@ -237,10 +238,10 @@ class _UserManagementAddDomainsPageState
                 child: ListTile(
                   contentPadding: const EdgeInsets.symmetric(vertical: 6),
                   title: Text(
-                    domain.name,
+                    domain.name!,
                     style: const TextStyle(fontWeight: FontWeight.w600),
                   ),
-                  subtitle: Text(domain.code),
+                  subtitle: Text(domain.code!),
                   trailing: Icon(
                     checked ? Icons.check_circle : Icons.radio_button_unchecked,
                     color: checked ? Colors.blue : Colors.grey,

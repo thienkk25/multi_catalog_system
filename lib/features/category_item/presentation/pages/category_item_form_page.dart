@@ -10,6 +10,9 @@ import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/core/widgets/custom_dropdown_button.dart';
 import 'package:multi_catalog_system/core/widgets/custom_input.dart';
 import 'package:multi_catalog_system/core/widgets/file_icon_widget.dart';
+import 'package:multi_catalog_system/features/category_group/presentation/bloc/category_group_lookup_bloc.dart';
+import 'package:multi_catalog_system/features/category_group/presentation/bloc/category_group_lookup_event.dart';
+import 'package:multi_catalog_system/features/category_group/presentation/bloc/category_group_lookup_state.dart';
 import 'package:multi_catalog_system/features/category_item/domain/entities/category_group_ref_entry.dart';
 import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_entry.dart';
 import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_version_entry.dart';
@@ -19,6 +22,8 @@ import 'package:multi_catalog_system/features/category_item/presentation/bloc/ca
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_version_bloc.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_version_event.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_version_state.dart';
+import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_lookup_bloc.dart';
+import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_lookup_state.dart';
 import 'package:multi_catalog_system/features/legal_document/domain/entities/legal_document_entry.dart';
 
 enum CategoryItemFormMode { create, updateItem, updateVersion }
@@ -63,9 +68,6 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
   @override
   void initState() {
     super.initState();
-
-    context.lookupBloc.add(const CatalogLookupEvent.getDomainsRef());
-
     _loadData();
   }
 
@@ -102,8 +104,8 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
     _selectedDomainId = domainId;
 
     if (domainId != null) {
-      context.lookupBloc.add(
-        CatalogLookupEvent.getCategoryGroupsRef(domainId: domainId),
+      context.categoryGroupLookupBloc.add(
+        CategoryGroupLookupEvent.lookup(domainId: domainId),
       );
     }
 
@@ -277,9 +279,9 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
             Column(
               spacing: 10,
               children: [
-                BlocBuilder<CatalogLookupBloc, CatalogLookupState>(
+                BlocBuilder<DomainLookupBloc, DomainLookupState>(
                   builder: (context, state) {
-                    final domains = state.domainsRef;
+                    final domains = state.entries;
 
                     return CustomDropdownButton<String>(
                       lable: const Text(
@@ -292,7 +294,7 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
                           .map(
                             (e) => DropdownMenuItem<String>(
                               value: e.id,
-                              child: Text(e.name),
+                              child: Text(e.name ?? '-'),
                             ),
                           )
                           .toList(),
@@ -305,10 +307,8 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
                           _selectedCategoryGroupId = null;
                         });
 
-                        context.lookupBloc.add(
-                          CatalogLookupEvent.getCategoryGroupsRef(
-                            domainId: value,
-                          ),
+                        context.categoryGroupLookupBloc.add(
+                          CategoryGroupLookupEvent.lookup(domainId: value),
                         );
                       },
                       validator: (v) => v == null || v.isEmpty
@@ -317,9 +317,9 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
                     );
                   },
                 ),
-                BlocBuilder<CatalogLookupBloc, CatalogLookupState>(
+                BlocBuilder<CategoryGroupLookupBloc, CategoryGroupLookupState>(
                   builder: (context, state) {
-                    final categoryGroups = state.categoryGroupRef;
+                    final categoryGroups = state.entries;
 
                     return CustomDropdownButton<String>(
                       lable: const Text(
@@ -332,7 +332,7 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
                           .map(
                             (e) => DropdownMenuItem<String>(
                               value: e.id,
-                              child: Text(e.name),
+                              child: Text(e.name ?? '-'),
                             ),
                           )
                           .toList(),

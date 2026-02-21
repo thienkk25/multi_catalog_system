@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/core.dart';
-import 'package:multi_catalog_system/features/catalog_lookup/presentation/presentation.dart';
 import 'package:multi_catalog_system/features/category_group/domain/domain.dart';
 import 'package:multi_catalog_system/features/category_group/presentation/bloc/category_group_bloc.dart';
 import 'package:multi_catalog_system/features/category_group/presentation/bloc/category_group_event.dart';
 import 'package:multi_catalog_system/features/category_group/presentation/bloc/category_group_state.dart';
+import 'package:multi_catalog_system/features/domain_management/domain/entities/domain_entry.dart';
+import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_management_bloc.dart';
+import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_management_state.dart';
 
 enum CategoryGroupFormType { create, update }
 
@@ -54,7 +56,7 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
     _codeController.text = entry.code!;
     _nameController.text = entry.name!;
     _descriptionController.text = entry.description!;
-    _selectedDomainId = entry.domainId;
+    _selectedDomainId = entry.domain!.id;
 
     _didInit = true;
   }
@@ -141,11 +143,11 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
                                         : null,
                                   ),
                                   BlocSelector<
-                                    CatalogLookupBloc,
-                                    CatalogLookupState,
-                                    List<DomainRefEntry>
+                                    DomainManagementBloc,
+                                    DomainManagementState,
+                                    List<DomainEntry>
                                   >(
-                                    selector: (state) => state.domainsRef,
+                                    selector: (state) => state.entries,
                                     builder: (context, domains) {
                                       return CustomDropdownButton<String>(
                                         lable: const Text(
@@ -160,7 +162,7 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
                                             .map(
                                               (e) => DropdownMenuItem<String>(
                                                 value: e.id,
-                                                child: Text(e.name),
+                                                child: Text(e.name!),
                                               ),
                                             )
                                             .toList(),
@@ -258,7 +260,7 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
     if (_isUpdate) {
       final entry = CategoryGroupEntry(
         id: _entry!.id,
-        domainId: _selectedDomainId,
+        domain: DomainRefEntry(id: _selectedDomainId),
         code: _entry?.code != _codeController.text
             ? _codeController.text
             : _entry?.code,
@@ -272,7 +274,7 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
       context.groupBloc.add(CategoryGroupEvent.update(entry: entry));
     } else {
       final entry = CategoryGroupEntry(
-        domainId: _selectedDomainId,
+        domain: DomainRefEntry(id: _selectedDomainId),
         code: _codeController.text,
         name: _nameController.text,
         description: _descriptionController.text.isNotEmpty

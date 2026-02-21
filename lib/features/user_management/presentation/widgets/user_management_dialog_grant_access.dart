@@ -165,7 +165,7 @@ class _UserManagementDialogGrantAccessState
               ..._domains.map(
                 (field) => Chip(
                   label: Text(
-                    field.name,
+                    field.name!,
                     style: const TextStyle(
                       color: Colors.blue,
                       fontWeight: FontWeight.w500,

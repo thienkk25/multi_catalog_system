@@ -45,18 +45,28 @@ class MainApp extends StatelessWidget {
 
           context.notificationCubit.clear();
         },
-        child: MaterialApp.router(
-          title: AppConstant.appName,
-          scaffoldMessengerKey: scaffoldMessengerKey,
-          theme: ThemeData(
-            scaffoldBackgroundColor: Color(0xFFF5F7FA),
-            appBarTheme: AppBarTheme(
-              backgroundColor: Colors.blue,
-              foregroundColor: Colors.white,
-            ),
-          ),
-          routerConfig: AppRouter.router,
-          debugShowCheckedModeBanner: false,
+        child: BlocBuilder<AuthBloc, AuthState>(
+          buildWhen: (previous, current) => previous != current,
+          builder: (context, authState) {
+            final isAuthenticated = authState.mapOrNull(
+              authenticated: (_) => true,
+              unauthenticated: (_) => false,
+            );
+            return MaterialApp.router(
+              key: ValueKey(isAuthenticated),
+              title: AppConstant.appName,
+              scaffoldMessengerKey: scaffoldMessengerKey,
+              theme: ThemeData(
+                scaffoldBackgroundColor: Color(0xFFF5F7FA),
+                appBarTheme: AppBarTheme(
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.white,
+                ),
+              ),
+              routerConfig: AppRouter.router,
+              debugShowCheckedModeBanner: false,
+            );
+          },
         ),
       ),
     );

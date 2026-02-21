@@ -52,7 +52,7 @@ class CategoryItemCard extends StatelessWidget {
             const SizedBox(height: 12),
 
             _InfoRow(label: 'Mã mục', value: entry.code),
-            _InfoRow(label: 'Lĩnh vực', value: entry.group?.domain?.name),
+            _InfoRow(label: 'Lĩnh vực', value: entry.domain?.name),
             _InfoRow(label: 'Nhóm', value: entry.group?.name),
 
             if (entry.description?.isNotEmpty == true) ...[

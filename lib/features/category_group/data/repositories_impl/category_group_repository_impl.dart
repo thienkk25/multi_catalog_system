@@ -1,4 +1,6 @@
 import 'package:dartz/dartz.dart';
+import 'package:multi_catalog_system/core/domain/entities/category_group/category_group_ref_entry.dart';
+import 'package:multi_catalog_system/core/domain/entities/domain/domain_ref_entry.dart';
 import 'package:multi_catalog_system/core/domain/entities/page/page_entry.dart';
 import 'package:multi_catalog_system/core/domain/entities/page/pagination_entry.dart';
 import 'package:multi_catalog_system/core/error/exception_mapper.dart';
@@ -16,7 +18,11 @@ class CategoryGroupRepositoryImpl implements CategoryGroupRepository {
 
   CategoryGroupEntry _toEntity(CategoryGroupModel model) => CategoryGroupEntry(
     id: model.id,
-    domainId: model.domainId,
+    domain: DomainRefEntry(
+      id: model.domain.id,
+      code: model.domain.code,
+      name: model.domain.name,
+    ),
     code: model.code,
     name: model.name,
     description: model.description,
@@ -25,14 +31,14 @@ class CategoryGroupRepositoryImpl implements CategoryGroupRepository {
   );
 
   Map<String, dynamic> _createPayload(CategoryGroupEntry entry) => {
-    'domain_id': entry.domainId,
+    'domain': DomainRefEntry(id: entry.domain!.id),
     'code': entry.code,
     'name': entry.name,
     if (entry.description != null) 'description': entry.description,
   };
 
   Map<String, dynamic> _updatePayload(CategoryGroupEntry entry) => {
-    if (entry.domainId != null) 'domain_id': entry.domainId,
+    if (entry.domain != null) 'domain': DomainRefEntry(id: entry.domain!.id),
     if (entry.code != null) 'code': entry.code,
     if (entry.name != null) 'name': entry.name,
     if (entry.description != null) 'description': entry.description,
@@ -121,6 +127,42 @@ class CategoryGroupRepositoryImpl implements CategoryGroupRepository {
     try {
       await remoteDataSource.delete(id: id);
       return const Right(unit);
+    } on AppException catch (e) {
+      return Left(mapExceptionToFailure(e));
+    } catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, PageEntry<CategoryGroupRefEntry>>> lookup({
+    required String domainId,
+    int? page,
+    int? limit,
+  }) async {
+    try {
+      final model = await remoteDataSource.lookup(
+        domainId: domainId,
+        page: page,
+        limit: limit,
+      );
+      return Right(
+        PageEntry<CategoryGroupRefEntry>(
+          entries: model.data
+              .map(
+                (m) =>
+                    CategoryGroupRefEntry(id: m.id, code: m.code, name: m.name),
+              )
+              .toList(),
+          pagination: PaginationEntry(
+            page: model.pagination.page,
+            limit: model.pagination.limit,
+            total: model.pagination.total,
+            totalPages: model.pagination.totalPages,
+            hasMore: model.pagination.hasMore,
+          ),
+        ),
+      );
     } on AppException catch (e) {
       return Left(mapExceptionToFailure(e));
     } catch (e) {
