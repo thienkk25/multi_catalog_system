@@ -4,6 +4,7 @@ import 'package:multi_catalog_system/core/config/di/injection.dart';
 import 'package:multi_catalog_system/core/utils/extensions/bloc_extension.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/features/category_group/presentation/presentation.dart';
+import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_lookup_bloc.dart';
 
 class CategoryGroupRoutes {
   static List<RouteBase> get routes => [
@@ -35,9 +36,12 @@ class CategoryGroupRoutes {
               builder: (context, state) {
                 final mode = state.uri.queryParameters['mode']!;
                 final id = state.uri.queryParameters['id'];
-                return CategoryGroupFormPage(
-                  mode: CategoryGroupFormType.values.byName(mode),
-                  id: id,
+                return BlocProvider(
+                  create: (_) => getIt.get<DomainLookupBloc>(),
+                  child: CategoryGroupFormPage(
+                    mode: CategoryGroupFormType.values.byName(mode),
+                    id: id,
+                  ),
                 );
               },
             ),

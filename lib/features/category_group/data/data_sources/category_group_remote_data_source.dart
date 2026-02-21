@@ -124,7 +124,7 @@ class CategoryGroupRemoteDataSourceImpl extends BaseRemoteDataSource
     int? limit,
   }) async {
     try {
-      final queryParams = <String, dynamic>{};
+      final queryParams = <String, dynamic>{'domain_id': domainId};
       if (page != null) queryParams['page'] = page;
 
       if (limit != null) queryParams['limit'] = limit;

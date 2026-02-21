@@ -3,7 +3,9 @@ import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/config/di/injection.dart';
 import 'package:multi_catalog_system/core/utils/extensions/bloc_extension.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
+import 'package:multi_catalog_system/features/category_group/presentation/bloc/category_group_lookup_bloc.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/presentation.dart';
+import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_lookup_bloc.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/bloc/legal_document_bloc.dart';
 
 class CategoryItemRoutes {
@@ -44,10 +46,18 @@ class CategoryItemRoutes {
                 final itemId = state.uri.queryParameters['itemId'];
                 final versionId = state.uri.queryParameters['versionId'];
 
-                return CategoryItemFormPage(
-                  mode: CategoryItemFormMode.values.byName(mode),
-                  itemId: itemId,
-                  versionId: versionId,
+                return MultiBlocProvider(
+                  providers: [
+                    BlocProvider(create: (_) => getIt.get<DomainLookupBloc>()),
+                    BlocProvider(
+                      create: (_) => getIt.get<CategoryGroupLookupBloc>(),
+                    ),
+                  ],
+                  child: CategoryItemFormPage(
+                    mode: CategoryItemFormMode.values.byName(mode),
+                    itemId: itemId,
+                    versionId: versionId,
+                  ),
                 );
               },
             ),

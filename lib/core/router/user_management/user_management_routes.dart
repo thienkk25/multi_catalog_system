@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/config/di/injection.dart';
 import 'package:multi_catalog_system/core/utils/extensions/bloc_extension.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
+import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_lookup_bloc.dart';
 import 'package:multi_catalog_system/features/user_management/presentation/presentation.dart';
 
 class UserManagementRoutes {
@@ -37,9 +38,12 @@ class UserManagementRoutes {
               builder: (context, state) {
                 final mode = state.uri.queryParameters['mode']!;
                 final id = state.uri.queryParameters['id'];
-                return UserManagementFormPage(
-                  mode: UserManagementFormMode.values.byName(mode),
-                  id: id,
+                return BlocProvider(
+                  create: (_) => getIt<DomainLookupBloc>(),
+                  child: UserManagementFormPage(
+                    mode: UserManagementFormMode.values.byName(mode),
+                    id: id,
+                  ),
                 );
               },
             ),

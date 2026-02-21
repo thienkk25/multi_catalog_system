@@ -23,6 +23,7 @@ import 'package:multi_catalog_system/features/category_item/presentation/bloc/ca
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_version_event.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_version_state.dart';
 import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_lookup_bloc.dart';
+import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_lookup_event.dart';
 import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_lookup_state.dart';
 import 'package:multi_catalog_system/features/legal_document/domain/entities/legal_document_entry.dart';
 
@@ -68,6 +69,7 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
   @override
   void initState() {
     super.initState();
+    context.domainLookupBloc.add(const DomainLookupEvent.lookup());
     _loadData();
   }
 
@@ -280,6 +282,8 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
               spacing: 10,
               children: [
                 BlocBuilder<DomainLookupBloc, DomainLookupState>(
+                  buildWhen: (previous, current) =>
+                      previous.entries != current.entries,
                   builder: (context, state) {
                     final domains = state.entries;
 

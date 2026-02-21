@@ -6,9 +6,9 @@ import 'package:multi_catalog_system/features/category_group/domain/domain.dart'
 import 'package:multi_catalog_system/features/category_group/presentation/bloc/category_group_bloc.dart';
 import 'package:multi_catalog_system/features/category_group/presentation/bloc/category_group_event.dart';
 import 'package:multi_catalog_system/features/category_group/presentation/bloc/category_group_state.dart';
-import 'package:multi_catalog_system/features/domain_management/domain/entities/domain_entry.dart';
-import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_management_bloc.dart';
-import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_management_state.dart';
+import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_lookup_bloc.dart';
+import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_lookup_event.dart';
+import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_lookup_state.dart';
 
 enum CategoryGroupFormType { create, update }
 
@@ -37,6 +37,7 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
   @override
   void initState() {
     super.initState();
+    context.domainLookupBloc.add(const DomainLookupEvent.lookup());
     _loadData();
   }
 
@@ -143,9 +144,9 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
                                         : null,
                                   ),
                                   BlocSelector<
-                                    DomainManagementBloc,
-                                    DomainManagementState,
-                                    List<DomainEntry>
+                                    DomainLookupBloc,
+                                    DomainLookupState,
+                                    List<DomainRefEntry>
                                   >(
                                     selector: (state) => state.entries,
                                     builder: (context, domains) {
