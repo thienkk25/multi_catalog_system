@@ -16,7 +16,7 @@ class ButtonBackWidget extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           spacing: 8,
           children: [
-            Icon(Icons.arrow_back, color: Colors.blue),
+            Icon(Icons.keyboard_arrow_left, color: Colors.blue),
             Text('Quay lại'),
           ],
         ),

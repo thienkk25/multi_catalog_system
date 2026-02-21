@@ -34,8 +34,8 @@ class CategoryItemVersionRepositoryImpl
 
   Map<String, dynamic> _createPayload(CategoryItemEntry entry) => {
     'version_data': {
-      'domain_id': entry.domain?.id,
-      'group_id': entry.group?.id,
+      'domain_id': entry.domainId,
+      'group_id': entry.groupId,
       'code': entry.code,
       'name': entry.name,
       'status': entry.status,
@@ -47,8 +47,8 @@ class CategoryItemVersionRepositoryImpl
   Map<String, dynamic> _updatePayload(int? type, CategoryItemEntry entry) => {
     if (type != null) 'version_type': type,
     'version_data': {
-      if (entry.domain?.id != null) 'domain_id': entry.domain?.id,
-      if (entry.group?.id != null) 'group_id': entry.group?.id,
+      if (entry.domainId != null) 'domain_id': entry.domainId,
+      if (entry.groupId != null) 'group_id': entry.groupId,
       if (entry.code != null) 'code': entry.code,
       if (entry.name != null) 'name': entry.name,
       if (entry.status != null) 'status': entry.status,

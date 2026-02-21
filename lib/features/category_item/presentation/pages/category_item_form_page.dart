@@ -1,7 +1,7 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:multi_catalog_system/core/domain/entities/domain/domain_ref_entry.dart';
 import 'package:multi_catalog_system/core/utils/extensions/bloc_extension.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/core/utils/extensions/auth_permission_extension.dart';
@@ -127,17 +127,23 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
       name: json['name'],
       code: json['code'],
       description: json['description'],
+      domainId: json['domain_id'],
+      groupId: json['group_id'],
       group: CategoryGroupRefEntry(id: json['group_id']),
+      domain: DomainRefEntry(id: json['domain_id']),
       status: json['status'],
     );
 
     _codeController.text = json['code'] ?? '';
     _nameController.text = json['name'] ?? '';
     _descriptionController.text = json['description'] ?? '';
+    _selectedDomainId = json['domain_id'];
     _selectedCategoryGroupId = json['group_id'];
     _selectedStatus = json['status'];
 
     _didInit = true;
+
+    setState(() {});
   }
 
   @override
@@ -231,15 +237,7 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
                   isLoading: isLoading,
                   key: _bottomBarKey,
                   onCancel: () {
-                    if (!kIsWeb) {
-                      context.pop();
-                    } else if (!_isCreate) {
-                      widget.itemId != null
-                          ? context.goNamed(RouterNames.categoryItem)
-                          : context.goNamed(RouterNames.approve);
-                    } else {
-                      context.goNamed(RouterNames.categoryItem);
-                    }
+                    context.pop();
                   },
                   onSave: () => _onSave(context: context, isEdit: true),
                 ),
@@ -487,7 +485,8 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
         description: _descriptionController.text.isNotEmpty
             ? _descriptionController.text
             : null,
-        group: CategoryGroupRefEntry(id: _selectedCategoryGroupId),
+        domainId: _selectedDomainId,
+        groupId: _selectedCategoryGroupId,
         status: _selectedStatus,
         legalDocuments: _legalDocuments,
       );
@@ -510,7 +509,8 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
         description: _entry?.description != _descriptionController.text
             ? _descriptionController.text
             : _entry?.description,
-        group: CategoryGroupRefEntry(id: _selectedCategoryGroupId),
+        domainId: _selectedDomainId,
+        groupId: _selectedCategoryGroupId,
         status: _selectedStatus,
         legalDocuments: _legalDocuments,
       );
@@ -536,7 +536,8 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
         description: _entry?.description != _descriptionController.text
             ? _descriptionController.text
             : _entry?.description,
-        group: CategoryGroupRefEntry(id: _selectedCategoryGroupId),
+        domainId: _selectedDomainId,
+        groupId: _selectedCategoryGroupId,
         status: _selectedStatus,
         legalDocuments: _legalDocuments,
       );

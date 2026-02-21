@@ -83,6 +83,7 @@ class AuthInterceptor extends Interceptor {
         final response = await dio.fetch(requestOptions);
         return handler.resolve(response);
       } catch (_) {
+        authBloc.add(AuthEvent.logout());
         return handler.reject(err);
       }
     }
