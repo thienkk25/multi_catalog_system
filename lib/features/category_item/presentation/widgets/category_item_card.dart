@@ -79,10 +79,12 @@ class CategoryItemCard extends StatelessWidget {
                   showDialog(
                     context: context,
                     builder: (_) => CustomAlertDialog(
-                      title: 'Xác nhận vô hiệu hóa',
-                      content: 'Bạn có chắc chắn muốn vô hiệu hóa bản ghi?',
+                      title: 'Xác nhận',
+                      content: 'Bạn có chắc chắn muốn hành động này?',
                       onCancel: () => context.pop(),
-                      confirmText: 'Vô hiệu hóa',
+                      confirmText: isAdmin
+                          ? 'Xóa'
+                          : 'Gửi yêu cầu ngừng hoạt động',
                       onConfirm: () {
                         if (entry.id == null) return;
 

@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:multi_catalog_system/core/config/networks/base_remote_data_source.dart';
+import 'package:multi_catalog_system/core/data/models/category_group/category_group_ref_model.dart';
 import 'package:multi_catalog_system/core/data/models/page/page_model.dart';
 import 'package:multi_catalog_system/core/error/exceptions.dart';
 import 'package:multi_catalog_system/features/category_group/data/models/category_group_model.dart';
@@ -19,7 +20,7 @@ abstract class CategoryGroupRemoteDataSource {
   });
   Future<void> delete({required String id});
 
-  Future<PageModel<CategoryGroupModel>> lookup({
+  Future<PageModel<CategoryGroupRefModel>> lookup({
     required String domainId,
     int? page,
     int? limit,
@@ -118,7 +119,7 @@ class CategoryGroupRemoteDataSourceImpl extends BaseRemoteDataSource
   }
 
   @override
-  Future<PageModel<CategoryGroupModel>> lookup({
+  Future<PageModel<CategoryGroupRefModel>> lookup({
     required String domainId,
     int? page,
     int? limit,
@@ -132,9 +133,9 @@ class CategoryGroupRemoteDataSourceImpl extends BaseRemoteDataSource
         '/category-group/lookup',
         queryParameters: queryParams,
       );
-      return PageModel<CategoryGroupModel>.fromJson(
+      return PageModel<CategoryGroupRefModel>.fromJson(
         response.data['data'],
-        (e) => CategoryGroupModel.fromJson(e as Map<String, dynamic>),
+        (e) => CategoryGroupRefModel.fromJson(e as Map<String, dynamic>),
       );
     } on DioException catch (e) {
       handleDioError(e);

@@ -27,7 +27,7 @@ class DomainLookupBloc extends Bloc<DomainLookupEvent, DomainLookupState> {
             entries: [],
           ),
         );
-        final result = await lookup();
+        final result = await lookup(page: state.page, limit: state.limit);
         if (emit.isDone) return;
         result.fold(
           (l) => emit(state.copyWith(isLoading: false, error: mapFailure(l))),

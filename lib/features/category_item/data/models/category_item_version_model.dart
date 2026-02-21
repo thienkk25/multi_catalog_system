@@ -7,6 +7,7 @@ part 'category_item_version_model.g.dart';
 abstract class CategoryItemVersionModel with _$CategoryItemVersionModel {
   const factory CategoryItemVersionModel({
     required String id,
+    @JsonKey(name: 'domain_id') required String domainId,
     @JsonKey(name: 'item_id') String? itemId,
     @JsonKey(name: 'old_value') Map<String, dynamic>? oldValue,
     @JsonKey(name: 'new_value') Map<String, dynamic>? newValue,

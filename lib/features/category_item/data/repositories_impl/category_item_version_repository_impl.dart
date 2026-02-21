@@ -18,6 +18,7 @@ class CategoryItemVersionRepositoryImpl
   CategoryItemVersionEntry _toEntity(CategoryItemVersionModel model) =>
       CategoryItemVersionEntry(
         id: model.id,
+        domainId: model.domainId,
         itemId: model.itemId,
         oldValue: model.oldValue,
         newValue: model.newValue,
@@ -33,6 +34,7 @@ class CategoryItemVersionRepositoryImpl
 
   Map<String, dynamic> _createPayload(CategoryItemEntry entry) => {
     'version_data': {
+      'domain_id': entry.domain?.id,
       'group_id': entry.group?.id,
       'code': entry.code,
       'name': entry.name,
@@ -45,6 +47,7 @@ class CategoryItemVersionRepositoryImpl
   Map<String, dynamic> _updatePayload(int? type, CategoryItemEntry entry) => {
     if (type != null) 'version_type': type,
     'version_data': {
+      if (entry.domain?.id != null) 'domain_id': entry.domain?.id,
       if (entry.group?.id != null) 'group_id': entry.group?.id,
       if (entry.code != null) 'code': entry.code,
       if (entry.name != null) 'name': entry.name,

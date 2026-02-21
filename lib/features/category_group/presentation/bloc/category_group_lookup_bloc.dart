@@ -29,7 +29,11 @@ class CategoryGroupLookupBloc
             entries: [],
           ),
         );
-        final result = await lookup(domainId: v.domainId);
+        final result = await lookup(
+          domainId: v.domainId,
+          page: state.page,
+          limit: state.limit,
+        );
         result.fold(
           (l) => emit(state.copyWith(isLoading: false, error: mapFailure(l))),
           (r) => emit(

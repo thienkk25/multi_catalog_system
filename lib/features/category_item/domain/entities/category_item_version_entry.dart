@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 
 class CategoryItemVersionEntry extends Equatable {
   final String? id;
+  final String? domainId;
   final String? itemId;
   final Map<String, dynamic>? oldValue;
   final Map<String, dynamic>? newValue;
@@ -16,6 +17,7 @@ class CategoryItemVersionEntry extends Equatable {
 
   const CategoryItemVersionEntry({
     this.id,
+    this.domainId,
     this.itemId,
     this.oldValue,
     this.newValue,
@@ -32,6 +34,7 @@ class CategoryItemVersionEntry extends Equatable {
   @override
   List<Object?> get props => [
     id,
+    domainId,
     itemId,
     oldValue,
     newValue,

@@ -272,7 +272,6 @@ class _FooterDrawer extends StatelessWidget {
                   onTap: () {
                     context.notificationCubit.success('Đăng xuất thành công');
                     context.authBloc.add(const AuthEvent.logout());
-                    context.goNamed(RouterNames.home);
                   },
                   child: ListTile(
                     leading: Icon(Icons.exit_to_app_outlined, size: 20),
