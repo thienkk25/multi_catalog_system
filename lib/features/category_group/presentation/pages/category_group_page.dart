@@ -61,7 +61,12 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
           padding: const EdgeInsets.all(10.0),
           child: Column(
             spacing: 10,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Text(
+                'Nhóm danh mục',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
               Row(
                 mainAxisSize: MainAxisSize.min,
                 spacing: 5,

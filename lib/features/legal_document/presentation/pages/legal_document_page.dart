@@ -63,7 +63,12 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
           padding: const EdgeInsets.all(10.0),
           child: Column(
             spacing: 10,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Text(
+                'Văn bản pháp lý',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
               CustomInput(
                 hintText: 'Tìm kiếm văn bản...',
                 suffixIcon: Icon(Icons.search),

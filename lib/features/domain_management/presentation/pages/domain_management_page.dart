@@ -63,7 +63,12 @@ class _DomainManagementPageState extends State<DomainManagementPage>
           padding: const EdgeInsets.all(10.0),
           child: Column(
             spacing: 10,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Text(
+                'Lĩnh vực',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
               CustomInput(
                 controller: _searchController,
                 hintText: 'Tìm kiếm lĩnh vực',

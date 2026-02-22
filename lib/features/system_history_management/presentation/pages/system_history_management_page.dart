@@ -65,7 +65,12 @@ class _SystemHistoryManagementPageState
         padding: const EdgeInsets.all(10.0),
         child: Column(
           spacing: 10,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Text(
+              'Nhật kí hệ thống',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
             CustomInput(
               hintText: 'Tìm kiếm...',
               suffixIcon: const Icon(Icons.search),

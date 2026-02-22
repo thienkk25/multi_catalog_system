@@ -48,7 +48,7 @@ class CategoryGroupLookupBloc
       loadMore: (_) async {
         if (state.isLoadingMore || !state.hasMore) return;
 
-        emit(state.copyWith(isLoadingMore: true));
+        emit(state.copyWith(isLoadingMore: true, error: null));
 
         final result = await lookup(
           domainId: state.domainId!,

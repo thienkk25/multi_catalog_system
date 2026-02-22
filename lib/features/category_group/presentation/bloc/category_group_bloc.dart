@@ -56,7 +56,13 @@ class CategoryGroupBloc extends Bloc<CategoryGroupEvent, CategoryGroupState> {
       loadMore: (_) async {
         if (state.isLoadingMore || !state.hasMore) return;
 
-        emit(state.copyWith(isLoadingMore: true));
+        emit(
+          state.copyWith(
+            isLoadingMore: true,
+            error: null,
+            successMessage: null,
+          ),
+        );
 
         final result = await getAll(page: state.page + 1, limit: state.limit);
 

@@ -313,11 +313,19 @@ class _DrawerItem extends StatelessWidget {
         }
         onSelectTab?.call(pageIndex ?? 0);
       },
-      child: ListTile(
-        selected: selected,
-        selectedColor: const Color(0xFF1976D2),
-        leading: icon,
-        title: Text(title),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: selected
+              ? Colors.blue.withValues(alpha: .2)
+              : Colors.transparent,
+        ),
+        child: ListTile(
+          selected: selected,
+          selectedColor: const Color(0xFF1976D2),
+          leading: icon,
+          title: Text(title),
+        ),
       ),
     );
   }

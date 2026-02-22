@@ -63,7 +63,12 @@ class _UserManagementPageState extends State<UserManagementPage>
           padding: const EdgeInsets.all(10.0),
           child: Column(
             spacing: 10,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Text(
+                'Quản lý người dùng',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
               CustomInput(
                 hintText: 'Tìm kiếm...',
                 suffixIcon: const Icon(Icons.search),

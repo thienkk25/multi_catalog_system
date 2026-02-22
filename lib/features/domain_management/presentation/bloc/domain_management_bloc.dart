@@ -36,6 +36,7 @@ class DomainManagementBloc
             hasMore: true,
             entries: [],
             error: null,
+            successMessage: null,
           ),
         );
 
@@ -63,7 +64,13 @@ class DomainManagementBloc
       loadMore: (_) async {
         if (state.isLoadingMore || !state.hasMore) return;
 
-        emit(state.copyWith(isLoadingMore: true));
+        emit(
+          state.copyWith(
+            isLoadingMore: true,
+            error: null,
+            successMessage: null,
+          ),
+        );
 
         final result = await getAll(page: state.page + 1, limit: state.limit);
 

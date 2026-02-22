@@ -38,7 +38,7 @@ class DomainLookupBloc extends Bloc<DomainLookupEvent, DomainLookupState> {
       loadMore: (_) async {
         if (state.isLoadingMore || !state.hasMore) return;
 
-        emit(state.copyWith(isLoadingMore: true));
+        emit(state.copyWith(isLoadingMore: true, error: null));
 
         final result = await lookup(page: state.page + 1, limit: state.limit);
 

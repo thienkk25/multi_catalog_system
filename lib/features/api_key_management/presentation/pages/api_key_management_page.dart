@@ -67,7 +67,12 @@ class _ApiKeyManagementPageState extends State<ApiKeyManagementPage>
           padding: const EdgeInsets.all(10.0),
           child: Column(
             spacing: 10,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Text(
+                'Quản lý API Key',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
               CustomInput(
                 controller: _searchController,
                 hintText: 'Tìm kiếm...',

@@ -95,7 +95,12 @@ class _CategoryItemPageState extends State<CategoryItemPage>
             padding: const EdgeInsets.all(10.0),
             child: Column(
               spacing: 10,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Text(
+                  'Mục danh mục',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
                 CustomInput(
                   hintText: 'Tìm kiếm theo tên, mã...',
                   suffixIcon: Icon(Icons.search),
