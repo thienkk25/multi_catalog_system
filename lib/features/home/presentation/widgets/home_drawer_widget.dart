@@ -254,16 +254,24 @@ class _FooterDrawer extends StatelessWidget {
                     }
                     onSelectTab(9);
                   },
-                  child: ListTile(
-                    selected: currentIndex == 9,
-                    selectedColor: const Color(0xFF1976D2),
-                    leading: SvgPicture.asset(
-                      'assets/icons/profile-circle-svgrepo-com.svg',
-                      height: 20,
-                      width: 20,
-                      fit: BoxFit.contain,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: currentIndex == 9
+                          ? Colors.blue.withValues(alpha: .2)
+                          : Colors.transparent,
                     ),
-                    title: Text('Hồ sơ'),
+                    child: ListTile(
+                      selected: currentIndex == 9,
+                      selectedColor: const Color(0xFF1976D2),
+                      leading: SvgPicture.asset(
+                        'assets/icons/profile-circle-svgrepo-com.svg',
+                        height: 20,
+                        width: 20,
+                        fit: BoxFit.contain,
+                      ),
+                      title: Text('Hồ sơ'),
+                    ),
                   ),
                 ),
                 InkWell(

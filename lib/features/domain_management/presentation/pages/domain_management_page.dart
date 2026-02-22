@@ -21,11 +21,14 @@ class _DomainManagementPageState extends State<DomainManagementPage>
   final TextEditingController _searchController = TextEditingController();
   Timer? _debounce;
   final ScrollController _scrollController = ScrollController();
+  late ValueNotifier<bool> _showUpButton;
   late final DomainManagementBloc bloc;
 
   @override
   void initState() {
     super.initState();
+
+    _showUpButton = ValueNotifier(false);
 
     bloc = context.domainManagementBloc;
     bloc.add(const DomainManagementEvent.getAll());
@@ -35,6 +38,13 @@ class _DomainManagementPageState extends State<DomainManagementPage>
 
   void _onScroll() {
     if (!_scrollController.hasClients) return;
+
+    final shouldShow = _scrollController.offset > 300;
+
+    if (_showUpButton.value != shouldShow) {
+      _showUpButton.value = shouldShow;
+    }
+
     if (!bloc.state.hasMore) return;
     if (bloc.state.isLoadingMore) return;
 
@@ -65,7 +75,7 @@ class _DomainManagementPageState extends State<DomainManagementPage>
             spacing: 10,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              const Text(
                 'Lĩnh vực',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
@@ -163,6 +173,15 @@ class _DomainManagementPageState extends State<DomainManagementPage>
               ),
             ],
           ),
+        ),
+        ValueListenableBuilder<bool>(
+          valueListenable: _showUpButton,
+          builder: (context, show, child) {
+            return ButtomUpWidget(
+              scrollController: _scrollController,
+              show: show,
+            );
+          },
         ),
         CustomFloatingActionButton(
           permission: ['admin'],

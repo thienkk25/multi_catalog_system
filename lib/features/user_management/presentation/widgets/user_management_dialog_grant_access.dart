@@ -173,7 +173,7 @@ class _UserManagementDialogGrantAccessState
                   ),
                   deleteIcon: const Icon(Icons.close, size: 18),
                   onDeleted: () {
-                    setState(() => (_domains).remove(field));
+                    setState(() => _domains.remove(field));
                   },
                   backgroundColor: Colors.blue.shade50,
                   side: BorderSide(color: Colors.blue.shade200),
