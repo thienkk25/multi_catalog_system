@@ -45,98 +45,109 @@ class _UserManagementDialogGrantAccessState
       alignment: Alignment.center,
       insetPadding: const EdgeInsets.all(16),
       clipBehavior: Clip.antiAlias,
-      child: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Center(
-              child: Text(
-                widget.entry.fullName ?? 'Chưa cập nhật',
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            const SizedBox(height: 12),
-            Center(
-              child: Text(
-                widget.entry.email ?? '-',
-                style: TextStyle(color: Colors.grey.shade600),
-              ),
-            ),
-            const SizedBox(height: 12),
-            CustomDropdownButton(
-              lable: Text(
-                'Quyền',
-                style: TextStyle(color: Colors.grey.shade600),
-              ),
-              hint: '---',
-              value: _selectedRole,
-              items: const [
-                DropdownMenuItem(
-                  value: 1,
-                  child: Text('Quản trị hệ thống cấp cao'),
-                ),
-                DropdownMenuItem(value: 2, child: Text('Chuyên viên duyệt')),
-                DropdownMenuItem(value: 3, child: Text('Cán bộ chuyên môn')),
-              ],
-              onChanged: (value) {
-                setState(() {
-                  _selectedRole = value;
-                });
-              },
-            ),
-            const SizedBox(height: 12),
-            if (_selectedRole != 1) _permissionDomains(),
-            const SizedBox(height: 12),
-            Row(
+      child: SizedBox(
+        width: 400,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Expanded(
-                  child: CustomButton(
-                    colorBackground: Colors.transparent,
-                    colorBorder: Colors.blue,
-                    textButton: Text(
-                      'Hủy',
-                      style: TextStyle(color: Colors.blue),
+                Center(
+                  child: Text(
+                    widget.entry.fullName ?? 'Chưa cập nhật',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
                     ),
-                    onTap: () => context.pop(),
                   ),
                 ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: CustomButton(
-                    colorBackground: Colors.blue,
-                    textButton: Text(
-                      'Xác nhận',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    onTap: () {
-                      if (_selectedRole == null) return;
-                      if (_selectedRole != 1 && _domains.isEmpty) {
-                        context.notificationCubit.warning(
-                          'Vui lòng chọn ít nhất một lĩnh vực được phân quyền',
-                        );
-                        return;
-                      }
-                      widget.bloc.add(
-                        UserManagementEvent.grantAccess(
-                          entry: UserEntry(
-                            id: widget.entry.id,
-                            role: RoleEntry(id: _selectedRole),
-                            domains: _domains,
-                          ),
-                        ),
-                      );
-                      context.pop();
-                    },
+                const SizedBox(height: 12),
+                Center(
+                  child: Text(
+                    widget.entry.email ?? '-',
+                    style: TextStyle(color: Colors.grey.shade600),
                   ),
+                ),
+                const SizedBox(height: 12),
+                CustomDropdownButton(
+                  lable: Text(
+                    'Quyền',
+                    style: TextStyle(color: Colors.grey.shade600),
+                  ),
+                  hint: '---',
+                  value: _selectedRole,
+                  items: const [
+                    DropdownMenuItem(
+                      value: 1,
+                      child: Text('Quản trị hệ thống cấp cao'),
+                    ),
+                    DropdownMenuItem(
+                      value: 2,
+                      child: Text('Chuyên viên duyệt'),
+                    ),
+                    DropdownMenuItem(
+                      value: 3,
+                      child: Text('Cán bộ chuyên môn'),
+                    ),
+                  ],
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedRole = value;
+                    });
+                  },
+                ),
+                const SizedBox(height: 12),
+                if (_selectedRole != 1) _permissionDomains(),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: CustomButton(
+                        colorBackground: Colors.transparent,
+                        colorBorder: Colors.blue,
+                        textButton: Text(
+                          'Hủy',
+                          style: TextStyle(color: Colors.blue),
+                        ),
+                        onTap: () => context.pop(),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: CustomButton(
+                        colorBackground: Colors.blue,
+                        textButton: Text(
+                          'Xác nhận',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        onTap: () {
+                          if (_selectedRole == null) return;
+                          if (_selectedRole != 1 && _domains.isEmpty) {
+                            context.notificationCubit.warning(
+                              'Vui lòng chọn ít nhất một lĩnh vực được phân quyền',
+                            );
+                            return;
+                          }
+                          widget.bloc.add(
+                            UserManagementEvent.grantAccess(
+                              entry: UserEntry(
+                                id: widget.entry.id,
+                                role: RoleEntry(id: _selectedRole),
+                                domains: _domains,
+                              ),
+                            ),
+                          );
+                          context.pop();
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -145,6 +156,7 @@ class _UserManagementDialogGrantAccessState
   Widget _permissionDomains() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
         const Text(
           'Lĩnh vực được phân quyền',

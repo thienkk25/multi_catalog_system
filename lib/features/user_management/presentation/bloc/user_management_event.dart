@@ -5,7 +5,12 @@ part 'user_management_event.freezed.dart';
 
 @freezed
 class UserManagementEvent with _$UserManagementEvent {
-  const factory UserManagementEvent.getAll({String? search}) = _GetAll;
+  const factory UserManagementEvent.getAll({
+    String? search,
+    int? page,
+    int? limit,
+    Map<String, dynamic>? filter,
+  }) = _GetAll;
   const factory UserManagementEvent.loadMore() = _LoadMore;
   const factory UserManagementEvent.getById({required String id}) = _GetById;
   const factory UserManagementEvent.create({required UserEntry entry}) =

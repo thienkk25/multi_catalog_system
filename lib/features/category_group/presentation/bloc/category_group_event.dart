@@ -6,7 +6,12 @@ part 'category_group_event.freezed.dart';
 
 @freezed
 class CategoryGroupEvent with _$CategoryGroupEvent {
-  const factory CategoryGroupEvent.getAll({String? search}) = _GetAll;
+  const factory CategoryGroupEvent.getAll({
+    String? search,
+    int? page,
+    int? limit,
+    Map<String, dynamic>? filter,
+  }) = _GetAll;
   const factory CategoryGroupEvent.loadMore() = _LoadMore;
   const factory CategoryGroupEvent.getById({required String id}) = _GetById;
 

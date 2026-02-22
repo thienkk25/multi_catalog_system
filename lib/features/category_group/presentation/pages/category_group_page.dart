@@ -19,6 +19,7 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
   bool get wantKeepAlive => true;
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  late ValueNotifier<bool> _showUpButton;
   Timer? _debounce;
   late final CategoryGroupBloc bloc;
 
@@ -27,12 +28,19 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
     super.initState();
     bloc = context.groupBloc;
     bloc.add(const CategoryGroupEvent.getAll());
-
+    _showUpButton = ValueNotifier(false);
     _scrollController.addListener(_onScroll);
   }
 
   void _onScroll() {
     if (!_scrollController.hasClients) return;
+
+    final shouldShow = _scrollController.offset > 300;
+
+    if (_showUpButton.value != shouldShow) {
+      _showUpButton.value = shouldShow;
+    }
+
     if (!bloc.state.hasMore) return;
     if (bloc.state.isLoadingMore) return;
 
@@ -101,6 +109,7 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
                     onPressed: () {
                       showModalBottomSheet(
                         context: context,
+                        isScrollControlled: true,
                         builder: (context) => CategoryGroupFilterSearchWidget(),
                       );
                     },
@@ -199,6 +208,15 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
               ),
             ],
           ),
+        ),
+        ValueListenableBuilder<bool>(
+          valueListenable: _showUpButton,
+          builder: (context, show, child) {
+            return ButtomUpWidget(
+              scrollController: _scrollController,
+              show: show,
+            );
+          },
         ),
         CustomFloatingActionButton(
           onPressedImport: () {

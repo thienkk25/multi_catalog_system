@@ -29,7 +29,7 @@ class LegalDocumentBloc extends Bloc<LegalDocumentEvent, LegalDocumentState> {
     Emitter<LegalDocumentState> emit,
   ) async {
     await event.map(
-      getAll: (v) async {
+      getAll: (e) async {
         emit(
           state.copyWith(
             isLoading: true,
@@ -43,9 +43,10 @@ class LegalDocumentBloc extends Bloc<LegalDocumentEvent, LegalDocumentState> {
         );
 
         final result = await getAll(
-          search: v.search,
+          search: e.search,
           page: 1,
           limit: state.limit,
+          filter: e.filter,
         );
         if (emit.isDone) return;
 

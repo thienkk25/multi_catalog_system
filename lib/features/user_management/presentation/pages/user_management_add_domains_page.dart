@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:multi_catalog_system/core/domain/entities/domain/domain_ref_entry.dart';
 import 'package:multi_catalog_system/core/utils/extensions/bloc_extension.dart';
+import 'package:multi_catalog_system/core/widgets/buttom_up_widget.dart';
 import 'package:multi_catalog_system/core/widgets/custom_button.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/core/widgets/custom_circular_progress.dart';
@@ -27,7 +28,11 @@ class UserManagementAddDomainsPage extends StatefulWidget {
 class _UserManagementAddDomainsPageState
     extends State<UserManagementAddDomainsPage> {
   final TextEditingController _searchController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
   final ScrollController _chipScrollController = ScrollController();
+
+  late ValueNotifier<bool> _showUpButton;
+  late final DomainLookupBloc _bloc;
 
   late List<DomainRefEntry> _selected;
   String _keyword = '';
@@ -35,14 +40,31 @@ class _UserManagementAddDomainsPageState
   @override
   void initState() {
     super.initState();
+    _bloc = context.domainLookupBloc;
+    _bloc.add(const DomainLookupEvent.lookup());
+    _showUpButton = ValueNotifier(false);
+    _scrollController.addListener(_onScroll);
     _selected = List.from(widget.fields);
   }
 
-  @override
-  void dispose() {
-    _searchController.dispose();
-    _chipScrollController.dispose();
-    super.dispose();
+  void _onScroll() {
+    if (!_scrollController.hasClients) return;
+
+    final shouldShow = _scrollController.offset > 300;
+
+    if (_showUpButton.value != shouldShow) {
+      _showUpButton.value = shouldShow;
+    }
+
+    if (!_bloc.state.hasMore) return;
+    if (_bloc.state.isLoadingMore) return;
+
+    final position = _scrollController.position;
+    if (position.maxScrollExtent <= 0) return;
+
+    if (position.pixels >= position.maxScrollExtent - 200) {
+      _bloc.add(const DomainLookupEvent.loadMore());
+    }
   }
 
   bool _isAllSelected(List<DomainRefEntry> entries) {
@@ -61,6 +83,14 @@ class _UserManagementAddDomainsPageState
           ? _selected.remove(entry)
           : _selected.add(entry);
     });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _scrollController.dispose();
+    _chipScrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -93,20 +123,33 @@ class _UserManagementAddDomainsPageState
         ],
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildSearch(),
-              const SizedBox(height: 8),
-              _buildSelectedChips(),
-              _buildLabel(),
-              const SizedBox(height: 8),
-              Expanded(child: _buildList()),
-              _buildFooter(),
-            ],
-          ),
+        child: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildSearch(),
+                  const SizedBox(height: 8),
+                  _buildSelectedChips(),
+                  _buildLabel(),
+                  const SizedBox(height: 8),
+                  Expanded(child: _buildList()),
+                  _buildFooter(),
+                ],
+              ),
+            ),
+            ValueListenableBuilder<bool>(
+              valueListenable: _showUpButton,
+              builder: (context, show, child) {
+                return ButtomUpWidget(
+                  scrollController: _scrollController,
+                  show: show,
+                );
+              },
+            ),
+          ],
         ),
       ),
     );
@@ -221,35 +264,61 @@ class _UserManagementAddDomainsPageState
             );
           }
 
+          if (state.entries.isEmpty) {
+            return const Center(child: Text('Không có dữ liệu'));
+          }
+
           final items = state.entries.where((e) {
             return e.name!.toLowerCase().contains(_keyword) ||
                 e.code!.toLowerCase().contains(_keyword);
           }).toList();
 
-          return ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            itemCount: items.length,
-            itemBuilder: (context, index) {
-              final domain = items[index];
-              final checked = _selected.contains(domain);
+          return CustomScrollView(
+            controller: _scrollController,
+            slivers: [
+              SliverList.builder(
+                itemCount: items.length,
+                itemBuilder: (context, index) {
+                  final domain = items[index];
+                  final checked = _selected.contains(domain);
 
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ListTile(
-                  contentPadding: const EdgeInsets.symmetric(vertical: 6),
-                  title: Text(
-                    domain.name!,
-                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  return Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    margin: const EdgeInsets.only(bottom: 8),
+                    decoration: BoxDecoration(
+                      color: checked
+                          ? Colors.blue.shade50
+                          : Colors.grey.shade50,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: ListTile(
+                      title: Text(
+                        domain.name!,
+                        style: const TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      subtitle: Text(domain.code!),
+                      trailing: Icon(
+                        checked
+                            ? Icons.check_circle
+                            : Icons.radio_button_unchecked,
+                        color: checked ? Colors.blue : Colors.grey,
+                      ),
+                      onTap: () => _toggle(domain),
+                    ),
+                  );
+                },
+              ),
+              if (state.isLoadingMore)
+                const SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 24),
+                    child: Center(child: CustomCircularProgressLoadMore()),
                   ),
-                  subtitle: Text(domain.code!),
-                  trailing: Icon(
-                    checked ? Icons.check_circle : Icons.radio_button_unchecked,
-                    color: checked ? Colors.blue : Colors.grey,
-                  ),
-                  onTap: () => _toggle(domain),
                 ),
-              );
-            },
+            ],
           );
         },
       ),

@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/utils/extensions/bloc_extension.dart';
 import 'package:multi_catalog_system/core/responsive/screen_size.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
+import 'package:multi_catalog_system/core/widgets/custom_alert_dialog.dart';
 import 'package:multi_catalog_system/core/widgets/custom_button.dart';
 import 'package:multi_catalog_system/core/widgets/role_based_widget.dart';
 import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_bloc.dart';
@@ -278,8 +279,22 @@ class _FooterDrawer extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                   hoverColor: Colors.blue.withValues(alpha: .2),
                   onTap: () {
-                    context.notificationCubit.success('Đăng xuất thành công');
-                    context.authBloc.add(const AuthEvent.logout());
+                    showDialog(
+                      context: context,
+                      builder: (context) => CustomAlertDialog(
+                        title: 'Đăng xuất',
+                        content: 'Bạn có chắc chắn muốn đăng xuất?',
+                        onCancel: () => context.pop(),
+                        confirmText: 'Đăng xuất',
+                        onConfirm: () {
+                          context.pop();
+                          context.notificationCubit.success(
+                            'Đăng xuất thành công',
+                          );
+                          context.authBloc.add(const AuthEvent.logout());
+                        },
+                      ),
+                    );
                   },
                   child: ListTile(
                     leading: Icon(Icons.exit_to_app_outlined, size: 20),

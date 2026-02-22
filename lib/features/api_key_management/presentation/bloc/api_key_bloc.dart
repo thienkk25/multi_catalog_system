@@ -24,7 +24,7 @@ class ApiKeyBloc extends Bloc<ApiKeyEvent, ApiKeyState> {
 
   Future<void> _onEvent(ApiKeyEvent event, Emitter<ApiKeyState> emit) async {
     await event.map(
-      getAll: (v) async {
+      getAll: (e) async {
         emit(
           state.copyWith(
             isLoading: true,
@@ -39,9 +39,10 @@ class ApiKeyBloc extends Bloc<ApiKeyEvent, ApiKeyState> {
         );
 
         final result = await getAll(
-          search: v.search,
+          search: e.search,
           page: 1,
           limit: state.limit,
+          filter: e.filter,
         );
         if (emit.isDone) return;
 

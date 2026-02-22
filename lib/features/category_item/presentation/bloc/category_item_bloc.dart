@@ -44,6 +44,7 @@ class CategoryItemBloc extends Bloc<CategoryItemEvent, CategoryItemState> {
           search: e.search,
           page: 1,
           limit: state.limit,
+          filter: e.filter,
         );
         if (emit.isDone) return;
 

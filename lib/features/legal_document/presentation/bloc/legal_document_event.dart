@@ -6,7 +6,12 @@ part 'legal_document_event.freezed.dart';
 
 @freezed
 class LegalDocumentEvent with _$LegalDocumentEvent {
-  const factory LegalDocumentEvent.getAll({String? search}) = _GetAll;
+  const factory LegalDocumentEvent.getAll({
+    String? search,
+    int? page,
+    int? limit,
+    Map<String, dynamic>? filter,
+  }) = _GetAll;
   const factory LegalDocumentEvent.getAllHasFile({String? search}) =
       _GetAllHasFile;
   const factory LegalDocumentEvent.loadMore() = _LoadMore;
