@@ -22,6 +22,7 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
   late ValueNotifier<bool> _showUpButton;
   Timer? _debounce;
   late final CategoryGroupBloc bloc;
+  late Map<String, dynamic> _filter;
 
   @override
   void initState() {
@@ -30,6 +31,7 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
     bloc.add(const CategoryGroupEvent.getAll());
     _showUpButton = ValueNotifier(false);
     _scrollController.addListener(_onScroll);
+    _filter = {};
   }
 
   void _onScroll() {
@@ -110,7 +112,10 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
                       showModalBottomSheet(
                         context: context,
                         isScrollControlled: true,
-                        builder: (context) => CategoryGroupFilterSearchWidget(),
+                        builder: (context) => CategoryGroupFilterSearchWidget(
+                          search: _searchController.text.trim(),
+                          filter: _filter,
+                        ),
                       );
                     },
                   ),
