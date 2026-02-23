@@ -25,8 +25,8 @@ class _CategoryGroupFilterSearchWidgetState
   @override
   void initState() {
     super.initState();
-    _sortBy = 'code';
-    _sort = 'asc';
+    _sortBy = context.groupBloc.state.sortBy ?? 'code';
+    _sort = context.groupBloc.state.sort ?? 'asc';
   }
 
   @override
@@ -83,7 +83,7 @@ class _CategoryGroupFilterSearchWidgetState
             SizedBox(height: 16),
             CustomDropdownButton(
               lable: Text('Loại sắp xếp'),
-              value: context.groupBloc.state.sortBy ?? _sortBy,
+              value: _sortBy,
               items: [
                 DropdownMenuItem(value: 'code', child: Text('Mã nhóm')),
                 DropdownMenuItem(value: 'name', child: Text('Tên nhóm')),
@@ -102,7 +102,7 @@ class _CategoryGroupFilterSearchWidgetState
             SizedBox(height: 16),
             CustomDropdownButton(
               lable: Text('Sắp xếp theo'),
-              value: context.groupBloc.state.sort ?? _sort,
+              value: _sort,
               items: [
                 DropdownMenuItem(value: 'asc', child: Text('Tăng dần')),
                 DropdownMenuItem(value: 'desc', child: Text('Giảm dần')),
@@ -122,13 +122,6 @@ class _CategoryGroupFilterSearchWidgetState
                   child: CustomButton(
                     onTap: () {
                       context.pop();
-                      if (context
-                          .domainLookupBloc
-                          .state
-                          .selectedEntries
-                          .isEmpty) {
-                        return;
-                      }
                       context.domainLookupBloc.add(
                         DomainLookupEvent.selectedEntries(entries: []),
                       );
