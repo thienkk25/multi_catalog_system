@@ -81,9 +81,11 @@ class DomainManagementBloc
 
         final result = await getAll(
           search: state.search,
-          filter: state.filter,
           page: state.page + 1,
           limit: state.limit,
+          sortBy: state.sortBy,
+          sort: state.sort,
+          filter: state.filter,
         );
 
         if (emit.isDone) return;
