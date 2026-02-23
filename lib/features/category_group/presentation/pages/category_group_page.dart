@@ -23,15 +23,13 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
   late ValueNotifier<bool> _showUpButton;
   Timer? _debounce;
   late final CategoryGroupBloc _bloc;
-  late Map<String, dynamic> _filter;
   @override
   void initState() {
     super.initState();
     _bloc = context.groupBloc;
-    _bloc.add(const CategoryGroupEvent.getAll());
+    _bloc.add(const CategoryGroupEvent.getAll(sortBy: 'code', sort: 'asc'));
     _showUpButton = ValueNotifier(false);
     _scrollController.addListener(_onScroll);
-    _filter = {};
 
     context.domainLookupBloc.add(const DomainLookupEvent.lookup());
   }
@@ -75,10 +73,11 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
             spacing: 10,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Nhóm danh mục',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
+              if (!ScreenSize.of(context).isMobile)
+                Text(
+                  'Nhóm danh mục',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
               Row(
                 mainAxisSize: MainAxisSize.min,
                 spacing: 5,
@@ -100,7 +99,12 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
                               _bloc.add(const CategoryGroupEvent.getAll());
                             } else {
                               _bloc.add(
-                                CategoryGroupEvent.getAll(search: search),
+                                CategoryGroupEvent.getAll(
+                                  search: search,
+                                  sortBy: _bloc.state.sortBy,
+                                  sort: _bloc.state.sort,
+                                  filter: _bloc.state.filter,
+                                ),
                               );
                             }
                           },
@@ -114,10 +118,7 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
                       showModalBottomSheet(
                         context: context,
                         isScrollControlled: true,
-                        builder: (context) => CategoryGroupFilterSearchWidget(
-                          search: _searchController.text.trim(),
-                          filter: _filter,
-                        ),
+                        builder: (context) => CategoryGroupFilterSearchWidget(),
                       );
                     },
                   ),

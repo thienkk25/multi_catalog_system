@@ -9,13 +9,7 @@ import 'package:multi_catalog_system/core/widgets/overlay_dropdown_load_button.d
 import 'package:multi_catalog_system/features/features.dart';
 
 class CategoryGroupFilterSearchWidget extends StatefulWidget {
-  final String? search;
-  final Map<String, dynamic> filter;
-  const CategoryGroupFilterSearchWidget({
-    super.key,
-    this.search,
-    required this.filter,
-  });
+  const CategoryGroupFilterSearchWidget({super.key});
 
   @override
   State<CategoryGroupFilterSearchWidget> createState() =>
@@ -24,11 +18,15 @@ class CategoryGroupFilterSearchWidget extends StatefulWidget {
 
 class _CategoryGroupFilterSearchWidgetState
     extends State<CategoryGroupFilterSearchWidget> {
-  late final DomainLookupBloc bloc;
+  String? _domainId;
+  String? _sortBy;
+  String? _sort;
+
   @override
   void initState() {
     super.initState();
-    bloc = context.domainLookupBloc;
+    _sortBy = 'code';
+    _sort = 'asc';
   }
 
   @override
@@ -67,14 +65,16 @@ class _CategoryGroupFilterSearchWidgetState
                   hasMore: state.hasMore,
                   isLoadingMore: state.isLoadingMore,
                   onLoadMore: () {
-                    bloc.add(const DomainLookupEvent.loadMore());
+                    context.domainLookupBloc.add(
+                      const DomainLookupEvent.loadMore(),
+                    );
                   },
                   onSelected: (value) {
-                    bloc.add(
+                    context.domainLookupBloc.add(
                       DomainLookupEvent.selectedEntries(entries: [value]),
                     );
                     setState(() {
-                      widget.filter['domain_id'] = value.id;
+                      _domainId = value.id;
                     });
                   },
                 );
@@ -83,7 +83,7 @@ class _CategoryGroupFilterSearchWidgetState
             SizedBox(height: 16),
             CustomDropdownButton(
               lable: Text('Loại sắp xếp'),
-              hint: '---',
+              value: context.groupBloc.state.sortBy ?? _sortBy,
               items: [
                 DropdownMenuItem(value: 'code', child: Text('Mã nhóm')),
                 DropdownMenuItem(value: 'name', child: Text('Tên nhóm')),
@@ -95,21 +95,21 @@ class _CategoryGroupFilterSearchWidgetState
               ],
               onChanged: (value) {
                 setState(() {
-                  widget.filter['sortBy'] = value;
+                  _sortBy = value;
                 });
               },
             ),
             SizedBox(height: 16),
             CustomDropdownButton(
               lable: Text('Sắp xếp theo'),
-              hint: '---',
+              value: context.groupBloc.state.sort ?? _sort,
               items: [
                 DropdownMenuItem(value: 'asc', child: Text('Tăng dần')),
                 DropdownMenuItem(value: 'desc', child: Text('Giảm dần')),
               ],
               onChanged: (value) {
                 setState(() {
-                  widget.filter['sort'] = value;
+                  _sort = value;
                 });
               },
             ),
@@ -121,12 +121,20 @@ class _CategoryGroupFilterSearchWidgetState
                 Expanded(
                   child: CustomButton(
                     onTap: () {
-                      widget.filter.clear();
                       context.pop();
+                      if (context
+                          .domainLookupBloc
+                          .state
+                          .selectedEntries
+                          .isEmpty) {
+                        return;
+                      }
+                      context.domainLookupBloc.add(
+                        DomainLookupEvent.selectedEntries(entries: []),
+                      );
                       context.groupBloc.add(
                         CategoryGroupEvent.getAll(
-                          search: widget.search,
-                          filter: widget.filter,
+                          search: context.groupBloc.state.search,
                         ),
                       );
                     },
@@ -143,8 +151,10 @@ class _CategoryGroupFilterSearchWidgetState
                       context.pop();
                       context.groupBloc.add(
                         CategoryGroupEvent.getAll(
-                          search: widget.search,
-                          filter: widget.filter,
+                          search: context.groupBloc.state.search,
+                          filter: {'domain_id': _domainId},
+                          sortBy: _sortBy,
+                          sort: _sort,
                         ),
                       );
                     },
