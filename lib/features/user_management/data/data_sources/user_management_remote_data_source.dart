@@ -9,6 +9,8 @@ abstract class UserManagementRemoteDataSource {
     String? search,
     int? page,
     int? limit,
+    String? sortBy,
+    String? sort,
     Map<String, dynamic>? filter,
   });
   Future<UserProfileModel> create({required Map<String, dynamic> data});
@@ -34,6 +36,8 @@ class UserManagementRemoteDataSourceImpl extends BaseRemoteDataSource
     String? search,
     int? page,
     int? limit,
+    String? sortBy,
+    String? sort,
     Map<String, dynamic>? filter,
   }) async {
     try {
@@ -42,6 +46,8 @@ class UserManagementRemoteDataSourceImpl extends BaseRemoteDataSource
       if (search != null) queryParams['search'] = search;
       if (page != null) queryParams['page'] = page;
       if (limit != null) queryParams['limit'] = limit;
+      if (sortBy != null) queryParams['sortBy'] = sortBy;
+      if (sort != null) queryParams['sort'] = sort;
       if (filter != null) queryParams['filter'] = filter;
 
       final response = await dio.get(

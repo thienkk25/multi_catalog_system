@@ -9,6 +9,8 @@ abstract class CategoryGroupRepository {
     String? search,
     int? page,
     int? limit,
+    String? sortBy,
+    String? sort,
     Map<String, dynamic>? filter,
   });
   Future<Either<Failure, CategoryGroupEntry>> getById({required String id});

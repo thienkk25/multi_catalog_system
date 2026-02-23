@@ -10,8 +10,11 @@ abstract class UserManagementState with _$UserManagementState {
     @Default(false) bool isLoadingMore,
     @Default(false) bool hasMore,
 
+    String? search,
     @Default(1) int page,
     @Default(20) int limit,
+    String? sortBy,
+    String? sort,
     @Default([]) List<UserEntry> entries,
     UserEntry? entry,
     String? error,

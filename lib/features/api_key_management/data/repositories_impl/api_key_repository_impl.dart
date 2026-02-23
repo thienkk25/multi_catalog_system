@@ -66,6 +66,8 @@ class ApiKeyRepositoryImpl implements ApiKeyRepository {
     String? search,
     int? page,
     int? limit,
+    String? sortBy,
+    String? sort,
     Map<String, dynamic>? filter,
   }) async {
     try {
@@ -73,6 +75,8 @@ class ApiKeyRepositoryImpl implements ApiKeyRepository {
         search: search,
         page: page,
         limit: limit,
+        sortBy: sortBy,
+        sort: sort,
         filter: filter,
       );
       return Right(

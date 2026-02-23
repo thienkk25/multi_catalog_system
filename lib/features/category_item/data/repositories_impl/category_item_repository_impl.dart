@@ -116,6 +116,8 @@ class CategoryItemRepositoryImpl implements CategoryItemRepository {
     String? search,
     int? page,
     int? limit,
+    String? sortBy,
+    String? sort,
     Map<String, dynamic>? filter,
   }) async {
     try {
@@ -123,6 +125,8 @@ class CategoryItemRepositoryImpl implements CategoryItemRepository {
         search: search,
         page: page,
         limit: limit,
+        sortBy: sortBy,
+        sort: sort,
         filter: filter,
       );
       return Right(

@@ -81,6 +81,8 @@ class UserManagementRepositoryImpl implements UserManagementRepository {
     String? search,
     int? page,
     int? limit,
+    String? sortBy,
+    String? sort,
     Map<String, dynamic>? filter,
   }) async {
     try {
@@ -88,6 +90,8 @@ class UserManagementRepositoryImpl implements UserManagementRepository {
         search: search,
         page: page,
         limit: limit,
+        sortBy: sortBy,
+        sort: sort,
         filter: filter,
       );
       return Right(

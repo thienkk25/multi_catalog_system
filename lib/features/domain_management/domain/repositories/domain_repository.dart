@@ -9,6 +9,8 @@ abstract class DomainRepository {
     String? search,
     int? page,
     int? limit,
+    String? sortBy,
+    String? sort,
     Map<String, dynamic>? filter,
   });
   Future<Either<Failure, DomainEntry>> getById({required String id});

@@ -8,33 +8,33 @@ class CategoryItemVersionEvent with _$CategoryItemVersionEvent {
   const factory CategoryItemVersionEvent.getAll({
     String? itemId,
     String? search,
-  }) = GetAll;
-  const factory CategoryItemVersionEvent.loadMore() = LoadMore;
+  }) = _GetAll;
+  const factory CategoryItemVersionEvent.loadMore() = _LoadMore;
   const factory CategoryItemVersionEvent.getById({required String id}) =
-      GetById;
+      _GetById;
 
   const factory CategoryItemVersionEvent.createVersion({
     required CategoryItemEntry entry,
-  }) = CreateVersion;
+  }) = _CreateVersion;
 
   const factory CategoryItemVersionEvent.updateVersion({
     required CategoryItemEntry entry,
     required String id,
     int? type,
-  }) = UpdateVersion;
+  }) = _UpdateVersion;
   const factory CategoryItemVersionEvent.deleteVersion({required String id}) =
       DeleteVersion;
 
   const factory CategoryItemVersionEvent.approveVersion({required String id}) =
-      ApproveVersion;
+      _ApproveVersion;
 
   const factory CategoryItemVersionEvent.rejectVersion({
     required String id,
     required String rejectReason,
-  }) = RejectVersion;
+  }) = _RejectVersion;
 
   const factory CategoryItemVersionEvent.delete({required String id}) = Delete;
 
   const factory CategoryItemVersionEvent.rollbackVersion({required String id}) =
-      RollbackVersion;
+      _RollbackVersion;
 }

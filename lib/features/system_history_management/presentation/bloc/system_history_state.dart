@@ -9,9 +9,11 @@ abstract class SystemHistoryState with _$SystemHistoryState {
     @Default(false) bool isLoading,
     @Default(false) bool isLoadingMore,
     @Default(false) bool hasMore,
-
+    String? search,
     @Default(1) int page,
     @Default(20) int limit,
+    String? sortBy,
+    String? sort,
     String? error,
     @Default([]) List<SystemHistoryEntry> entries,
     SystemHistoryEntry? entry,

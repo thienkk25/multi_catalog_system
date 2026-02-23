@@ -9,6 +9,8 @@ abstract class LegalDocumentRemoteDataSource {
     String? search,
     int? page,
     int? limit,
+    String? sortBy,
+    String? sort,
     Map<String, dynamic>? filter,
   });
   Future<List<LegalDocumentModel>> getAllHasFile({String? search});
@@ -32,6 +34,8 @@ class LegalDocumentRemoteDataSourceImpl extends BaseRemoteDataSource
     String? search,
     int? page,
     int? limit,
+    String? sortBy,
+    String? sort,
     Map<String, dynamic>? filter,
   }) async {
     try {
@@ -40,6 +44,8 @@ class LegalDocumentRemoteDataSourceImpl extends BaseRemoteDataSource
       if (search != null) queryParams['search'] = search;
       if (page != null) queryParams['page'] = page;
       if (limit != null) queryParams['limit'] = limit;
+      if (sortBy != null) queryParams['sortBy'] = sortBy;
+      if (sort != null) queryParams['sort'] = sort;
       if (filter != null) queryParams['filter'] = filter;
 
       final response = await dio.get(

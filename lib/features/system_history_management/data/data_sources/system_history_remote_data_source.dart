@@ -9,6 +9,8 @@ abstract class SystemHistoryRemoteDataSource {
     String? search,
     int? page,
     int? limit,
+    String? sortBy,
+    String? sort,
     Map<String, dynamic>? filter,
   });
   Future<SystemHistoryModel> getById({required String id});
@@ -24,6 +26,8 @@ class SystemHistoryRemoteDataSourceImpl extends BaseRemoteDataSource
     String? search,
     int? page,
     int? limit,
+    String? sortBy,
+    String? sort,
     Map<String, dynamic>? filter,
   }) async {
     try {
@@ -34,6 +38,10 @@ class SystemHistoryRemoteDataSourceImpl extends BaseRemoteDataSource
       if (page != null) queryParams['page'] = page;
 
       if (limit != null) queryParams['limit'] = limit;
+
+      if (sortBy != null) queryParams['sortBy'] = sortBy;
+
+      if (sort != null) queryParams['sort'] = sort;
 
       if (filter != null) queryParams['filter'] = filter;
 

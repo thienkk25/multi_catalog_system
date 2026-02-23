@@ -8,6 +8,8 @@ abstract class UserManagementRepository {
     String? search,
     int? page,
     int? limit,
+    String? sortBy,
+    String? sort,
     Map<String, dynamic>? filter,
   });
   Future<Either<Failure, UserEntry>> getById({required String id});

@@ -22,13 +22,13 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
   final ScrollController _scrollController = ScrollController();
   late ValueNotifier<bool> _showUpButton;
   Timer? _debounce;
-  late final CategoryGroupBloc bloc;
+  late final CategoryGroupBloc _bloc;
   late Map<String, dynamic> _filter;
   @override
   void initState() {
     super.initState();
-    bloc = context.groupBloc;
-    bloc.add(const CategoryGroupEvent.getAll());
+    _bloc = context.groupBloc;
+    _bloc.add(const CategoryGroupEvent.getAll());
     _showUpButton = ValueNotifier(false);
     _scrollController.addListener(_onScroll);
     _filter = {};
@@ -45,14 +45,14 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
       _showUpButton.value = shouldShow;
     }
 
-    if (!bloc.state.hasMore) return;
-    if (bloc.state.isLoadingMore) return;
+    if (!_bloc.state.hasMore) return;
+    if (_bloc.state.isLoadingMore) return;
 
     final position = _scrollController.position;
     if (position.maxScrollExtent <= 0) return;
 
     if (position.pixels >= position.maxScrollExtent - 200) {
-      bloc.add(const CategoryGroupEvent.loadMore());
+      _bloc.add(const CategoryGroupEvent.loadMore());
     }
   }
 
@@ -97,9 +97,9 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
                           const Duration(milliseconds: 500),
                           () {
                             if (search.isEmpty) {
-                              bloc.add(const CategoryGroupEvent.getAll());
+                              _bloc.add(const CategoryGroupEvent.getAll());
                             } else {
-                              bloc.add(
+                              _bloc.add(
                                 CategoryGroupEvent.getAll(search: search),
                               );
                             }
@@ -143,7 +143,7 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
                       return ErrorRetryWidget(
                         error: state.error!,
                         onRetry: () {
-                          bloc.add(const CategoryGroupEvent.getAll());
+                          _bloc.add(const CategoryGroupEvent.getAll());
                         },
                       );
                     }

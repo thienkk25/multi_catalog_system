@@ -100,6 +100,8 @@ class LegalDocumentRepositoryImpl implements LegalDocumentRepository {
     String? search,
     int? page,
     int? limit,
+    String? sortBy,
+    String? sort,
     Map<String, dynamic>? filter,
   }) async {
     try {
@@ -107,6 +109,8 @@ class LegalDocumentRepositoryImpl implements LegalDocumentRepository {
         search: search,
         page: page,
         limit: limit,
+        sortBy: sortBy,
+        sort: sort,
         filter: filter,
       );
       return Right(

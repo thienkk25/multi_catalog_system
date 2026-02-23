@@ -9,6 +9,8 @@ abstract class LegalDocumentRepository {
     String? search,
     int? page,
     int? limit,
+    String? sortBy,
+    String? sort,
     Map<String, dynamic>? filter,
   });
   Future<Either<Failure, List<LegalDocumentEntry>>> getAllHasFile({

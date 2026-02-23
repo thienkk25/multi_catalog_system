@@ -9,6 +9,8 @@ abstract class CategoryItemRemoteDataSource {
     String? search,
     int? page,
     int? limit,
+    String? sortBy,
+    String? sort,
     Map<String, dynamic>? filter,
   });
   Future<CategoryItemModel> getById({required String id});
@@ -31,6 +33,8 @@ class CategoryItemRemoteDataSourceImpl extends BaseRemoteDataSource
     String? search,
     int? page,
     int? limit,
+    String? sortBy,
+    String? sort,
     Map<String, dynamic>? filter,
   }) async {
     try {
@@ -39,6 +43,8 @@ class CategoryItemRemoteDataSourceImpl extends BaseRemoteDataSource
       if (search != null) queryParams['search'] = search;
       if (page != null) queryParams['page'] = page;
       if (limit != null) queryParams['limit'] = limit;
+      if (sortBy != null) queryParams['sort_by'] = sortBy;
+      if (sort != null) queryParams['sort'] = sort;
       if (filter != null) queryParams['filter'] = filter;
 
       final response = await dio.get(

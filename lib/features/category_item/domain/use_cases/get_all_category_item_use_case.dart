@@ -13,12 +13,16 @@ class GetAllCategoryItemUseCase {
     String? search,
     int? page,
     int? limit,
+    String? sortBy,
+    String? sort,
     Map<String, dynamic>? filter,
   }) {
     return repository.getAll(
       search: search,
       page: page,
       limit: limit,
+      sortBy: sortBy,
+      sort: sort,
       filter: filter,
     );
   }
