@@ -96,7 +96,15 @@ class _DomainManagementPageState extends State<DomainManagementPage>
               sliver: SliverToBoxAdapter(child: _buildFilterSection(context)),
             ),
 
-            BlocBuilder<DomainManagementBloc, DomainManagementState>(
+            BlocConsumer<DomainManagementBloc, DomainManagementState>(
+              listener: (context, state) {
+                if (state.error != null) {
+                  context.notificationCubit.error(state.error!);
+                }
+                if (state.successMessage != null) {
+                  context.notificationCubit.success(state.successMessage!);
+                }
+              },
               buildWhen: (previous, current) =>
                   previous.entries != current.entries ||
                   previous.isLoading != current.isLoading,
