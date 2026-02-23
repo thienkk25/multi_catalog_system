@@ -34,6 +34,8 @@ class DomainManagementBloc
             isLoading: true,
             page: 1,
             hasMore: true,
+            search: e.search,
+            filter: e.filter,
             entries: [],
             error: null,
             successMessage: null,
@@ -73,7 +75,12 @@ class DomainManagementBloc
           ),
         );
 
-        final result = await getAll(page: state.page + 1, limit: state.limit);
+        final result = await getAll(
+          search: state.search,
+          filter: state.filter,
+          page: state.page + 1,
+          limit: state.limit,
+        );
 
         if (emit.isDone) return;
 

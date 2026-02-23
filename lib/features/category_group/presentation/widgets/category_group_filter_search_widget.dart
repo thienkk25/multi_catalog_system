@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:multi_catalog_system/core/core.dart';
-import 'package:multi_catalog_system/features/category_group/presentation/bloc/category_group_event.dart';
+import 'package:multi_catalog_system/core/domain/entities/domain/domain_ref_entry.dart';
+import 'package:multi_catalog_system/core/utils/extensions/bloc_extension.dart';
+import 'package:multi_catalog_system/core/widgets/custom_button.dart';
+import 'package:multi_catalog_system/core/widgets/custom_dropdown_button.dart';
+import 'package:multi_catalog_system/core/widgets/overlay_dropdown_load_button.dart';
+import 'package:multi_catalog_system/features/features.dart';
 
 class CategoryGroupFilterSearchWidget extends StatefulWidget {
   final String? search;
@@ -19,6 +24,13 @@ class CategoryGroupFilterSearchWidget extends StatefulWidget {
 
 class _CategoryGroupFilterSearchWidgetState
     extends State<CategoryGroupFilterSearchWidget> {
+  late final DomainLookupBloc bloc;
+  @override
+  void initState() {
+    super.initState();
+    bloc = context.domainLookupBloc;
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -44,23 +56,28 @@ class _CategoryGroupFilterSearchWidgetState
               ],
             ),
             SizedBox(height: 16),
-            CustomDropdownButton(
-              lable: Text('Lĩnh vực'),
-              hint: '---',
-              value: widget.filter['domain_id'],
-              items: [
-                DropdownMenuItem(value: null, child: Text('Tất cả')),
-                DropdownMenuItem(
-                  value: 'ef1ce0b7-7b2f-48f3-a628-b2a1e8e4d15b',
-                  child: Text('Lĩnh vực 1'),
-                ),
-                DropdownMenuItem(value: '2', child: Text('Lĩnh vực 2')),
-                DropdownMenuItem(value: '3', child: Text('Lĩnh vực 3')),
-              ],
-              onChanged: (value) {
-                setState(() {
-                  widget.filter['domain_id'] = value;
-                });
+
+            BlocBuilder<DomainLookupBloc, DomainLookupState>(
+              builder: (context, state) {
+                return OverlayDropdownLoadButton<DomainRefEntry>(
+                  label: Text('Lĩnh vực'),
+                  entries: state.entries,
+                  selected: state.selectedEntries.firstOrNull,
+                  itemLabel: (item) => item.name!,
+                  hasMore: state.hasMore,
+                  isLoadingMore: state.isLoadingMore,
+                  onLoadMore: () {
+                    bloc.add(const DomainLookupEvent.loadMore());
+                  },
+                  onSelected: (value) {
+                    bloc.add(
+                      DomainLookupEvent.selectedEntries(entries: [value]),
+                    );
+                    setState(() {
+                      widget.filter['domain_id'] = value.id;
+                    });
+                  },
+                );
               },
             ),
             SizedBox(height: 16),

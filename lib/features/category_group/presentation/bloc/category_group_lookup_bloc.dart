@@ -71,6 +71,9 @@ class CategoryGroupLookupBloc
           ),
         );
       },
+      selectEntries: (e) {
+        emit(state.copyWith(selectedEntries: e.entries));
+      },
     );
   }
 }

@@ -10,8 +10,11 @@ class CategoryGroupRoutes {
   static List<RouteBase> get routes => [
     ShellRoute(
       builder: (context, state, child) {
-        return BlocProvider(
-          create: (_) => getIt<CategoryGroupBloc>(),
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider(create: (_) => getIt.get<CategoryGroupBloc>()),
+            BlocProvider(create: (_) => getIt.get<DomainLookupBloc>()),
+          ],
           child: child,
         );
       },
@@ -36,12 +39,9 @@ class CategoryGroupRoutes {
               builder: (context, state) {
                 final mode = state.uri.queryParameters['mode']!;
                 final id = state.uri.queryParameters['id'];
-                return BlocProvider(
-                  create: (_) => getIt.get<DomainLookupBloc>(),
-                  child: CategoryGroupFormPage(
-                    mode: CategoryGroupFormType.values.byName(mode),
-                    id: id,
-                  ),
+                return CategoryGroupFormPage(
+                  mode: CategoryGroupFormType.values.byName(mode),
+                  id: id,
                 );
               },
             ),

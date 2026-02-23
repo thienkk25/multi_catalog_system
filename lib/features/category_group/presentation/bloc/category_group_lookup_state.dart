@@ -14,6 +14,7 @@ abstract class CategoryGroupLookupState with _$CategoryGroupLookupState {
     @Default(20) int limit,
     @Default([]) List<CategoryGroupRefEntry> entries,
     String? domainId,
+    @Default([]) List<CategoryGroupRefEntry> selectedEntries,
     String? error,
   }) = _CategoryGroupLookupState;
 }

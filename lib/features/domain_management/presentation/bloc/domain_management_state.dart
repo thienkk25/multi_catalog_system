@@ -13,6 +13,8 @@ abstract class DomainManagementState with _$DomainManagementState {
     @Default(1) int page,
     @Default(20) int limit,
 
+    String? search,
+    Map<String, dynamic>? filter,
     @Default(<DomainEntry>[]) List<DomainEntry> entries,
 
     DomainEntry? entry,

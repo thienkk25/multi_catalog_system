@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/core.dart';
 import 'package:multi_catalog_system/features/category_group/presentation/presentation.dart';
+import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_lookup_event.dart';
 
 class CategoryGroupPage extends StatefulWidget {
   const CategoryGroupPage({super.key});
@@ -23,7 +24,6 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
   Timer? _debounce;
   late final CategoryGroupBloc bloc;
   late Map<String, dynamic> _filter;
-
   @override
   void initState() {
     super.initState();
@@ -32,6 +32,8 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
     _showUpButton = ValueNotifier(false);
     _scrollController.addListener(_onScroll);
     _filter = {};
+
+    context.domainLookupBloc.add(const DomainLookupEvent.lookup());
   }
 
   void _onScroll() {

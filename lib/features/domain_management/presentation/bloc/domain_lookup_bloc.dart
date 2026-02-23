@@ -57,6 +57,9 @@ class DomainLookupBloc extends Bloc<DomainLookupEvent, DomainLookupState> {
           ),
         );
       },
+      selectedEntries: (e) {
+        emit(state.copyWith(selectedEntries: e.entries));
+      },
     );
   }
 }

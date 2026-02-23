@@ -13,6 +13,7 @@ abstract class DomainLookupState with _$DomainLookupState {
     @Default(1) int page,
     @Default(20) int limit,
     @Default([]) List<DomainRefEntry> entries,
+    @Default([]) List<DomainRefEntry> selectedEntries,
     String? error,
   }) = _DomainLookupState;
 }
