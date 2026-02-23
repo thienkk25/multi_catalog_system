@@ -15,6 +15,7 @@ abstract class CategoryGroupState with _$CategoryGroupState {
     @Default(20) int limit,
     String? sortBy,
     String? sort,
+    Map<String, dynamic>? filter,
     @Default([]) List<CategoryGroupEntry> entries,
     CategoryGroupEntry? entry,
     String? error,

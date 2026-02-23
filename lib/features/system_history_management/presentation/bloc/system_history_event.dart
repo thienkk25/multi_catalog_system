@@ -8,6 +8,8 @@ class SystemHistoryEvent with _$SystemHistoryEvent {
     String? search,
     int? page,
     int? limit,
+    String? sortBy,
+    String? sort,
     Map<String, dynamic>? filter,
   }) = _GetAll;
   const factory SystemHistoryEvent.loadMore() = _LoadMore;

@@ -14,6 +14,7 @@ abstract class SystemHistoryState with _$SystemHistoryState {
     @Default(20) int limit,
     String? sortBy,
     String? sort,
+    Map<String, dynamic>? filter,
     String? error,
     @Default([]) List<SystemHistoryEntry> entries,
     SystemHistoryEntry? entry,

@@ -9,6 +9,8 @@ class CategoryItemEvent with _$CategoryItemEvent {
     String? search,
     int? page,
     int? limit,
+    String? sortBy,
+    String? sort,
     Map<String, dynamic>? filter,
   }) = _GetAll;
   const factory CategoryItemEvent.loadMore() = _LoadMore;

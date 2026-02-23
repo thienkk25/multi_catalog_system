@@ -10,6 +10,8 @@ class CategoryGroupEvent with _$CategoryGroupEvent {
     String? search,
     int? page,
     int? limit,
+    String? sortBy,
+    String? sort,
     Map<String, dynamic>? filter,
   }) = _GetAll;
   const factory CategoryGroupEvent.loadMore() = _LoadMore;

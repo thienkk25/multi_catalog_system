@@ -15,6 +15,7 @@ abstract class CategoryItemState with _$CategoryItemState {
     @Default(20) int limit,
     String? sortBy,
     String? sort,
+    Map<String, dynamic>? filter,
     @Default([]) List<CategoryItemEntry> entries,
     CategoryItemEntry? entry,
     String? error,

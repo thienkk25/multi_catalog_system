@@ -15,6 +15,7 @@ abstract class ApiKeyState with _$ApiKeyState {
     @Default(20) int limit,
     String? sortBy,
     String? sort,
+    Map<String, dynamic>? filter,
     @Default([]) List<ApiKeyEntry> entries,
     ApiKeyEntry? entry,
     String? error,

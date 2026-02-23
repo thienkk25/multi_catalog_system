@@ -33,6 +33,10 @@ class ApiKeyBloc extends Bloc<ApiKeyEvent, ApiKeyState> {
             entry: null,
             createdEntry: null,
             page: 1,
+            search: e.search,
+            sortBy: e.sortBy,
+            sort: e.sort,
+            filter: e.filter,
             hasMore: true,
             entries: [],
           ),
@@ -42,6 +46,8 @@ class ApiKeyBloc extends Bloc<ApiKeyEvent, ApiKeyState> {
           search: e.search,
           page: 1,
           limit: state.limit,
+          sortBy: e.sortBy,
+          sort: e.sort,
           filter: e.filter,
         );
         if (emit.isDone) return;
@@ -63,7 +69,14 @@ class ApiKeyBloc extends Bloc<ApiKeyEvent, ApiKeyState> {
           ),
         );
 
-        final result = await getAll(page: state.page + 1, limit: state.limit);
+        final result = await getAll(
+          search: state.search,
+          page: state.page + 1,
+          limit: state.limit,
+          sortBy: state.sortBy,
+          sort: state.sort,
+          filter: state.filter,
+        );
 
         if (emit.isDone) return;
 

@@ -15,6 +15,7 @@ abstract class CategoryItemVersionState with _$CategoryItemVersionState {
     @Default(20) int limit,
     String? sortBy,
     String? sort,
+    Map<String, dynamic>? filter,
     @Default([]) List<CategoryItemVersionEntry> entries,
     CategoryItemVersionEntry? entry,
     String? error,

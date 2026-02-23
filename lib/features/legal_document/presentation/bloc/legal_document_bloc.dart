@@ -37,6 +37,10 @@ class LegalDocumentBloc extends Bloc<LegalDocumentEvent, LegalDocumentState> {
             successMessage: null,
             entry: null,
             page: 1,
+            search: e.search,
+            sortBy: e.sortBy,
+            sort: e.sort,
+            filter: e.filter,
             hasMore: true,
             entries: [],
           ),
@@ -46,6 +50,8 @@ class LegalDocumentBloc extends Bloc<LegalDocumentEvent, LegalDocumentState> {
           search: e.search,
           page: 1,
           limit: state.limit,
+          sortBy: e.sortBy,
+          sort: e.sort,
           filter: e.filter,
         );
         if (emit.isDone) return;
@@ -85,7 +91,14 @@ class LegalDocumentBloc extends Bloc<LegalDocumentEvent, LegalDocumentState> {
           ),
         );
 
-        final result = await getAll(page: state.page + 1, limit: state.limit);
+        final result = await getAll(
+          search: state.search,
+          page: state.page + 1,
+          limit: state.limit,
+          sortBy: state.sortBy,
+          sort: state.sort,
+          filter: state.filter,
+        );
 
         if (emit.isDone) return;
 

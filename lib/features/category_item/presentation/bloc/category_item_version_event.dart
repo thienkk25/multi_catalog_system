@@ -8,6 +8,11 @@ class CategoryItemVersionEvent with _$CategoryItemVersionEvent {
   const factory CategoryItemVersionEvent.getAll({
     String? itemId,
     String? search,
+    int? page,
+    int? limit,
+    String? sortBy,
+    String? sort,
+    Map<String, dynamic>? filter,
   }) = _GetAll;
   const factory CategoryItemVersionEvent.loadMore() = _LoadMore;
   const factory CategoryItemVersionEvent.getById({required String id}) =

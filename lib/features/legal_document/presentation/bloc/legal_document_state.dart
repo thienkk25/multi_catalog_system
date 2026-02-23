@@ -15,6 +15,7 @@ abstract class LegalDocumentState with _$LegalDocumentState {
     @Default(20) int limit,
     String? sortBy,
     String? sort,
+    Map<String, dynamic>? filter,
     @Default([]) List<LegalDocumentEntry> entries,
     @Default({}) Set<String> selectedIds,
     LegalDocumentEntry? entry,

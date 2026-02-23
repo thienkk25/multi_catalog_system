@@ -28,6 +28,10 @@ class SystemHistoryBloc extends Bloc<SystemHistoryEvent, SystemHistoryState> {
             error: null,
             entry: null,
             page: 1,
+            search: e.search,
+            sortBy: e.sortBy,
+            sort: e.sort,
+            filter: e.filter,
             hasMore: true,
             entries: [],
           ),
@@ -37,6 +41,8 @@ class SystemHistoryBloc extends Bloc<SystemHistoryEvent, SystemHistoryState> {
           search: e.search,
           page: 1,
           limit: state.limit,
+          sortBy: e.sortBy,
+          sort: e.sort,
           filter: e.filter,
         );
         if (emit.isDone) return;
@@ -52,7 +58,14 @@ class SystemHistoryBloc extends Bloc<SystemHistoryEvent, SystemHistoryState> {
 
         emit(state.copyWith(isLoadingMore: true, error: null));
 
-        final result = await getAll(page: state.page + 1, limit: state.limit);
+        final result = await getAll(
+          search: state.search,
+          page: state.page + 1,
+          limit: state.limit,
+          sortBy: state.sortBy,
+          sort: state.sort,
+          filter: state.filter,
+        );
 
         if (emit.isDone) return;
 

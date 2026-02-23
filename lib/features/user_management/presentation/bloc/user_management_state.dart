@@ -15,6 +15,7 @@ abstract class UserManagementState with _$UserManagementState {
     @Default(20) int limit,
     String? sortBy,
     String? sort,
+    Map<String, dynamic>? filter,
     @Default([]) List<UserEntry> entries,
     UserEntry? entry,
     String? error,

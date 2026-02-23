@@ -35,6 +35,8 @@ class DomainManagementBloc
             page: 1,
             hasMore: true,
             search: e.search,
+            sortBy: e.sortBy,
+            sort: e.sort,
             filter: e.filter,
             entries: [],
             error: null,
@@ -46,6 +48,8 @@ class DomainManagementBloc
           search: e.search,
           page: 1,
           limit: state.limit,
+          sortBy: e.sortBy,
+          sort: e.sort,
           filter: e.filter,
         );
 
