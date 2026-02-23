@@ -57,7 +57,7 @@ class CategoryItemVersionRemoteDataSourceImpl extends BaseRemoteDataSource
       if (itemId != null) queryParams['item_id'] = itemId;
       if (page != null) queryParams['page'] = page;
       if (limit != null) queryParams['limit'] = limit;
-      if (sortBy != null) queryParams['sort_by'] = sortBy;
+      if (sortBy != null) queryParams['sortBy'] = sortBy;
       if (sort != null) queryParams['sort'] = sort;
       if (filter != null) queryParams['filter'] = filter;
 
