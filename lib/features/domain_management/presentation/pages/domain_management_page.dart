@@ -77,196 +77,115 @@ class _DomainManagementPageState extends State<DomainManagementPage>
     super.build(context);
     return Stack(
       children: [
-        Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Column(
-            spacing: 10,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (!ScreenSize.of(context).isMobile)
-                const Text(
-                  'Lĩnh vực',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-              Expanded(
-                child: BlocConsumer<DomainManagementBloc, DomainManagementState>(
-                  listener: (context, state) {
-                    if (state.successMessage != null) {
-                      context.notificationCubit.success(state.successMessage!);
-                    }
-                    if (state.error != null) {
-                      context.notificationCubit.error(state.error!);
-                    }
-                  },
-                  builder: (context, state) {
-                    if (state.isLoading) {
-                      return const Center(
-                        child: CustomCircularProgressScreen(),
-                      );
-                    }
-                    if (state.error != null) {
-                      return ErrorRetryWidget(
-                        error: state.error!,
-                        onRetry: () {
-                          bloc.add(const DomainManagementEvent.getAll());
-                        },
-                      );
-                    }
-                    final entries = state.entries;
-                    if (entries.isEmpty) {
-                      return const Center(child: Text('Không có dữ liệu'));
-                    }
-                    final crossAxisCount = ScreenSize.of(context).isMobile
-                        ? 2
-                        : ScreenSize.of(context).isTablet
-                        ? 3
-                        : 4;
-                    return CustomScrollView(
-                      controller: _scrollController,
-                      slivers: [
-                        SliverToBoxAdapter(
-                          child: Column(
-                            spacing: 10,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              CustomInput(
-                                controller: _searchController,
-                                hintText: 'Tìm kiếm lĩnh vực',
-                                suffixIcon: Icon(Icons.search),
-                                onChanged: (value) {
-                                  final search = value.trim();
-                                  if (_debounce?.isActive ?? false) {
-                                    _debounce?.cancel();
-                                  }
-                                  _debounce = Timer(
-                                    const Duration(milliseconds: 500),
-                                    () {
-                                      if (search.isEmpty) {
-                                        bloc.add(
-                                          const DomainManagementEvent.getAll(
-                                            sortBy: 'code',
-                                            sort: 'asc',
-                                          ),
-                                        );
-                                      } else {
-                                        bloc.add(
-                                          DomainManagementEvent.getAll(
-                                            search: search,
-                                            sortBy: bloc.state.sortBy,
-                                            sort: bloc.state.sort,
-                                            filter: bloc.state.filter,
-                                          ),
-                                        );
-                                      }
-                                    },
-                                  );
-                                },
-                              ),
-                              Wrap(
-                                spacing: 10,
-                                runSpacing: 10,
-                                crossAxisAlignment: WrapCrossAlignment.center,
-                                children: [
-                                  const Text('Sắp xếp theo'),
-                                  SizedBox(
-                                    width: 150,
-                                    child: CustomDropdownButton(
-                                      items: [
-                                        DropdownMenuItem(
-                                          value: 'code',
-                                          child: Text('Mã lĩnh vực'),
-                                        ),
-                                        DropdownMenuItem(
-                                          value: 'name',
-                                          child: Text('Tên lĩnh vực'),
-                                        ),
-                                      ],
-                                      value: bloc.state.sortBy ?? 'code',
-                                      onChanged: (value) {
-                                        if (value == null) return;
-                                        bloc.add(
-                                          DomainManagementEvent.getAll(
-                                            search: bloc.state.search,
-                                            sortBy: value,
-                                            sort: bloc.state.sort,
-                                            filter: bloc.state.filter,
-                                          ),
-                                        ); // bloc.add(DomainManagementEvent.sortBy(value));
-                                      },
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 150,
-                                    child: CustomDropdownButton(
-                                      value: bloc.state.sort ?? 'asc',
-                                      items: [
-                                        DropdownMenuItem(
-                                          value: 'asc',
-                                          child: Text('Tăng dần'),
-                                        ),
-                                        DropdownMenuItem(
-                                          value: 'desc',
-                                          child: Text('Giảm dần'),
-                                        ),
-                                      ],
-                                      onChanged: (value) {
-                                        if (value == null) return;
-                                        bloc.add(
-                                          DomainManagementEvent.getAll(
-                                            search: bloc.state.search,
-                                            sortBy: bloc.state.sortBy,
-                                            sort: value,
-                                            filter: bloc.state.filter,
-                                          ),
-                                        ); // bloc.add(DomainManagementEvent.sort(value));
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SliverPadding(padding: EdgeInsets.only(top: 10)),
-                        SliverGrid.builder(
-                          itemCount: entries.length,
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: crossAxisCount,
-                                mainAxisSpacing: 10,
-                                crossAxisSpacing: 10,
-                              ),
-                          itemBuilder: (context, index) {
-                            final entry = entries[index];
-
-                            return GestureDetector(
-                              onTap: () => context.goNamed(
-                                RouterNames.domainDetail,
-                                pathParameters: {'id': entry.id!},
-                              ),
-                              child: DomainManagementCard(entry: entry),
-                            );
-                          },
-                        ),
-
-                        if (state.isLoadingMore)
-                          const SliverToBoxAdapter(
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(vertical: 24),
-                              child: Center(
-                                child: CustomCircularProgressLoadMore(),
-                              ),
-                            ),
-                          ),
-                      ],
-                    );
-                  },
+        CustomScrollView(
+          controller: _scrollController,
+          slivers: [
+            if (!ScreenSize.of(context).isMobile)
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                sliver: SliverToBoxAdapter(
+                  child: const Text(
+                    'Lĩnh vực',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
                 ),
               ),
-            ],
-          ),
+
+            SliverPadding(
+              padding: const EdgeInsets.all(16),
+              sliver: SliverToBoxAdapter(child: _buildFilterSection(context)),
+            ),
+
+            BlocBuilder<DomainManagementBloc, DomainManagementState>(
+              buildWhen: (previous, current) =>
+                  previous.entries != current.entries ||
+                  previous.isLoading != current.isLoading,
+              builder: (context, state) {
+                if (state.isLoading) {
+                  return const SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: Center(child: CustomCircularProgressScreen()),
+                  );
+                }
+
+                if (state.error != null) {
+                  return SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: ErrorRetryWidget(
+                      error: state.error!,
+                      onRetry: () {
+                        bloc.add(
+                          DomainManagementEvent.getAll(
+                            search: state.search,
+                            page: state.page,
+                            sortBy: state.sortBy,
+                            sort: state.sort,
+                            filter: state.filter,
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                }
+
+                final entries = state.entries;
+
+                if (entries.isEmpty) {
+                  return const SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: Center(child: Text('Không có dữ liệu')),
+                  );
+                }
+
+                final crossAxisCount = ScreenSize.of(context).isMobile
+                    ? 2
+                    : ScreenSize.of(context).isTablet
+                    ? 3
+                    : 4;
+
+                return SliverPadding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  sliver: SliverGrid(
+                    delegate: SliverChildBuilderDelegate((context, index) {
+                      final entry = entries[index];
+
+                      return GestureDetector(
+                        onTap: () => context.goNamed(
+                          RouterNames.domainDetail,
+                          pathParameters: {'id': entry.id!},
+                        ),
+                        child: DomainManagementCard(entry: entry),
+                      );
+                    }, childCount: entries.length),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: crossAxisCount,
+                      mainAxisSpacing: 10,
+                      crossAxisSpacing: 10,
+                      childAspectRatio: 1.2,
+                    ),
+                  ),
+                );
+              },
+            ),
+
+            BlocBuilder<DomainManagementBloc, DomainManagementState>(
+              buildWhen: (p, c) => p.isLoadingMore != c.isLoadingMore,
+              builder: (context, state) {
+                if (!state.isLoadingMore) {
+                  return const SliverToBoxAdapter(child: SizedBox.shrink());
+                }
+
+                return const SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 24),
+                    child: Center(child: CustomCircularProgressLoadMore()),
+                  ),
+                );
+              },
+            ),
+          ],
         ),
+
         ValueListenableBuilder<bool>(
           valueListenable: _showUpButton,
           builder: (context, show, child) {
@@ -276,6 +195,7 @@ class _DomainManagementPageState extends State<DomainManagementPage>
             );
           },
         ),
+
         CustomFloatingActionButton(
           permission: ['admin'],
           onPressedImport: () {
@@ -287,6 +207,104 @@ class _DomainManagementPageState extends State<DomainManagementPage>
               queryParameters: {'mode': 'create'},
             );
           },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFilterSection(BuildContext context) {
+    return Column(
+      spacing: 10,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        CustomInput(
+          controller: _searchController,
+          hintText: 'Tìm kiếm lĩnh vực',
+          suffixIcon: Icon(Icons.search),
+          onChanged: (value) {
+            final search = value.trim();
+            if (_debounce?.isActive ?? false) {
+              _debounce?.cancel();
+            }
+            _debounce = Timer(const Duration(milliseconds: 500), () {
+              if (search.isEmpty) {
+                bloc.add(
+                  const DomainManagementEvent.getAll(
+                    sortBy: 'code',
+                    sort: 'asc',
+                  ),
+                );
+              } else {
+                bloc.add(
+                  DomainManagementEvent.getAll(
+                    search: search,
+                    sortBy: bloc.state.sortBy,
+                    sort: bloc.state.sort,
+                    filter: bloc.state.filter,
+                  ),
+                );
+              }
+            });
+          },
+        ),
+        Wrap(
+          spacing: 10,
+          runSpacing: 10,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            const Text('Sắp xếp theo'),
+            SizedBox(
+              width: 170,
+              child: CustomDropdownButton(
+                items: [
+                  DropdownMenuItem(value: 'code', child: Text('Mã lĩnh vực')),
+                  DropdownMenuItem(value: 'name', child: Text('Tên lĩnh vực')),
+                  DropdownMenuItem(
+                    value: 'created_at',
+                    child: Text('Ngày tạo'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'updated_at',
+                    child: Text('Ngày cập nhật'),
+                  ),
+                ],
+                value: bloc.state.sortBy ?? 'code',
+                onChanged: (value) {
+                  if (value == null) return;
+                  bloc.add(
+                    DomainManagementEvent.getAll(
+                      search: bloc.state.search,
+                      sortBy: value,
+                      sort: bloc.state.sort,
+                      filter: bloc.state.filter,
+                    ),
+                  );
+                },
+              ),
+            ),
+            SizedBox(
+              width: 150,
+              child: CustomDropdownButton(
+                value: bloc.state.sort ?? 'asc',
+                items: [
+                  DropdownMenuItem(value: 'asc', child: Text('Tăng dần')),
+                  DropdownMenuItem(value: 'desc', child: Text('Giảm dần')),
+                ],
+                onChanged: (value) {
+                  if (value == null) return;
+                  bloc.add(
+                    DomainManagementEvent.getAll(
+                      search: bloc.state.search,
+                      sortBy: bloc.state.sortBy,
+                      sort: value,
+                      filter: bloc.state.filter,
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
         ),
       ],
     );
