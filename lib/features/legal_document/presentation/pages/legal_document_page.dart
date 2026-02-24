@@ -131,16 +131,8 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
                 if (ScreenSize.of(context).isMobile ||
                     ScreenSize.of(context).isTablet) {
                   return SliverList.builder(
-                    itemCount: entries.length + (state.isLoadingMore ? 1 : 0),
+                    itemCount: entries.length,
                     itemBuilder: (context, index) {
-                      if (index >= entries.length) {
-                        return const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 20),
-                          child: Center(
-                            child: CustomCircularProgressLoadMore(),
-                          ),
-                        );
-                      }
                       final entry = entries[index];
                       return Padding(
                         padding: const EdgeInsets.all(10.0),
@@ -173,12 +165,6 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
                               ),
                             ],
                           ),
-
-                          if (state.isLoadingMore)
-                            const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 24),
-                              child: CustomCircularProgressLoadMore(),
-                            ),
                         ],
                       );
                     },

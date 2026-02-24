@@ -261,9 +261,8 @@ class _DomainManagementPageState extends State<DomainManagementPage>
         Wrap(
           spacing: 10,
           runSpacing: 10,
-          crossAxisAlignment: WrapCrossAlignment.center,
+          crossAxisAlignment: WrapCrossAlignment.start,
           children: [
-            const Text('Sắp xếp theo'),
             SizedBox(
               width: 170,
               child: CustomDropdownButton(

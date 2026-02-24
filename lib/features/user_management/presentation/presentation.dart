@@ -8,3 +8,4 @@ export 'pages/user_management_detail_page.dart';
 export 'pages/user_management_form_page.dart';
 export 'widgets/user_management_dialog_grant_access.dart';
 export 'pages/user_management_add_domains_page.dart';
+export 'widgets/user_management_filter_widget.dart';
