@@ -165,7 +165,7 @@ class _UserManagementAddDomainsPageState
   }
 
   Widget _buildSelectedChips() {
-    if (_selected.isEmpty) return const SizedBox();
+    if (_selected.isEmpty) return const SizedBox.shrink();
 
     return SizedBox(
       height: 50,

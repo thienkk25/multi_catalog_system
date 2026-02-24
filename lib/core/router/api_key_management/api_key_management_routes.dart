@@ -37,16 +37,6 @@ class ApiKeyManagementRoutes {
                   id: id,
                 );
               },
-              routes: [
-                GoRoute(
-                  path: '/add-domains',
-                  name: RouterNames.apiKeyAddDomains,
-                  builder: (context, state) {
-                    final fields = state.extra as List<String>;
-                    return ApiKeyManagementAddDomainsPage(fields: fields);
-                  },
-                ),
-              ],
             ),
           ],
         ),

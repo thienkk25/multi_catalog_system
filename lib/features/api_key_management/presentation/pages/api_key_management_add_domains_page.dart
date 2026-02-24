@@ -2,18 +2,21 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+
+import 'package:multi_catalog_system/core/domain/entities/domain/domain_ref_entry.dart';
 import 'package:multi_catalog_system/core/utils/extensions/bloc_extension.dart';
+import 'package:multi_catalog_system/core/widgets/buttom_up_widget.dart';
 import 'package:multi_catalog_system/core/widgets/custom_button.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/core/widgets/custom_circular_progress.dart';
 import 'package:multi_catalog_system/core/widgets/custom_input.dart';
 import 'package:multi_catalog_system/core/widgets/error_retry_widget.dart';
-import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_management_bloc.dart';
-import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_management_event.dart';
-import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_management_state.dart';
+import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_lookup_bloc.dart';
+import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_lookup_event.dart';
+import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_lookup_state.dart';
 
 class ApiKeyManagementAddDomainsPage extends StatefulWidget {
-  final List<String> fields;
+  final List<DomainRefEntry> fields;
 
   const ApiKeyManagementAddDomainsPage({super.key, required this.fields});
 
@@ -25,39 +28,67 @@ class ApiKeyManagementAddDomainsPage extends StatefulWidget {
 class _ApiKeyManagementAddDomainsPageState
     extends State<ApiKeyManagementAddDomainsPage> {
   final TextEditingController _searchController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
   final ScrollController _chipScrollController = ScrollController();
-  late List<String> _selected;
+
+  late ValueNotifier<bool> _showUpButton;
+  late final DomainLookupBloc _bloc;
+
+  late List<DomainRefEntry> _selected;
   String _keyword = '';
 
   @override
   void initState() {
     super.initState();
+    _bloc = context.domainLookupBloc;
+    _bloc.add(const DomainLookupEvent.lookup());
+    _showUpButton = ValueNotifier(false);
+    _scrollController.addListener(_onScroll);
     _selected = List.from(widget.fields);
   }
 
-  bool _isAllSelected(List<String> allCodes) {
-    return _selected.length == allCodes.length && allCodes.isNotEmpty;
+  void _onScroll() {
+    if (!_scrollController.hasClients) return;
+
+    final shouldShow = _scrollController.offset > 300;
+
+    if (_showUpButton.value != shouldShow) {
+      _showUpButton.value = shouldShow;
+    }
+
+    if (!_bloc.state.hasMore) return;
+    if (_bloc.state.isLoadingMore) return;
+
+    final position = _scrollController.position;
+    if (position.maxScrollExtent <= 0) return;
+
+    if (position.pixels >= position.maxScrollExtent - 200) {
+      _bloc.add(const DomainLookupEvent.loadMore());
+    }
   }
 
-  void _toggleSelectAll(List<String> allCodes) {
+  bool _isAllSelected(List<DomainRefEntry> entries) {
+    return entries.isNotEmpty && _selected.length == entries.length;
+  }
+
+  void _toggleSelectAll(List<DomainRefEntry> entries) {
     setState(() {
-      if (_isAllSelected(allCodes)) {
-        _selected.clear();
-      } else {
-        _selected = List.from(allCodes);
-      }
+      _selected = _isAllSelected(entries) ? [] : List.from(entries);
     });
   }
 
-  void _toggle(String code) {
+  void _toggle(DomainRefEntry entry) {
     setState(() {
-      _selected.contains(code) ? _selected.remove(code) : _selected.add(code);
+      _selected.contains(entry)
+          ? _selected.remove(entry)
+          : _selected.add(entry);
     });
   }
 
   @override
   void dispose() {
     _searchController.dispose();
+    _scrollController.dispose();
     _chipScrollController.dispose();
     super.dispose();
   }
@@ -70,13 +101,15 @@ class _ApiKeyManagementAddDomainsPageState
         title: const Text('Chọn lĩnh vực'),
         centerTitle: true,
         actions: [
-          BlocBuilder<DomainManagementBloc, DomainManagementState>(
+          BlocBuilder<DomainLookupBloc, DomainLookupState>(
             builder: (context, state) {
-              final allCodes = state.entries.map((e) => e.code!).toList();
-              final isAll = _isAllSelected(allCodes);
+              final domains = state.entries;
+              final isAll = _isAllSelected(domains);
 
               return TextButton(
-                onPressed: () => _toggleSelectAll(allCodes),
+                onPressed: domains.isEmpty
+                    ? null
+                    : () => _toggleSelectAll(domains),
                 child: Text(
                   isAll ? 'Bỏ chọn tất cả' : 'Chọn tất cả',
                   style: const TextStyle(
@@ -90,20 +123,33 @@ class _ApiKeyManagementAddDomainsPageState
         ],
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildSearch(),
-              SizedBox(height: 8),
-              _buildSelectedChips(),
-              _buildLabel(),
-              SizedBox(height: 8),
-              Expanded(child: _buildList()),
-              _buildFooter(),
-            ],
-          ),
+        child: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildSearch(),
+                  const SizedBox(height: 8),
+                  _buildSelectedChips(),
+                  _buildLabel(),
+                  const SizedBox(height: 8),
+                  Expanded(child: _buildList()),
+                  _buildFooter(),
+                ],
+              ),
+            ),
+            ValueListenableBuilder<bool>(
+              valueListenable: _showUpButton,
+              builder: (context, show, child) {
+                return ButtomUpWidget(
+                  scrollController: _scrollController,
+                  show: show,
+                );
+              },
+            ),
+          ],
         ),
       ),
     );
@@ -114,12 +160,12 @@ class _ApiKeyManagementAddDomainsPageState
       controller: _searchController,
       hintText: 'Tìm kiếm lĩnh vực...',
       onChanged: (v) => setState(() => _keyword = v.toLowerCase()),
-      suffixIcon: Icon(Icons.search),
+      suffixIcon: const Icon(Icons.search),
     );
   }
 
   Widget _buildSelectedChips() {
-    if (_selected.isEmpty) return const SizedBox();
+    if (_selected.isEmpty) return const SizedBox.shrink();
 
     return SizedBox(
       height: 50,
@@ -151,15 +197,15 @@ class _ApiKeyManagementAddDomainsPageState
           child: ListView.builder(
             controller: _chipScrollController,
             scrollDirection: Axis.horizontal,
-            shrinkWrap: true,
             itemCount: _selected.length,
             itemBuilder: (context, index) {
-              final code = _selected[index];
+              final domain = _selected[index];
+
               return Padding(
-                padding: const EdgeInsets.only(right: 8.0),
+                padding: const EdgeInsets.only(right: 8),
                 child: Chip(
                   label: Text(
-                    code,
+                    domain.name!,
                     style: const TextStyle(
                       color: Colors.blue,
                       fontWeight: FontWeight.w500,
@@ -171,7 +217,7 @@ class _ApiKeyManagementAddDomainsPageState
                     color: Colors.blue,
                   ),
                   onDeleted: () {
-                    setState(() => _selected.remove(code));
+                    setState(() => _selected.remove(domain));
                   },
                   backgroundColor: Colors.blue.shade50,
                   side: BorderSide(color: Colors.blue.shade200),
@@ -203,7 +249,7 @@ class _ApiKeyManagementAddDomainsPageState
 
   Widget _buildList() {
     return CustomCard(
-      child: BlocBuilder<DomainManagementBloc, DomainManagementState>(
+      child: BlocBuilder<DomainLookupBloc, DomainLookupState>(
         builder: (context, state) {
           if (state.isLoading) {
             return const Center(child: CustomCircularProgressScreen());
@@ -213,11 +259,13 @@ class _ApiKeyManagementAddDomainsPageState
             return ErrorRetryWidget(
               error: state.error!,
               onRetry: () {
-                context.domainManagementBloc.add(
-                  const DomainManagementEvent.getAll(),
-                );
+                context.domainLookupBloc.add(const DomainLookupEvent.lookup());
               },
             );
+          }
+
+          if (state.entries.isEmpty) {
+            return const Center(child: Text('Không có dữ liệu'));
           }
 
           final items = state.entries.where((e) {
@@ -225,30 +273,52 @@ class _ApiKeyManagementAddDomainsPageState
                 e.code!.toLowerCase().contains(_keyword);
           }).toList();
 
-          return ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            itemCount: items.length,
-            itemBuilder: (context, index) {
-              final domain = items[index];
-              final checked = _selected.contains(domain.code);
+          return CustomScrollView(
+            controller: _scrollController,
+            slivers: [
+              SliverList.builder(
+                itemCount: items.length,
+                itemBuilder: (context, index) {
+                  final domain = items[index];
+                  final checked = _selected.contains(domain);
 
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ListTile(
-                  contentPadding: const EdgeInsets.symmetric(vertical: 6),
-                  title: Text(
-                    domain.name!,
-                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  return Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    margin: const EdgeInsets.only(bottom: 8),
+                    decoration: BoxDecoration(
+                      color: checked
+                          ? Colors.blue.shade50
+                          : Colors.grey.shade50,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: ListTile(
+                      title: Text(
+                        domain.name!,
+                        style: const TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      subtitle: Text(domain.code!),
+                      trailing: Icon(
+                        checked
+                            ? Icons.check_circle
+                            : Icons.radio_button_unchecked,
+                        color: checked ? Colors.blue : Colors.grey,
+                      ),
+                      onTap: () => _toggle(domain),
+                    ),
+                  );
+                },
+              ),
+              if (state.isLoadingMore)
+                const SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 24),
+                    child: Center(child: CustomCircularProgressLoadMore()),
                   ),
-                  subtitle: Text(domain.code!),
-                  trailing: Icon(
-                    checked ? Icons.check_circle : Icons.radio_button_unchecked,
-                    color: checked ? Colors.blue : Colors.grey,
-                  ),
-                  onTap: () => _toggle(domain.code!),
                 ),
-              );
-            },
+            ],
           );
         },
       ),
@@ -268,7 +338,10 @@ class _ApiKeyManagementAddDomainsPageState
         },
         textButton: Text(
           'Xác nhận (${_selected.length})',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
     );

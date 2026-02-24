@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:multi_catalog_system/core/domain/entities/domain/domain_ref_entry.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
 
 class ApiKeyManagementPermissionFieldWidget extends StatefulWidget {
   final List<String> fields;
   final bool isDetail;
+  final ValueChanged<List<DomainRefEntry>>? onSelected;
   const ApiKeyManagementPermissionFieldWidget({
     super.key,
     required this.fields,
     required this.isDetail,
+    this.onSelected,
   });
 
   @override
@@ -18,6 +21,14 @@ class ApiKeyManagementPermissionFieldWidget extends StatefulWidget {
 
 class _ApiKeyManagementPermissionFieldWidgetState
     extends State<ApiKeyManagementPermissionFieldWidget> {
+  List<DomainRefEntry> _domains = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _domains = List.from(widget.fields);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -39,10 +50,10 @@ class _ApiKeyManagementPermissionFieldWidgetState
             spacing: 8,
             runSpacing: 8,
             children: [
-              ...widget.fields.map(
+              ..._domains.map(
                 (field) => Chip(
                   label: Text(
-                    field,
+                    field.name!,
                     style: const TextStyle(
                       color: Colors.blue,
                       fontWeight: FontWeight.w500,
@@ -54,7 +65,7 @@ class _ApiKeyManagementPermissionFieldWidgetState
                   onDeleted: widget.isDetail
                       ? null
                       : () {
-                          setState(() => widget.fields.remove(field));
+                          setState(() => _domains.remove(field));
                         },
                   backgroundColor: Colors.blue.shade50,
                   side: BorderSide(color: Colors.blue.shade200),
@@ -82,23 +93,23 @@ class _ApiKeyManagementPermissionFieldWidgetState
                       backgroundColor: Colors.transparent,
                       side: BorderSide(color: Colors.blue.shade300),
                       onPressed: () async {
-                        final result =
-                            await context.pushNamed(
-                                  RouterNames.apiKeyAddDomains,
-                                  extra: widget.fields,
-                                )
-                                as List<String>?;
-
-                        if (result == null) return;
-
-                        setState(
-                          () => widget.fields
-                            ..clear()
-                            ..addAll(result),
+                        final raw = await context.pushNamed(
+                          RouterNames.userManagementAddDomains,
+                          extra: _domains,
                         );
+
+                        if (raw == null) return;
+
+                        final result = (raw as List).cast<DomainRefEntry>();
+
+                        setState(() {
+                          _domains.clear();
+                          _domains.addAll(result);
+                        });
+                        widget.onSelected?.call(result);
                       },
                     ),
-                    if (widget.fields.isNotEmpty)
+                    if (_domains.isNotEmpty)
                       ActionChip(
                         label: const Row(
                           mainAxisSize: MainAxisSize.min,
@@ -118,7 +129,7 @@ class _ApiKeyManagementPermissionFieldWidgetState
                         side: BorderSide(color: Colors.blue.shade300),
                         onPressed: () {
                           setState(() {
-                            widget.fields.clear();
+                            _domains.clear();
                           });
                         },
                       ),

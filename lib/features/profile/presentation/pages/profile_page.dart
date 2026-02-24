@@ -67,7 +67,7 @@ class _ProfilePageState extends State<ProfilePage>
 
         final entry = state.entry;
         if (entry == null) {
-          return const Center(child: Text('Không có dữ liệu'));
+          return const SizedBox.shrink();
         }
 
         return SafeArea(

@@ -153,6 +153,13 @@ class _ApiKeyManagementFormPageState extends State<ApiKeyManagementFormPage> {
                               ApiKeyManagementPermissionFieldWidget(
                                 fields: _allowedDomains,
                                 isDetail: false,
+                                onSelected: (value) {
+                                  setState(() {
+                                    _allowedDomains = value
+                                        .map((e) => e.code!)
+                                        .toList();
+                                  });
+                                },
                               ),
                             ],
                           ),
