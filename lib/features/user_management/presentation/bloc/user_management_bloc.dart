@@ -63,8 +63,18 @@ class UserManagementBloc
         if (emit.isDone) return;
         result.fold(
           (l) => emit(state.copyWith(isLoading: false, error: mapFailure(l))),
-          (r) =>
-              emit(state.copyWith(isLoading: false, entries: r.entries ?? [])),
+          (r) => emit(
+            state.copyWith(
+              isLoading: false,
+              page: r.pagination?.page ?? 1,
+              hasMore: r.pagination?.hasMore ?? false,
+              entries: r.entries ?? [],
+              search: e.search,
+              sortBy: e.sortBy,
+              sort: e.sort,
+              filter: e.filter,
+            ),
+          ),
         );
       },
       loadMore: (_) async {

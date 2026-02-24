@@ -63,6 +63,10 @@ class DomainManagementBloc
               page: r.pagination?.page ?? 1,
               hasMore: r.pagination?.hasMore ?? false,
               entries: r.entries ?? [],
+              search: e.search,
+              sortBy: e.sortBy,
+              sort: e.sort,
+              filter: e.filter,
             ),
           ),
         );

@@ -20,13 +20,11 @@ class CategoryGroupLookupBloc
   ) async {
     await event.map(
       lookup: (v) async {
-        const firstPage = 1;
-
         emit(
           state.copyWith(
             isLoading: true,
             error: null,
-            page: firstPage,
+            page: 1,
             hasMore: true,
             entries: [],
           ),
@@ -34,7 +32,7 @@ class CategoryGroupLookupBloc
 
         final result = await lookup(
           domainIds: v.domainIds,
-          page: firstPage,
+          page: 1,
           limit: state.limit,
         );
 
@@ -43,7 +41,7 @@ class CategoryGroupLookupBloc
           (r) => emit(
             state.copyWith(
               isLoading: false,
-              page: r.pagination?.page ?? firstPage,
+              page: r.pagination?.page ?? 1,
               hasMore: r.pagination?.hasMore ?? false,
               entries: r.entries ?? [],
               domainIds: v.domainIds,
