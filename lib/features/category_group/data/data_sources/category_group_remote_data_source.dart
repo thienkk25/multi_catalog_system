@@ -23,7 +23,7 @@ abstract class CategoryGroupRemoteDataSource {
   Future<void> delete({required String id});
 
   Future<PageModel<CategoryGroupRefModel>> lookup({
-    required String domainId,
+    required List<String> domainIds,
     int? page,
     int? limit,
   });
@@ -126,12 +126,12 @@ class CategoryGroupRemoteDataSourceImpl extends BaseRemoteDataSource
 
   @override
   Future<PageModel<CategoryGroupRefModel>> lookup({
-    required String domainId,
+    required List<String> domainIds,
     int? page,
     int? limit,
   }) async {
     try {
-      final queryParams = <String, dynamic>{'domain_id': domainId};
+      final queryParams = <String, dynamic>{'domain_ids': domainIds};
       if (page != null) queryParams['page'] = page;
 
       if (limit != null) queryParams['limit'] = limit;

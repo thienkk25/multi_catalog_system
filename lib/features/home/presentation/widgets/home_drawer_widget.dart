@@ -15,17 +15,15 @@ import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_state.
 class HomeDrawerWidget extends StatelessWidget {
   final int currentIndex;
   final Function(int index) onSelectTab;
-  final double? drawerWidth;
   const HomeDrawerWidget({
     super.key,
-    this.drawerWidth,
     required this.onSelectTab,
     required this.currentIndex,
   });
 
   @override
   Widget build(BuildContext context) {
-    final drawerWidth = this.drawerWidth ?? 250;
+    final double drawerWidth = 250;
     return Drawer(
       width: drawerWidth,
       backgroundColor: Color(0xFFF5F7FA),

@@ -16,6 +16,8 @@ class CategoryItemRoutes {
           providers: [
             BlocProvider(create: (_) => getIt<CategoryItemBloc>()),
             BlocProvider(create: (_) => getIt<CategoryItemVersionBloc>()),
+            BlocProvider(create: (_) => getIt<DomainLookupBloc>()),
+            BlocProvider(create: (_) => getIt<CategoryGroupLookupBloc>()),
           ],
           child: child,
         );

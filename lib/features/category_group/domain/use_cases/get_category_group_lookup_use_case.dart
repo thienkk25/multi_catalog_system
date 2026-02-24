@@ -10,10 +10,10 @@ class GetCategoryGroupLookupUseCase {
   GetCategoryGroupLookupUseCase({required this.repository});
 
   Future<Either<Failure, PageEntry<CategoryGroupRefEntry>>> call({
-    required String domainId,
+    required List<String> domainIds,
     int? page,
     int? limit,
   }) {
-    return repository.lookup(domainId: domainId, page: page, limit: limit);
+    return repository.lookup(domainIds: domainIds, page: page, limit: limit);
   }
 }

@@ -140,13 +140,13 @@ class CategoryGroupRepositoryImpl implements CategoryGroupRepository {
 
   @override
   Future<Either<Failure, PageEntry<CategoryGroupRefEntry>>> lookup({
-    required String domainId,
+    required List<String> domainIds,
     int? page,
     int? limit,
   }) async {
     try {
       final model = await remoteDataSource.lookup(
-        domainId: domainId,
+        domainIds: domainIds,
         page: page,
         limit: limit,
       );

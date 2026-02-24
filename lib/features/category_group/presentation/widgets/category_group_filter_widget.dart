@@ -8,16 +8,15 @@ import 'package:multi_catalog_system/core/widgets/custom_dropdown_button.dart';
 import 'package:multi_catalog_system/core/widgets/overlay_dropdown_load_button.dart';
 import 'package:multi_catalog_system/features/features.dart';
 
-class CategoryGroupFilterSearchWidget extends StatefulWidget {
-  const CategoryGroupFilterSearchWidget({super.key});
+class CategoryGroupFilterWidget extends StatefulWidget {
+  const CategoryGroupFilterWidget({super.key});
 
   @override
-  State<CategoryGroupFilterSearchWidget> createState() =>
-      _CategoryGroupFilterSearchWidgetState();
+  State<CategoryGroupFilterWidget> createState() =>
+      _CategoryGroupFilterWidgetState();
 }
 
-class _CategoryGroupFilterSearchWidgetState
-    extends State<CategoryGroupFilterSearchWidget> {
+class _CategoryGroupFilterWidgetState extends State<CategoryGroupFilterWidget> {
   String? _domainId;
   String? _sortBy;
   String? _sort;
@@ -58,6 +57,7 @@ class _CategoryGroupFilterSearchWidgetState
             BlocBuilder<DomainLookupBloc, DomainLookupState>(
               builder: (context, state) {
                 return OverlayDropdownLoadButton<DomainRefEntry>(
+                  isMulti: false,
                   label: Text('Lĩnh vực'),
                   entries: state.entries,
                   selected: state.selectedEntries.firstOrNull,

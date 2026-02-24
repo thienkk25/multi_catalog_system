@@ -107,7 +107,7 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
 
     if (domainId != null) {
       context.categoryGroupLookupBloc.add(
-        CategoryGroupLookupEvent.lookup(domainId: domainId),
+        CategoryGroupLookupEvent.lookup(domainIds: [domainId]),
       );
     }
 
@@ -310,7 +310,7 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
                         });
 
                         context.categoryGroupLookupBloc.add(
-                          CategoryGroupLookupEvent.lookup(domainId: value),
+                          CategoryGroupLookupEvent.lookup(domainIds: [value]),
                         );
                       },
                       validator: (v) => v == null || v.isEmpty

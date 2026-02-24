@@ -20,27 +20,33 @@ class CategoryGroupLookupBloc
   ) async {
     await event.map(
       lookup: (v) async {
+        const firstPage = 1;
+
         emit(
           state.copyWith(
             isLoading: true,
             error: null,
-            page: 1,
+            page: firstPage,
             hasMore: true,
             entries: [],
           ),
         );
+
         final result = await lookup(
-          domainId: v.domainId,
-          page: state.page,
+          domainIds: v.domainIds,
+          page: firstPage,
           limit: state.limit,
         );
+
         result.fold(
           (l) => emit(state.copyWith(isLoading: false, error: mapFailure(l))),
           (r) => emit(
             state.copyWith(
               isLoading: false,
+              page: r.pagination?.page ?? firstPage,
+              hasMore: r.pagination?.hasMore ?? false,
               entries: r.entries ?? [],
-              domainId: v.domainId,
+              domainIds: v.domainIds,
             ),
           ),
         );
@@ -51,7 +57,7 @@ class CategoryGroupLookupBloc
         emit(state.copyWith(isLoadingMore: true, error: null));
 
         final result = await lookup(
-          domainId: state.domainId!,
+          domainIds: state.domainIds,
           page: state.page + 1,
           limit: state.limit,
         );
@@ -71,7 +77,7 @@ class CategoryGroupLookupBloc
           ),
         );
       },
-      selectEntries: (e) {
+      selectedEntries: (e) {
         emit(state.copyWith(selectedEntries: e.entries));
       },
     );

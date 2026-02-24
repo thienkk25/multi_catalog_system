@@ -8,7 +8,13 @@ class OverlayDropdownLoadButton<T> extends StatefulWidget {
   final VoidCallback onLoadMore;
   final bool hasMore;
   final bool isLoadingMore;
-  final ValueChanged<T> onSelected;
+  final ValueChanged<T>? onSelected;
+  final bool isMulti;
+  final List<T>? selectedValues;
+  final ValueChanged<List<T>>? onMultiSelected;
+  final ValueChanged<bool>? onToggle;
+  final double? maxHeightOverlay;
+  final double? maxWidthOverlay;
 
   const OverlayDropdownLoadButton({
     super.key,
@@ -19,7 +25,13 @@ class OverlayDropdownLoadButton<T> extends StatefulWidget {
     required this.onLoadMore,
     required this.hasMore,
     required this.isLoadingMore,
-    required this.onSelected,
+    this.onSelected,
+    required this.isMulti,
+    this.selectedValues,
+    this.onMultiSelected,
+    this.onToggle,
+    this.maxHeightOverlay,
+    this.maxWidthOverlay,
   });
 
   @override
@@ -35,15 +47,23 @@ class _OverlayDropdownLoadButtonState<T>
 
   OverlayEntry? _overlayEntry;
   T? _selected;
+  List<T> _selectedList = [];
 
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
 
+  bool get _isOpen => _overlayEntry != null;
+
   @override
   void initState() {
     super.initState();
-    _selected = widget.selected;
+    if (widget.isMulti) {
+      _selectedList = List<T>.from(widget.selectedValues ?? []);
+    } else {
+      _selected = widget.selected;
+    }
+
     _scrollController.addListener(_onScroll);
     _animationController = AnimationController(
       vsync: this,
@@ -64,9 +84,21 @@ class _OverlayDropdownLoadButtonState<T>
   @override
   void didUpdateWidget(covariant OverlayDropdownLoadButton<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.selected != oldWidget.selected) {
-      _selected = widget.selected;
+
+    if (widget.isMulti) {
+      if (widget.selectedValues != oldWidget.selectedValues) {
+        _selectedList = List<T>.from(widget.selectedValues ?? []);
+      }
+    } else {
+      if (widget.selected != oldWidget.selected) {
+        _selected = widget.selected;
+      }
     }
+
+    _onRebuildOverlay();
+  }
+
+  void _onRebuildOverlay() {
     if (_overlayEntry != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _overlayEntry?.markNeedsBuild();
@@ -75,7 +107,11 @@ class _OverlayDropdownLoadButtonState<T>
   }
 
   void _onScroll() {
-    _overlayEntry?.markNeedsBuild();
+    if (_overlayEntry != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _overlayEntry?.markNeedsBuild();
+      });
+    }
     if (!_scrollController.hasClients) return;
     if (!widget.hasMore) return;
     if (widget.isLoadingMore) return;
@@ -107,8 +143,8 @@ class _OverlayDropdownLoadButtonState<T>
                     alignment: Alignment.topCenter,
                     child: ConstrainedBox(
                       constraints: BoxConstraints(
-                        maxWidth: 400,
-                        maxHeight: 250,
+                        maxWidth: widget.maxWidthOverlay ?? 400,
+                        maxHeight: widget.maxHeightOverlay ?? 250,
                       ),
                       child: Material(
                         elevation: 4,
@@ -131,13 +167,28 @@ class _OverlayDropdownLoadButtonState<T>
                               );
                             }
                             final item = widget.entries[index];
-                            final isSelected = item == widget.selected;
+                            final isSelected = widget.isMulti
+                                ? _selectedList.contains(item)
+                                : item == _selected;
 
                             return InkWell(
                               onTap: () {
-                                setState(() => _selected = item);
-                                widget.onSelected(item);
-                                _removeOverlay();
+                                if (widget.isMulti) {
+                                  setState(() {
+                                    if (_selectedList.contains(item)) {
+                                      _selectedList.remove(item);
+                                    } else {
+                                      _selectedList.add(item);
+                                    }
+                                  });
+
+                                  widget.onMultiSelected?.call(_selectedList);
+                                  _onRebuildOverlay();
+                                } else {
+                                  setState(() => _selected = item);
+                                  widget.onSelected?.call(item);
+                                  _removeOverlay();
+                                }
                               },
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
@@ -147,13 +198,37 @@ class _OverlayDropdownLoadButtonState<T>
                                 color: isSelected
                                     ? Colors.blue.withValues(alpha: .1)
                                     : null,
-                                child: Text(
-                                  widget.itemLabel(item),
-                                  style: TextStyle(
-                                    fontWeight: isSelected
-                                        ? FontWeight.bold
-                                        : FontWeight.normal,
-                                  ),
+                                child: Row(
+                                  children: [
+                                    if (widget.isMulti)
+                                      Checkbox(
+                                        value: isSelected,
+                                        onChanged: (_) {
+                                          setState(() {
+                                            if (_selectedList.contains(item)) {
+                                              _selectedList.remove(item);
+                                            } else {
+                                              _selectedList.add(item);
+                                            }
+                                            _onRebuildOverlay();
+                                          });
+
+                                          widget.onMultiSelected?.call(
+                                            _selectedList,
+                                          );
+                                        },
+                                      ),
+                                    Expanded(
+                                      child: Text(
+                                        widget.itemLabel(item),
+                                        style: TextStyle(
+                                          fontWeight: isSelected
+                                              ? FontWeight.bold
+                                              : FontWeight.normal,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             );
@@ -178,6 +253,7 @@ class _OverlayDropdownLoadButtonState<T>
       _overlayEntry = _createOverlay();
       Overlay.of(context).insert(_overlayEntry!);
       _animationController.forward(from: 0);
+      widget.onToggle?.call(_isOpen);
     }
   }
 
@@ -191,6 +267,7 @@ class _OverlayDropdownLoadButtonState<T>
 
     _overlayEntry?.remove();
     _overlayEntry = null;
+    widget.onToggle?.call(_isOpen);
   }
 
   @override
@@ -203,9 +280,9 @@ class _OverlayDropdownLoadButtonState<T>
 
   @override
   Widget build(BuildContext context) {
-    final selectedValue = _selected != null
-        ? widget.itemLabel(_selected as T)
-        : "---";
+    final selectedValue = widget.isMulti
+        ? (_selectedList.isEmpty ? "---" : "${_selectedList.length} đã chọn")
+        : (_selected != null ? widget.itemLabel(_selected as T) : "---");
 
     return Column(
       mainAxisSize: MainAxisSize.min,

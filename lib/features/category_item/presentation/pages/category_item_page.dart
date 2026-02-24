@@ -8,7 +8,6 @@ import 'package:multi_catalog_system/core/responsive/screen_size.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/core/widgets/buttom_up_widget.dart';
 import 'package:multi_catalog_system/core/widgets/custom_circular_progress.dart';
-import 'package:multi_catalog_system/core/widgets/custom_dropdown_button.dart';
 import 'package:multi_catalog_system/core/widgets/custom_floating_action_button.dart';
 import 'package:multi_catalog_system/core/widgets/custom_input.dart';
 import 'package:multi_catalog_system/core/widgets/error_retry_widget.dart';
@@ -19,6 +18,7 @@ import 'package:multi_catalog_system/features/category_item/presentation/bloc/ca
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_version_state.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/pages/category_item_form_page.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/widgets/category_item_card.dart';
+import 'package:multi_catalog_system/features/category_item/presentation/widgets/category_item_filter_widget.dart';
 
 class CategoryItemPage extends StatefulWidget {
   const CategoryItemPage({super.key});
@@ -34,40 +34,71 @@ class _CategoryItemPageState extends State<CategoryItemPage>
 
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollFilterController = ScrollController();
   late ValueNotifier<bool> _showUpButton;
   Timer? _debounce;
+
+  late CategoryItemBloc _bloc;
+  bool isFilterOpen = false;
+  final double filterWidth = 300;
 
   @override
   void initState() {
     super.initState();
     _showUpButton = ValueNotifier(false);
+    _bloc = context.itemBloc;
     context.itemBloc.add(const CategoryItemEvent.getAll());
-
     _scrollController.addListener(_onScroll);
   }
 
   void _onScroll() {
-    final bloc = context.itemBloc;
     if (!_scrollController.hasClients) return;
     final shouldShow = _scrollController.offset > 300;
 
     if (_showUpButton.value != shouldShow) {
       _showUpButton.value = shouldShow;
     }
-    if (!bloc.state.hasMore) return;
-    if (bloc.state.isLoadingMore) return;
+    if (!_bloc.state.hasMore) return;
+    if (_bloc.state.isLoadingMore) return;
 
     final position = _scrollController.position;
     if (position.maxScrollExtent <= 0) return;
 
     if (position.pixels >= position.maxScrollExtent - 200) {
-      bloc.add(const CategoryItemEvent.loadMore());
+      _bloc.add(const CategoryItemEvent.loadMore());
     }
+  }
+
+  void _toggleFilter() {
+    isFilterOpen = !isFilterOpen;
+    if (isFilterOpen) {
+      _openFilter();
+    } else {
+      _closeFilter();
+    }
+  }
+
+  void _openFilter() {
+    _scrollFilterController.animateTo(
+      filterWidth,
+      duration: Duration(milliseconds: 400),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void _closeFilter() {
+    _scrollFilterController.animateTo(
+      0,
+      duration: Duration(milliseconds: 400),
+      curve: Curves.easeInOut,
+    );
   }
 
   @override
   void dispose() {
     _searchController.dispose();
+    _scrollController.dispose();
+    _scrollFilterController.dispose();
     _debounce?.cancel();
     super.dispose();
   }
@@ -75,6 +106,8 @@ class _CategoryItemPageState extends State<CategoryItemPage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    final screenSize = ScreenSize.of(context);
+    final screenWidth = screenSize.width - (screenSize.isMobile ? 0 : 250);
     return MultiBlocListener(
       listeners: [
         BlocListener<CategoryItemBloc, CategoryItemState>(
@@ -98,215 +131,217 @@ class _CategoryItemPageState extends State<CategoryItemPage>
           },
         ),
       ],
-      child: Stack(
-        children: [
-          CustomScrollView(
-            controller: _scrollController,
-            slivers: [
-              if (!ScreenSize.of(context).isMobile)
-                SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                  sliver: SliverToBoxAdapter(
-                    child: const Text(
-                      'Mục danh mục',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              SliverPadding(
-                padding: const EdgeInsets.all(16),
-                sliver: SliverToBoxAdapter(child: _buildFilterSection(context)),
-              ),
-              BlocBuilder<CategoryItemBloc, CategoryItemState>(
-                buildWhen: (prev, curr) =>
-                    prev.entries != curr.entries ||
-                    prev.isLoading != curr.isLoading,
-                builder: (context, state) {
-                  if (state.isLoading) {
-                    return const SliverFillRemaining(
-                      hasScrollBody: false,
-                      child: Center(child: CustomCircularProgressScreen()),
-                    );
-                  }
-                  if (state.error != null) {
-                    return SliverFillRemaining(
-                      hasScrollBody: false,
-                      child: ErrorRetryWidget(
-                        error: state.error!,
-                        onRetry: () {
-                          context.itemBloc.add(
-                            const CategoryItemEvent.getAll(),
-                          );
-                        },
-                      ),
-                    );
-                  }
-
-                  final entries = state.entries;
-                  if (entries.isEmpty) {
-                    return const SliverFillRemaining(
-                      hasScrollBody: false,
-                      child: Center(child: Text('Không có dữ liệu')),
-                    );
-                  }
-                  if (ScreenSize.of(context).isMobile ||
-                      ScreenSize.of(context).isTablet) {
-                    return SliverPadding(
-                      padding: const EdgeInsets.all(16),
-                      sliver: SliverList.builder(
-                        itemCount: entries.length,
-                        itemBuilder: (context, index) {
-                          final entry = entries[index];
-                          return Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: CategoryItemCard(entry: entry),
-                          );
-                        },
-                      ),
-                    );
-                  }
-                  return SliverPadding(
-                    padding: const EdgeInsets.all(16),
-                    sliver: SliverToBoxAdapter(
-                      child: LayoutBuilder(
-                        builder: (context, constraints) {
-                          final crossAxisCount = (constraints.maxWidth / 600)
-                              .floor()
-                              .clamp(1, 6);
-
-                          final itemWidth =
-                              constraints.maxWidth / crossAxisCount - 10;
-
-                          return Column(
-                            children: [
-                              Wrap(
-                                spacing: 10,
-                                runSpacing: 10,
-                                children: [
-                                  ...entries.map(
-                                    (entry) => SizedBox(
-                                      width: itemWidth,
-                                      child: CategoryItemCard(entry: entry),
-                                    ),
-                                  ),
-                                ],
+      child: SingleChildScrollView(
+        controller: _scrollFilterController,
+        scrollDirection: Axis.horizontal,
+        physics: const NeverScrollableScrollPhysics(),
+        child: Row(
+          children: [
+            SizedBox(
+              width: screenWidth,
+              child: Stack(
+                children: [
+                  CustomScrollView(
+                    controller: _scrollController,
+                    slivers: [
+                      if (!ScreenSize.of(context).isMobile)
+                        SliverPadding(
+                          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                          sliver: SliverToBoxAdapter(
+                            child: const Text(
+                              'Mục danh mục',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
                               ),
-                            ],
+                            ),
+                          ),
+                        ),
+                      SliverPadding(
+                        padding: const EdgeInsets.all(16),
+                        sliver: SliverToBoxAdapter(
+                          child: _buildSearchFilterSection(context),
+                        ),
+                      ),
+                      BlocBuilder<CategoryItemBloc, CategoryItemState>(
+                        buildWhen: (prev, curr) =>
+                            prev.entries != curr.entries ||
+                            prev.isLoading != curr.isLoading,
+                        builder: (context, state) {
+                          if (state.isLoading) {
+                            return const SliverFillRemaining(
+                              hasScrollBody: false,
+                              child: Center(
+                                child: CustomCircularProgressScreen(),
+                              ),
+                            );
+                          }
+                          if (state.error != null) {
+                            return SliverFillRemaining(
+                              hasScrollBody: false,
+                              child: ErrorRetryWidget(
+                                error: state.error!,
+                                onRetry: () {
+                                  _bloc.add(const CategoryItemEvent.getAll());
+                                },
+                              ),
+                            );
+                          }
+
+                          final entries = state.entries;
+                          if (entries.isEmpty) {
+                            return const SliverFillRemaining(
+                              hasScrollBody: false,
+                              child: Center(child: Text('Không có dữ liệu')),
+                            );
+                          }
+                          if (ScreenSize.of(context).isMobile ||
+                              ScreenSize.of(context).isTablet) {
+                            return SliverPadding(
+                              padding: const EdgeInsets.all(16),
+                              sliver: SliverList.builder(
+                                itemCount: entries.length,
+                                itemBuilder: (context, index) {
+                                  final entry = entries[index];
+                                  return Padding(
+                                    padding: const EdgeInsets.only(bottom: 10),
+                                    child: CategoryItemCard(entry: entry),
+                                  );
+                                },
+                              ),
+                            );
+                          }
+                          return SliverPadding(
+                            padding: const EdgeInsets.all(16),
+                            sliver: SliverToBoxAdapter(
+                              child: LayoutBuilder(
+                                builder: (context, constraints) {
+                                  final crossAxisCount =
+                                      (constraints.maxWidth / 600)
+                                          .floor()
+                                          .clamp(1, 6);
+
+                                  final itemWidth =
+                                      constraints.maxWidth / crossAxisCount -
+                                      10;
+
+                                  return Column(
+                                    children: [
+                                      Wrap(
+                                        spacing: 10,
+                                        runSpacing: 10,
+                                        children: [
+                                          ...entries.map(
+                                            (entry) => SizedBox(
+                                              width: itemWidth,
+                                              child: CategoryItemCard(
+                                                entry: entry,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  );
+                                },
+                              ),
+                            ),
                           );
                         },
                       ),
-                    ),
-                  );
-                },
-              ),
-              BlocBuilder<CategoryItemBloc, CategoryItemState>(
-                buildWhen: (p, c) => p.isLoadingMore != c.isLoadingMore,
-                builder: (context, state) {
-                  if (!state.isLoadingMore) {
-                    return const SliverToBoxAdapter(child: SizedBox.shrink());
-                  }
+                      BlocBuilder<CategoryItemBloc, CategoryItemState>(
+                        buildWhen: (p, c) => p.isLoadingMore != c.isLoadingMore,
+                        builder: (context, state) {
+                          if (!state.isLoadingMore) {
+                            return const SliverToBoxAdapter(
+                              child: SizedBox.shrink(),
+                            );
+                          }
 
-                  return const SliverToBoxAdapter(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 24),
-                      child: Center(child: CustomCircularProgressLoadMore()),
-                    ),
-                  );
-                },
-              ),
-            ],
-          ),
+                          return const SliverToBoxAdapter(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 24),
+                              child: Center(
+                                child: CustomCircularProgressLoadMore(),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
 
-          ValueListenableBuilder<bool>(
-            valueListenable: _showUpButton,
-            builder: (context, show, child) {
-              return ButtomUpWidget(
-                scrollController: _scrollController,
-                show: show,
-              );
-            },
-          ),
-          CustomFloatingActionButton(
-            onPressedImport: () {
-              context.goNamed(RouterNames.importFile, extra: 3);
-            },
-            onPressedAdd: () {
-              context.goNamed(
-                RouterNames.categoryItemForm,
-                queryParameters: {'mode': CategoryItemFormMode.create.name},
-              );
-            },
-          ),
-        ],
+                  ValueListenableBuilder<bool>(
+                    valueListenable: _showUpButton,
+                    builder: (context, show, child) {
+                      return ButtomUpWidget(
+                        scrollController: _scrollController,
+                        show: show,
+                      );
+                    },
+                  ),
+                  CustomFloatingActionButton(
+                    onPressedImport: () {
+                      context.goNamed(RouterNames.importFile, extra: 3);
+                    },
+                    onPressedAdd: () {
+                      context.goNamed(
+                        RouterNames.categoryItemForm,
+                        queryParameters: {
+                          'mode': CategoryItemFormMode.create.name,
+                        },
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              width: filterWidth,
+              child: CategoryItemFilterWidget(onClose: _closeFilter),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildFilterSection(BuildContext context) {
-    return Column(
-      spacing: 10,
-      crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildSearchFilterSection(BuildContext context) {
+    return Row(
       mainAxisSize: MainAxisSize.min,
+      spacing: 5,
       children: [
-        CustomInput(
-          hintText: 'Tìm kiếm theo tên, mã...',
-          suffixIcon: Icon(Icons.search),
-          onChanged: (value) {
-            final search = value.trim();
-            if (_debounce?.isActive ?? false) {
-              _debounce?.cancel();
-            }
-            _debounce = Timer(const Duration(milliseconds: 500), () {
-              if (search.isEmpty) {
-                context.itemBloc.add(const CategoryItemEvent.getAll());
-              } else {
-                context.itemBloc.add(CategoryItemEvent.getAll(search: search));
+        Expanded(
+          child: CustomInput(
+            hintText: 'Tìm kiếm theo mã, tên...',
+            suffixIcon: const Icon(Icons.search),
+            onChanged: (value) {
+              final search = value.trim();
+              if (_debounce?.isActive ?? false) {
+                _debounce?.cancel();
               }
-            });
-          },
+              _debounce = Timer(const Duration(milliseconds: 500), () {
+                if (search.isEmpty) {
+                  _bloc.add(
+                    const CategoryItemEvent.getAll(sortBy: 'code', sort: 'asc'),
+                  );
+                } else {
+                  _bloc.add(
+                    CategoryItemEvent.getAll(
+                      search: search,
+                      sortBy: _bloc.state.sortBy,
+                      sort: _bloc.state.sort,
+                      filter: _bloc.state.filter,
+                    ),
+                  );
+                }
+              });
+            },
+          ),
         ),
-        Wrap(
-          spacing: 10,
-          runSpacing: 10,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: [
-            const Text('Sắp xếp theo'),
-            SizedBox(
-              width: 170,
-              child: CustomDropdownButton(
-                items: [
-                  DropdownMenuItem(value: 'code', child: Text('Mã lĩnh vực')),
-                  DropdownMenuItem(value: 'name', child: Text('Tên lĩnh vực')),
-                  DropdownMenuItem(
-                    value: 'created_at',
-                    child: Text('Ngày tạo'),
-                  ),
-                  DropdownMenuItem(
-                    value: 'updated_at',
-                    child: Text('Ngày cập nhật'),
-                  ),
-                ],
-                onChanged: (value) {
-                  if (value == null) return;
-                },
-              ),
-            ),
-            SizedBox(
-              width: 150,
-              child: CustomDropdownButton(
-                items: [
-                  DropdownMenuItem(value: 'asc', child: Text('Tăng dần')),
-                  DropdownMenuItem(value: 'desc', child: Text('Giảm dần')),
-                ],
-                onChanged: (value) {
-                  if (value == null) return;
-                },
-              ),
-            ),
-          ],
+        IconButton(
+          icon: Icon(Icons.filter_list_alt),
+          onPressed: () => _toggleFilter(),
         ),
       ],
     );

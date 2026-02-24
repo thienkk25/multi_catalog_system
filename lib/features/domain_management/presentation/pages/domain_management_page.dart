@@ -93,7 +93,9 @@ class _DomainManagementPageState extends State<DomainManagementPage>
 
             SliverPadding(
               padding: const EdgeInsets.all(16),
-              sliver: SliverToBoxAdapter(child: _buildFilterSection(context)),
+              sliver: SliverToBoxAdapter(
+                child: _buildSearchFilterSection(context),
+              ),
             ),
 
             BlocConsumer<DomainManagementBloc, DomainManagementState>(
@@ -220,7 +222,7 @@ class _DomainManagementPageState extends State<DomainManagementPage>
     );
   }
 
-  Widget _buildFilterSection(BuildContext context) {
+  Widget _buildSearchFilterSection(BuildContext context) {
     return Column(
       spacing: 10,
       crossAxisAlignment: CrossAxisAlignment.start,

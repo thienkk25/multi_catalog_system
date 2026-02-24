@@ -5,12 +5,13 @@ part 'category_group_lookup_event.freezed.dart';
 
 @freezed
 abstract class CategoryGroupLookupEvent with _$CategoryGroupLookupEvent {
-  const factory CategoryGroupLookupEvent.lookup({required String domainId}) =
-      _Lookup;
+  const factory CategoryGroupLookupEvent.lookup({
+    required List<String> domainIds,
+  }) = _Lookup;
 
   const factory CategoryGroupLookupEvent.loadMore() = _LoadMore;
 
-  const factory CategoryGroupLookupEvent.selectEntries({
+  const factory CategoryGroupLookupEvent.selectedEntries({
     required List<CategoryGroupRefEntry> entries,
-  }) = _Refresh;
+  }) = _SelectedEntries;
 }

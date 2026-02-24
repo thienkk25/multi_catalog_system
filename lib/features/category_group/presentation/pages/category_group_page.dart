@@ -67,156 +67,124 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
     super.build(context);
     return Stack(
       children: [
-        Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Column(
-            spacing: 10,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (!ScreenSize.of(context).isMobile)
-                Text(
-                  'Nhóm danh mục',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        CustomScrollView(
+          controller: _scrollController,
+          slivers: [
+            if (!ScreenSize.of(context).isMobile)
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                sliver: SliverToBoxAdapter(
+                  child: const Text(
+                    'Nhóm danh mục',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
                 ),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                spacing: 5,
-                children: [
-                  Expanded(
-                    child: CustomInput(
-                      hintText: 'Tìm kiếm theo mã, tên...',
-                      suffixIcon: Icon(Icons.search),
-                      controller: _searchController,
-                      onChanged: (value) {
-                        final search = value.trim();
-                        if (_debounce?.isActive ?? false) {
-                          _debounce?.cancel();
-                        }
-                        _debounce = Timer(
-                          const Duration(milliseconds: 500),
-                          () {
-                            if (search.isEmpty) {
-                              _bloc.add(const CategoryGroupEvent.getAll());
-                            } else {
-                              _bloc.add(
-                                CategoryGroupEvent.getAll(
-                                  search: search,
-                                  sortBy: _bloc.state.sortBy,
-                                  sort: _bloc.state.sort,
-                                  filter: _bloc.state.filter,
-                                ),
-                              );
-                            }
-                          },
-                        );
+              ),
+            SliverPadding(
+              padding: const EdgeInsets.all(16),
+              sliver: SliverToBoxAdapter(
+                child: _buildSearchFilterSection(context),
+              ),
+            ),
+            BlocConsumer<CategoryGroupBloc, CategoryGroupState>(
+              listener: (context, state) {
+                if (state.successMessage != null) {
+                  context.notificationCubit.success(state.successMessage!);
+                }
+                if (state.error != null) {
+                  context.notificationCubit.error(state.error!);
+                }
+              },
+              buildWhen: (previous, current) =>
+                  previous.entries != current.entries ||
+                  previous.isLoading != current.isLoading,
+              builder: (context, state) {
+                if (state.isLoading) {
+                  return SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: const Center(child: CustomCircularProgressScreen()),
+                  );
+                }
+                if (state.error != null) {
+                  return SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: ErrorRetryWidget(
+                      error: state.error!,
+                      onRetry: () {
+                        _bloc.add(const CategoryGroupEvent.getAll());
                       },
                     ),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.filter_list),
-                    onPressed: () {
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        builder: (context) => CategoryGroupFilterSearchWidget(),
+                  );
+                }
+                final entries = state.entries;
+                if (entries.isEmpty) {
+                  return const SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: Center(child: Text('Không có dữ liệu')),
+                  );
+                }
+                if (ScreenSize.of(context).isMobile ||
+                    ScreenSize.of(context).isTablet) {
+                  return SliverList.builder(
+                    itemCount: entries.length,
+                    itemBuilder: (context, index) {
+                      final entry = entries[index];
+                      return Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: CategoryGroupCard(entry: entry),
+                      );
+                    },
+                  );
+                }
+                return SliverToBoxAdapter(
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final crossAxisCount = (constraints.maxWidth / 600)
+                          .floor()
+                          .clamp(1, 6);
+
+                      final itemWidth =
+                          constraints.maxWidth / crossAxisCount - 10;
+
+                      return Column(
+                        children: [
+                          Wrap(
+                            spacing: 10,
+                            runSpacing: 10,
+                            children: [
+                              ...entries.map(
+                                (entry) => SizedBox(
+                                  width: itemWidth,
+                                  child: CategoryGroupCard(entry: entry),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       );
                     },
                   ),
-                ],
-              ),
-              Expanded(
-                child: BlocConsumer<CategoryGroupBloc, CategoryGroupState>(
-                  listener: (context, state) {
-                    if (state.successMessage != null) {
-                      context.notificationCubit.success(state.successMessage!);
-                    }
-                    if (state.error != null) {
-                      context.notificationCubit.error(state.error!);
-                    }
-                  },
-                  builder: (context, state) {
-                    if (state.isLoading) {
-                      return const Center(
-                        child: CustomCircularProgressScreen(),
-                      );
-                    }
-                    if (state.error != null) {
-                      return ErrorRetryWidget(
-                        error: state.error!,
-                        onRetry: () {
-                          _bloc.add(const CategoryGroupEvent.getAll());
-                        },
-                      );
-                    }
-                    final entries = state.entries;
-                    if (entries.isEmpty) {
-                      return const Center(child: Text('Không có dữ liệu'));
-                    }
-                    if (ScreenSize.of(context).isMobile ||
-                        ScreenSize.of(context).isTablet) {
-                      return ListView.builder(
-                        controller: _scrollController,
-                        itemCount:
-                            entries.length + (state.isLoadingMore ? 1 : 0),
-                        itemBuilder: (context, index) {
-                          if (index >= entries.length) {
-                            return const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 20),
-                              child: Center(
-                                child: CustomCircularProgressLoadMore(),
-                              ),
-                            );
-                          }
-                          final entry = entries[index];
-                          return Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: CategoryGroupCard(entry: entry),
-                          );
-                        },
-                      );
-                    }
-                    return LayoutBuilder(
-                      builder: (context, constraints) {
-                        final crossAxisCount = (constraints.maxWidth / 600)
-                            .floor()
-                            .clamp(1, 6);
+                );
+              },
+            ),
+            BlocBuilder<CategoryGroupBloc, CategoryGroupState>(
+              buildWhen: (p, c) => p.isLoadingMore != c.isLoadingMore,
+              builder: (context, state) {
+                if (!state.isLoadingMore) {
+                  return const SliverToBoxAdapter(child: SizedBox.shrink());
+                }
 
-                        final itemWidth =
-                            constraints.maxWidth / crossAxisCount - 10;
-
-                        return SingleChildScrollView(
-                          controller: _scrollController,
-                          child: Column(
-                            children: [
-                              Wrap(
-                                spacing: 10,
-                                runSpacing: 10,
-                                children: [
-                                  ...entries.map(
-                                    (entry) => SizedBox(
-                                      width: itemWidth,
-                                      child: CategoryGroupCard(entry: entry),
-                                    ),
-                                  ),
-                                ],
-                              ),
-
-                              if (state.isLoadingMore)
-                                const Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 24),
-                                  child: CustomCircularProgressLoadMore(),
-                                ),
-                            ],
-                          ),
-                        );
-                      },
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
+                return const SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 24),
+                    child: Center(child: CustomCircularProgressLoadMore()),
+                  ),
+                );
+              },
+            ),
+          ],
         ),
+
         ValueListenableBuilder<bool>(
           valueListenable: _showUpButton,
           builder: (context, show, child) {
@@ -234,6 +202,52 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
             context.goNamed(
               RouterNames.categoryGroupForm,
               queryParameters: {'mode': 'create'},
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSearchFilterSection(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      spacing: 5,
+      children: [
+        Expanded(
+          child: CustomInput(
+            hintText: 'Tìm kiếm theo mã, tên...',
+            suffixIcon: Icon(Icons.search),
+            controller: _searchController,
+            onChanged: (value) {
+              final search = value.trim();
+              if (_debounce?.isActive ?? false) {
+                _debounce?.cancel();
+              }
+              _debounce = Timer(const Duration(milliseconds: 500), () {
+                if (search.isEmpty) {
+                  _bloc.add(const CategoryGroupEvent.getAll());
+                } else {
+                  _bloc.add(
+                    CategoryGroupEvent.getAll(
+                      search: search,
+                      sortBy: _bloc.state.sortBy,
+                      sort: _bloc.state.sort,
+                      filter: _bloc.state.filter,
+                    ),
+                  );
+                }
+              });
+            },
+          ),
+        ),
+        IconButton(
+          icon: Icon(Icons.filter_list),
+          onPressed: () {
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              builder: (context) => CategoryGroupFilterWidget(),
             );
           },
         ),

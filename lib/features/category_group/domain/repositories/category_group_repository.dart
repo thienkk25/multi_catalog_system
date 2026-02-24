@@ -23,7 +23,7 @@ abstract class CategoryGroupRepository {
   Future<Either<Failure, void>> delete({required String id});
 
   Future<Either<Failure, PageEntry<CategoryGroupRefEntry>>> lookup({
-    required String domainId,
+    required List<String> domainIds,
     int? page,
     int? limit,
   });
