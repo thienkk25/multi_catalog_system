@@ -32,7 +32,7 @@ class CustomDropdownButton<T> extends StatelessWidget {
           decoration: InputDecoration(
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Colors.blue),
+              borderSide: BorderSide(color: Colors.blue.withValues(alpha: .5)),
             ),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
             enabledBorder: OutlineInputBorder(
