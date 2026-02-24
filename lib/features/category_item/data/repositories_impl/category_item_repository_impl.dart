@@ -23,6 +23,8 @@ class CategoryItemRepositoryImpl implements CategoryItemRepository {
         name: model.name,
         description: model.description,
         status: model.status,
+        domainId: model.domainId,
+        groupId: model.groupId,
         group: CategoryGroupRefEntry(
           id: model.group.id,
           name: model.group.name,
@@ -62,7 +64,7 @@ class CategoryItemRepositoryImpl implements CategoryItemRepository {
 
   Map<String, dynamic> _createPayload(CategoryItemEntry entry) => {
     'category_item': {
-      'group_id': entry.group?.id,
+      'group_id': entry.groupId,
       'code': entry.code,
       'name': entry.name,
       'status': entry.status,
@@ -73,7 +75,7 @@ class CategoryItemRepositoryImpl implements CategoryItemRepository {
 
   Map<String, dynamic> _updatePayload(CategoryItemEntry entry) => {
     'category_item': {
-      if (entry.group?.id != null) 'group_id': entry.group?.id,
+      if (entry.groupId != null) 'group_id': entry.groupId,
       if (entry.code != null) 'code': entry.code,
       if (entry.name != null) 'name': entry.name,
       if (entry.status != null) 'status': entry.status,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:multi_catalog_system/core/domain/entities/category_group/category_group_ref_entry.dart';
 import 'package:multi_catalog_system/core/domain/entities/domain/domain_ref_entry.dart';
 import 'package:multi_catalog_system/core/utils/extensions/bloc_extension.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
@@ -10,10 +11,10 @@ import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/core/widgets/custom_dropdown_button.dart';
 import 'package:multi_catalog_system/core/widgets/custom_input.dart';
 import 'package:multi_catalog_system/core/widgets/file_icon_widget.dart';
+import 'package:multi_catalog_system/core/widgets/overlay_dropdown_load_button.dart';
 import 'package:multi_catalog_system/features/category_group/presentation/bloc/category_group_lookup_bloc.dart';
 import 'package:multi_catalog_system/features/category_group/presentation/bloc/category_group_lookup_event.dart';
 import 'package:multi_catalog_system/features/category_group/presentation/bloc/category_group_lookup_state.dart';
-import 'package:multi_catalog_system/features/category_item/domain/entities/category_group_ref_entry.dart';
 import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_entry.dart';
 import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_version_entry.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_bloc.dart';
@@ -129,8 +130,6 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
       description: json['description'],
       domainId: json['domain_id'],
       groupId: json['group_id'],
-      group: CategoryGroupRefEntry(id: json['group_id']),
-      domain: DomainRefEntry(id: json['domain_id']),
       status: json['status'],
     );
 
@@ -280,74 +279,40 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
               spacing: 10,
               children: [
                 BlocBuilder<DomainLookupBloc, DomainLookupState>(
-                  buildWhen: (previous, current) =>
-                      previous.entries != current.entries,
                   builder: (context, state) {
-                    final domains = state.entries;
-
-                    return CustomDropdownButton<String>(
-                      lable: const Text(
-                        'Lĩnh vực',
-                        style: TextStyle(fontWeight: FontWeight.w600),
-                      ),
-                      hint: 'Chọn lĩnh vực',
-                      value: _selectedDomainId,
-                      items: domains
-                          .map(
-                            (e) => DropdownMenuItem<String>(
-                              value: e.id,
-                              child: Text(e.name ?? '-'),
-                            ),
-                          )
-                          .toList(),
-
-                      onChanged: (value) {
-                        if (value == null) return;
-
-                        setState(() {
-                          _selectedDomainId = value;
-                          _selectedCategoryGroupId = null;
-                        });
-
-                        context.categoryGroupLookupBloc.add(
-                          CategoryGroupLookupEvent.lookup(domainIds: [value]),
+                    return OverlayDropdownLoadButton<DomainRefEntry>(
+                      isMulti: false,
+                      label: Text('Lĩnh vực'),
+                      entries: state.entries,
+                      selected: state.selectedEntries.firstOrNull,
+                      itemLabel: (item) => item.name!,
+                      hasMore: state.hasMore,
+                      isLoadingMore: state.isLoadingMore,
+                      onLoadMore: () {
+                        context.domainLookupBloc.add(
+                          const DomainLookupEvent.loadMore(),
                         );
                       },
-                      validator: (v) => v == null || v.isEmpty
-                          ? 'Vui lòng chọn lĩnh vực'
-                          : null,
+                      onSelected: (value) {
+                        context.domainLookupBloc.add(
+                          DomainLookupEvent.selectedEntries(entries: [value]),
+                        );
+                      },
                     );
                   },
                 ),
                 BlocBuilder<CategoryGroupLookupBloc, CategoryGroupLookupState>(
                   builder: (context, state) {
-                    final categoryGroups = state.entries;
-
-                    return CustomDropdownButton<String>(
-                      lable: const Text(
-                        'Nhóm danh mục',
-                        style: TextStyle(fontWeight: FontWeight.w600),
-                      ),
-                      hint: 'Chọn nhóm danh mục',
-                      value: _selectedCategoryGroupId,
-                      items: categoryGroups
-                          .map(
-                            (e) => DropdownMenuItem<String>(
-                              value: e.id,
-                              child: Text(e.name ?? '-'),
-                            ),
-                          )
-                          .toList(),
-                      onChanged: categoryGroups.isEmpty
-                          ? null
-                          : (value) {
-                              setState(() {
-                                _selectedCategoryGroupId = value;
-                              });
-                            },
-                      validator: (v) => v == null || v.isEmpty
-                          ? 'Vui lòng chọn nhóm danh mục'
-                          : null,
+                    return OverlayDropdownLoadButton<CategoryGroupRefEntry>(
+                      isMulti: false,
+                      label: Text('Lĩnh vực'),
+                      entries: state.entries,
+                      selected: state.selectedEntries.firstOrNull,
+                      itemLabel: (item) => item.name!,
+                      hasMore: state.hasMore,
+                      isLoadingMore: state.isLoadingMore,
+                      onLoadMore: () {},
+                      onSelected: (value) {},
                     );
                   },
                 ),
