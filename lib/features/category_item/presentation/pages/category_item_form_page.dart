@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/domain/entities/category_group/category_group_ref_entry.dart';
 import 'package:multi_catalog_system/core/domain/entities/domain/domain_ref_entry.dart';
+import 'package:multi_catalog_system/core/responsive/screen_size.dart';
 import 'package:multi_catalog_system/core/utils/extensions/bloc_extension.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/core/utils/extensions/auth_permission_extension.dart';
@@ -282,7 +283,11 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
                   builder: (context, state) {
                     return OverlayDropdownLoadButton<DomainRefEntry>(
                       isMulti: false,
-                      label: Text('Lĩnh vực'),
+                      maxWidthOverlay: ScreenSize.of(context).width - 300,
+                      label: Text(
+                        'Lĩnh vực',
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      ),
                       entries: state.entries,
                       selected: state.selectedEntries.firstOrNull,
                       itemLabel: (item) => item.name!,
@@ -294,8 +299,14 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
                         );
                       },
                       onSelected: (value) {
+                        _selectedDomainId = value.id;
                         context.domainLookupBloc.add(
                           DomainLookupEvent.selectedEntries(entries: [value]),
+                        );
+                        context.categoryGroupLookupBloc.add(
+                          CategoryGroupLookupEvent.lookup(
+                            domainIds: [_selectedDomainId!],
+                          ),
                         );
                       },
                     );
@@ -305,14 +316,29 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
                   builder: (context, state) {
                     return OverlayDropdownLoadButton<CategoryGroupRefEntry>(
                       isMulti: false,
-                      label: Text('Lĩnh vực'),
+                      maxWidthOverlay: ScreenSize.of(context).width - 300,
+                      label: Text(
+                        'Nhóm danh mục',
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      ),
                       entries: state.entries,
                       selected: state.selectedEntries.firstOrNull,
                       itemLabel: (item) => item.name!,
                       hasMore: state.hasMore,
                       isLoadingMore: state.isLoadingMore,
-                      onLoadMore: () {},
-                      onSelected: (value) {},
+                      onLoadMore: () {
+                        context.categoryGroupLookupBloc.add(
+                          const CategoryGroupLookupEvent.loadMore(),
+                        );
+                      },
+                      onSelected: (value) {
+                        _selectedCategoryGroupId = value.id;
+                        context.categoryGroupLookupBloc.add(
+                          CategoryGroupLookupEvent.selectedEntries(
+                            entries: [value],
+                          ),
+                        );
+                      },
                     );
                   },
                 ),
