@@ -25,20 +25,27 @@ class _ApiKeyManagementPageState extends State<ApiKeyManagementPage>
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   Timer? _debounce;
-
+  late ValueNotifier<bool> _showUpButton;
   late final ApiKeyBloc bloc;
 
   @override
   void initState() {
     super.initState();
+    _showUpButton = ValueNotifier(false);
     bloc = context.apiKeyBloc;
-    bloc.add(const ApiKeyEvent.getAll());
+    bloc.add(ApiKeyEvent.getAll(sortBy: 'system_name', sort: 'asc'));
 
     _scrollController.addListener(_onScroll);
   }
 
   void _onScroll() {
     if (!_scrollController.hasClients) return;
+    final shouldShow = _scrollController.offset > 300;
+
+    if (_showUpButton.value != shouldShow) {
+      _showUpButton.value = shouldShow;
+    }
+
     if (!bloc.state.hasMore) return;
     if (bloc.state.isLoadingMore) return;
 
@@ -63,129 +70,140 @@ class _ApiKeyManagementPageState extends State<ApiKeyManagementPage>
     super.build(context);
     return Stack(
       children: [
-        Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Column(
-            spacing: 10,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Quản lý API Key',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        CustomScrollView(
+          controller: _scrollController,
+          slivers: [
+            if (!ScreenSize.of(context).isMobile)
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                sliver: SliverToBoxAdapter(
+                  child: const Text(
+                    'Quản lý API Key',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                ),
               ),
-              CustomInput(
-                controller: _searchController,
-                hintText: 'Tìm kiếm...',
-                suffixIcon: Icon(Icons.search),
-                onChanged: (value) {
-                  final search = value.trim();
-                  if (_debounce?.isActive ?? false) {
-                    _debounce?.cancel();
-                  }
-                  _debounce = Timer(const Duration(milliseconds: 500), () {
-                    if (search.isEmpty) {
-                      bloc.add(const ApiKeyEvent.getAll());
-                    } else {
-                      bloc.add(ApiKeyEvent.getAll(search: search));
-                    }
-                  });
-                },
+
+            SliverPadding(
+              padding: const EdgeInsets.all(16),
+              sliver: SliverToBoxAdapter(
+                child: _buildSearchFilterSection(context),
               ),
-              Expanded(
-                child: BlocConsumer<ApiKeyBloc, ApiKeyState>(
-                  listener: (context, state) {
-                    if (state.createdEntry != null) {
-                      _showSuccessDialog(context, state.createdEntry!.key!);
-                    }
-                    if (state.successMessage != null) {
-                      context.notificationCubit.success(state.successMessage!);
-                    }
-                  },
-                  builder: (context, state) {
-                    if (state.isLoading) {
-                      return const Center(
-                        child: CustomCircularProgressScreen(),
-                      );
-                    }
-                    if (state.error != null) {
-                      return ErrorRetryWidget(
-                        error: state.error!,
-                        onRetry: () {
-                          bloc.add(const ApiKeyEvent.getAll());
-                        },
-                      );
-                    }
-                    if (state.entries.isEmpty) {
-                      return Center(child: Text('Không có dữ liệu'));
-                    }
-
-                    final entries = state.entries;
-                    if (ScreenSize.of(context).isMobile ||
-                        ScreenSize.of(context).isTablet) {
-                      return ListView.builder(
-                        controller: _scrollController,
-                        itemCount:
-                            entries.length + (state.isLoadingMore ? 1 : 0),
-                        itemBuilder: (context, index) {
-                          if (index >= entries.length) {
-                            return const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 20),
-                              child: Center(
-                                child: CustomCircularProgressLoadMore(),
-                              ),
-                            );
-                          }
-
-                          final entry = entries[index];
-                          return Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: ApiKeyManagementCard(entry: entry),
-                          );
-                        },
-                      );
-                    }
-                    return LayoutBuilder(
-                      builder: (context, constraints) {
-                        final crossAxisCount = (constraints.maxWidth / 600)
-                            .floor()
-                            .clamp(1, 6);
-
-                        final itemWidth =
-                            constraints.maxWidth / crossAxisCount - 10;
-
-                        return SingleChildScrollView(
-                          controller: _scrollController,
-                          child: Column(
-                            children: [
-                              Wrap(
-                                spacing: 10,
-                                runSpacing: 10,
-                                children: [
-                                  ...entries.map(
-                                    (entry) => SizedBox(
-                                      width: itemWidth,
-                                      child: ApiKeyManagementCard(entry: entry),
-                                    ),
-                                  ),
-                                ],
-                              ),
-
-                              if (state.isLoadingMore)
-                                const Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 24),
-                                  child: CustomCircularProgressLoadMore(),
-                                ),
-                            ],
+            ),
+            BlocConsumer<ApiKeyBloc, ApiKeyState>(
+              listener: (context, state) {
+                if (state.createdEntry != null) {
+                  _showSuccessDialog(context, state.createdEntry!.key!);
+                }
+                if (state.successMessage != null) {
+                  context.notificationCubit.success(state.successMessage!);
+                }
+              },
+              buildWhen: (previous, current) =>
+                  previous.entries != current.entries ||
+                  previous.isLoading != current.isLoading,
+              builder: (context, state) {
+                if (state.isLoading) {
+                  return SliverFillRemaining(
+                    child: const Center(child: CustomCircularProgressScreen()),
+                  );
+                }
+                if (state.error != null) {
+                  return SliverFillRemaining(
+                    child: ErrorRetryWidget(
+                      error: state.error!,
+                      onRetry: () {
+                        bloc.add(
+                          ApiKeyEvent.getAll(
+                            search: state.search,
+                            page: state.page,
+                            sortBy: state.sortBy,
+                            sort: state.sort,
+                            filter: state.filter,
                           ),
                         );
                       },
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
+                    ),
+                  );
+                }
+                if (state.entries.isEmpty) {
+                  return SliverFillRemaining(
+                    child: Center(child: Text('Không có dữ liệu')),
+                  );
+                }
+
+                final entries = state.entries;
+                if (ScreenSize.of(context).isMobile ||
+                    ScreenSize.of(context).isTablet) {
+                  return SliverList.builder(
+                    itemCount: entries.length,
+                    itemBuilder: (context, index) {
+                      final entry = entries[index];
+                      return Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: ApiKeyManagementCard(entry: entry),
+                      );
+                    },
+                  );
+                }
+                return SliverToBoxAdapter(
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final crossAxisCount = (constraints.maxWidth / 600)
+                          .floor()
+                          .clamp(1, 6);
+
+                      final itemWidth =
+                          constraints.maxWidth / crossAxisCount - 10;
+
+                      return Column(
+                        children: [
+                          Wrap(
+                            spacing: 10,
+                            runSpacing: 10,
+                            children: [
+                              ...entries.map(
+                                (entry) => SizedBox(
+                                  width: itemWidth,
+                                  child: ApiKeyManagementCard(entry: entry),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
+            BlocBuilder<ApiKeyBloc, ApiKeyState>(
+              buildWhen: (p, c) => p.isLoadingMore != c.isLoadingMore,
+              builder: (context, state) {
+                if (!state.isLoadingMore) {
+                  return const SliverToBoxAdapter(child: SizedBox.shrink());
+                }
+
+                return const SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 24),
+                    child: Center(child: CustomCircularProgressLoadMore()),
+                  ),
+                );
+              },
+            ),
+          ],
         ),
+        ValueListenableBuilder<bool>(
+          valueListenable: _showUpButton,
+          builder: (context, show, child) {
+            return ButtomUpWidget(
+              scrollController: _scrollController,
+              show: show,
+            );
+          },
+        ),
+
         CustomFloatingActionButton(
           onPressedImport: () {},
           onPressedAdd: () {
@@ -282,5 +300,176 @@ class _ApiKeyManagementPageState extends State<ApiKeyManagementPage>
         );
       },
     );
+  }
+
+  Widget _buildSearchFilterSection(BuildContext context) {
+    return Column(
+      spacing: 10,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        CustomInput(
+          controller: _searchController,
+          hintText: 'Tìm kiếm...',
+          suffixIcon: Icon(Icons.search),
+          onChanged: (value) {
+            final search = value.trim();
+            if (_debounce?.isActive ?? false) {
+              _debounce?.cancel();
+            }
+            _debounce = Timer(const Duration(milliseconds: 500), () {
+              if (search.isEmpty) {
+                bloc.add(
+                  ApiKeyEvent.getAll(sortBy: 'system_name', sort: 'asc'),
+                );
+              } else {
+                bloc.add(
+                  ApiKeyEvent.getAll(
+                    search: search,
+                    sortBy: bloc.state.sortBy,
+                    sort: bloc.state.sort,
+                    filter: bloc.state.filter,
+                  ),
+                );
+              }
+            });
+          },
+        ),
+        SizedBox(
+          height: 50,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            children: [
+              _buildFilterButton(
+                context: context,
+                label: 'Tất cả',
+                onTap: () => bloc.add(
+                  const ApiKeyEvent.getAll(sortBy: 'system_name', sort: 'asc'),
+                ),
+              ),
+              _buildFilterButton(
+                context: context,
+                label: 'Hoạt động',
+                onTap: () => bloc.add(
+                  ApiKeyEvent.getAll(
+                    search: bloc.state.search,
+                    filter: {'status': 'active'},
+                    sortBy: bloc.state.sortBy,
+                    sort: bloc.state.sort,
+                  ),
+                ),
+              ),
+              _buildFilterButton(
+                context: context,
+                label: 'Thu hồi',
+                onTap: () => bloc.add(
+                  ApiKeyEvent.getAll(
+                    search: bloc.state.search,
+                    filter: {'status': 'revoked'},
+                    sortBy: bloc.state.sortBy,
+                    sort: bloc.state.sort,
+                  ),
+                ),
+              ),
+
+              SizedBox(
+                width: 200,
+                child: CustomDropdownButton<String>(
+                  value: 'system_name|asc',
+                  items: const [
+                    DropdownMenuItem(
+                      value: 'system_name|asc',
+                      child: Text('Tên (A → Z)'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'system_name|desc',
+                      child: Text('Tên (Z → A)'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'status|asc',
+                      child: Text('Trạng thái (A → Z)'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'status|desc',
+                      child: Text('Trạng thái (Z → A)'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'created_at|desc',
+                      child: Text('Mới nhất'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'created_at|asc',
+                      child: Text('Cũ nhất'),
+                    ),
+                  ],
+                  onChanged: (value) {
+                    if (value == null) return;
+
+                    final parts = value.split('|');
+                    bloc.add(
+                      ApiKeyEvent.getAll(
+                        search: bloc.state.search,
+                        sortBy: parts[0],
+                        sort: parts[1],
+                        filter: bloc.state.filter,
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFilterButton({
+    required BuildContext context,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: GestureDetector(
+        onTap: onTap,
+        child: BlocSelector<ApiKeyBloc, ApiKeyState, Map<String, dynamic>?>(
+          selector: (state) => state.filter,
+          builder: (context, state) {
+            final isSelected =
+                (state != null && state['status'] == _actionText(label)) ||
+                (state == null && label == 'Tất cả');
+            return Container(
+              height: 30,
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                color: isSelected ? Colors.blue : Colors.transparent,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Colors.blue.withValues(alpha: .5)),
+              ),
+              child: Center(
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    color: isSelected ? Colors.white : Colors.black,
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  String _actionText(String action) {
+    switch (action) {
+      case 'Hoạt động':
+        return 'active';
+      case 'Thu hồi':
+        return 'revoked';
+      default:
+        return '-';
+    }
   }
 }
