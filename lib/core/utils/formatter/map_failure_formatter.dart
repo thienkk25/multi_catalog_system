@@ -10,6 +10,7 @@ String mapFailure(Failure failure) {
   if (failure is UnauthorizedFailure) return failure.message;
   if (failure is ForbiddenFailure) return failure.message;
   if (failure is NotFoundFailure) return failure.message;
+  if (failure is InvalidCredentialsFailure) return failure.message;
 
   return 'Unknown error';
 }

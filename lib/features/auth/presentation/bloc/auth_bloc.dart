@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:multi_catalog_system/core/error/failures.dart';
+import 'package:multi_catalog_system/core/utils/formatter/map_failure_formatter.dart';
 import 'package:multi_catalog_system/features/auth/domain/domain.dart';
 
 import 'auth_event.dart';
@@ -38,7 +38,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           final result = await authLoginUseCase(email: e.email, pass: e.pass);
 
           result.fold(
-            (failure) => emit(_mapFailureToState(failure)),
+            (failure) => emit(AuthState.error(message: mapFailure(failure))),
             (user) => emit(AuthState.authenticated(entry: user)),
           );
         },
@@ -48,10 +48,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
           final result = await authGetCurrentUserUseCase();
 
-          result.fold(
-            (_) => emit(const AuthState.unauthenticated()),
-            (user) => emit(AuthState.authenticated(entry: user)),
-          );
+          result.fold((_) {
+            add(const AuthEvent.logout());
+          }, (user) => emit(AuthState.authenticated(entry: user)));
         },
 
         refreshToken: (e) async {
@@ -81,37 +80,5 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<void> close() {
     _authSub.cancel();
     return super.close();
-  }
-
-  AuthState _mapFailureToState(Failure failure) {
-    if (failure is InvalidCredentialsFailure) {
-      return AuthState.error(message: failure.message);
-    }
-
-    if (failure is UnauthorizedFailure) {
-      return AuthState.unauthenticated();
-    }
-
-    if (failure is ForbiddenFailure) {
-      return AuthState.error(message: failure.message);
-    }
-
-    if (failure is NotFoundFailure) {
-      return AuthState.error(message: failure.message);
-    }
-
-    if (failure is ServerFailure) {
-      return AuthState.error(message: failure.message);
-    }
-
-    if (failure is NetworkFailure) {
-      return AuthState.error(message: failure.message);
-    }
-
-    if (failure is CacheFailure) {
-      return const AuthState.unauthenticated();
-    }
-
-    return AuthState.error(message: failure.message);
   }
 }

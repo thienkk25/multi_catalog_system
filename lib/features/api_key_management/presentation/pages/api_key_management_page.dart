@@ -336,7 +336,7 @@ class _ApiKeyManagementPageState extends State<ApiKeyManagementPage>
           },
         ),
         SizedBox(
-          height: 56,
+          height: 48,
           child: ListView(
             scrollDirection: Axis.horizontal,
             children: [
@@ -371,7 +371,7 @@ class _ApiKeyManagementPageState extends State<ApiKeyManagementPage>
                   ),
                 ),
               ),
-
+              const SizedBox(width: 5),
               SizedBox(
                 width: 200,
                 child: CustomDropdownButton<String>(
@@ -429,35 +429,30 @@ class _ApiKeyManagementPageState extends State<ApiKeyManagementPage>
     required String label,
     required VoidCallback onTap,
   }) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 8),
-      child: GestureDetector(
-        onTap: onTap,
-        child: BlocSelector<ApiKeyBloc, ApiKeyState, Map<String, dynamic>?>(
-          selector: (state) => state.filter,
-          builder: (context, state) {
-            final isSelected =
-                (state != null && state['status'] == _actionText(label)) ||
-                (state == null && label == 'Tất cả');
-            return Container(
-              height: 30,
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              decoration: BoxDecoration(
-                color: isSelected ? Colors.blue : Colors.transparent,
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.blue.withValues(alpha: .5)),
-              ),
-              child: Center(
-                child: Text(
-                  label,
-                  style: TextStyle(
-                    color: isSelected ? Colors.white : Colors.black,
-                  ),
-                ),
-              ),
-            );
-          },
-        ),
+    return GestureDetector(
+      onTap: onTap,
+      child: BlocSelector<ApiKeyBloc, ApiKeyState, Map<String, dynamic>?>(
+        selector: (state) => state.filter,
+        builder: (context, state) {
+          final isSelected =
+              (state != null && state['status'] == _actionText(label)) ||
+              (state == null && label == 'Tất cả');
+          return Container(
+            constraints: const BoxConstraints(minWidth: 60),
+            alignment: Alignment.center,
+            margin: const EdgeInsets.symmetric(horizontal: 5),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+            decoration: BoxDecoration(
+              color: isSelected ? Colors.blue : Colors.transparent,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: Colors.blue.withValues(alpha: .5)),
+            ),
+            child: Text(
+              label,
+              style: TextStyle(color: isSelected ? Colors.white : Colors.black),
+            ),
+          );
+        },
       ),
     );
   }
