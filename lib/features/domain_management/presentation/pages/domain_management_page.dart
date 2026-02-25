@@ -258,62 +258,68 @@ class _DomainManagementPageState extends State<DomainManagementPage>
             });
           },
         ),
-        Wrap(
-          spacing: 10,
-          runSpacing: 10,
-          crossAxisAlignment: WrapCrossAlignment.start,
-          children: [
-            SizedBox(
-              width: 170,
-              child: CustomDropdownButton(
-                items: [
-                  DropdownMenuItem(value: 'code', child: Text('Mã lĩnh vực')),
-                  DropdownMenuItem(value: 'name', child: Text('Tên lĩnh vực')),
-                  DropdownMenuItem(
-                    value: 'created_at',
-                    child: Text('Ngày tạo'),
-                  ),
-                  DropdownMenuItem(
-                    value: 'updated_at',
-                    child: Text('Ngày cập nhật'),
-                  ),
-                ],
-                value: bloc.state.sortBy ?? 'code',
-                onChanged: (value) {
-                  if (value == null) return;
-                  bloc.add(
-                    DomainManagementEvent.getAll(
-                      search: bloc.state.search,
-                      sortBy: value,
-                      sort: bloc.state.sort,
-                      filter: bloc.state.filter,
+        SizedBox(
+          height: 56,
+          child: ListView(
+            shrinkWrap: true,
+            scrollDirection: Axis.horizontal,
+            children: [
+              SizedBox(
+                width: 170,
+                child: CustomDropdownButton(
+                  items: [
+                    DropdownMenuItem(value: 'code', child: Text('Mã lĩnh vực')),
+                    DropdownMenuItem(
+                      value: 'name',
+                      child: Text('Tên lĩnh vực'),
                     ),
-                  );
-                },
-              ),
-            ),
-            SizedBox(
-              width: 150,
-              child: CustomDropdownButton(
-                value: bloc.state.sort ?? 'asc',
-                items: [
-                  DropdownMenuItem(value: 'asc', child: Text('Tăng dần')),
-                  DropdownMenuItem(value: 'desc', child: Text('Giảm dần')),
-                ],
-                onChanged: (value) {
-                  if (value == null) return;
-                  bloc.add(
-                    DomainManagementEvent.getAll(
-                      search: bloc.state.search,
-                      sortBy: bloc.state.sortBy,
-                      sort: value,
-                      filter: bloc.state.filter,
+                    DropdownMenuItem(
+                      value: 'created_at',
+                      child: Text('Ngày tạo'),
                     ),
-                  );
-                },
+                    DropdownMenuItem(
+                      value: 'updated_at',
+                      child: Text('Ngày cập nhật'),
+                    ),
+                  ],
+                  value: bloc.state.sortBy ?? 'code',
+                  onChanged: (value) {
+                    if (value == null) return;
+                    bloc.add(
+                      DomainManagementEvent.getAll(
+                        search: bloc.state.search,
+                        sortBy: value,
+                        sort: bloc.state.sort,
+                        filter: bloc.state.filter,
+                      ),
+                    );
+                  },
+                ),
               ),
-            ),
-          ],
+              const SizedBox(width: 10),
+              SizedBox(
+                width: 150,
+                child: CustomDropdownButton(
+                  value: bloc.state.sort ?? 'asc',
+                  items: [
+                    DropdownMenuItem(value: 'asc', child: Text('Tăng dần')),
+                    DropdownMenuItem(value: 'desc', child: Text('Giảm dần')),
+                  ],
+                  onChanged: (value) {
+                    if (value == null) return;
+                    bloc.add(
+                      DomainManagementEvent.getAll(
+                        search: bloc.state.search,
+                        sortBy: bloc.state.sortBy,
+                        sort: value,
+                        filter: bloc.state.filter,
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
         ),
       ],
     );

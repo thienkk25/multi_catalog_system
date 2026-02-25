@@ -336,7 +336,7 @@ class _ApiKeyManagementPageState extends State<ApiKeyManagementPage>
           },
         ),
         SizedBox(
-          height: 50,
+          height: 56,
           child: ListView(
             scrollDirection: Axis.horizontal,
             children: [

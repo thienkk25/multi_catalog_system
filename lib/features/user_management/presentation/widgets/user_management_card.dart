@@ -80,13 +80,14 @@ class _Header extends StatelessWidget {
                 style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
               ),
               const SizedBox(height: 6),
-              Row(
+              Wrap(
+                spacing: 5,
+                runSpacing: 5,
                 children: [
                   CustomLabel(
                     text: entry.role?.name ?? 'Chưa có quyền',
                     color: _colorRole(entry.role?.code),
                   ),
-                  const SizedBox(width: 6),
                   CustomLabel(
                     text: _status(entry.status),
                     color: _colorStatus(entry.status),

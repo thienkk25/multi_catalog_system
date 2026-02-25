@@ -44,6 +44,9 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
   void _loadData() {
     switch (widget.mode) {
       case CategoryGroupFormType.create:
+        context.domainLookupBloc.add(
+          DomainLookupEvent.selectedEntries(entries: []),
+        );
         break;
       case CategoryGroupFormType.update:
         context.groupBloc.add(CategoryGroupEvent.getById(id: widget.id!));
@@ -58,7 +61,9 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
     _nameController.text = entry.name!;
     _descriptionController.text = entry.description!;
     _selectedDomainId = entry.domain!.id;
-
+    context.domainLookupBloc.add(
+      DomainLookupEvent.selectedEntries(entries: [entry.domain!]),
+    );
     _didInit = true;
   }
 
@@ -143,41 +148,45 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
                                         ? 'Vui lòng nhập tên nhóm danh mục'
                                         : null,
                                   ),
-                                  BlocSelector<
+                                  BlocBuilder<
                                     DomainLookupBloc,
-                                    DomainLookupState,
-                                    List<DomainRefEntry>
+                                    DomainLookupState
                                   >(
-                                    selector: (state) => state.entries,
-                                    builder: (context, domains) {
-                                      return CustomDropdownButton<String>(
-                                        lable: const Text(
+                                    builder: (context, state) {
+                                      return OverlayDropdownLoadButton<
+                                        DomainRefEntry
+                                      >(
+                                        isMulti: false,
+                                        maxWidthOverlay:
+                                            ScreenSize.of(context).width -
+                                            (ScreenSize.of(context).isMobile
+                                                ? 0
+                                                : 300),
+                                        label: Text(
                                           'Lĩnh vực',
                                           style: TextStyle(
                                             fontWeight: FontWeight.w600,
                                           ),
                                         ),
-                                        hint: 'Chọn lĩnh vực',
-                                        value: _selectedDomainId,
-                                        items: domains
-                                            .map(
-                                              (e) => DropdownMenuItem<String>(
-                                                value: e.id,
-                                                child: Text(e.name!),
-                                              ),
-                                            )
-                                            .toList(),
-                                        onChanged: (value) {
-                                          if (value == null) return;
-
-                                          setState(() {
-                                            _selectedDomainId = value;
-                                          });
+                                        entries: state.entries,
+                                        selected:
+                                            state.selectedEntries.firstOrNull,
+                                        itemLabel: (item) => item.name!,
+                                        hasMore: state.hasMore,
+                                        isLoadingMore: state.isLoadingMore,
+                                        onLoadMore: () {
+                                          context.domainLookupBloc.add(
+                                            const DomainLookupEvent.loadMore(),
+                                          );
                                         },
-                                        validator: (p0) =>
-                                            p0 == null || p0.isEmpty
-                                            ? 'Vui lòng chọn lĩnh vực'
-                                            : null,
+                                        onSelected: (value) {
+                                          _selectedDomainId = value.id;
+                                          context.domainLookupBloc.add(
+                                            DomainLookupEvent.selectedEntries(
+                                              entries: [value],
+                                            ),
+                                          );
+                                        },
                                       );
                                     },
                                   ),

@@ -164,7 +164,7 @@ class _ImportFilePageState extends State<ImportFilePage>
                   items: [
                     const DropdownMenuItem(
                       value: 0,
-                      child: Text('Lĩnh vực + Nhóm danh mục + Mục danh mục'),
+                      child: Text('Lĩnh vực + Nhóm + Mục'),
                     ),
                     const DropdownMenuItem(value: 1, child: Text('Lĩnh vực')),
                     const DropdownMenuItem(

@@ -283,7 +283,9 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
                   builder: (context, state) {
                     return OverlayDropdownLoadButton<DomainRefEntry>(
                       isMulti: false,
-                      maxWidthOverlay: ScreenSize.of(context).width - 300,
+                      maxWidthOverlay:
+                          ScreenSize.of(context).width -
+                          (ScreenSize.of(context).isMobile ? 0 : 300),
                       label: Text(
                         'Lĩnh vực',
                         style: TextStyle(fontWeight: FontWeight.w600),
@@ -316,7 +318,9 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
                   builder: (context, state) {
                     return OverlayDropdownLoadButton<CategoryGroupRefEntry>(
                       isMulti: false,
-                      maxWidthOverlay: ScreenSize.of(context).width - 300,
+                      maxWidthOverlay:
+                          ScreenSize.of(context).width -
+                          (ScreenSize.of(context).isMobile ? 0 : 300),
                       label: Text(
                         'Nhóm danh mục',
                         style: TextStyle(fontWeight: FontWeight.w600),

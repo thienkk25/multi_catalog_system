@@ -191,8 +191,9 @@ class _UserManagementDialogGrantAccessState
                   side: BorderSide(color: Colors.blue.shade200),
                 ),
               ),
-              Row(
+              Wrap(
                 spacing: 8,
+                runSpacing: 8,
                 children: [
                   ActionChip(
                     label: const Row(

@@ -249,7 +249,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
           },
         ),
         SizedBox(
-          height: 50,
+          height: 56,
           child: ListView(
             scrollDirection: Axis.horizontal,
             children: [
