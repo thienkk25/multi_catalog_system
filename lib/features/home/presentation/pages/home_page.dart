@@ -21,7 +21,7 @@ class HomePage extends StatelessWidget {
           return Scaffold(
             appBar: AppBar(
               centerTitle: true,
-              title: const Text('Multi Catalog System'),
+              title: const Text('Hệ thống quản lý danh mục'),
             ),
             drawer: HomeDrawerWidget(
               currentIndex: currentIndex,
