@@ -11,7 +11,6 @@ import 'category_item/category_item_routes.dart';
 import 'domain_management/domain_management_routes.dart';
 import 'import_file/import_file_routes.dart';
 import 'legal_document/legal_document_routes.dart';
-import 'others/others_routes.dart';
 import 'profile/profile_routes.dart';
 import 'system_history_management/system_history_management_routes.dart';
 import 'user_management/user_management_routes.dart';
@@ -38,7 +37,6 @@ class AppRouter {
           StatefulShellBranch(routes: ProfileRoutes.routes),
         ],
       ),
-      ...OthersRoutes.routes,
     ],
     redirect: (context, state) {
       final authState = context.authBloc.state;

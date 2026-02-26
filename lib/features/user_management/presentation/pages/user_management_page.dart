@@ -18,25 +18,44 @@ class UserManagementPage extends StatefulWidget {
 }
 
 class _UserManagementPageState extends State<UserManagementPage>
-    with AutomaticKeepAliveClientMixin {
+    with AutomaticKeepAliveClientMixin, SingleTickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final ScrollController _scrollFilterController = ScrollController();
+  late final AnimationController _refreshController;
   Timer? _debounce;
-  late final UserManagementBloc bloc;
+  late final UserManagementBloc _bloc;
   late ValueNotifier<bool> _showUpButton;
-  bool isFilterOpen = false;
-  final double filterWidth = 300;
+  bool _isFilterOpen = false;
+  final double _filterWidth = 300;
 
   @override
   void initState() {
     super.initState();
     _showUpButton = ValueNotifier(false);
-    bloc = context.userManagementBloc;
-    bloc.add(const UserManagementEvent.getAll());
+    _refreshController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 700),
+    );
+    _bloc = context.userManagementBloc;
+    _bloc.add(
+      const UserManagementEvent.getAll(sortBy: 'full_name', sort: 'asc'),
+    );
     _scrollController.addListener(_onScroll);
+  }
+
+  void _onRefresh() {
+    _bloc.add(
+      UserManagementEvent.getAll(
+        search: _bloc.state.search,
+        sortBy: _bloc.state.sortBy,
+        sort: _bloc.state.sort,
+        filter: _bloc.state.filter,
+      ),
+    );
+    _refreshController.forward(from: 0);
   }
 
   void _onScroll() {
@@ -46,20 +65,20 @@ class _UserManagementPageState extends State<UserManagementPage>
     if (_showUpButton.value != shouldShow) {
       _showUpButton.value = shouldShow;
     }
-    if (!bloc.state.hasMore) return;
-    if (bloc.state.isLoadingMore) return;
+    if (!_bloc.state.hasMore) return;
+    if (_bloc.state.isLoadingMore) return;
 
     final position = _scrollController.position;
     if (position.maxScrollExtent <= 0) return;
 
     if (position.pixels >= position.maxScrollExtent - 200) {
-      bloc.add(const UserManagementEvent.loadMore());
+      _bloc.add(const UserManagementEvent.loadMore());
     }
   }
 
   void _toggleFilter() {
-    isFilterOpen = !isFilterOpen;
-    if (isFilterOpen) {
+    _isFilterOpen = !_isFilterOpen;
+    if (_isFilterOpen) {
       _openFilter();
     } else {
       _closeFilter();
@@ -68,7 +87,7 @@ class _UserManagementPageState extends State<UserManagementPage>
 
   void _openFilter() {
     _scrollFilterController.animateTo(
-      filterWidth,
+      _filterWidth,
       duration: Duration(milliseconds: 400),
       curve: Curves.easeInOut,
     );
@@ -87,6 +106,7 @@ class _UserManagementPageState extends State<UserManagementPage>
     _searchController.dispose();
     _scrollController.dispose();
     _scrollFilterController.dispose();
+    _refreshController.dispose();
     _debounce?.cancel();
     super.dispose();
   }
@@ -102,168 +122,196 @@ class _UserManagementPageState extends State<UserManagementPage>
       physics: const NeverScrollableScrollPhysics(),
       child: Row(
         children: [
-          SizedBox(
-            width: screenWidth,
-            child: Stack(
-              children: [
-                CustomScrollView(
-                  controller: _scrollController,
-                  slivers: [
-                    if (!ScreenSize.of(context).isMobile)
-                      SliverPadding(
-                        padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                        sliver: SliverToBoxAdapter(
-                          child: const Text(
-                            'Quản lý người dùng',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
+          RefreshIndicator(
+            onRefresh: () async => _onRefresh(),
+            child: SizedBox(
+              width: screenWidth,
+              child: Stack(
+                children: [
+                  CustomScrollView(
+                    controller: _scrollController,
+                    slivers: [
+                      if (!ScreenSize.of(context).isMobile)
+                        SliverPadding(
+                          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                          sliver: SliverToBoxAdapter(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text(
+                                  'Quản lý người dùng',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: _onRefresh,
+                                  child: Row(
+                                    children: [
+                                      RotationTransition(
+                                        turns: _refreshController,
+                                        child: Icon(Icons.refresh),
+                                      ),
+                                      Text('Làm mới'),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
-                      ),
 
-                    SliverPadding(
-                      padding: const EdgeInsets.all(16),
-                      sliver: SliverToBoxAdapter(
-                        child: _buildSearchFilterSection(context),
+                      SliverPadding(
+                        padding: const EdgeInsets.all(16),
+                        sliver: SliverToBoxAdapter(
+                          child: _buildSearchFilterSection(context),
+                        ),
                       ),
-                    ),
-                    BlocConsumer<UserManagementBloc, UserManagementState>(
-                      listener: (context, state) {
-                        if (state.successMessage != null) {
-                          context.notificationCubit.success(
-                            state.successMessage!,
-                          );
-                        }
-                        if (state.error != null) {
-                          context.notificationCubit.error(state.error!);
-                        }
-                      },
-                      buildWhen: (previous, current) =>
-                          previous.entries != current.entries ||
-                          previous.isLoading != current.isLoading,
-                      builder: (context, state) {
-                        if (state.isLoading) {
-                          return SliverFillRemaining(
-                            child: Center(
-                              child: CustomCircularProgressScreen(),
-                            ),
-                          );
-                        }
+                      BlocConsumer<UserManagementBloc, UserManagementState>(
+                        listener: (context, state) {
+                          if (state.successMessage != null) {
+                            context.notificationCubit.success(
+                              state.successMessage!,
+                            );
+                          }
+                          if (state.error != null) {
+                            context.notificationCubit.error(state.error!);
+                          }
+                        },
+                        buildWhen: (previous, current) =>
+                            previous.entries != current.entries ||
+                            previous.isLoading != current.isLoading,
+                        builder: (context, state) {
+                          if (state.isLoading) {
+                            return SliverFillRemaining(
+                              hasScrollBody: false,
+                              child: Center(
+                                child: CustomCircularProgressScreen(),
+                              ),
+                            );
+                          }
 
-                        if (state.error != null) {
-                          return SliverFillRemaining(
-                            child: ErrorRetryWidget(
-                              error: state.error!,
-                              onRetry: () {
-                                bloc.add(const UserManagementEvent.getAll());
+                          if (state.error != null) {
+                            return SliverFillRemaining(
+                              hasScrollBody: false,
+                              child: ErrorRetryWidget(
+                                error: state.error!,
+                                onRetry: () {
+                                  _bloc.add(
+                                    const UserManagementEvent.getAll(
+                                      sortBy: 'full_name',
+                                      sort: 'asc',
+                                    ),
+                                  );
+                                },
+                              ),
+                            );
+                          }
+
+                          if (state.entries.isEmpty) {
+                            return SliverFillRemaining(
+                              hasScrollBody: false,
+                              child: const Center(
+                                child: Text('Không có dữ liệu'),
+                              ),
+                            );
+                          }
+
+                          final entries = state.entries;
+                          if (ScreenSize.of(context).isMobile ||
+                              ScreenSize.of(context).isTablet) {
+                            return SliverList.builder(
+                              itemBuilder: (context, index) {
+                                final entry = entries[index];
+                                return Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: UserManagementCard(entry: entry),
+                                );
+                              },
+                              itemCount: entries.length,
+                            );
+                          }
+                          return SliverToBoxAdapter(
+                            child: LayoutBuilder(
+                              builder: (context, constraints) {
+                                final crossAxisCount =
+                                    (constraints.maxWidth / 600).floor().clamp(
+                                      1,
+                                      6,
+                                    );
+
+                                final itemWidth =
+                                    constraints.maxWidth / crossAxisCount - 10;
+
+                                return Column(
+                                  children: [
+                                    Wrap(
+                                      spacing: 10,
+                                      runSpacing: 10,
+                                      children: [
+                                        ...entries.map(
+                                          (entry) => SizedBox(
+                                            width: itemWidth,
+                                            child: UserManagementCard(
+                                              entry: entry,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                );
                               },
                             ),
                           );
-                        }
+                        },
+                      ),
+                      BlocBuilder<UserManagementBloc, UserManagementState>(
+                        buildWhen: (p, c) => p.isLoadingMore != c.isLoadingMore,
+                        builder: (context, state) {
+                          if (!state.isLoadingMore) {
+                            return const SliverToBoxAdapter(
+                              child: SizedBox.shrink(),
+                            );
+                          }
 
-                        if (state.entries.isEmpty) {
-                          return SliverFillRemaining(
-                            child: const Center(
-                              child: Text('Không có dữ liệu'),
-                            ),
-                          );
-                        }
-
-                        final entries = state.entries;
-                        if (ScreenSize.of(context).isMobile ||
-                            ScreenSize.of(context).isTablet) {
-                          return SliverList.builder(
-                            itemBuilder: (context, index) {
-                              final entry = entries[index];
-                              return Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: UserManagementCard(entry: entry),
-                              );
-                            },
-                            itemCount: entries.length,
-                          );
-                        }
-                        return SliverToBoxAdapter(
-                          child: LayoutBuilder(
-                            builder: (context, constraints) {
-                              final crossAxisCount =
-                                  (constraints.maxWidth / 600).floor().clamp(
-                                    1,
-                                    6,
-                                  );
-
-                              final itemWidth =
-                                  constraints.maxWidth / crossAxisCount - 10;
-
-                              return Column(
-                                children: [
-                                  Wrap(
-                                    spacing: 10,
-                                    runSpacing: 10,
-                                    children: [
-                                      ...entries.map(
-                                        (entry) => SizedBox(
-                                          width: itemWidth,
-                                          child: UserManagementCard(
-                                            entry: entry,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              );
-                            },
-                          ),
-                        );
-                      },
-                    ),
-                    BlocBuilder<UserManagementBloc, UserManagementState>(
-                      buildWhen: (p, c) => p.isLoadingMore != c.isLoadingMore,
-                      builder: (context, state) {
-                        if (!state.isLoadingMore) {
                           return const SliverToBoxAdapter(
-                            child: SizedBox.shrink(),
-                          );
-                        }
-
-                        return const SliverToBoxAdapter(
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(vertical: 24),
-                            child: Center(
-                              child: CustomCircularProgressLoadMore(),
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 24),
+                              child: Center(
+                                child: CustomCircularProgressLoadMore(),
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-                ValueListenableBuilder<bool>(
-                  valueListenable: _showUpButton,
-                  builder: (context, show, child) {
-                    return ButtomUpWidget(
-                      scrollController: _scrollController,
-                      show: show,
-                    );
-                  },
-                ),
-                CustomFloatingActionButton(
-                  onPressedImport: () {},
-                  onPressedAdd: () {
-                    context.goNamed(
-                      RouterNames.userManagementForm,
-                      queryParameters: {'mode': 'create'},
-                    );
-                  },
-                ),
-              ],
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                  ValueListenableBuilder<bool>(
+                    valueListenable: _showUpButton,
+                    builder: (context, show, child) {
+                      return ButtomUpWidget(
+                        scrollController: _scrollController,
+                        show: show,
+                      );
+                    },
+                  ),
+                  CustomFloatingActionButton(
+                    onPressedImport: () {},
+                    onPressedAdd: () {
+                      context.goNamed(
+                        RouterNames.userManagementForm,
+                        queryParameters: {'mode': 'create'},
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
           SizedBox(
-            width: filterWidth,
+            width: _filterWidth,
             child: UserManagementFilterWidget(onClose: _closeFilter),
           ),
         ],
@@ -287,9 +335,9 @@ class _UserManagementPageState extends State<UserManagementPage>
               }
               _debounce = Timer(const Duration(milliseconds: 500), () {
                 if (search.isEmpty) {
-                  bloc.add(const UserManagementEvent.getAll());
+                  _bloc.add(const UserManagementEvent.getAll());
                 } else {
-                  bloc.add(UserManagementEvent.getAll(search: search));
+                  _bloc.add(UserManagementEvent.getAll(search: search));
                 }
               });
             },

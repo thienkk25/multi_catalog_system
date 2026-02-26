@@ -30,6 +30,16 @@ class _ApiKeyManagementPermissionFieldWidgetState
   }
 
   @override
+  void didUpdateWidget(
+    covariant ApiKeyManagementPermissionFieldWidget oldWidget,
+  ) {
+    if (widget.fields != oldWidget.fields) {
+      _domains = List.from(widget.fields);
+    }
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

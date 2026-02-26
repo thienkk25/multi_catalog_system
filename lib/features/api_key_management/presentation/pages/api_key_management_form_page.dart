@@ -60,6 +60,7 @@ class _ApiKeyManagementFormPageState extends State<ApiKeyManagementFormPage> {
     _selectedAction = entry.status;
     _allowedDomains = List<String>.from(entry.allowedDomains ?? []);
     _didInit = true;
+    setState(() {});
   }
 
   @override
@@ -87,16 +88,12 @@ class _ApiKeyManagementFormPageState extends State<ApiKeyManagementFormPage> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ApiKeyBloc, ApiKeyState>(
-      listenWhen: (previous, current) =>
-          previous.entry?.id != current.entry?.id && current.entry != null,
       listener: (context, state) {
         final entry = state.entry;
         if (entry != null) {
           _initFromData(entry);
         }
       },
-      buildWhen: (previous, current) =>
-          previous.entry?.id != current.entry?.id && current.entry != null,
       builder: (context, state) => SafeArea(
         child: Stack(
           children: [

@@ -113,13 +113,14 @@ class CategoryGroupCard extends StatelessWidget {
   }
 
   void _onRemove({required BuildContext context, required String id}) {
+    final bloc = context.groupBloc;
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) {
         return CustomAlertDialog(
           onConfirm: () {
-            context.groupBloc.add(CategoryGroupEvent.delete(id: id));
+            bloc.add(CategoryGroupEvent.delete(id: id));
             context.pop();
           },
         );

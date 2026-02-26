@@ -131,7 +131,7 @@ class _ActionMenu extends StatelessWidget {
               case _MenuAction.grant:
                 showDialog(
                   context: context,
-                  barrierDismissible: false,
+                  useRootNavigator: false,
                   builder: (_) =>
                       UserManagementDialogGrantAccess(bloc: bloc, entry: entry),
                 );

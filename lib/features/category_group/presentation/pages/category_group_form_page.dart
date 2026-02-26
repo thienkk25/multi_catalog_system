@@ -26,10 +26,10 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
   final TextEditingController _codeController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  String? _selectedDomainId;
   final GlobalKey _bottomBarKey = GlobalKey();
   double _bottomBarHeight = 0;
   CategoryGroupEntry? _entry;
+  DomainRefEntry? _selectedDomain;
   bool get _isUpdate => widget.mode == CategoryGroupFormType.update;
 
   bool _didInit = false;
@@ -37,16 +37,12 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
   @override
   void initState() {
     super.initState();
-    context.domainLookupBloc.add(const DomainLookupEvent.lookup());
     _loadData();
   }
 
   void _loadData() {
     switch (widget.mode) {
       case CategoryGroupFormType.create:
-        context.domainLookupBloc.add(
-          DomainLookupEvent.selectedEntries(entries: []),
-        );
         break;
       case CategoryGroupFormType.update:
         context.groupBloc.add(CategoryGroupEvent.getById(id: widget.id!));
@@ -57,13 +53,10 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
   void _initFromData(CategoryGroupEntry entry) {
     if (_didInit) return;
     _entry = entry;
-    _codeController.text = entry.code!;
-    _nameController.text = entry.name!;
-    _descriptionController.text = entry.description!;
-    _selectedDomainId = entry.domain!.id;
-    context.domainLookupBloc.add(
-      DomainLookupEvent.selectedEntries(entries: [entry.domain!]),
-    );
+    _codeController.text = entry.code ?? '';
+    _nameController.text = entry.name ?? '';
+    _descriptionController.text = entry.description ?? '';
+    _selectedDomain = entry.domain;
     _didInit = true;
   }
 
@@ -169,8 +162,7 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
                                           ),
                                         ),
                                         entries: state.entries,
-                                        selected:
-                                            state.selectedEntries.firstOrNull,
+                                        selected: _selectedDomain,
                                         itemLabel: (item) => item.name!,
                                         hasMore: state.hasMore,
                                         isLoadingMore: state.isLoadingMore,
@@ -180,12 +172,7 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
                                           );
                                         },
                                         onSelected: (value) {
-                                          _selectedDomainId = value.id;
-                                          context.domainLookupBloc.add(
-                                            DomainLookupEvent.selectedEntries(
-                                              entries: [value],
-                                            ),
-                                          );
+                                          _selectedDomain = value;
                                         },
                                       );
                                     },
@@ -270,7 +257,7 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
     if (_isUpdate) {
       final entry = CategoryGroupEntry(
         id: _entry!.id,
-        domain: DomainRefEntry(id: _selectedDomainId),
+        domain: _selectedDomain,
         code: _entry?.code != _codeController.text
             ? _codeController.text
             : _entry?.code,
@@ -284,7 +271,7 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
       context.groupBloc.add(CategoryGroupEvent.update(entry: entry));
     } else {
       final entry = CategoryGroupEntry(
-        domain: DomainRefEntry(id: _selectedDomainId),
+        domain: _selectedDomain,
         code: _codeController.text,
         name: _nameController.text,
         description: _descriptionController.text.isNotEmpty

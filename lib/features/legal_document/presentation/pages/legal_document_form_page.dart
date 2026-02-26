@@ -96,7 +96,7 @@ class _LegalDocumentFormPageState extends State<LegalDocumentFormPage> {
   Widget build(BuildContext context) {
     return BlocConsumer<LegalDocumentBloc, LegalDocumentState>(
       listenWhen: (previous, current) =>
-          previous.entry?.id != current.entry?.id && current.entry != null,
+          previous.entry != current.entry && current.entry != null,
       listener: (context, state) {
         final entry = state.entry;
         if (entry != null) {
@@ -105,7 +105,7 @@ class _LegalDocumentFormPageState extends State<LegalDocumentFormPage> {
         }
       },
       buildWhen: (previous, current) =>
-          previous.entry?.id != current.entry?.id && current.entry != null,
+          previous.entry != current.entry && current.entry != null,
       builder: (context, state) => SafeArea(
         child: Stack(
           children: [
@@ -264,7 +264,7 @@ class _LegalDocumentFormPageState extends State<LegalDocumentFormPage> {
           CustomDatePicker(
             label: 'Ngày ban hành',
             initialDate: _issueDate,
-            onChanged: (value) => setState(() => _issueDate = value),
+            onChanged: (value) => _issueDate = value,
           ),
           Row(
             spacing: 10,
@@ -274,7 +274,7 @@ class _LegalDocumentFormPageState extends State<LegalDocumentFormPage> {
                   icon: Icons.event_available,
                   label: 'Ngày hiệu lực',
                   initialDate: _effectiveDate,
-                  onChanged: (value) => setState(() => _effectiveDate = value),
+                  onChanged: (value) => _effectiveDate = value,
                 ),
               ),
               Expanded(
@@ -282,7 +282,7 @@ class _LegalDocumentFormPageState extends State<LegalDocumentFormPage> {
                   icon: Icons.event_busy,
                   label: 'Ngày hết hiệu lực',
                   initialDate: _expiryDate,
-                  onChanged: (value) => setState(() => _expiryDate = value),
+                  onChanged: (value) => _expiryDate = value,
                 ),
               ),
             ],

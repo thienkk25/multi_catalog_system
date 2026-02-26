@@ -57,6 +57,7 @@ class _UserManagementFormPageState extends State<UserManagementFormPage> {
 
   void _initFromData(UserEntry entry) {
     if (_didInit) return;
+    _entry = entry;
     _emailCtrl.text = entry.email ?? '';
     _fullNameCtrl.text = entry.fullName ?? '';
     _phoneCtrl.text = entry.phone ?? '';
@@ -74,16 +75,12 @@ class _UserManagementFormPageState extends State<UserManagementFormPage> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<UserManagementBloc, UserManagementState>(
-      listenWhen: (previous, current) =>
-          previous.entry?.id != current.entry?.id && current.entry != null,
       listener: (context, state) {
         final entry = state.entry;
         if (entry != null) {
           _initFromData(entry);
         }
       },
-      buildWhen: (previous, current) =>
-          previous.entry?.id != current.entry?.id && current.entry != null,
       builder: (context, state) => SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(10),

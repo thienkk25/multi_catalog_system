@@ -54,8 +54,8 @@ class _DomainManagementFormPageState extends State<DomainManagementFormPage> {
   void _initFromData(DomainEntry entry) {
     if (_didInit) return;
     _entry = entry;
-    _nameController.text = entry.name!;
-    _codeController.text = entry.code!;
+    _nameController.text = entry.name ?? '';
+    _codeController.text = entry.code ?? '';
     _descriptionController.text = entry.description ?? '';
 
     _didInit = true;

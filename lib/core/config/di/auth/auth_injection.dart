@@ -44,7 +44,7 @@ void initAuthModule() {
   );
 
   // Bloc
-  getIt.registerFactory<AuthBloc>(
+  getIt.registerLazySingleton<AuthBloc>(
     () => AuthBloc(
       authGetCurrentUserUseCase: getIt(),
       authLoginUseCase: getIt(),

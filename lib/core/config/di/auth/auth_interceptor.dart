@@ -83,7 +83,6 @@ class AuthInterceptor extends Interceptor {
         final response = await dio.fetch(requestOptions);
         return handler.resolve(response);
       } catch (_) {
-        authBloc.add(AuthEvent.logout());
         return handler.reject(err);
       }
     }
@@ -120,7 +119,6 @@ class AuthInterceptor extends Interceptor {
       _refreshCompleter!.complete(success);
       return success;
     } catch (_) {
-      await authLocal.clearAuthToken();
       _refreshCompleter!.complete(false);
       return false;
     } finally {

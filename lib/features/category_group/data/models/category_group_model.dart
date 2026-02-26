@@ -10,7 +10,7 @@ abstract class CategoryGroupModel with _$CategoryGroupModel {
     required String id,
     required String code,
     required String name,
-    required String description,
+    String? description,
     required DomainRefModel domain,
     @JsonKey(name: 'created_at') required DateTime createdAt,
     @JsonKey(name: 'updated_at') DateTime? updatedAt,

@@ -71,7 +71,7 @@ class _UserManagementDialogGrantAccessState
                   ),
                 ),
                 const SizedBox(height: 12),
-                CustomDropdownButton(
+                CustomDropdownButton<int>(
                   lable: Text(
                     'Quyền',
                     style: TextStyle(color: Colors.grey.shade600),
@@ -97,6 +97,7 @@ class _UserManagementDialogGrantAccessState
                       _selectedRole = value;
                     });
                   },
+                  validator: (p0) => p0 == null ? 'Vui lòng chọn quyền' : null,
                 ),
                 const SizedBox(height: 12),
                 if (_selectedRole != 1) _permissionDomains(),
@@ -123,7 +124,6 @@ class _UserManagementDialogGrantAccessState
                           style: TextStyle(color: Colors.white),
                         ),
                         onTap: () {
-                          if (_selectedRole == null) return;
                           if (_selectedRole != 1 && _domains.isEmpty) {
                             context.notificationCubit.warning(
                               'Vui lòng chọn ít nhất một lĩnh vực được phân quyền',

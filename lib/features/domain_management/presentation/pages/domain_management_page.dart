@@ -22,7 +22,7 @@ class DomainManagementPage extends StatefulWidget {
 }
 
 class _DomainManagementPageState extends State<DomainManagementPage>
-    with AutomaticKeepAliveClientMixin {
+    with AutomaticKeepAliveClientMixin, SingleTickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
 
@@ -30,18 +30,35 @@ class _DomainManagementPageState extends State<DomainManagementPage>
   Timer? _debounce;
   final ScrollController _scrollController = ScrollController();
   late ValueNotifier<bool> _showUpButton;
-  late final DomainManagementBloc bloc;
+  late final AnimationController _refreshController;
+  late final DomainManagementBloc _bloc;
 
   @override
   void initState() {
     super.initState();
 
     _showUpButton = ValueNotifier(false);
+    _refreshController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 700),
+    );
+    _bloc = context.domainManagementBloc;
 
-    bloc = context.domainManagementBloc;
-    bloc.add(const DomainManagementEvent.getAll(sortBy: 'code', sort: 'asc'));
+    _bloc.add(const DomainManagementEvent.getAll(sortBy: 'code', sort: 'asc'));
 
     _scrollController.addListener(_onScroll);
+  }
+
+  void _onRefresh() {
+    _bloc.add(
+      DomainManagementEvent.getAll(
+        search: _bloc.state.search,
+        sortBy: _bloc.state.sortBy,
+        sort: _bloc.state.sort,
+        filter: _bloc.state.filter,
+      ),
+    );
+    _refreshController.forward(from: 0);
   }
 
   void _onScroll() {
@@ -53,14 +70,14 @@ class _DomainManagementPageState extends State<DomainManagementPage>
       _showUpButton.value = shouldShow;
     }
 
-    if (!bloc.state.hasMore) return;
-    if (bloc.state.isLoadingMore) return;
+    if (!_bloc.state.hasMore) return;
+    if (_bloc.state.isLoadingMore) return;
 
     final position = _scrollController.position;
     if (position.maxScrollExtent <= 0) return;
 
     if (position.pixels >= position.maxScrollExtent - 200) {
-      bloc.add(const DomainManagementEvent.loadMore());
+      _bloc.add(const DomainManagementEvent.loadMore());
     }
   }
 
@@ -68,6 +85,7 @@ class _DomainManagementPageState extends State<DomainManagementPage>
   void dispose() {
     _searchController.dispose();
     _scrollController.dispose();
+    _refreshController.dispose();
     _debounce?.cancel();
     super.dispose();
   }
@@ -75,150 +93,172 @@ class _DomainManagementPageState extends State<DomainManagementPage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Stack(
-      children: [
-        CustomScrollView(
-          controller: _scrollController,
-          slivers: [
-            if (!ScreenSize.of(context).isMobile)
-              SliverPadding(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                sliver: SliverToBoxAdapter(
-                  child: const Text(
-                    'Lĩnh vực',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+    return RefreshIndicator(
+      onRefresh: () async => _onRefresh(),
+      child: Stack(
+        children: [
+          CustomScrollView(
+            controller: _scrollController,
+            slivers: [
+              if (!ScreenSize.of(context).isMobile)
+                SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                  sliver: SliverToBoxAdapter(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Lĩnh vực',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: _onRefresh,
+                          child: Row(
+                            children: [
+                              RotationTransition(
+                                turns: _refreshController,
+                                child: Icon(Icons.refresh),
+                              ),
+                              Text('Làm mới'),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
+                ),
+
+              SliverPadding(
+                padding: const EdgeInsets.all(16),
+                sliver: SliverToBoxAdapter(
+                  child: _buildSearchFilterSection(context),
                 ),
               ),
 
-            SliverPadding(
-              padding: const EdgeInsets.all(16),
-              sliver: SliverToBoxAdapter(
-                child: _buildSearchFilterSection(context),
-              ),
-            ),
+              BlocConsumer<DomainManagementBloc, DomainManagementState>(
+                listener: (context, state) {
+                  if (state.error != null) {
+                    context.notificationCubit.error(state.error!);
+                  }
+                  if (state.successMessage != null) {
+                    context.notificationCubit.success(state.successMessage!);
+                  }
+                },
+                buildWhen: (previous, current) =>
+                    previous.entries != current.entries ||
+                    previous.isLoading != current.isLoading,
+                builder: (context, state) {
+                  if (state.isLoading) {
+                    return const SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: Center(child: CustomCircularProgressScreen()),
+                    );
+                  }
 
-            BlocConsumer<DomainManagementBloc, DomainManagementState>(
-              listener: (context, state) {
-                if (state.error != null) {
-                  context.notificationCubit.error(state.error!);
-                }
-                if (state.successMessage != null) {
-                  context.notificationCubit.success(state.successMessage!);
-                }
-              },
-              buildWhen: (previous, current) =>
-                  previous.entries != current.entries ||
-                  previous.isLoading != current.isLoading,
-              builder: (context, state) {
-                if (state.isLoading) {
-                  return const SliverFillRemaining(
-                    hasScrollBody: false,
-                    child: Center(child: CustomCircularProgressScreen()),
-                  );
-                }
+                  if (state.error != null) {
+                    return SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: ErrorRetryWidget(
+                        error: state.error!,
+                        onRetry: () {
+                          _bloc.add(
+                            DomainManagementEvent.getAll(
+                              search: state.search,
+                              sortBy: state.sortBy,
+                              sort: state.sort,
+                              filter: state.filter,
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  }
 
-                if (state.error != null) {
-                  return SliverFillRemaining(
-                    hasScrollBody: false,
-                    child: ErrorRetryWidget(
-                      error: state.error!,
-                      onRetry: () {
-                        bloc.add(
-                          DomainManagementEvent.getAll(
-                            search: state.search,
-                            page: state.page,
-                            sortBy: state.sortBy,
-                            sort: state.sort,
-                            filter: state.filter,
+                  final entries = state.entries;
+
+                  if (entries.isEmpty) {
+                    return const SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: Center(child: Text('Không có dữ liệu')),
+                    );
+                  }
+
+                  final crossAxisCount = ScreenSize.of(context).isMobile
+                      ? 2
+                      : ScreenSize.of(context).isTablet
+                      ? 3
+                      : 4;
+
+                  return SliverPadding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    sliver: SliverGrid(
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                        final entry = entries[index];
+
+                        return GestureDetector(
+                          onTap: () => context.goNamed(
+                            RouterNames.domainDetail,
+                            pathParameters: {'id': entry.id!},
                           ),
+                          child: DomainManagementCard(entry: entry),
                         );
-                      },
+                      }, childCount: entries.length),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: crossAxisCount,
+                        mainAxisSpacing: 10,
+                        crossAxisSpacing: 10,
+                        childAspectRatio: 1.2,
+                      ),
                     ),
                   );
-                }
+                },
+              ),
 
-                final entries = state.entries;
+              BlocBuilder<DomainManagementBloc, DomainManagementState>(
+                buildWhen: (p, c) => p.isLoadingMore != c.isLoadingMore,
+                builder: (context, state) {
+                  if (!state.isLoadingMore) {
+                    return const SliverToBoxAdapter(child: SizedBox.shrink());
+                  }
 
-                if (entries.isEmpty) {
-                  return const SliverFillRemaining(
-                    hasScrollBody: false,
-                    child: Center(child: Text('Không có dữ liệu')),
-                  );
-                }
-
-                final crossAxisCount = ScreenSize.of(context).isMobile
-                    ? 2
-                    : ScreenSize.of(context).isTablet
-                    ? 3
-                    : 4;
-
-                return SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  sliver: SliverGrid(
-                    delegate: SliverChildBuilderDelegate((context, index) {
-                      final entry = entries[index];
-
-                      return GestureDetector(
-                        onTap: () => context.goNamed(
-                          RouterNames.domainDetail,
-                          pathParameters: {'id': entry.id!},
-                        ),
-                        child: DomainManagementCard(entry: entry),
-                      );
-                    }, childCount: entries.length),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: crossAxisCount,
-                      mainAxisSpacing: 10,
-                      crossAxisSpacing: 10,
-                      childAspectRatio: 1.2,
+                  return const SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 24),
+                      child: Center(child: CustomCircularProgressLoadMore()),
                     ),
-                  ),
-                );
-              },
-            ),
+                  );
+                },
+              ),
+            ],
+          ),
 
-            BlocBuilder<DomainManagementBloc, DomainManagementState>(
-              buildWhen: (p, c) => p.isLoadingMore != c.isLoadingMore,
-              builder: (context, state) {
-                if (!state.isLoadingMore) {
-                  return const SliverToBoxAdapter(child: SizedBox.shrink());
-                }
+          ValueListenableBuilder<bool>(
+            valueListenable: _showUpButton,
+            builder: (context, show, child) {
+              return ButtomUpWidget(
+                scrollController: _scrollController,
+                show: show,
+              );
+            },
+          ),
 
-                return const SliverToBoxAdapter(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 24),
-                    child: Center(child: CustomCircularProgressLoadMore()),
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
-
-        ValueListenableBuilder<bool>(
-          valueListenable: _showUpButton,
-          builder: (context, show, child) {
-            return ButtomUpWidget(
-              scrollController: _scrollController,
-              show: show,
-            );
-          },
-        ),
-
-        CustomFloatingActionButton(
-          permission: ['admin'],
-          onPressedImport: () {
-            context.goNamed(RouterNames.importFile, extra: 1);
-          },
-          onPressedAdd: () {
-            context.goNamed(
-              RouterNames.domainForm,
-              queryParameters: {'mode': 'create'},
-            );
-          },
-        ),
-      ],
+          CustomFloatingActionButton(
+            permission: ['admin'],
+            onPressedImport: () {
+              context.goNamed(RouterNames.importFile, extra: 1);
+            },
+            onPressedAdd: () {
+              context.goNamed(
+                RouterNames.domainForm,
+                queryParameters: {'mode': 'create'},
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 
@@ -239,19 +279,19 @@ class _DomainManagementPageState extends State<DomainManagementPage>
             }
             _debounce = Timer(const Duration(milliseconds: 500), () {
               if (search.isEmpty) {
-                bloc.add(
+                _bloc.add(
                   const DomainManagementEvent.getAll(
                     sortBy: 'code',
                     sort: 'asc',
                   ),
                 );
               } else {
-                bloc.add(
+                _bloc.add(
                   DomainManagementEvent.getAll(
                     search: search,
-                    sortBy: bloc.state.sortBy,
-                    sort: bloc.state.sort,
-                    filter: bloc.state.filter,
+                    sortBy: _bloc.state.sortBy,
+                    sort: _bloc.state.sort,
+                    filter: _bloc.state.filter,
                   ),
                 );
               }
@@ -267,6 +307,7 @@ class _DomainManagementPageState extends State<DomainManagementPage>
               SizedBox(
                 width: 170,
                 child: CustomDropdownButton(
+                  value: 'code',
                   items: [
                     DropdownMenuItem(value: 'code', child: Text('Mã lĩnh vực')),
                     DropdownMenuItem(
@@ -282,15 +323,14 @@ class _DomainManagementPageState extends State<DomainManagementPage>
                       child: Text('Ngày cập nhật'),
                     ),
                   ],
-                  value: bloc.state.sortBy ?? 'code',
                   onChanged: (value) {
                     if (value == null) return;
-                    bloc.add(
+                    _bloc.add(
                       DomainManagementEvent.getAll(
-                        search: bloc.state.search,
+                        search: _bloc.state.search,
                         sortBy: value,
-                        sort: bloc.state.sort,
-                        filter: bloc.state.filter,
+                        sort: _bloc.state.sort,
+                        filter: _bloc.state.filter,
                       ),
                     );
                   },
@@ -300,19 +340,19 @@ class _DomainManagementPageState extends State<DomainManagementPage>
               SizedBox(
                 width: 150,
                 child: CustomDropdownButton(
-                  value: bloc.state.sort ?? 'asc',
+                  value: 'asc',
                   items: [
                     DropdownMenuItem(value: 'asc', child: Text('Tăng dần')),
                     DropdownMenuItem(value: 'desc', child: Text('Giảm dần')),
                   ],
                   onChanged: (value) {
                     if (value == null) return;
-                    bloc.add(
+                    _bloc.add(
                       DomainManagementEvent.getAll(
-                        search: bloc.state.search,
-                        sortBy: bloc.state.sortBy,
+                        search: _bloc.state.search,
+                        sortBy: _bloc.state.sortBy,
                         sort: value,
-                        filter: bloc.state.filter,
+                        filter: _bloc.state.filter,
                       ),
                     );
                   },

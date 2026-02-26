@@ -21,23 +21,41 @@ class SystemHistoryManagementPage extends StatefulWidget {
 
 class _SystemHistoryManagementPageState
     extends State<SystemHistoryManagementPage>
-    with AutomaticKeepAliveClientMixin {
+    with AutomaticKeepAliveClientMixin, SingleTickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
 
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  late final AnimationController _refreshController;
   Timer? _debounce;
   late ValueNotifier<bool> _showUpButton;
-  late final SystemHistoryBloc bloc;
+  late final SystemHistoryBloc _bloc;
 
   @override
   void initState() {
     super.initState();
     _showUpButton = ValueNotifier(false);
-    bloc = context.systemHistoryBloc;
-    bloc.add(const SystemHistoryEvent.getAll());
+    _refreshController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 700),
+    );
+    _bloc = context.systemHistoryBloc;
+    _bloc.add(
+      const SystemHistoryEvent.getAll(sortBy: 'timestamp', sort: 'desc'),
+    );
     _scrollController.addListener(_onScroll);
+  }
+
+  void _onRefresh() {
+    _bloc.add(
+      SystemHistoryEvent.getAll(
+        search: _bloc.state.search,
+        sortBy: _bloc.state.sortBy,
+        sort: _bloc.state.sort,
+      ),
+    );
+    _refreshController.forward(from: 0);
   }
 
   void _onScroll() {
@@ -47,14 +65,14 @@ class _SystemHistoryManagementPageState
     if (_showUpButton.value != shouldShow) {
       _showUpButton.value = shouldShow;
     }
-    if (!bloc.state.hasMore) return;
-    if (bloc.state.isLoadingMore) return;
+    if (!_bloc.state.hasMore) return;
+    if (_bloc.state.isLoadingMore) return;
 
     final position = _scrollController.position;
     if (position.maxScrollExtent <= 0) return;
 
     if (position.pixels >= position.maxScrollExtent - 200) {
-      bloc.add(const SystemHistoryEvent.loadMore());
+      _bloc.add(const SystemHistoryEvent.loadMore());
     }
   }
 
@@ -62,6 +80,7 @@ class _SystemHistoryManagementPageState
   void dispose() {
     _searchController.dispose();
     _scrollController.dispose();
+    _refreshController.dispose();
     _debounce?.cancel();
     super.dispose();
   }
@@ -69,130 +88,163 @@ class _SystemHistoryManagementPageState
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Stack(
-      children: [
-        CustomScrollView(
-          controller: _scrollController,
-          slivers: [
-            if (!ScreenSize.of(context).isMobile)
-              SliverPadding(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                sliver: SliverToBoxAdapter(
-                  child: const Text(
-                    'Nhật kí hệ thống',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+    return RefreshIndicator(
+      onRefresh: () async => _onRefresh(),
+      child: Stack(
+        children: [
+          CustomScrollView(
+            controller: _scrollController,
+            slivers: [
+              if (!ScreenSize.of(context).isMobile)
+                SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                  sliver: SliverToBoxAdapter(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Nhật kí hệ thống',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: _onRefresh,
+                          child: Row(
+                            children: [
+                              RotationTransition(
+                                turns: _refreshController,
+                                child: Icon(Icons.refresh),
+                              ),
+                              Text('Làm mới'),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
 
-            SliverPadding(
-              padding: const EdgeInsets.all(16),
-              sliver: SliverToBoxAdapter(
-                child: _buildSearchFilterSection(context),
+              SliverPadding(
+                padding: const EdgeInsets.all(16),
+                sliver: SliverToBoxAdapter(
+                  child: _buildSearchFilterSection(context),
+                ),
               ),
-            ),
-            BlocBuilder<SystemHistoryBloc, SystemHistoryState>(
-              buildWhen: (previous, current) =>
-                  previous.entries != current.entries ||
-                  previous.isLoading != current.isLoading,
-              builder: (context, state) {
-                if (state.isLoading) {
-                  return SliverFillRemaining(
-                    child: const Center(child: CustomCircularProgressScreen()),
-                  );
-                }
+              BlocBuilder<SystemHistoryBloc, SystemHistoryState>(
+                buildWhen: (previous, current) =>
+                    previous.entries != current.entries ||
+                    previous.isLoading != current.isLoading,
+                builder: (context, state) {
+                  if (state.isLoading) {
+                    return SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: const Center(
+                        child: CustomCircularProgressScreen(),
+                      ),
+                    );
+                  }
 
-                if (state.error != null) {
-                  return SliverFillRemaining(
-                    child: ErrorRetryWidget(
-                      error: state.error!,
-                      onRetry: () {
-                        bloc.add(const SystemHistoryEvent.getAll());
+                  if (state.error != null) {
+                    return SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: ErrorRetryWidget(
+                        error: state.error!,
+                        onRetry: () {
+                          _bloc.add(
+                            const SystemHistoryEvent.getAll(
+                              sortBy: 'timestamp',
+                              sort: 'desc',
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  }
+
+                  if (state.entries.isEmpty) {
+                    return SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: const Center(child: Text('Không có dữ liệu')),
+                    );
+                  }
+
+                  final entries = state.entries;
+                  if (ScreenSize.of(context).isMobile ||
+                      ScreenSize.of(context).isTablet) {
+                    return SliverList.builder(
+                      itemCount: entries.length,
+                      itemBuilder: (context, index) {
+                        final entry = entries[index];
+                        return Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: SystemHistoryManagementCard(log: entry),
+                        );
+                      },
+                    );
+                  }
+                  return SliverToBoxAdapter(
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        final crossAxisCount = (constraints.maxWidth / 600)
+                            .floor()
+                            .clamp(1, 6);
+
+                        final itemWidth =
+                            constraints.maxWidth / crossAxisCount - 10;
+
+                        return Column(
+                          children: [
+                            Wrap(
+                              spacing: 10,
+                              runSpacing: 10,
+                              children: [
+                                ...entries.map(
+                                  (entry) => SizedBox(
+                                    width: itemWidth,
+                                    child: SystemHistoryManagementCard(
+                                      log: entry,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        );
                       },
                     ),
                   );
-                }
+                },
+              ),
+              BlocBuilder<SystemHistoryBloc, SystemHistoryState>(
+                buildWhen: (p, c) => p.isLoadingMore != c.isLoadingMore,
+                builder: (context, state) {
+                  if (!state.isLoadingMore) {
+                    return const SliverToBoxAdapter(child: SizedBox.shrink());
+                  }
 
-                if (state.entries.isEmpty) {
-                  return SliverFillRemaining(
-                    child: const Center(child: Text('Không có dữ liệu')),
+                  return const SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 24),
+                      child: Center(child: CustomCircularProgressLoadMore()),
+                    ),
                   );
-                }
-
-                final entries = state.entries;
-                if (ScreenSize.of(context).isMobile ||
-                    ScreenSize.of(context).isTablet) {
-                  return SliverList.builder(
-                    itemCount: entries.length,
-                    itemBuilder: (context, index) {
-                      final entry = entries[index];
-                      return Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: SystemHistoryManagementCard(log: entry),
-                      );
-                    },
-                  );
-                }
-                return SliverToBoxAdapter(
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      final crossAxisCount = (constraints.maxWidth / 600)
-                          .floor()
-                          .clamp(1, 6);
-
-                      final itemWidth =
-                          constraints.maxWidth / crossAxisCount - 10;
-
-                      return Column(
-                        children: [
-                          Wrap(
-                            spacing: 10,
-                            runSpacing: 10,
-                            children: [
-                              ...entries.map(
-                                (entry) => SizedBox(
-                                  width: itemWidth,
-                                  child: SystemHistoryManagementCard(
-                                    log: entry,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                );
-              },
-            ),
-            BlocBuilder<SystemHistoryBloc, SystemHistoryState>(
-              buildWhen: (p, c) => p.isLoadingMore != c.isLoadingMore,
-              builder: (context, state) {
-                if (!state.isLoadingMore) {
-                  return const SliverToBoxAdapter(child: SizedBox.shrink());
-                }
-
-                return const SliverToBoxAdapter(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 24),
-                    child: Center(child: CustomCircularProgressLoadMore()),
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
-        ValueListenableBuilder<bool>(
-          valueListenable: _showUpButton,
-          builder: (context, show, child) {
-            return ButtomUpWidget(
-              scrollController: _scrollController,
-              show: show,
-            );
-          },
-        ),
-      ],
+                },
+              ),
+            ],
+          ),
+          ValueListenableBuilder<bool>(
+            valueListenable: _showUpButton,
+            builder: (context, show, child) {
+              return ButtomUpWidget(
+                scrollController: _scrollController,
+                show: show,
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 
@@ -212,9 +264,14 @@ class _SystemHistoryManagementPageState
             }
             _debounce = Timer(const Duration(milliseconds: 500), () {
               if (search.isEmpty) {
-                bloc.add(const SystemHistoryEvent.getAll());
+                _bloc.add(
+                  const SystemHistoryEvent.getAll(
+                    sortBy: 'timestamp',
+                    sort: 'desc',
+                  ),
+                );
               } else {
-                bloc.add(SystemHistoryEvent.getAll(search: search));
+                _bloc.add(SystemHistoryEvent.getAll(search: search));
               }
             });
           },
@@ -227,7 +284,7 @@ class _SystemHistoryManagementPageState
               _buildFilterButton(
                 context: context,
                 label: 'Tất cả',
-                onTap: () => bloc.add(
+                onTap: () => _bloc.add(
                   const SystemHistoryEvent.getAll(
                     sortBy: 'timestamp',
                     sort: 'desc',
@@ -237,36 +294,36 @@ class _SystemHistoryManagementPageState
               _buildFilterButton(
                 context: context,
                 label: 'Tạo',
-                onTap: () => bloc.add(
+                onTap: () => _bloc.add(
                   SystemHistoryEvent.getAll(
-                    search: bloc.state.search,
+                    search: _bloc.state.search,
                     filter: {'action': 'INSERT'},
-                    sortBy: bloc.state.sortBy,
-                    sort: bloc.state.sort,
+                    sortBy: _bloc.state.sortBy,
+                    sort: _bloc.state.sort,
                   ),
                 ),
               ),
               _buildFilterButton(
                 context: context,
                 label: 'Cập nhật',
-                onTap: () => bloc.add(
+                onTap: () => _bloc.add(
                   SystemHistoryEvent.getAll(
-                    search: bloc.state.search,
+                    search: _bloc.state.search,
                     filter: {'action': 'UPDATE'},
-                    sortBy: bloc.state.sortBy,
-                    sort: bloc.state.sort,
+                    sortBy: _bloc.state.sortBy,
+                    sort: _bloc.state.sort,
                   ),
                 ),
               ),
               _buildFilterButton(
                 context: context,
                 label: 'Xóa',
-                onTap: () => bloc.add(
+                onTap: () => _bloc.add(
                   SystemHistoryEvent.getAll(
-                    search: bloc.state.search,
+                    search: _bloc.state.search,
                     filter: {'action': 'DELETE'},
-                    sortBy: bloc.state.sortBy,
-                    sort: bloc.state.sort,
+                    sortBy: _bloc.state.sortBy,
+                    sort: _bloc.state.sort,
                   ),
                 ),
               ),
@@ -305,12 +362,12 @@ class _SystemHistoryManagementPageState
                     if (value == null) return;
 
                     final parts = value.split('|');
-                    bloc.add(
+                    _bloc.add(
                       SystemHistoryEvent.getAll(
-                        search: bloc.state.search,
+                        search: _bloc.state.search,
                         sortBy: parts[0],
                         sort: parts[1],
-                        filter: bloc.state.filter,
+                        filter: _bloc.state.filter,
                       ),
                     );
                   },

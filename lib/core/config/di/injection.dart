@@ -27,7 +27,7 @@ Future<void> init() async {
 
   getIt.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
 
-  getIt.registerFactory(() => NotificationCubit());
+  getIt.registerLazySingleton(() => NotificationCubit());
 
   getIt.registerLazySingleton<AuthLocalDataSource>(
     () => AuthLocalDataSourceImpl(sharedPreferences: getIt()),

@@ -95,62 +95,36 @@ class _ApiKeyManagementAddDomainsPageState
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF7F8FA),
-      appBar: AppBar(
-        title: const Text('Chọn lĩnh vực'),
-        centerTitle: true,
-        actions: [
-          BlocBuilder<DomainLookupBloc, DomainLookupState>(
-            builder: (context, state) {
-              final domains = state.entries;
-              final isAll = _isAllSelected(domains);
-
-              return TextButton(
-                onPressed: domains.isEmpty
-                    ? null
-                    : () => _toggleSelectAll(domains),
-                child: Text(
-                  isAll ? 'Bỏ chọn tất cả' : 'Chọn tất cả',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
-                ),
+    return SafeArea(
+      child: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeder(),
+                const SizedBox(height: 8),
+                _buildSearch(),
+                const SizedBox(height: 8),
+                _buildSelectedChips(),
+                _buildLabel(),
+                const SizedBox(height: 8),
+                Expanded(child: _buildList()),
+                _buildFooter(),
+              ],
+            ),
+          ),
+          ValueListenableBuilder<bool>(
+            valueListenable: _showUpButton,
+            builder: (context, show, child) {
+              return ButtomUpWidget(
+                scrollController: _scrollController,
+                show: show,
               );
             },
           ),
         ],
-      ),
-      body: SafeArea(
-        child: Stack(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildSearch(),
-                  const SizedBox(height: 8),
-                  _buildSelectedChips(),
-                  _buildLabel(),
-                  const SizedBox(height: 8),
-                  Expanded(child: _buildList()),
-                  _buildFooter(),
-                ],
-              ),
-            ),
-            ValueListenableBuilder<bool>(
-              valueListenable: _showUpButton,
-              builder: (context, show, child) {
-                return ButtomUpWidget(
-                  scrollController: _scrollController,
-                  show: show,
-                );
-              },
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -327,23 +301,77 @@ class _ApiKeyManagementAddDomainsPageState
 
   Widget _buildFooter() {
     return SafeArea(
-      child: CustomButton(
-        colorBackground: Colors.blue,
-        onTap: () {
-          if (_selected == widget.fields) {
-            context.pop();
-          } else {
-            context.pop(_selected);
-          }
-        },
-        textButton: Text(
-          'Xác nhận (${_selected.length})',
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w600,
-          ),
+      child: Padding(
+        padding: const EdgeInsets.only(top: 8.0),
+        child: Row(
+          spacing: 10,
+          children: [
+            Expanded(
+              child: CustomButton(
+                colorBackground: Colors.transparent,
+                colorBorder: Colors.blue.withValues(alpha: .5),
+                onTap: () {
+                  context.pop();
+                },
+                textButton: Text(
+                  'Hủy',
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+              ),
+            ),
+            Expanded(
+              child: CustomButton(
+                colorBackground: Colors.blue,
+                onTap: () {
+                  if (_selected == widget.fields) {
+                    context.pop();
+                  } else {
+                    context.pop(_selected);
+                  }
+                },
+                textButton: Text(
+                  'Xác nhận (${_selected.length})',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
+    );
+  }
+
+  Widget _buildHeder() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          '${_selected.length} Lĩnh vực đang chọn',
+          style: const TextStyle(fontWeight: FontWeight.w600),
+        ),
+        BlocBuilder<DomainLookupBloc, DomainLookupState>(
+          builder: (context, state) {
+            final domains = state.entries;
+            final isAll = _isAllSelected(domains);
+
+            return TextButton(
+              onPressed: domains.isEmpty
+                  ? null
+                  : () => _toggleSelectAll(domains),
+              child: Text(
+                isAll ? 'Bỏ chọn tất cả' : 'Chọn tất cả',
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: Colors.blue,
+                ),
+              ),
+            );
+          },
+        ),
+      ],
     );
   }
 }

@@ -1,9 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/config/di/injection.dart';
+import 'package:multi_catalog_system/core/domain/entities/domain/domain_ref_entry.dart';
 import 'package:multi_catalog_system/core/utils/extensions/bloc_extension.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/features/api_key_management/presentation/presentation.dart';
+import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_lookup_bloc.dart';
 
 class ApiKeyManagementRoutes {
   static List<RouteBase> routes = [
@@ -37,6 +39,21 @@ class ApiKeyManagementRoutes {
                   id: id,
                 );
               },
+              routes: [
+                GoRoute(
+                  path: '/add-domains',
+                  name: RouterNames.apiKeyAddDomains,
+                  builder: (context, state) {
+                    final fields =
+                        (state.extra as List?)?.cast<DomainRefEntry>() ?? [];
+
+                    return BlocProvider(
+                      create: (_) => getIt<DomainLookupBloc>(),
+                      child: ApiKeyManagementAddDomainsPage(fields: fields),
+                    );
+                  },
+                ),
+              ],
             ),
           ],
         ),

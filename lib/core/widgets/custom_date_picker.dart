@@ -32,6 +32,13 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
     );
   }
 
+  @override
+  void didUpdateWidget(covariant CustomDatePicker oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _selectedDate = widget.initialDate;
+    _controller.text = _selectedDate != null ? dateFormat(_selectedDate!) : '';
+  }
+
   Future<void> _pickDate() async {
     final now = DateTime.now();
     final date = await showDatePicker(
