@@ -17,12 +17,12 @@ void initApiKeyModule() {
   getIt.registerLazySingleton(() => DeleteApiKeyUseCase(repository: getIt()));
   getIt.registerLazySingleton(() => GetAllApiKeyUseCase(repository: getIt()));
   getIt.registerLazySingleton(() => GetByIdApiKeyUseCase(repository: getIt()));
-  getIt.registerLazySingleton(() => UpdateApiKeyUseCase(repository: getIt()));
+  getIt.registerLazySingleton(() => RevokeApiKeyUseCase(repository: getIt()));
 
   getIt.registerFactory(
     () => ApiKeyBloc(
       create: getIt<CreateApiKeyUseCase>(),
-      update: getIt<UpdateApiKeyUseCase>(),
+      revoke: getIt<RevokeApiKeyUseCase>(),
       delete: getIt<DeleteApiKeyUseCase>(),
       getById: getIt<GetByIdApiKeyUseCase>(),
       getAll: getIt<GetAllApiKeyUseCase>(),

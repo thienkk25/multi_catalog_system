@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/utils/extensions/bloc_extension.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/core/utils/formatter/data_time_formatter.dart';
+import 'package:multi_catalog_system/core/widgets/custom_alert_dialog.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/core/widgets/role_based_widget.dart';
 import 'package:multi_catalog_system/features/api_key_management/domain/entities/api_key_entry.dart';
+import 'package:multi_catalog_system/features/api_key_management/presentation/bloc/api_key_bloc.dart';
 import 'package:multi_catalog_system/features/api_key_management/presentation/bloc/api_key_event.dart';
+import 'package:multi_catalog_system/features/api_key_management/presentation/bloc/api_key_state.dart';
 
 class ApiKeyManagementCard extends StatelessWidget {
   final ApiKeyEntry entry;
@@ -77,23 +81,43 @@ class ApiKeyManagementCard extends StatelessWidget {
                       ),
                       itemBuilder: (context) => [
                         PopupMenuItem(
-                          child: _APIKeyCardMenu(
-                            onEdit: () {
-                              context.pop();
-                              context.goNamed(
-                                RouterNames.apiKeyForm,
-                                queryParameters: {
-                                  'mode': 'update',
-                                  'id': entry.id!,
-                                },
-                              );
-                            },
-                            onDelete: () {
-                              context.pop();
-                              context.apiKeyBloc.add(
-                                ApiKeyEvent.delete(id: entry.id!),
-                              );
-                            },
+                          child: BlocSelector<ApiKeyBloc, ApiKeyState, bool>(
+                            selector: (state) =>
+                                state.entries
+                                    .firstWhere(
+                                      (element) => element.id == entry.id,
+                                    )
+                                    .status ==
+                                'revoked',
+                            builder: (context, isRevoke) => _APIKeyCardMenu(
+                              onRevoke: isRevoke
+                                  ? null
+                                  : () {
+                                      final apiKeyBloc = context.apiKeyBloc;
+                                      context.pop();
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => CustomAlertDialog(
+                                          title: 'Xác nhận thu hồi',
+                                          content:
+                                              'Bạn có chắc chắn muốn thu hồi? \nHành động này không thể hoàn tác.',
+                                          confirmText: 'Thu hồi',
+                                          onConfirm: () {
+                                            context.pop();
+                                            apiKeyBloc.add(
+                                              ApiKeyEvent.revoke(id: entry.id!),
+                                            );
+                                          },
+                                        ),
+                                      );
+                                    },
+                              onDelete: () {
+                                context.pop();
+                                context.apiKeyBloc.add(
+                                  ApiKeyEvent.delete(id: entry.id!),
+                                );
+                              },
+                            ),
                           ),
                         ),
                       ],
@@ -186,10 +210,10 @@ class ApiKeyManagementCard extends StatelessWidget {
 }
 
 class _APIKeyCardMenu extends StatelessWidget {
-  final VoidCallback onEdit;
+  final VoidCallback? onRevoke;
   final VoidCallback onDelete;
 
-  const _APIKeyCardMenu({required this.onEdit, required this.onDelete});
+  const _APIKeyCardMenu({this.onRevoke, required this.onDelete});
 
   @override
   Widget build(BuildContext context) {
@@ -197,17 +221,18 @@ class _APIKeyCardMenu extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       spacing: 5,
       children: [
-        InkWell(
-          borderRadius: BorderRadius.circular(10),
-          onTap: onEdit,
-          child: Padding(
-            padding: const EdgeInsets.all(5.0),
-            child: ListTile(
-              leading: Icon(Icons.edit, color: Colors.blue),
-              title: Text('Chỉnh sửa'),
+        if (onRevoke != null)
+          InkWell(
+            borderRadius: BorderRadius.circular(10),
+            onTap: onRevoke,
+            child: Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: ListTile(
+                leading: Icon(Icons.block, color: Colors.blue),
+                title: Text('Thu hồi'),
+              ),
             ),
           ),
-        ),
         InkWell(
           borderRadius: BorderRadius.circular(10),
           onTap: onDelete,

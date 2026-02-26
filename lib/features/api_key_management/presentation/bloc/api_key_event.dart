@@ -18,7 +18,7 @@ class ApiKeyEvent with _$ApiKeyEvent {
 
   const factory ApiKeyEvent.create({required ApiKeyEntry entry}) = _Create;
 
-  const factory ApiKeyEvent.update({required ApiKeyEntry entry}) = _Update;
+  const factory ApiKeyEvent.revoke({required String id}) = _Revoke;
 
   const factory ApiKeyEvent.delete({required String id}) = _Delete;
 }

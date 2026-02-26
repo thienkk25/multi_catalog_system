@@ -15,10 +15,7 @@ abstract class ApiKeyRemoteDataSource {
   });
   Future<ApiKeyModel> getById({required String id});
   Future<ApiKeyModel> create({required Map<String, dynamic> data});
-  Future<ApiKeyModel> update({
-    required String id,
-    required Map<String, dynamic> data,
-  });
+  Future<ApiKeyModel> revoke({required String id});
   Future<void> delete({required String id});
 }
 
@@ -87,12 +84,9 @@ class ApiKeyRemoteDataSourceImpl extends BaseRemoteDataSource
   }
 
   @override
-  Future<ApiKeyModel> update({
-    required String id,
-    required Map<String, dynamic> data,
-  }) async {
+  Future<ApiKeyModel> revoke({required String id}) async {
     try {
-      final response = await dio.patch('/api-key/$id', data: data);
+      final response = await dio.patch('/api-key/$id');
       return ApiKeyModel.fromJson(response.data['data']);
     } on DioException catch (e) {
       handleDioError(e);

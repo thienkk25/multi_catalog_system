@@ -26,13 +26,7 @@ class ApiKeyRepositoryImpl implements ApiKeyRepository {
 
   Map<String, dynamic> _createPayload(ApiKeyEntry e) => {
     'system_name': e.systemName,
-    if (e.allowedDomains != null) 'allowed_domains': e.allowedDomains,
-  };
-
-  Map<String, dynamic> _updatePayload(ApiKeyEntry e) => {
-    if (e.systemName != null) 'system_name': e.systemName,
-    if (e.allowedDomains != null) 'allowed_domains': e.allowedDomains,
-    if (e.status != null) 'status': e.status,
+    'allowed_domains': e.allowedDomains,
   };
 
   @override
@@ -99,14 +93,9 @@ class ApiKeyRepositoryImpl implements ApiKeyRepository {
   }
 
   @override
-  Future<Either<Failure, ApiKeyEntry>> update({
-    required ApiKeyEntry entry,
-  }) async {
+  Future<Either<Failure, ApiKeyEntry>> revoke({required String id}) async {
     try {
-      final model = await remoteDataSource.update(
-        data: _updatePayload(entry),
-        id: entry.id!,
-      );
+      final model = await remoteDataSource.revoke(id: id);
       return Right(_toEntity(model));
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message, statusCode: e.statusCode));

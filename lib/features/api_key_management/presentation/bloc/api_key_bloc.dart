@@ -7,14 +7,14 @@ import 'api_key_state.dart';
 
 class ApiKeyBloc extends Bloc<ApiKeyEvent, ApiKeyState> {
   final CreateApiKeyUseCase create;
-  final UpdateApiKeyUseCase update;
+  final RevokeApiKeyUseCase revoke;
   final DeleteApiKeyUseCase delete;
   final GetByIdApiKeyUseCase getById;
   final GetAllApiKeyUseCase getAll;
 
   ApiKeyBloc({
     required this.create,
-    required this.update,
+    required this.revoke,
     required this.delete,
     required this.getById,
     required this.getAll,
@@ -151,7 +151,7 @@ class ApiKeyBloc extends Bloc<ApiKeyEvent, ApiKeyState> {
           ),
         );
       },
-      update: (e) async {
+      revoke: (e) async {
         emit(
           state.copyWith(
             isLoading: true,
@@ -162,7 +162,7 @@ class ApiKeyBloc extends Bloc<ApiKeyEvent, ApiKeyState> {
           ),
         );
 
-        final result = await update(entry: e.entry);
+        final result = await revoke(id: e.id);
         if (emit.isDone) return;
 
         result.fold(
@@ -178,7 +178,7 @@ class ApiKeyBloc extends Bloc<ApiKeyEvent, ApiKeyState> {
               state.copyWith(
                 isLoading: false,
                 entries: updated,
-                successMessage: 'Cập nhật thành công',
+                successMessage: 'Thu hồi thành công',
               ),
             );
           },

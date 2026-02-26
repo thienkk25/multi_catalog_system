@@ -32,12 +32,7 @@ class ApiKeyManagementRoutes {
               path: '/form',
               name: RouterNames.apiKeyForm,
               builder: (context, state) {
-                final mode = state.uri.queryParameters['mode']!;
-                final id = state.uri.queryParameters['id'];
-                return ApiKeyManagementFormPage(
-                  mode: ApiKeyManagementFormType.values.byName(mode),
-                  id: id,
-                );
+                return ApiKeyManagementFormPage();
               },
               routes: [
                 GoRoute(

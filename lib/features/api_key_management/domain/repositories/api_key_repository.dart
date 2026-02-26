@@ -14,6 +14,6 @@ abstract class ApiKeyRepository {
   });
   Future<Either<Failure, ApiKeyEntry>> getById({required String id});
   Future<Either<Failure, ApiKeyEntry>> create({required ApiKeyEntry entry});
-  Future<Either<Failure, ApiKeyEntry>> update({required ApiKeyEntry entry});
+  Future<Either<Failure, ApiKeyEntry>> revoke({required String id});
   Future<Either<Failure, void>> delete({required String id});
 }
