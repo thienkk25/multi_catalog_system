@@ -141,6 +141,7 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
     _legalDocuments = version.legalDocuments ?? [];
 
     _didInit = true;
+    setState(() {});
   }
 
   @override
