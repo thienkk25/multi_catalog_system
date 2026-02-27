@@ -100,6 +100,7 @@ class CategoryItemCard extends StatelessWidget {
                           bloc.add(
                             CategoryItemVersionEvent.deleteVersion(
                               id: entry.id!,
+                              domainId: entry.domainId,
                             ),
                           );
                         }

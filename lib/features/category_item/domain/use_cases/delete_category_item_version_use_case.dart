@@ -8,7 +8,10 @@ class DeleteCategoryItemVersionUseCase {
 
   DeleteCategoryItemVersionUseCase({required this.repository});
 
-  Future<Either<Failure, CategoryItemVersionEntry>> call({required String id}) {
-    return repository.deleteVersion(id: id);
+  Future<Either<Failure, CategoryItemVersionEntry>> call({
+    required String id,
+    required String domainId,
+  }) {
+    return repository.deleteVersion(id: id, domainId: domainId);
   }
 }

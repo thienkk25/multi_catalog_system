@@ -17,6 +17,11 @@ class CategoryItemVersionEvent with _$CategoryItemVersionEvent {
   const factory CategoryItemVersionEvent.loadMore() = _LoadMore;
   const factory CategoryItemVersionEvent.getById({required String id}) =
       _GetById;
+  const factory CategoryItemVersionEvent.getHistoryVersion({
+    required String itemId,
+    int? page,
+    int? limit,
+  }) = _GetHistoryVersion;
 
   const factory CategoryItemVersionEvent.createVersion({
     required CategoryItemEntry entry,
@@ -27,8 +32,10 @@ class CategoryItemVersionEvent with _$CategoryItemVersionEvent {
     required String id,
     int? type,
   }) = _UpdateVersion;
-  const factory CategoryItemVersionEvent.deleteVersion({required String id}) =
-      DeleteVersion;
+  const factory CategoryItemVersionEvent.deleteVersion({
+    required String id,
+    required String domainId,
+  }) = DeleteVersion;
 
   const factory CategoryItemVersionEvent.approveVersion({required String id}) =
       _ApproveVersion;

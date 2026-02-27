@@ -63,7 +63,7 @@ class _CategoryItemDetailPageState extends State<CategoryItemDetailPage>
         }
 
         context.itemVersionBloc.add(
-          CategoryItemVersionEvent.getAll(itemId: entry.id!),
+          CategoryItemVersionEvent.getHistoryVersion(itemId: entry.id!),
         );
 
         return Scaffold(

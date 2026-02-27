@@ -47,8 +47,8 @@ class CategoryItemVersionRepositoryImpl
   Map<String, dynamic> _updatePayload(int? type, CategoryItemEntry entry) => {
     if (type != null) 'version_type': type,
     'version_data': {
-      if (entry.domainId != null) 'domain_id': entry.domainId,
-      if (entry.groupId != null) 'group_id': entry.groupId,
+      'domain_id': entry.domainId,
+      'group_id': entry.groupId,
       if (entry.code != null) 'code': entry.code,
       if (entry.name != null) 'name': entry.name,
       if (entry.status != null) 'status': entry.status,
@@ -111,6 +111,34 @@ class CategoryItemVersionRepositoryImpl
   }
 
   @override
+  Future<Either<Failure, PageEntry<CategoryItemVersionEntry>>>
+  getHistoryVersion({required String itemId, int? page, int? limit}) async {
+    try {
+      final models = await remoteDataSource.getHistoryVersion(
+        itemId: itemId,
+        page: page,
+        limit: limit,
+      );
+      return Right(
+        PageEntry<CategoryItemVersionEntry>(
+          entries: models.data.map((m) => _toEntity(m)).toList(),
+          pagination: PaginationEntry(
+            page: models.pagination.page,
+            limit: models.pagination.limit,
+            total: models.pagination.total,
+            totalPages: models.pagination.totalPages,
+            hasMore: models.pagination.hasMore,
+          ),
+        ),
+      );
+    } on AppException catch (e) {
+      return Left(mapExceptionToFailure(e));
+    } catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
+    }
+  }
+
+  @override
   Future<Either<Failure, CategoryItemVersionEntry>> createVersion({
     required CategoryItemEntry entry,
   }) async {
@@ -148,9 +176,13 @@ class CategoryItemVersionRepositoryImpl
   @override
   Future<Either<Failure, CategoryItemVersionEntry>> deleteVersion({
     required String id,
+    required String domainId,
   }) async {
     try {
-      final model = await remoteDataSource.deleteVersion(id: id);
+      final model = await remoteDataSource.deleteVersion(
+        id: id,
+        domainId: domainId,
+      );
       return Right(_toEntity(model));
     } on AppException catch (e) {
       return Left(mapExceptionToFailure(e));

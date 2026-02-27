@@ -41,6 +41,9 @@ void initCategoryItemVersionModule() {
   getIt.registerLazySingleton(
     () => RollbackCategoryItemVersionUseCase(repository: getIt()),
   );
+  getIt.registerLazySingleton(
+    () => GetHistoryVersionUseCase(repository: getIt()),
+  );
 
   getIt.registerFactory(
     () => CategoryItemVersionBloc(
@@ -53,6 +56,7 @@ void initCategoryItemVersionModule() {
       rejectVersion: getIt<RejectCategoryItemVersionUseCase>(),
       deleteOrigin: getIt<DeleteOriginCategoryItemVersionUseCase>(),
       rollbackVersion: getIt<RollbackCategoryItemVersionUseCase>(),
+      getHistoryVersion: getIt<GetHistoryVersionUseCase>(),
     ),
   );
 }

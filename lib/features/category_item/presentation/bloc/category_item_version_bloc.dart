@@ -17,6 +17,7 @@ class CategoryItemVersionBloc
   final RejectCategoryItemVersionUseCase rejectVersion;
   final DeleteOriginCategoryItemVersionUseCase deleteOrigin;
   final RollbackCategoryItemVersionUseCase rollbackVersion;
+  final GetHistoryVersionUseCase getHistoryVersion;
 
   CategoryItemVersionBloc({
     required this.getAll,
@@ -28,6 +29,7 @@ class CategoryItemVersionBloc
     required this.rejectVersion,
     required this.deleteOrigin,
     required this.rollbackVersion,
+    required this.getHistoryVersion,
   }) : super(const CategoryItemVersionState()) {
     on<CategoryItemVersionEvent>(_onEvent);
   }
@@ -117,6 +119,30 @@ class CategoryItemVersionBloc
           (r) => emit(state.copyWith(isLoading: false, entry: r)),
         );
       },
+      getHistoryVersion: (e) async {
+        emit(
+          state.copyWith(
+            isLoading: true,
+            error: null,
+            successMessage: null,
+            entry: null,
+            page: 1,
+            hasMore: true,
+            entries: [],
+          ),
+        );
+        final result = await getHistoryVersion(
+          itemId: e.itemId,
+          page: 1,
+          limit: state.limit,
+        );
+        if (emit.isDone) return;
+        result.fold(
+          (l) => emit(state.copyWith(isLoading: false, error: mapFailure(l))),
+          (r) =>
+              emit(state.copyWith(isLoading: false, entries: r.entries ?? [])),
+        );
+      },
       createVersion: (e) async {
         emit(
           state.copyWith(
@@ -173,7 +199,7 @@ class CategoryItemVersionBloc
             entry: null,
           ),
         );
-        final result = await deleteVersion(id: e.id);
+        final result = await deleteVersion(id: e.id, domainId: e.domainId);
         if (emit.isDone) return;
         result.fold(
           (l) => emit(state.copyWith(isLoading: false, error: mapFailure(l))),

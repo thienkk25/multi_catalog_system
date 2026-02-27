@@ -20,6 +20,8 @@ class ApproveCard extends StatelessWidget {
   Widget build(BuildContext context) {
     CategoryItemEntry item = CategoryItemEntry(
       id: version.itemId,
+      domainId: version.oldValue?['domain_id'] ?? '',
+      groupId: version.oldValue?['group_id'] ?? '',
       code: version.oldValue?['code'] ?? '',
       name: version.oldValue?['name'] ?? '',
       description: version.oldValue?['description'] ?? '',
@@ -28,6 +30,8 @@ class ApproveCard extends StatelessWidget {
     if (version.changeType == 'create') {
       item = CategoryItemEntry(
         id: version.itemId,
+        domainId: version.newValue?['domain_id'] ?? '',
+        groupId: version.newValue?['group_id'] ?? '',
         code: version.newValue?['code'] ?? '',
         name: version.newValue?['name'] ?? '',
         description: version.newValue?['description'] ?? '',

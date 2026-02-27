@@ -10,8 +10,8 @@ class CategoryItemEntry extends Equatable {
   final String? name;
   final String? description;
   final String? status;
+  final String domainId;
   final String? groupId;
-  final String? domainId;
   final CategoryGroupRefEntry? group;
   final DomainRefEntry? domain;
   final List<LegalDocumentEntry>? legalDocuments;
@@ -26,8 +26,8 @@ class CategoryItemEntry extends Equatable {
     this.name,
     this.description,
     this.status,
+    required this.domainId,
     this.groupId,
-    this.domainId,
     this.group,
     this.domain,
     this.legalDocuments,

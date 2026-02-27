@@ -17,6 +17,8 @@ abstract class CategoryItemVersionRepository {
   Future<Either<Failure, CategoryItemVersionEntry>> getById({
     required String id,
   });
+  Future<Either<Failure, PageEntry<CategoryItemVersionEntry>>>
+  getHistoryVersion({required String itemId, int? page, int? limit});
   Future<Either<Failure, CategoryItemVersionEntry>> createVersion({
     required CategoryItemEntry entry,
   });
@@ -27,6 +29,7 @@ abstract class CategoryItemVersionRepository {
   });
   Future<Either<Failure, CategoryItemVersionEntry>> deleteVersion({
     required String id,
+    required String domainId,
   });
 
   Future<Either<Failure, CategoryItemVersionEntry>> approveVersion({

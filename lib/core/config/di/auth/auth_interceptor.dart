@@ -119,6 +119,7 @@ class AuthInterceptor extends Interceptor {
       _refreshCompleter!.complete(success);
       return success;
     } catch (_) {
+      await authLocal.clearAuthToken();
       _refreshCompleter!.complete(false);
       return false;
     } finally {

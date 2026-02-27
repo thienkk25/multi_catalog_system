@@ -64,6 +64,7 @@ class CategoryItemRepositoryImpl implements CategoryItemRepository {
 
   Map<String, dynamic> _createPayload(CategoryItemEntry entry) => {
     'category_item': {
+      'domain_id': entry.domainId,
       'group_id': entry.groupId,
       'code': entry.code,
       'name': entry.name,
@@ -75,7 +76,8 @@ class CategoryItemRepositoryImpl implements CategoryItemRepository {
 
   Map<String, dynamic> _updatePayload(CategoryItemEntry entry) => {
     'category_item': {
-      if (entry.groupId != null) 'group_id': entry.groupId,
+      'domain_id': entry.domainId,
+      'group_id': entry.groupId,
       if (entry.code != null) 'code': entry.code,
       if (entry.name != null) 'name': entry.name,
       if (entry.status != null) 'status': entry.status,

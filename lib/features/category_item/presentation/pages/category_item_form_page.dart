@@ -97,21 +97,18 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
 
     _entry = entry;
 
+    final domainId = entry.domainId;
+    final groupId = entry.groupId;
     _codeController.text = entry.code ?? '';
     _nameController.text = entry.name ?? '';
     _descriptionController.text = entry.description ?? '';
     _selectedStatus = entry.status;
 
-    final domainId = entry.group?.domain?.id;
-    final groupId = entry.group?.id;
-
     _selectedDomainId = domainId;
 
-    if (domainId != null) {
-      context.categoryGroupLookupBloc.add(
-        CategoryGroupLookupEvent.lookup(domainIds: [domainId]),
-      );
-    }
+    context.categoryGroupLookupBloc.add(
+      CategoryGroupLookupEvent.lookup(domainIds: [domainId]),
+    );
 
     _selectedCategoryGroupId = groupId;
 
@@ -137,9 +134,9 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
     _codeController.text = json['code'] ?? '';
     _nameController.text = json['name'] ?? '';
     _descriptionController.text = json['description'] ?? '';
-    _selectedDomainId = json['domain_id'];
-    _selectedCategoryGroupId = json['group_id'];
-    _selectedStatus = json['status'];
+    _selectedDomainId = json['domain_id'] ?? '';
+    _selectedCategoryGroupId = json['group_id'] ?? '';
+    _selectedStatus = json['status'] ?? '';
 
     _didInit = true;
 
@@ -480,7 +477,7 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
         description: _descriptionController.text.isNotEmpty
             ? _descriptionController.text
             : null,
-        domainId: _selectedDomainId,
+        domainId: _selectedDomainId!,
         groupId: _selectedCategoryGroupId,
         status: _selectedStatus,
         legalDocuments: _legalDocuments,
@@ -504,7 +501,7 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
         description: _entry?.description != _descriptionController.text
             ? _descriptionController.text
             : _entry?.description,
-        domainId: _selectedDomainId,
+        domainId: _selectedDomainId!,
         groupId: _selectedCategoryGroupId,
         status: _selectedStatus,
         legalDocuments: _legalDocuments,
@@ -531,7 +528,7 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
         description: _entry?.description != _descriptionController.text
             ? _descriptionController.text
             : _entry?.description,
-        domainId: _selectedDomainId,
+        domainId: _selectedDomainId!,
         groupId: _selectedCategoryGroupId,
         status: _selectedStatus,
         legalDocuments: _legalDocuments,

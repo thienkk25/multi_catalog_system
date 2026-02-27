@@ -28,13 +28,14 @@ class CategoryItemPage extends StatefulWidget {
 }
 
 class _CategoryItemPageState extends State<CategoryItemPage>
-    with AutomaticKeepAliveClientMixin {
+    with AutomaticKeepAliveClientMixin, SingleTickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
 
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final ScrollController _scrollFilterController = ScrollController();
+  late final AnimationController _refreshController;
   late ValueNotifier<bool> _showUpButton;
   Timer? _debounce;
 
@@ -46,9 +47,18 @@ class _CategoryItemPageState extends State<CategoryItemPage>
   void initState() {
     super.initState();
     _showUpButton = ValueNotifier(false);
+    _refreshController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 700),
+    );
     _bloc = context.itemBloc;
     context.itemBloc.add(const CategoryItemEvent.getAll());
     _scrollController.addListener(_onScroll);
+  }
+
+  void _onRefresh() {
+    _bloc.add(const CategoryItemEvent.getAll());
+    _refreshController.forward(from: 0);
   }
 
   void _onScroll() {
@@ -148,12 +158,29 @@ class _CategoryItemPageState extends State<CategoryItemPage>
                         SliverPadding(
                           padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
                           sliver: SliverToBoxAdapter(
-                            child: const Text(
-                              'Mục danh mục',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text(
+                                  'Mục danh mục',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: _onRefresh,
+                                  child: Row(
+                                    children: [
+                                      RotationTransition(
+                                        turns: _refreshController,
+                                        child: Icon(Icons.refresh),
+                                      ),
+                                      Text('Làm mới'),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),

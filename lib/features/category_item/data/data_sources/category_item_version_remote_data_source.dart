@@ -15,6 +15,11 @@ abstract class CategoryItemVersionRemoteDataSource {
     Map<String, dynamic>? filter,
   });
   Future<CategoryItemVersionModel> getById({required String id});
+  Future<PageModel<CategoryItemVersionModel>> getHistoryVersion({
+    required String itemId,
+    int? page,
+    int? limit,
+  });
 
   Future<CategoryItemVersionModel> createVersion({
     required Map<String, dynamic> data,
@@ -23,7 +28,10 @@ abstract class CategoryItemVersionRemoteDataSource {
     required String id,
     required Map<String, dynamic> data,
   });
-  Future<CategoryItemVersionModel> deleteVersion({required String id});
+  Future<CategoryItemVersionModel> deleteVersion({
+    required String id,
+    required String domainId,
+  });
 
   Future<CategoryItemVersionModel> approveVersion({required String id});
   Future<CategoryItemVersionModel> rejectVersion({
@@ -91,6 +99,29 @@ class CategoryItemVersionRemoteDataSourceImpl extends BaseRemoteDataSource
   }
 
   @override
+  Future<PageModel<CategoryItemVersionModel>> getHistoryVersion({
+    required String itemId,
+    int? page,
+    int? limit,
+  }) async {
+    try {
+      final response = await dio.get(
+        '/category-item-version/$itemId/history',
+        queryParameters: {'page': page, 'limit': limit},
+      );
+      final data = response.data['data'];
+      return PageModel<CategoryItemVersionModel>.fromJson(
+        data,
+        (e) => CategoryItemVersionModel.fromJson(e as Map<String, dynamic>),
+      );
+    } on DioException catch (e) {
+      handleDioError(e);
+    } catch (e) {
+      throw UnexpectedException(e.toString());
+    }
+  }
+
+  @override
   Future<CategoryItemVersionModel> createVersion({
     required Map<String, dynamic> data,
   }) async {
@@ -126,9 +157,15 @@ class CategoryItemVersionRemoteDataSourceImpl extends BaseRemoteDataSource
   }
 
   @override
-  Future<CategoryItemVersionModel> deleteVersion({required String id}) async {
+  Future<CategoryItemVersionModel> deleteVersion({
+    required String id,
+    required String domainId,
+  }) async {
     try {
-      final response = await dio.post('/category-item-version/$id/delete');
+      final response = await dio.post(
+        '/category-item-version/$id/delete',
+        data: {'domain_id': domainId},
+      );
       if (response.data['data'] == null) {
         throw UnexpectedException('No data');
       }
