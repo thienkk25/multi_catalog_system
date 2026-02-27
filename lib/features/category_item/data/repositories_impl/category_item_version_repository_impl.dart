@@ -1,4 +1,6 @@
 import 'package:dartz/dartz.dart';
+import 'package:multi_catalog_system/core/domain/entities/category_item/category_item_ref_entry.dart';
+import 'package:multi_catalog_system/core/domain/entities/domain/domain_ref_entry.dart';
 import 'package:multi_catalog_system/core/domain/entities/page/page_entry.dart';
 import 'package:multi_catalog_system/core/domain/entities/page/pagination_entry.dart';
 import 'package:multi_catalog_system/core/error/exception_mapper.dart';
@@ -8,6 +10,8 @@ import 'package:multi_catalog_system/features/category_item/data/data_sources/ca
 import 'package:multi_catalog_system/features/category_item/data/models/category_item_version_model.dart';
 import 'package:multi_catalog_system/features/category_item/domain/domain.dart';
 import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_version_entry.dart';
+import 'package:multi_catalog_system/features/legal_document/data/models/legal_document_model.dart';
+import 'package:multi_catalog_system/features/legal_document/domain/entities/legal_document_entry.dart';
 
 class CategoryItemVersionRepositoryImpl
     implements CategoryItemVersionRepository {
@@ -20,18 +24,49 @@ class CategoryItemVersionRepositoryImpl
         id: model.id,
         domainId: model.domainId,
         itemId: model.itemId,
+        domain: DomainRefEntry(
+          id: model.domain.id,
+          name: model.domain.name,
+          code: model.domain.code,
+        ),
+        item: CategoryItemRefEntry(
+          id: model.item?.id,
+          name: model.item?.name,
+          code: model.item?.code,
+        ),
         oldValue: model.oldValue,
         newValue: model.newValue,
         changeSummary: model.changeSummary,
         changeType: model.changeType,
         status: model.status,
+        legalDocuments: model.legalDocuments
+            ?.map((e) => _toEntityLegalDocument(e))
+            .toList(),
         changeBy: model.changeBy,
+        changeByName: model.changeByName,
         approvedBy: model.approvedBy,
+        approvedByName: model.approvedByName,
         rejectReason: model.rejectReason,
         appliedAt: model.appliedAt,
         createdAt: model.createdAt,
       );
-
+  LegalDocumentEntry _toEntityLegalDocument(LegalDocumentModel model) =>
+      LegalDocumentEntry(
+        id: model.id,
+        code: model.code,
+        title: model.title,
+        description: model.description,
+        type: model.type,
+        status: model.status,
+        issuedByName: model.issuedByName,
+        issueDate: model.issueDate,
+        effectiveDate: model.effectiveDate,
+        expiryDate: model.expiryDate,
+        fileName: model.fileName,
+        fileUrl: model.fileUrl,
+        createdAt: model.createdAt,
+        updatedAt: model.updatedAt,
+      );
   Map<String, dynamic> _createPayload(CategoryItemEntry entry) => {
     'version_data': {
       'domain_id': entry.domainId,

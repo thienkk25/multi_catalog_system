@@ -75,7 +75,7 @@ class ApproveCard extends StatelessWidget {
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             _infoRow("Loại", _statusType(version.changeType)),
-            _infoRow("ID Người gửi", version.changeBy),
+            _infoRow("Người gửi", version.changeByName),
             _infoRow("Nội dung", version.changeSummary),
 
             version.status == 'rejected'

@@ -138,9 +138,9 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
     _selectedCategoryGroupId = json['group_id'] ?? '';
     _selectedStatus = json['status'] ?? '';
 
-    _didInit = true;
+    _legalDocuments = version.legalDocuments ?? [];
 
-    setState(() {});
+    _didInit = true;
   }
 
   @override
@@ -529,7 +529,7 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
             ? _descriptionController.text
             : _entry?.description,
         domainId: _selectedDomainId!,
-        groupId: _selectedCategoryGroupId,
+        groupId: _selectedCategoryGroupId!,
         status: _selectedStatus,
         legalDocuments: _legalDocuments,
       );

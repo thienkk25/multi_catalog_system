@@ -1,8 +1,7 @@
 import 'package:equatable/equatable.dart';
+import 'package:multi_catalog_system/core/domain/entities/category_group/category_group_ref_entry.dart';
 import 'package:multi_catalog_system/core/domain/entities/domain/domain_ref_entry.dart';
 import 'package:multi_catalog_system/features/legal_document/domain/entities/legal_document_entry.dart';
-
-import 'category_group_ref_entry.dart';
 
 class CategoryItemEntry extends Equatable {
   final String? id;

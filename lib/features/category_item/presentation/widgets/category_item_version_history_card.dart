@@ -144,12 +144,12 @@ class _InfoBottomSheet extends StatelessWidget {
 
               const SizedBox(height: 8),
 
-              _infoRow("Người tạo", entry.changeBy),
+              _infoRow("Người tạo", entry.changeByName),
               _infoRow(
                 "Ngày tạo",
                 entry.createdAt != null ? dateFormat(entry.createdAt) : null,
               ),
-              _infoRow("Người duyệt", entry.approvedBy),
+              _infoRow("Người duyệt", entry.approvedByName),
               _infoRow(
                 "Ngày áp dụng",
                 entry.appliedAt != null ? dateFormat(entry.appliedAt) : null,
