@@ -90,10 +90,7 @@ class _CategoryItemDetailPageState extends State<CategoryItemDetailPage>
             ],
           ),
 
-          bottomNavigationBar: RoleBasedWidget(
-            permission: ['admin', 'domainOfficer'],
-            child: _BottomActions(entry: entry),
-          ),
+          bottomNavigationBar: _BottomActions(entry: entry),
         );
       },
     );
@@ -249,23 +246,26 @@ class _BottomActions extends StatelessWidget {
                 ),
               ),
             ),
-            Expanded(
-              child: CustomButton(
-                onTap: () {
-                  context.goNamed(
-                    RouterNames.categoryItemForm,
-                    queryParameters: {
-                      'mode': 'updateItem',
-                      'itemId': entry.id.toString(),
-                    },
-                  );
-                },
-                colorBackground: Colors.blue,
-                textButton: const Text(
-                  'Chỉnh sửa',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
+            RoleBasedWidget(
+              permission: ['admin', 'domainOfficer'],
+              child: Expanded(
+                child: CustomButton(
+                  onTap: () {
+                    context.goNamed(
+                      RouterNames.categoryItemForm,
+                      queryParameters: {
+                        'mode': 'updateItem',
+                        'itemId': entry.id.toString(),
+                      },
+                    );
+                  },
+                  colorBackground: Colors.blue,
+                  textButton: const Text(
+                    'Chỉnh sửa',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ),

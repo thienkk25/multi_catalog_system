@@ -41,8 +41,13 @@ class _CategoryItemAddLegalDocumentsPageState
     super.initState();
     _showUpButton = ValueNotifier(false);
     context.legalDocumentBloc.add(const LegalDocumentEvent.getAllHasFile());
-    _legalDocuments = widget.legalDocuments ?? [];
+    _legalDocuments = List.from(widget.legalDocuments ?? []);
 
+    for (var element in _legalDocuments) {
+      context.legalDocumentBloc.add(
+        LegalDocumentEvent.toggleSelect(element.id!),
+      );
+    }
     _scrollController.addListener(_onScroll);
   }
 
@@ -173,7 +178,6 @@ class _CategoryItemAddLegalDocumentsPageState
                     itemCount: entries.length,
                     itemBuilder: (_, index) {
                       final entry = entries[index];
-
                       return BlocSelector<
                         LegalDocumentBloc,
                         LegalDocumentState,

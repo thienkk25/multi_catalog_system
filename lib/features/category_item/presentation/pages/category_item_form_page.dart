@@ -235,13 +235,8 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
                   isLoading: isLoading,
                   key: _bottomBarKey,
                   onCancel: () {
-                    if (_isCreate) {
+                    if (_isCreate || _isUpdateItem) {
                       context.goNamed(RouterNames.categoryItem);
-                    } else if (_isUpdateItem) {
-                      context.goNamed(
-                        RouterNames.categoryItemDetail,
-                        pathParameters: {'id': _entry!.id!},
-                      );
                     } else {
                       context.goNamed(RouterNames.categoryItem);
                     }
@@ -554,9 +549,9 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
       );
     }
     if (_isCreate || _isUpdateItem) {
-      context.pop();
+      context.goNamed(RouterNames.categoryItem);
     } else {
-      context.goNamed(RouterNames.approve);
+      context.goNamed(RouterNames.categoryItem);
     }
   }
 }
