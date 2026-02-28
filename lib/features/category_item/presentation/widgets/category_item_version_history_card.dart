@@ -14,10 +14,12 @@ import 'category_item_status_chip.dart';
 class CategoryItemVersionHistoryCard extends StatelessWidget {
   final CategoryItemVersionEntry entry;
   final int indexVersion;
+  final int lengthHistory;
   const CategoryItemVersionHistoryCard({
     super.key,
     required this.entry,
     required this.indexVersion,
+    required this.lengthHistory,
   });
 
   @override
@@ -26,8 +28,13 @@ class CategoryItemVersionHistoryCard extends StatelessWidget {
       onTap: () {
         showModalBottomSheet(
           context: context,
+          isScrollControlled: true,
           builder: (context) {
-            return _InfoBottomSheet(entry: entry);
+            return _InfoBottomSheet(
+              entry: entry,
+              indexVersion: indexVersion,
+              lengthHistory: lengthHistory,
+            );
           },
         );
       },
@@ -103,20 +110,41 @@ class CategoryItemVersionHistoryCard extends StatelessWidget {
 
 class _InfoBottomSheet extends StatelessWidget {
   final CategoryItemVersionEntry entry;
-
-  const _InfoBottomSheet({required this.entry});
+  final int indexVersion;
+  final int lengthHistory;
+  const _InfoBottomSheet({
+    required this.entry,
+    required this.lengthHistory,
+    required this.indexVersion,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final canRollback = entry.status == 'approved';
+    final canRollback =
+        entry.status == 'approved' &&
+        lengthHistory > 0 &&
+        context.hasRole('admin') &&
+        indexVersion != lengthHistory - 1;
 
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: SingleChildScrollView(
+    return SingleChildScrollView(
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Center(
+                child: Container(
+                  width: 100,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.grey,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+              ),
+              SizedBox(height: 10),
               Row(
                 children: [
                   const Icon(Icons.history, color: Colors.blue),
@@ -197,7 +225,7 @@ class _InfoBottomSheet extends StatelessWidget {
                 const SizedBox(height: 20),
               ],
 
-              if (canRollback && context.hasRole('admin'))
+              if (canRollback)
                 CustomButton(
                   colorBackground: Colors.blue,
                   textButton: Text(

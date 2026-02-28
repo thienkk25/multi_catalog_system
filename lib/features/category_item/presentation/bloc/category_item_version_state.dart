@@ -20,5 +20,6 @@ abstract class CategoryItemVersionState with _$CategoryItemVersionState {
     CategoryItemVersionEntry? entry,
     String? error,
     String? successMessage,
+    String? itemId,
   }) = _CategoryItemVersionState;
 }

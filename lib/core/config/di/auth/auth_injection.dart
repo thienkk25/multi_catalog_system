@@ -50,7 +50,6 @@ void initAuthModule() {
       authLoginUseCase: getIt(),
       authLogoutUseCase: getIt(),
       authRefreshTokenUseCase: getIt(),
-      repo: getIt<AuthRepository>(),
     ),
   );
 }

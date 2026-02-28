@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:multi_catalog_system/core/utils/formatter/map_failure_formatter.dart';
 import 'package:multi_catalog_system/features/auth/domain/domain.dart';
@@ -8,28 +6,17 @@ import 'auth_event.dart';
 import 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  final AuthRepository _repo;
   final AuthLoginUseCase authLoginUseCase;
   final AuthGetCurrentUserUseCase authGetCurrentUserUseCase;
   final AuthLogoutUseCase authLogoutUseCase;
   final AuthRefreshTokenUseCase authRefreshTokenUseCase;
 
-  late final StreamSubscription<AuthStatus> _authSub;
-
   AuthBloc({
-    required AuthRepository repo,
     required this.authLoginUseCase,
     required this.authGetCurrentUserUseCase,
     required this.authLogoutUseCase,
     required this.authRefreshTokenUseCase,
-  }) : _repo = repo,
-       super(const AuthState.initial()) {
-    _authSub = _repo.authStatus.listen((status) {
-      if (status == AuthStatus.unauthenticated) {
-        add(const AuthEvent.logout());
-      }
-    });
-
+  }) : super(const AuthState.initial()) {
     on<AuthEvent>((event, emit) async {
       await event.map(
         login: (e) async {
@@ -75,11 +62,5 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         },
       );
     });
-  }
-
-  @override
-  Future<void> close() {
-    _authSub.cancel();
-    return super.close();
   }
 }

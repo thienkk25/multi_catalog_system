@@ -22,6 +22,8 @@ class CategoryItemVersionEvent with _$CategoryItemVersionEvent {
     int? page,
     int? limit,
   }) = _GetHistoryVersion;
+  const factory CategoryItemVersionEvent.loadMoreHistoryVersion() =
+      _LoadMoreHistoryVersion;
 
   const factory CategoryItemVersionEvent.createVersion({
     required CategoryItemEntry entry,
