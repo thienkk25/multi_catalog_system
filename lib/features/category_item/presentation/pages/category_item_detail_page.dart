@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:multi_catalog_system/core/responsive/screen_size.dart';
 import 'package:multi_catalog_system/core/utils/extensions/bloc_extension.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/core/utils/formatter/data_time_formatter.dart';
@@ -12,6 +13,7 @@ import 'package:multi_catalog_system/core/widgets/file_icon_widget.dart';
 import 'package:multi_catalog_system/core/widgets/role_based_widget.dart';
 import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_entry.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_bloc.dart';
+import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_event.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_state.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_version_bloc.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_version_event.dart';
@@ -22,83 +24,157 @@ import 'package:multi_catalog_system/features/legal_document/domain/entities/leg
 import 'package:url_launcher/url_launcher.dart';
 
 class CategoryItemDetailPage extends StatefulWidget {
-  const CategoryItemDetailPage({super.key});
+  final String id;
+  const CategoryItemDetailPage({super.key, required this.id});
 
   @override
   State<CategoryItemDetailPage> createState() => _CategoryItemDetailPageState();
 }
 
 class _CategoryItemDetailPageState extends State<CategoryItemDetailPage>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late final TabController _tabController;
+  late final AnimationController _refreshController;
 
   @override
   void initState() {
     super.initState();
+
     _tabController = TabController(length: 2, vsync: this);
+
+    _refreshController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 700),
+    );
+
+    context.itemBloc.add(CategoryItemEvent.getById(id: widget.id));
+  }
+
+  void _onRefresh() {
+    context.itemBloc.add(CategoryItemEvent.getById(id: widget.id));
+
+    _refreshController.forward(from: 0);
   }
 
   @override
   void dispose() {
     _tabController.dispose();
+    _refreshController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CategoryItemBloc, CategoryItemState>(
-      builder: (context, state) {
-        if (state.isLoading) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
-        }
+    return Scaffold(
+      backgroundColor: Colors.transparent,
 
-        if (state.error != null) {
-          return Scaffold(body: Center(child: Text(state.error!)));
-        }
-
-        final entry = state.entry;
-
-        if (entry == null) {
-          return const Scaffold(body: Center(child: Text('Không có dữ liệu')));
-        }
-
-        context.itemVersionBloc.add(
-          CategoryItemVersionEvent.getHistoryVersion(itemId: entry.id!),
-        );
-
-        return Scaffold(
-          appBar: AppBar(
-            automaticallyImplyLeading: false,
-            backgroundColor: Colors.transparent,
-            title: TabBar(
-              controller: _tabController,
-              labelColor: Colors.blue,
-              unselectedLabelColor: Colors.grey,
-              dividerColor: Colors.grey,
-              indicatorColor: Colors.blue,
-              indicatorWeight: 5,
-              splashBorderRadius: BorderRadius.circular(10),
-              labelStyle: TextStyle(fontWeight: FontWeight.w600),
-              tabs: const [
-                Tab(text: 'Thông tin'),
-                Tab(text: 'Lịch sử phiên bản'),
-              ],
+      body: CustomScrollView(
+        slivers: [
+          if (!ScreenSize.of(context).isMobile)
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+              sliver: SliverToBoxAdapter(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Thông tin chi tiết mục danh mục',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: _onRefresh,
+                      child: Row(
+                        children: [
+                          RotationTransition(
+                            turns: _refreshController,
+                            child: const Icon(Icons.refresh),
+                          ),
+                          const SizedBox(width: 4),
+                          const Text('Làm mới'),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
-          ),
 
-          body: TabBarView(
-            controller: _tabController,
-            children: [
-              _InfoTab(entry: entry),
-              _HistoryTab(entry: entry),
-            ],
-          ),
+          BlocConsumer<CategoryItemBloc, CategoryItemState>(
+            listenWhen: (previous, current) =>
+                previous.entry?.id != current.entry?.id &&
+                current.entry != null,
+            listener: (context, state) {
+              context.read<CategoryItemVersionBloc>().add(
+                CategoryItemVersionEvent.getHistoryVersion(
+                  itemId: state.entry!.id!,
+                ),
+              );
+            },
+            builder: (context, state) {
+              if (state.isLoading) {
+                return const SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(child: CustomCircularProgressScreen()),
+                );
+              }
 
-          bottomNavigationBar: _BottomActions(entry: entry),
-        );
-      },
+              if (state.error != null) {
+                return SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(child: Text(state.error!)),
+                );
+              }
+
+              final entry = state.entry;
+
+              if (entry == null) {
+                return const SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(child: Text('Không có dữ liệu')),
+                );
+              }
+
+              return SliverFillRemaining(
+                child: Column(
+                  children: [
+                    TabBar(
+                      controller: _tabController,
+                      labelColor: Colors.blue,
+                      unselectedLabelColor: Colors.grey,
+                      indicatorColor: Colors.blue,
+                      indicatorWeight: 4,
+                      tabs: const [
+                        Tab(text: 'Thông tin'),
+                        Tab(text: 'Lịch sử phiên bản'),
+                      ],
+                    ),
+
+                    Expanded(
+                      child: TabBarView(
+                        controller: _tabController,
+                        children: [
+                          _InfoTab(entry: entry),
+                          _HistoryTab(entry: entry),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+
+      bottomNavigationBar: BlocBuilder<CategoryItemBloc, CategoryItemState>(
+        builder: (context, state) {
+          if (state.entry == null) return const SizedBox();
+          return _BottomActions(entry: state.entry!);
+        },
+      ),
     );
   }
 }
@@ -244,7 +320,7 @@ class _HistoryTabState extends State<_HistoryTab> {
                 if (state.isLoading) {
                   return SliverFillRemaining(
                     hasScrollBody: false,
-                    child: const Center(child: CircularProgressIndicator()),
+                    child: const Center(child: CustomCircularProgressScreen()),
                   );
                 }
 
