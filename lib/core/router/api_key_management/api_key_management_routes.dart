@@ -29,14 +29,14 @@ class ApiKeyManagementRoutes {
               },
             ),
             GoRoute(
-              path: '/form',
+              path: 'form',
               name: RouterNames.apiKeyForm,
               builder: (context, state) {
                 return ApiKeyManagementFormPage();
               },
               routes: [
                 GoRoute(
-                  path: '/add-domains',
+                  path: 'add-domains',
                   name: RouterNames.apiKeyAddDomains,
                   builder: (context, state) {
                     final fields =

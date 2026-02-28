@@ -21,7 +21,7 @@ class LegalDocumentRoutes {
           builder: (context, state) => const LegalDocumentPage(),
           routes: [
             GoRoute(
-              path: '/id/:id',
+              path: 'id/:id',
               name: RouterNames.legalDocumentDetail,
               builder: (context, state) {
                 final id = state.pathParameters['id']!;
@@ -32,7 +32,7 @@ class LegalDocumentRoutes {
               },
             ),
             GoRoute(
-              path: '/form',
+              path: 'form',
               name: RouterNames.legalDocumentForm,
               builder: (context, state) {
                 final mode = state.uri.queryParameters['mode']!;

@@ -32,7 +32,7 @@ class DomainManagementRoutes {
               },
             ),
             GoRoute(
-              path: '/form',
+              path: 'form',
               name: RouterNames.domainForm,
               builder: (context, state) {
                 final mode = state.uri.queryParameters['mode']!;

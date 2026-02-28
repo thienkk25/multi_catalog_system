@@ -23,7 +23,7 @@ class UserManagementRoutes {
           builder: (context, state) => const UserManagementPage(),
           routes: [
             GoRoute(
-              path: '/id/:id',
+              path: 'id/:id',
               name: RouterNames.userManagementDetail,
               builder: (context, state) {
                 final id = state.pathParameters['id']!;
@@ -34,7 +34,7 @@ class UserManagementRoutes {
               },
             ),
             GoRoute(
-              path: '/form',
+              path: 'form',
               name: RouterNames.userManagementForm,
               builder: (context, state) {
                 final mode = state.uri.queryParameters['mode']!;
@@ -46,7 +46,7 @@ class UserManagementRoutes {
               },
               routes: [
                 GoRoute(
-                  path: '/add-domains',
+                  path: 'add-domains',
                   name: RouterNames.userManagementAddDomains,
                   builder: (context, state) {
                     final fields =

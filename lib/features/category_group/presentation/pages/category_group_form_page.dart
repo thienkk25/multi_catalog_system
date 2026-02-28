@@ -222,7 +222,9 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
               builder: (context, isLoading) => BottomFormActions(
                 isLoading: isLoading,
                 key: _bottomBarKey,
-                onCancel: () => context.pop(),
+                onCancel: () {
+                  context.goNamed(RouterNames.categoryGroups);
+                },
                 onSave: () => _onSave(context: context),
               ),
             ),

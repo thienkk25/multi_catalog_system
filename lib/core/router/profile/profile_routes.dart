@@ -19,14 +19,14 @@ class ProfileRoutes {
           },
           routes: [
             GoRoute(
-              path: '/form',
+              path: 'form',
               name: RouterNames.profileForm,
               builder: (context, state) {
                 return ProfileFormPage();
               },
             ),
             GoRoute(
-              path: '/change-password',
+              path: 'change-password',
               name: RouterNames.changePassword,
               builder: (context, state) {
                 return ProfileChangePasswordPage();

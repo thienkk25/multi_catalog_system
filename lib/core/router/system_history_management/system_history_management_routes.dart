@@ -23,7 +23,7 @@ class SystemHistoryManagementRoutes {
           },
           routes: [
             GoRoute(
-              path: '/id/:id',
+              path: 'id/:id',
               name: RouterNames.systemHistoryManagementDetail,
               builder: (context, state) {
                 final id = state.pathParameters['id']!;

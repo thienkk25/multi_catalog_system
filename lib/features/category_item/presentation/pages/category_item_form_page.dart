@@ -235,7 +235,16 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
                   isLoading: isLoading,
                   key: _bottomBarKey,
                   onCancel: () {
-                    context.pop();
+                    if (_isCreate) {
+                      context.goNamed(RouterNames.categoryItem);
+                    } else if (_isUpdateItem) {
+                      context.goNamed(
+                        RouterNames.categoryItemDetail,
+                        pathParameters: {'id': _entry!.id!},
+                      );
+                    } else {
+                      context.goNamed(RouterNames.categoryItem);
+                    }
                   },
                   onSave: () => _onSave(context: context, isEdit: true),
                 ),
@@ -408,6 +417,7 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
                   final result =
                       await context.pushNamed(
                             RouterNames.categoryItemFormAddLegalDocuments,
+                            extra: _legalDocuments,
                           )
                           as List<LegalDocumentEntry>?;
                   if (result == null) return;

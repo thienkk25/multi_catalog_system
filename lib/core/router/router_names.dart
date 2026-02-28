@@ -53,4 +53,7 @@ class RouterNames {
   // approve
   static const String approve = 'approve';
   static const String approveDetail = 'approveDetail';
+  static const String approveForm = 'approveForm';
+  static const String approveFormAddLegalDocuments =
+      'approveFormAddLegalDocuments';
 }

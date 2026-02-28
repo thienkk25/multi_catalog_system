@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:multi_catalog_system/core/router/router_names.dart';
 
 class NotFoundPage extends StatelessWidget {
   const NotFoundPage({super.key});
@@ -33,7 +32,7 @@ class NotFoundPage extends StatelessWidget {
               const SizedBox(height: 32),
               ElevatedButton.icon(
                 onPressed: () {
-                  context.goNamed(RouterNames.home);
+                  context.go('/domains');
                 },
                 icon: const Icon(Icons.home),
                 label: const Text('Quay lại Trang chủ'),

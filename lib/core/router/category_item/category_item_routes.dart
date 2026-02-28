@@ -6,6 +6,7 @@ import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/features/category_group/presentation/bloc/category_group_lookup_bloc.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/presentation.dart';
 import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_lookup_bloc.dart';
+import 'package:multi_catalog_system/features/legal_document/domain/entities/legal_document_entry.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/bloc/legal_document_bloc.dart';
 
 class CategoryItemRoutes {
@@ -39,9 +40,8 @@ class CategoryItemRoutes {
                 return CategoryItemDetailPage();
               },
             ),
-
             GoRoute(
-              path: '/form',
+              path: 'form',
               name: RouterNames.categoryItemForm,
               builder: (context, state) {
                 final mode = state.uri.queryParameters['mode']!;
@@ -62,17 +62,22 @@ class CategoryItemRoutes {
                   ),
                 );
               },
-            ),
-
-            GoRoute(
-              path: '/form/add-legal-documents',
-              name: RouterNames.categoryItemFormAddLegalDocuments,
-              builder: (context, state) {
-                return BlocProvider(
-                  create: (_) => getIt<LegalDocumentBloc>(),
-                  child: const CategoryItemAddLegalDocumentsPage(),
-                );
-              },
+              routes: [
+                GoRoute(
+                  path: 'add-legal-documents',
+                  name: RouterNames.categoryItemFormAddLegalDocuments,
+                  builder: (context, state) {
+                    final legalDocuments =
+                        state.extra as List<LegalDocumentEntry>?;
+                    return BlocProvider(
+                      create: (_) => getIt<LegalDocumentBloc>(),
+                      child: CategoryItemAddLegalDocumentsPage(
+                        legalDocuments: legalDocuments,
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
           ],
         ),

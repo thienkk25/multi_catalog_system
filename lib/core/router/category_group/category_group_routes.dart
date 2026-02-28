@@ -25,7 +25,7 @@ class CategoryGroupRoutes {
           builder: (context, state) => const CategoryGroupPage(),
           routes: [
             GoRoute(
-              path: '/id/:id',
+              path: 'id/:id',
               name: RouterNames.categoryGroupDetail,
               builder: (context, state) {
                 final id = state.pathParameters['id']!;
@@ -34,7 +34,7 @@ class CategoryGroupRoutes {
               },
             ),
             GoRoute(
-              path: '/form',
+              path: 'form',
               name: RouterNames.categoryGroupForm,
               builder: (context, state) {
                 final mode = state.uri.queryParameters['mode']!;

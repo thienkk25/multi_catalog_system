@@ -1,4 +1,8 @@
+import 'dart:async';
+
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:multi_catalog_system/core/config/di/injection.dart';
 import 'package:multi_catalog_system/core/navigation/shells/home_shell.dart';
 import 'package:multi_catalog_system/core/utils/extensions/bloc_extension.dart';
 import 'package:multi_catalog_system/features/features.dart';
@@ -17,6 +21,7 @@ import 'user_management/user_management_routes.dart';
 
 class AppRouter {
   static final router = GoRouter(
+    refreshListenable: _GoRouterRefreshNotifier(getIt<AuthBloc>().stream),
     initialLocation: '/domains',
     routes: [
       ...AuthRoutes.routes,
@@ -40,9 +45,17 @@ class AppRouter {
     ],
     redirect: (context, state) {
       final authState = context.authBloc.state;
+
+      final isLoading = authState.maybeMap(
+        initial: (_) => true,
+        loading: (_) => true,
+        orElse: () => false,
+      );
+
+      if (isLoading) return null;
+
       final isLoggedIn = authState.maybeMap(
         authenticated: (_) => true,
-        unauthenticated: (_) => false,
         orElse: () => false,
       );
 
@@ -60,4 +73,20 @@ class AppRouter {
     },
     errorBuilder: (_, state) => const NotFoundPage(),
   );
+}
+
+class _GoRouterRefreshNotifier extends ChangeNotifier {
+  _GoRouterRefreshNotifier(Stream<dynamic> stream) {
+    _sub = stream.asBroadcastStream().listen((_) {
+      notifyListeners();
+    });
+  }
+
+  late final StreamSubscription<dynamic> _sub;
+
+  @override
+  void dispose() {
+    _sub.cancel();
+    super.dispose();
+  }
 }
