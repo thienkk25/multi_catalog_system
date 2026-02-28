@@ -247,6 +247,7 @@ class _DomainManagementPageState extends State<DomainManagementPage>
 
           CustomFloatingActionButton(
             permission: ['admin'],
+            isImport: true,
             onPressedImport: () {
               context.goNamed(RouterNames.importFile, extra: 1);
             },

@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:multi_catalog_system/core/domain/entities/auth/user_entry.dart';
 
@@ -19,21 +17,12 @@ class UserManagementAvatarSectionWidget extends StatelessWidget {
         ? entry!.fullName![0].toUpperCase()
         : '?';
 
-    Color radomColor() {
-      return Color.fromARGB(
-        255,
-        Random().nextInt(256),
-        Random().nextInt(256),
-        Random().nextInt(256),
-      );
-    }
-
     return Container(
       width: sizeAvatar ?? 60,
       height: sizeAvatar ?? 60,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: radomColor(),
+        color: Colors.blue.withValues(alpha: .3),
         boxShadow: [
           BoxShadow(
             color: Colors.blue.withValues(alpha: .3),

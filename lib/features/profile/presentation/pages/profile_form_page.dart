@@ -103,18 +103,18 @@ class _ProfileFormPageState extends State<ProfileFormPage> {
                         ),
                       ),
                     ),
-                    CircleAvatar(
-                      radius: 20,
-                      backgroundColor: Colors.blue.shade900,
-                      child: IconButton(
-                        icon: const Icon(
-                          Icons.camera_alt_outlined,
-                          size: 18,
-                          color: Colors.white,
-                        ),
-                        onPressed: () {},
-                      ),
-                    ),
+                    // CircleAvatar(
+                    //   radius: 20,
+                    //   backgroundColor: Colors.blue.shade900,
+                    //   child: IconButton(
+                    //     icon: const Icon(
+                    //       Icons.camera_alt_outlined,
+                    //       size: 18,
+                    //       color: Colors.white,
+                    //     ),
+                    //     onPressed: () {},
+                    //   ),
+                    // ),
                   ],
                 ),
                 CustomInput(

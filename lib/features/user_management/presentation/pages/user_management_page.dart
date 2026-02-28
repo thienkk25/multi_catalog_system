@@ -298,7 +298,11 @@ class _UserManagementPageState extends State<UserManagementPage>
                     },
                   ),
                   CustomFloatingActionButton(
-                    onPressedImport: () {},
+                    permission: ['admin'],
+                    isImport: true,
+                    onPressedImport: () {
+                      context.goNamed(RouterNames.importFile, extra: 5);
+                    },
                     onPressedAdd: () {
                       context.goNamed(
                         RouterNames.userManagementForm,

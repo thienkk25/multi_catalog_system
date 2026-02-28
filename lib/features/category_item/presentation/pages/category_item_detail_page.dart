@@ -107,7 +107,7 @@ class _CategoryItemDetailPageState extends State<CategoryItemDetailPage>
                 previous.entry?.id != current.entry?.id &&
                 current.entry != null,
             listener: (context, state) {
-              context.read<CategoryItemVersionBloc>().add(
+              context.itemVersionBloc.add(
                 CategoryItemVersionEvent.getHistoryVersion(
                   itemId: state.entry!.id!,
                 ),

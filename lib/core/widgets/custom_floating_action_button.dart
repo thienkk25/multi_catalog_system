@@ -3,16 +3,17 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:multi_catalog_system/core/widgets/role_based_widget.dart';
 
 class CustomFloatingActionButton extends StatefulWidget {
+  final List<String> permission;
+  final VoidCallback? onPressedImport;
+  final VoidCallback onPressedAdd;
+  final bool? isImport;
   const CustomFloatingActionButton({
     super.key,
-    required this.onPressedImport,
+    this.onPressedImport,
     required this.onPressedAdd,
-    this.permission,
+    required this.permission,
+    required this.isImport,
   });
-
-  final List<String>? permission;
-  final VoidCallback onPressedImport;
-  final VoidCallback onPressedAdd;
 
   @override
   State<CustomFloatingActionButton> createState() =>
@@ -32,7 +33,7 @@ class _CustomFloatingActionButtonState
   @override
   Widget build(BuildContext context) {
     return RoleBasedWidget(
-      permission: widget.permission ?? ['admin', 'domainOfficer'],
+      permission: widget.permission,
       child: Positioned(
         right: 20,
         bottom: 50,
@@ -45,26 +46,27 @@ class _CustomFloatingActionButtonState
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  AnimatedOpacity(
-                    duration: const Duration(milliseconds: 250),
-                    opacity: isOpen ? 1 : 0,
-                    child: AnimatedScale(
+                  if (widget.isImport ?? false)
+                    AnimatedOpacity(
                       duration: const Duration(milliseconds: 250),
-                      scale: isOpen ? 1 : .8,
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
-                        child: _actionButton(
-                          label: 'Import bằng file',
-                          icon: SvgPicture.asset(
-                            'assets/icons/import-svgrepo-com.svg',
-                            height: 20,
-                            width: 20,
+                      opacity: isOpen ? 1 : 0,
+                      child: AnimatedScale(
+                        duration: const Duration(milliseconds: 250),
+                        scale: isOpen ? 1 : .8,
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: _actionButton(
+                            label: 'Import bằng file',
+                            icon: SvgPicture.asset(
+                              'assets/icons/import-svgrepo-com.svg',
+                              height: 20,
+                              width: 20,
+                            ),
+                            onTap: isOpen ? widget.onPressedImport : null,
                           ),
-                          onTap: isOpen ? widget.onPressedImport : null,
                         ),
                       ),
                     ),
-                  ),
 
                   AnimatedOpacity(
                     duration: const Duration(milliseconds: 200),

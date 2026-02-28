@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:multi_catalog_system/core/data/models/picked_document_file/picked_document_file.dart';
+import 'package:multi_catalog_system/core/utils/extensions/auth_permission_extension.dart';
 import 'package:multi_catalog_system/core/utils/extensions/bloc_extension.dart';
 import 'package:multi_catalog_system/core/widgets/custom_button.dart';
 import 'package:multi_catalog_system/core/widgets/custom_circular_progress.dart';
@@ -18,8 +19,8 @@ import 'package:multi_catalog_system/features/import_file/presentation/widgets/i
 import 'package:multi_catalog_system/features/import_file/presentation/widgets/import_file_file_card.dart';
 
 class ImportFilePage extends StatefulWidget {
-  const ImportFilePage({super.key, required this.typeImport});
-  final int typeImport;
+  final int? typeImport;
+  const ImportFilePage({super.key, this.typeImport});
 
   @override
   State<ImportFilePage> createState() => _ImportFilePageState();
@@ -30,20 +31,25 @@ class _ImportFilePageState extends State<ImportFilePage>
   @override
   bool get wantKeepAlive => true;
 
-  Map<String, dynamic>? fileInfo;
-  dynamic file;
+  Map<String, dynamic>? _fileInfo;
+  dynamic _file;
 
-  int type = 1;
+  int? _type;
 
-  @override
-  void initState() {
-    super.initState();
-    if (widget.typeImport != 0) {
-      type = widget.typeImport;
-    }
-  }
+  bool get _isAdmin => context.hasRole('admin');
 
-  Future<void> importFile() async {
+  List<DropdownMenuItem<int>> get _items => [
+    if (_isAdmin)
+      const DropdownMenuItem(value: 0, child: Text('Lĩnh vực + Nhóm + Mục')),
+    if (_isAdmin) const DropdownMenuItem(value: 1, child: Text('Lĩnh vực')),
+    const DropdownMenuItem(value: 2, child: Text('Nhóm danh mục')),
+    const DropdownMenuItem(value: 3, child: Text('Mục danh mục')),
+    if (_isAdmin) const DropdownMenuItem(value: 4, child: Text('API Key')),
+    if (_isAdmin)
+      const DropdownMenuItem(value: 5, child: Text('Quản lý Người dùng')),
+  ];
+
+  Future<void> _importFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       withData: kIsWeb,
       allowMultiple: false,
@@ -56,16 +62,16 @@ class _ImportFilePageState extends State<ImportFilePage>
     final picked = result.files.first;
 
     setState(() {
-      fileInfo = {
+      _fileInfo = {
         'name': picked.name,
         'path': picked.path,
         'file_size': picked.size,
       };
 
       if (kIsWeb) {
-        file = picked.bytes;
+        _file = picked.bytes;
       } else {
-        file = File(picked.path!);
+        _file = File(picked.path!);
       }
     });
   }
@@ -73,6 +79,9 @@ class _ImportFilePageState extends State<ImportFilePage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    if (widget.typeImport != null) {
+      _type = widget.typeImport;
+    }
     return BlocListener<ImportFileBloc, ImportFileState>(
       listener: (context, state) {
         if (state.error != null) {
@@ -130,7 +139,7 @@ class _ImportFilePageState extends State<ImportFilePage>
                           width: 100,
                           child: CustomButton(
                             onTap: () async {
-                              await importFile();
+                              await _importFile();
                             },
                             colorBackground: Colors.grey.withValues(alpha: .2),
                             textButton: const Text(
@@ -144,13 +153,13 @@ class _ImportFilePageState extends State<ImportFilePage>
                   ),
                 ),
                 const SizedBox(height: 20),
-                if (fileInfo != null && file != null)
+                if (_fileInfo != null && _file != null)
                   ImportFileFileCard(
-                    fileInfo: fileInfo!,
+                    fileInfo: _fileInfo!,
                     onRemove: () {
                       setState(() {
-                        fileInfo = null;
-                        file = null;
+                        _fileInfo = null;
+                        _file = null;
                       });
                     },
                   ),
@@ -160,45 +169,22 @@ class _ImportFilePageState extends State<ImportFilePage>
                     'Loại dữ liệu',
                     style: TextStyle(fontWeight: FontWeight(600)),
                   ),
-                  value: type,
-                  items: [
-                    const DropdownMenuItem(
-                      value: 0,
-                      child: Text('Lĩnh vực + Nhóm + Mục'),
-                    ),
-                    const DropdownMenuItem(value: 1, child: Text('Lĩnh vực')),
-                    const DropdownMenuItem(
-                      value: 2,
-                      child: Text('Nhóm danh mục'),
-                    ),
-                    const DropdownMenuItem(
-                      value: 3,
-                      child: Text('Mục danh mục'),
-                    ),
-                    const DropdownMenuItem(
-                      value: 4,
-                      child: Text('Văn bản pháp lý'),
-                    ),
-                    const DropdownMenuItem(value: 5, child: Text('API Key')),
-                    const DropdownMenuItem(
-                      value: 6,
-                      child: Text('Quản lý Người dùng'),
-                    ),
-                  ],
-                  onChanged: widget.typeImport != 0
-                      ? null
-                      : (value) {
-                          setState(() {
-                            type = value!;
-                          });
-                        },
+                  hint: '--- Chọn loại dữ liệu ---',
+                  value: _type,
+                  items: _items,
+                  onChanged: (value) {
+                    setState(() {
+                      _type = value!;
+                    });
+                  },
                 ),
                 const SizedBox(height: 20),
-                NoteWidget(
-                  icon: Icons.info,
-                  color: Colors.blue,
-                  note: _noteInforByType(type),
-                ),
+                if (_type != null)
+                  NoteWidget(
+                    icon: Icons.info,
+                    color: Colors.blue,
+                    note: _noteInforByType(_type),
+                  ),
                 const SizedBox(height: 10),
                 const NoteWidget(
                   icon: Icons.warning,
@@ -237,7 +223,7 @@ class _ImportFilePageState extends State<ImportFilePage>
         return 'File CSV phải chứa đầy đủ 3 cấp: Lĩnh vực → Nhóm danh mục → Mục danh mục. Dữ liệu sẽ được import theo thứ tự và tự động liên kết.';
 
       case 1:
-        return 'Chỉ import danh sách Lĩnh vực.';
+        return 'Chỉ Import danh sách Lĩnh vực.';
 
       case 2:
         return 'Import Nhóm danh mục. Mỗi nhóm phải tham chiếu tới Lĩnh vực đã tồn tại trong hệ thống.';
@@ -246,45 +232,47 @@ class _ImportFilePageState extends State<ImportFilePage>
         return 'Import Mục danh mục. Mỗi mục phải liên kết với Nhóm danh mục tương ứng.';
 
       case 4:
-        return 'Import Văn bản pháp lý. Có thể bao gồm số hiệu, ngày ban hành và file đính kèm.';
-
-      case 5:
         return 'Quản lý API Key. Dùng để tạo, cập nhật hoặc thu hồi khóa truy cập cho hệ thống bên ngoài.';
 
-      case 6:
-        return 'Quản lý Người dùng. Cho phép import danh sách người dùng và phân quyền truy cập.';
+      case 5:
+        return 'Quản lý Người dùng. Cho phép Import danh sách người dùng và phân quyền truy cập.';
 
       default:
-        return '';
+        return '-';
     }
   }
 
   void _onImportFile(BuildContext context) {
-    if (fileInfo == null || file == null) return;
-    if (type == 0) {
+    if (_fileInfo == null || _file == null || _type == null) {
+      context.notificationCubit.warning(
+        'Vui lòng chọn file cần nhập hoặc loại dữ liệu',
+      );
+      return;
+    }
+    if (_type == 0) {
       context.importFileBloc.add(
         ImportFileEvent.importSingleFile(
           file: PickedDocumentFile(
-            file: kIsWeb ? null : file!,
-            bytes: kIsWeb ? file! : null,
-            name: fileInfo!['name'],
-            path: fileInfo!['path'],
-            size: fileInfo!['file_size'],
+            file: kIsWeb ? null : _file!,
+            bytes: kIsWeb ? _file! : null,
+            name: _fileInfo!['name'],
+            path: _fileInfo!['path'],
+            size: _fileInfo!['file_size'],
           ),
-          type: type,
+          type: _type!,
         ),
       );
     } else {
       context.importFileBloc.add(
         ImportFileEvent.importSingleFile(
           file: PickedDocumentFile(
-            file: kIsWeb ? null : file!,
-            bytes: kIsWeb ? file! : null,
-            name: fileInfo!['name'],
-            path: fileInfo!['path'],
-            size: fileInfo!['file_size'],
+            file: kIsWeb ? null : _file!,
+            bytes: kIsWeb ? _file! : null,
+            name: _fileInfo!['name'],
+            path: _fileInfo!['path'],
+            size: _fileInfo!['file_size'],
           ),
-          type: type,
+          type: _type!,
         ),
       );
     }

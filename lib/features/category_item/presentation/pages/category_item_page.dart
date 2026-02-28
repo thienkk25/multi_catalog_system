@@ -308,6 +308,8 @@ class _CategoryItemPageState extends State<CategoryItemPage>
                     },
                   ),
                   CustomFloatingActionButton(
+                    permission: ['admin', 'domainOfficer'],
+                    isImport: true,
                     onPressedImport: () {
                       context.goNamed(RouterNames.importFile, extra: 3);
                     },
