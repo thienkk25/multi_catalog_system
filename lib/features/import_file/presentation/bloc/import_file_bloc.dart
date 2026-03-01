@@ -41,12 +41,14 @@ class ImportFileBloc extends Bloc<ImportFileEvent, ImportFileState> {
         final result = await importCatalogFileUseCase(file: file);
         result.fold(
           (l) => emit(state.copyWith(isLoading: false, error: mapFailure(l))),
-          (r) => emit(
-            state.copyWith(
-              isLoading: false,
-              success: ' Nhập từ file thành công',
-            ),
-          ),
+          (r) {
+            emit(
+              state.copyWith(
+                isLoading: false,
+                success: 'Nhập dữ liệu từ tệp thành công',
+              ),
+            );
+          },
         );
       },
     );

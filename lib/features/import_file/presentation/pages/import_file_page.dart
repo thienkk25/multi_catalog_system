@@ -220,25 +220,25 @@ class _ImportFilePageState extends State<ImportFilePage>
   String _noteInforByType(int? type) {
     switch (type) {
       case 0:
-        return 'File CSV phải chứa đầy đủ 3 cấp: Lĩnh vực → Nhóm danh mục → Mục danh mục. Dữ liệu sẽ được import theo thứ tự và tự động liên kết.';
+        return 'Tệp dũ liệu phải chứa đầy đủ 3 cấp: Lĩnh vực → Nhóm danh mục → Mục danh mục. Dữ liệu sẽ được nhập theo thứ tự và tự động liên kết.';
 
       case 1:
-        return 'Chỉ Import danh sách Lĩnh vực.';
+        return 'Chỉ nhập dữ liệu tệp danh sách Lĩnh vực.';
 
       case 2:
-        return 'Import Nhóm danh mục. Mỗi nhóm phải tham chiếu tới Lĩnh vực đã tồn tại trong hệ thống.';
+        return 'Nhập dữ liệu tệp Nhóm danh mục. Mỗi nhóm phải tham chiếu tới Lĩnh vực đã tồn tại trong hệ thống.';
 
       case 3:
-        return 'Import Mục danh mục. Mỗi mục phải liên kết với Nhóm danh mục tương ứng.';
+        return 'Nhập dữ liệu tệp Mục danh mục. Mỗi mục phải liên kết với Nhóm danh mục tương ứng.';
 
       case 4:
-        return 'Quản lý API Key. Dùng để tạo, cập nhật hoặc thu hồi khóa truy cập cho hệ thống bên ngoài.';
+        return 'Quản lý API Key. Dùng để tạo khóa nhanh bằng tệp. Cho phép Import danh sách khóa nhanh và phân quyền truy cập cho hệ thống bên ngoài.';
 
       case 5:
-        return 'Quản lý Người dùng. Cho phép Import danh sách người dùng và phân quyền truy cập.';
+        return 'Quản lý Người dùng. Cho phép nhập dữ liệu tệp danh sách người dùng và phân quyền truy cập.';
 
       default:
-        return '-';
+        return '';
     }
   }
 
