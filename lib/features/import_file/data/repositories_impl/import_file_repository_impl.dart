@@ -44,8 +44,8 @@ class ImportFileRepositoryImpl implements ImportFileRepository {
       final formData = FormData();
 
       final multipartFile = kIsWeb
-          ? MultipartFile.fromBytes(file.bytes!, filename: file.path)
-          : await MultipartFile.fromFile(file.file!.path, filename: file.path);
+          ? MultipartFile.fromBytes(file.bytes!, filename: file.name)
+          : await MultipartFile.fromFile(file.file!.path, filename: file.name);
 
       formData.files.add(MapEntry('file', multipartFile));
       await remoteDataSource.importCatalogFile(data: formData);

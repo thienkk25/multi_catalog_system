@@ -251,7 +251,7 @@ class _ImportFilePageState extends State<ImportFilePage>
     }
     if (_type == 0) {
       context.importFileBloc.add(
-        ImportFileEvent.importSingleFile(
+        ImportFileEvent.importCatalogFile(
           file: PickedDocumentFile(
             file: kIsWeb ? null : _file!,
             bytes: kIsWeb ? _file! : null,
@@ -259,7 +259,6 @@ class _ImportFilePageState extends State<ImportFilePage>
             path: _fileInfo!['path'],
             size: _fileInfo!['file_size'],
           ),
-          type: _type!,
         ),
       );
     } else {
