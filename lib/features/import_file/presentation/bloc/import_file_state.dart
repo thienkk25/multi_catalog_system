@@ -8,5 +8,6 @@ abstract class ImportFileState with _$ImportFileState {
     @Default(false) bool isLoading,
     String? error,
     String? success,
+    Map<String, dynamic>? result,
   }) = _ImportFileState;
 }

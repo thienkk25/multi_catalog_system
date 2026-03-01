@@ -3,11 +3,11 @@ import 'package:multi_catalog_system/core/data/models/picked_document_file/picke
 import 'package:multi_catalog_system/core/error/failures.dart';
 
 abstract class ImportFileRepository {
-  Future<Either<Failure, void>> importSingleFile({
+  Future<Either<Failure, Map<String, dynamic>>> importSingleFile({
     required PickedDocumentFile file,
     required int type,
   });
-  Future<Either<Failure, void>> importCatalogFile({
+  Future<Either<Failure, Map<String, dynamic>>> importCatalogFile({
     required PickedDocumentFile file,
   });
 }

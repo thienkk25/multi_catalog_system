@@ -8,7 +8,9 @@ class ImportCatalogFileUseCase {
 
   ImportCatalogFileUseCase({required this.repository});
 
-  Future<Either<Failure, void>> call({required PickedDocumentFile file}) {
+  Future<Either<Failure, Map<String, dynamic>>> call({
+    required PickedDocumentFile file,
+  }) {
     return repository.importCatalogFile(file: file);
   }
 }

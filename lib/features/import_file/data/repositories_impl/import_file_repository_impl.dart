@@ -14,7 +14,7 @@ class ImportFileRepositoryImpl implements ImportFileRepository {
   ImportFileRepositoryImpl({required this.remoteDataSource});
 
   @override
-  Future<Either<Failure, Unit>> importSingleFile({
+  Future<Either<Failure, Map<String, dynamic>>> importSingleFile({
     required PickedDocumentFile file,
     required int type,
   }) async {
@@ -27,8 +27,8 @@ class ImportFileRepositoryImpl implements ImportFileRepository {
 
       formData.files.add(MapEntry('file', multipartFile));
 
-      await remoteDataSource.importSingleFile(data: formData);
-      return const Right(unit);
+      final result = await remoteDataSource.importSingleFile(data: formData);
+      return Right(result);
     } on AppException catch (e) {
       return Left(mapExceptionToFailure(e));
     } catch (e) {
@@ -37,7 +37,7 @@ class ImportFileRepositoryImpl implements ImportFileRepository {
   }
 
   @override
-  Future<Either<Failure, Unit>> importCatalogFile({
+  Future<Either<Failure, Map<String, dynamic>>> importCatalogFile({
     required PickedDocumentFile file,
   }) async {
     try {
@@ -48,8 +48,8 @@ class ImportFileRepositoryImpl implements ImportFileRepository {
           : await MultipartFile.fromFile(file.file!.path, filename: file.name);
 
       formData.files.add(MapEntry('file', multipartFile));
-      await remoteDataSource.importCatalogFile(data: formData);
-      return const Right(unit);
+      final result = await remoteDataSource.importCatalogFile(data: formData);
+      return Right(result);
     } on AppException catch (e) {
       return Left(mapExceptionToFailure(e));
     } catch (e) {

@@ -6,7 +6,7 @@ import 'package:multi_catalog_system/features/import_file/domain/repositories/im
 class ImportSingleFileUseCase {
   final ImportFileRepository repository;
   ImportSingleFileUseCase({required this.repository});
-  Future<Either<Failure, void>> call({
+  Future<Either<Failure, Map<String, dynamic>>> call({
     required PickedDocumentFile file,
     required int type,
   }) {

@@ -24,7 +24,14 @@ class ImportFileBloc extends Bloc<ImportFileEvent, ImportFileState> {
   ) async {
     await event.when(
       importSingleFile: (file, type) async {
-        emit(state.copyWith(isLoading: true, error: null, success: null));
+        emit(
+          state.copyWith(
+            isLoading: true,
+            error: null,
+            success: null,
+            result: null,
+          ),
+        );
         final result = await importSingleFileUseCase(file: file, type: type);
         result.fold(
           (l) => emit(state.copyWith(isLoading: false, error: mapFailure(l))),
@@ -32,23 +39,30 @@ class ImportFileBloc extends Bloc<ImportFileEvent, ImportFileState> {
             state.copyWith(
               isLoading: false,
               success: 'Nhập từ file thành công',
+              result: r,
             ),
           ),
         );
       },
       importCatalogFile: (file) async {
-        emit(state.copyWith(isLoading: true, error: null, success: null));
+        emit(
+          state.copyWith(
+            isLoading: true,
+            error: null,
+            success: null,
+            result: null,
+          ),
+        );
         final result = await importCatalogFileUseCase(file: file);
         result.fold(
           (l) => emit(state.copyWith(isLoading: false, error: mapFailure(l))),
-          (r) {
-            emit(
-              state.copyWith(
-                isLoading: false,
-                success: 'Nhập dữ liệu từ tệp thành công',
-              ),
-            );
-          },
+          (r) => emit(
+            state.copyWith(
+              isLoading: false,
+              success: 'Nhập dữ liệu từ tệp thành công',
+              result: r,
+            ),
+          ),
         );
       },
     );

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -30,7 +31,8 @@ class _ImportFilePageState extends State<ImportFilePage>
     with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
-
+  final verticalController = ScrollController();
+  final horizontalController = ScrollController();
   Map<String, dynamic>? _fileInfo;
   dynamic _file;
 
@@ -192,7 +194,7 @@ class _ImportFilePageState extends State<ImportFilePage>
                   note:
                       'Chú ý: Khi import bản ghi trùng mã có thể bị ghi đè dữ liệu.',
                 ),
-                const SizedBox(height: 40),
+                const SizedBox(height: 20),
                 BlocSelector<ImportFileBloc, ImportFileState, bool>(
                   selector: (state) => state.isLoading,
                   builder: (context, isLoading) => CustomButton(
@@ -208,6 +210,54 @@ class _ImportFilePageState extends State<ImportFilePage>
                             ),
                           ),
                   ),
+                ),
+                const SizedBox(height: 20),
+                const Text('Kết quả: '),
+                BlocSelector<
+                  ImportFileBloc,
+                  ImportFileState,
+                  Map<String, dynamic>?
+                >(
+                  selector: (state) => state.result,
+                  builder: (context, result) {
+                    final prettyJson = const JsonEncoder.withIndent(
+                      '  ',
+                    ).convert(result ?? {});
+
+                    return Container(
+                      height: 300,
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.withValues(alpha: .1),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.blue.shade300),
+                      ),
+                      child: Scrollbar(
+                        controller: verticalController,
+                        thumbVisibility: true,
+                        child: SingleChildScrollView(
+                          controller: verticalController,
+                          child: Scrollbar(
+                            controller: horizontalController,
+                            thumbVisibility: true,
+                            notificationPredicate: (notif) => notif.depth == 1,
+                            child: SingleChildScrollView(
+                              controller: horizontalController,
+                              scrollDirection: Axis.horizontal,
+                              child: SelectableText(
+                                prettyJson,
+                                style: const TextStyle(
+                                  fontFamily: 'monospace',
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),

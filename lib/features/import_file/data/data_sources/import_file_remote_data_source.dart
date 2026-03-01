@@ -3,9 +3,9 @@ import 'package:multi_catalog_system/core/config/networks/base_remote_data_sourc
 import 'package:multi_catalog_system/core/error/exceptions.dart';
 
 abstract class ImportFileRemoteDataSource {
-  Future<void> importSingleFile({required FormData data});
+  Future<Map<String, dynamic>> importSingleFile({required FormData data});
 
-  Future<void> importCatalogFile({required FormData data});
+  Future<Map<String, dynamic>> importCatalogFile({required FormData data});
 }
 
 class ImportFileRemoteDataSourceImpl extends BaseRemoteDataSource
@@ -15,13 +15,17 @@ class ImportFileRemoteDataSourceImpl extends BaseRemoteDataSource
   ImportFileRemoteDataSourceImpl({required this.dio});
 
   @override
-  Future<void> importSingleFile({required FormData data}) async {
+  Future<Map<String, dynamic>> importSingleFile({
+    required FormData data,
+  }) async {
     try {
-      await dio.post(
+      final response = await dio.post(
         '/import/single',
         data: data,
         options: Options(contentType: Headers.multipartFormDataContentType),
       );
+
+      return response.data;
     } on DioException catch (e) {
       handleDioError(e);
     } catch (e) {
@@ -30,13 +34,17 @@ class ImportFileRemoteDataSourceImpl extends BaseRemoteDataSource
   }
 
   @override
-  Future<void> importCatalogFile({required FormData data}) async {
+  Future<Map<String, dynamic>> importCatalogFile({
+    required FormData data,
+  }) async {
     try {
-      await dio.post(
+      final response = await dio.post(
         '/import/catalog',
         data: data,
         options: Options(contentType: Headers.multipartFormDataContentType),
       );
+
+      return response.data;
     } on DioException catch (e) {
       handleDioError(e);
     } catch (e) {
