@@ -220,9 +220,21 @@ class _ImportFilePageState extends State<ImportFilePage>
                 >(
                   selector: (state) => state.result,
                   builder: (context, result) {
+                    if (result == null) {
+                      return Container(
+                        height: 40,
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.blue.withValues(alpha: .1),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.blue.shade300),
+                        ),
+                      );
+                    }
                     final prettyJson = const JsonEncoder.withIndent(
                       '  ',
-                    ).convert(result ?? {});
+                    ).convert(result);
 
                     return Container(
                       height: 300,
