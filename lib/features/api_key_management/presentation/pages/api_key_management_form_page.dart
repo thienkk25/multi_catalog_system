@@ -19,7 +19,7 @@ class ApiKeyManagementFormPage extends StatefulWidget {
 class _ApiKeyManagementFormPageState extends State<ApiKeyManagementFormPage> {
   final TextEditingController _keyController = TextEditingController();
   final TextEditingController _systemNameController = TextEditingController();
-  List<String> _allowedDomains = [];
+  List<DomainRefEntry> _allowedDomains = [];
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey _bottomBarKey = GlobalKey();
@@ -91,9 +91,7 @@ class _ApiKeyManagementFormPageState extends State<ApiKeyManagementFormPage> {
                               isDetail: false,
                               onSelected: (value) {
                                 setState(() {
-                                  _allowedDomains = value
-                                      .map((e) => e.code!)
-                                      .toList();
+                                  _allowedDomains = value;
                                 });
                               },
                             ),

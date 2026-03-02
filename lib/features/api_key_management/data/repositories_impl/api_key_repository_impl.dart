@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:multi_catalog_system/core/domain/entities/domain/domain_ref_entry.dart';
 import 'package:multi_catalog_system/core/domain/entities/page/page_entry.dart';
 import 'package:multi_catalog_system/core/domain/entities/page/pagination_entry.dart';
 import 'package:multi_catalog_system/core/error/exceptions.dart';
@@ -17,7 +18,9 @@ class ApiKeyRepositoryImpl implements ApiKeyRepository {
       id: m.id,
       key: m.key,
       systemName: m.systemName,
-      allowedDomains: m.allowedDomains,
+      allowedDomains: m.allowedDomains
+          .map((e) => DomainRefEntry(id: e.id, name: e.name, code: e.code))
+          .toList(),
       status: m.status,
       createdBy: m.createdBy,
       createdAt: m.createdAt,

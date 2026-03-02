@@ -4,7 +4,7 @@ import 'package:multi_catalog_system/core/domain/entities/domain/domain_ref_entr
 import 'package:multi_catalog_system/core/router/router_names.dart';
 
 class ApiKeyManagementPermissionFieldWidget extends StatefulWidget {
-  final List<String> fields;
+  final List<DomainRefEntry> fields;
   final bool isDetail;
   final ValueChanged<List<DomainRefEntry>>? onSelected;
   const ApiKeyManagementPermissionFieldWidget({
