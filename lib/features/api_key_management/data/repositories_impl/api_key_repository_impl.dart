@@ -29,7 +29,9 @@ class ApiKeyRepositoryImpl implements ApiKeyRepository {
 
   Map<String, dynamic> _createPayload(ApiKeyEntry e) => {
     'system_name': e.systemName,
-    'allowed_domains': e.allowedDomains,
+    'allowed_domains': e.allowedDomains
+        ?.map((e) => {'id': e.id, 'code': e.code, 'name': e.name})
+        .toList(),
   };
 
   @override

@@ -94,7 +94,7 @@ class _ApiKeyManagementPermissionFieldWidgetState
                       side: BorderSide(color: Colors.blue.shade300),
                       onPressed: () async {
                         final raw = await context.pushNamed(
-                          RouterNames.userManagementAddDomains,
+                          RouterNames.apiKeyAddDomains,
                           extra: _domains,
                         );
 

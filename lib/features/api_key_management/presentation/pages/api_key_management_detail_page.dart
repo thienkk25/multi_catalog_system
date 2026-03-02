@@ -47,7 +47,11 @@ class ApiKeyManagementDetailPage extends StatelessWidget {
                       ),
                       _InfoRow(
                         label: 'Lĩnh vực cho phép',
-                        value: (entry.allowedDomains ?? []).join(', '),
+                        value:
+                            entry.allowedDomains
+                                ?.map((e) => e.name)
+                                .join(', ') ??
+                            '-',
                       ),
                       _InfoRow(
                         label: 'Ngày tạo',

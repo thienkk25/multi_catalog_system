@@ -86,6 +86,14 @@ class _ApiKeyManagementAddDomainsPageState
   }
 
   @override
+  void didUpdateWidget(covariant ApiKeyManagementAddDomainsPage oldWidget) {
+    if (widget.fields != oldWidget.fields) {
+      _selected = List.from(widget.fields);
+    }
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
   void dispose() {
     _searchController.dispose();
     _scrollController.dispose();

@@ -63,7 +63,7 @@ class ApiKeyManagementCard extends StatelessWidget {
                     SizedBox(height: 10),
                     Text('Tên: ${entry.systemName}'),
                     Text(
-                      'Quyền: ${entry.allowedDomains}',
+                      'Quyền: ${entry.allowedDomains?.map((e) => e.name).join(', ')}',
                       style: TextStyle(color: Colors.grey),
                     ),
                   ],
