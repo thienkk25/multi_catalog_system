@@ -5,8 +5,8 @@ import 'package:multi_catalog_system/core/data/models/picked_document_file/picke
 import 'package:multi_catalog_system/core/error/exception_mapper.dart';
 import 'package:multi_catalog_system/core/error/exceptions.dart';
 import 'package:multi_catalog_system/core/error/failures.dart';
-import 'package:multi_catalog_system/features/import_file/data/data_sources/import_file_remote_data_source.dart';
-import 'package:multi_catalog_system/features/import_file/domain/repositories/import_file_repository.dart';
+import 'package:multi_catalog_system/features/import_export_file/data/data_sources/import_file_remote_data_source.dart';
+import 'package:multi_catalog_system/features/import_export_file/domain/repositories/import_file_repository.dart';
 
 class ImportFileRepositoryImpl implements ImportFileRepository {
   final ImportFileRemoteDataSource remoteDataSource;

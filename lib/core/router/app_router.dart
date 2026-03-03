@@ -13,7 +13,7 @@ import 'auth/auth_routes.dart';
 import 'category_group/category_group_routes.dart';
 import 'category_item/category_item_routes.dart';
 import 'domain_management/domain_management_routes.dart';
-import 'import_file/import_file_routes.dart';
+import 'import_export_file/import_file_routes.dart';
 import 'legal_document/legal_document_routes.dart';
 import 'profile/profile_routes.dart';
 import 'system_history_management/system_history_management_routes.dart';

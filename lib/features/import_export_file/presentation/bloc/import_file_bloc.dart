@@ -1,6 +1,6 @@
 import 'package:multi_catalog_system/core/utils/formatter/map_failure_formatter.dart';
-import 'package:multi_catalog_system/features/import_file/domain/use_cases/import_catalog_file_use_case.dart';
-import 'package:multi_catalog_system/features/import_file/domain/use_cases/import_single_file_use_case.dart';
+import 'package:multi_catalog_system/features/import_export_file/domain/use_cases/import_catalog_file_use_case.dart';
+import 'package:multi_catalog_system/features/import_export_file/domain/use_cases/import_single_file_use_case.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 

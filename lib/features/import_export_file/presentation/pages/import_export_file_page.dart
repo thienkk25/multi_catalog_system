@@ -13,21 +13,21 @@ import 'package:multi_catalog_system/core/widgets/custom_button.dart';
 import 'package:multi_catalog_system/core/widgets/custom_circular_progress.dart';
 import 'package:multi_catalog_system/core/widgets/custom_dropdown_button.dart';
 import 'package:multi_catalog_system/core/widgets/note_widget.dart';
-import 'package:multi_catalog_system/features/import_file/presentation/bloc/import_file_bloc.dart';
-import 'package:multi_catalog_system/features/import_file/presentation/bloc/import_file_event.dart';
-import 'package:multi_catalog_system/features/import_file/presentation/bloc/import_file_state.dart';
-import 'package:multi_catalog_system/features/import_file/presentation/widgets/import_file_dashed_boder_widget.dart';
-import 'package:multi_catalog_system/features/import_file/presentation/widgets/import_file_file_card.dart';
+import 'package:multi_catalog_system/features/import_export_file/presentation/bloc/import_file_bloc.dart';
+import 'package:multi_catalog_system/features/import_export_file/presentation/bloc/import_file_event.dart';
+import 'package:multi_catalog_system/features/import_export_file/presentation/bloc/import_file_state.dart';
+import 'package:multi_catalog_system/features/import_export_file/presentation/widgets/import_file_dashed_boder_widget.dart';
+import 'package:multi_catalog_system/features/import_export_file/presentation/widgets/import_file_file_card.dart';
 
-class ImportFilePage extends StatefulWidget {
+class ImportExportFilePage extends StatefulWidget {
   final int? typeImport;
-  const ImportFilePage({super.key, this.typeImport});
+  const ImportExportFilePage({super.key, this.typeImport});
 
   @override
-  State<ImportFilePage> createState() => _ImportFilePageState();
+  State<ImportExportFilePage> createState() => _ImportExportFilePageState();
 }
 
-class _ImportFilePageState extends State<ImportFilePage>
+class _ImportExportFilePageState extends State<ImportExportFilePage>
     with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
