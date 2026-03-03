@@ -4,15 +4,15 @@ import 'package:multi_catalog_system/core/widgets/role_based_widget.dart';
 
 class CustomFloatingActionButton extends StatefulWidget {
   final List<String> permission;
-  final VoidCallback? onPressedImport;
+  final VoidCallback? onPressedImportExport;
   final VoidCallback onPressedAdd;
-  final bool? isImport;
+  final bool? isImportExport;
   const CustomFloatingActionButton({
     super.key,
-    this.onPressedImport,
+    this.onPressedImportExport,
     required this.onPressedAdd,
     required this.permission,
-    required this.isImport,
+    required this.isImportExport,
   });
 
   @override
@@ -25,6 +25,7 @@ class _CustomFloatingActionButtonState
   bool isOpen = false;
 
   void toggle() {
+    if (!mounted) return;
     setState(() {
       isOpen = !isOpen;
     });
@@ -44,25 +45,25 @@ class _CustomFloatingActionButtonState
               ignoring: !isOpen,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  if (widget.isImport ?? false)
+                  if (widget.isImportExport ?? false)
                     AnimatedOpacity(
                       duration: const Duration(milliseconds: 250),
                       opacity: isOpen ? 1 : 0,
                       child: AnimatedScale(
                         duration: const Duration(milliseconds: 250),
-                        scale: isOpen ? 1 : .8,
+                        scale: isOpen ? 1 : .5,
                         child: Padding(
                           padding: const EdgeInsets.only(bottom: 10),
                           child: _actionButton(
-                            label: 'Import bằng file',
+                            label: 'Nhập / Xuất dữ liệu với File',
                             icon: SvgPicture.asset(
                               'assets/icons/import-svgrepo-com.svg',
                               height: 20,
                               width: 20,
                             ),
-                            onTap: isOpen ? widget.onPressedImport : null,
+                            onTap: isOpen ? widget.onPressedImportExport : null,
                           ),
                         ),
                       ),
@@ -73,7 +74,7 @@ class _CustomFloatingActionButtonState
                     opacity: isOpen ? 1 : 0,
                     child: AnimatedScale(
                       duration: const Duration(milliseconds: 200),
-                      scale: isOpen ? 1 : .8,
+                      scale: isOpen ? 1 : .5,
                       child: Padding(
                         padding: const EdgeInsets.only(bottom: 10),
                         child: _actionButton(

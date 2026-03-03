@@ -244,7 +244,7 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
           ),
           CustomFloatingActionButton(
             permission: ['admin'],
-            isImport: false,
+            isImportExport: false,
             onPressedAdd: () {
               context.goNamed(
                 RouterNames.legalDocumentForm,

@@ -251,9 +251,9 @@ class _ApiKeyManagementPageState extends State<ApiKeyManagementPage>
 
           CustomFloatingActionButton(
             permission: ['admin'],
-            isImport: true,
-            onPressedImport: () {
-              context.goNamed(RouterNames.importFile, extra: 4);
+            isImportExport: true,
+            onPressedImportExport: () {
+              context.goNamed(RouterNames.importExportFile, extra: 4);
             },
             onPressedAdd: () {
               context.goNamed(RouterNames.apiKeyForm);

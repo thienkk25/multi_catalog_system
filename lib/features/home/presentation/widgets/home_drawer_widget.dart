@@ -164,7 +164,7 @@ class _MainDrawer extends StatelessWidget {
                   'assets/icons/import-svgrepo-com.svg',
                   height: 20,
                 ),
-                title: 'Nhập dữ liệu File',
+                title: 'Nhập / Xuất dữ liệu File',
                 pageIndex: 4,
                 onSelectTab: onSelectTab,
                 selected: currentIndex == 4,

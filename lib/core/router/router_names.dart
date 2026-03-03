@@ -9,7 +9,7 @@ class RouterNames {
   static const String changePassword = 'changePassword';
 
   // Import
-  static const String importFile = 'importFile';
+  static const String importExportFile = 'importExportFile';
 
   // Domain
   static const String domains = 'domains';

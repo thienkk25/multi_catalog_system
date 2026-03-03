@@ -240,9 +240,9 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
           ),
           CustomFloatingActionButton(
             permission: ['admin', 'domainOfficer'],
-            isImport: true,
-            onPressedImport: () {
-              context.goNamed(RouterNames.importFile, extra: 2);
+            isImportExport: true,
+            onPressedImportExport: () {
+              context.goNamed(RouterNames.importExportFile, extra: 2);
             },
             onPressedAdd: () {
               context.goNamed(

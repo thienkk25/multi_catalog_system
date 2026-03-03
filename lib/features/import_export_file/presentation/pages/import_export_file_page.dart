@@ -13,6 +13,9 @@ import 'package:multi_catalog_system/core/widgets/custom_button.dart';
 import 'package:multi_catalog_system/core/widgets/custom_circular_progress.dart';
 import 'package:multi_catalog_system/core/widgets/custom_dropdown_button.dart';
 import 'package:multi_catalog_system/core/widgets/note_widget.dart';
+import 'package:multi_catalog_system/features/import_export_file/presentation/bloc/export_file_bloc.dart';
+import 'package:multi_catalog_system/features/import_export_file/presentation/bloc/export_file_event.dart';
+import 'package:multi_catalog_system/features/import_export_file/presentation/bloc/export_file_state.dart';
 import 'package:multi_catalog_system/features/import_export_file/presentation/bloc/import_file_bloc.dart';
 import 'package:multi_catalog_system/features/import_export_file/presentation/bloc/import_file_event.dart';
 import 'package:multi_catalog_system/features/import_export_file/presentation/bloc/import_file_state.dart';
@@ -37,6 +40,7 @@ class _ImportExportFilePageState extends State<ImportExportFilePage>
   dynamic _file;
 
   int? _type;
+  String _format = 'xlsx';
 
   bool get _isAdmin => context.hasRole('admin');
 
@@ -84,16 +88,31 @@ class _ImportExportFilePageState extends State<ImportExportFilePage>
     if (widget.typeImport != null) {
       _type = widget.typeImport;
     }
-    return BlocListener<ImportFileBloc, ImportFileState>(
-      listener: (context, state) {
-        if (state.error != null) {
-          context.notificationCubit.error(state.error!);
-        }
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<ImportFileBloc, ImportFileState>(
+          listener: (context, state) {
+            if (state.error != null) {
+              context.notificationCubit.error(state.error!);
+            }
 
-        if (state.success != null) {
-          context.notificationCubit.success(state.success!);
-        }
-      },
+            if (state.success != null) {
+              context.notificationCubit.success(state.success!);
+            }
+          },
+        ),
+        BlocListener<ExportFileBloc, ExportFileState>(
+          listener: (context, state) {
+            if (state.error != null) {
+              context.notificationCubit.error(state.error!);
+            }
+
+            if (state.success != null) {
+              context.notificationCubit.success(state.success!);
+            }
+          },
+        ),
+      ],
       child: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -192,27 +211,88 @@ class _ImportExportFilePageState extends State<ImportExportFilePage>
                   icon: Icons.warning,
                   color: Colors.red,
                   note:
-                      'Chú ý: Khi import bản ghi trùng mã có thể bị ghi đè dữ liệu.',
+                      'Chú ý: Khi nhập dữ liệu bản ghi trùng mã có thể bị ghi đè dữ liệu.',
                 ),
                 const SizedBox(height: 20),
-                BlocSelector<ImportFileBloc, ImportFileState, bool>(
-                  selector: (state) => state.isLoading,
-                  builder: (context, isLoading) => CustomButton(
-                    onTap: isLoading ? null : () => _onImportFile(context),
-                    colorBackground: isLoading ? Colors.grey : Colors.blue,
-                    textButton: isLoading
-                        ? const CustomCircularProgressButton()
-                        : const Text(
-                            'Nhập dữ liệu',
-                            style: TextStyle(
-                              fontWeight: FontWeight(600),
-                              color: Colors.white,
+                CustomDropdownButton<String>(
+                  lable: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Định dạng xuất dữ liệu (Nhập dữ liệu tệp bỏ qua)',
+                        style: TextStyle(fontWeight: FontWeight(600)),
+                      ),
+                      const Text(
+                        'Tùy chọn',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                  hint: '--- Chọn định dạng xuất dữ liệu ---',
+                  value: _format,
+                  items: [
+                    DropdownMenuItem(value: 'csv', child: Text('CSV')),
+                    DropdownMenuItem(value: 'xlsx', child: Text('XLSX')),
+                  ],
+                  onChanged: (value) {
+                    setState(() {
+                      _format = value!;
+                    });
+                  },
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  spacing: 10,
+                  children: [
+                    Expanded(
+                      child:
+                          BlocSelector<ExportFileBloc, ExportFileState, bool>(
+                            selector: (state) => state.isLoading,
+                            builder: (context, isLoading) => CustomButton(
+                              onTap: isLoading
+                                  ? null
+                                  : () => _onExportFile(context),
+                              colorBackground: isLoading
+                                  ? Colors.grey
+                                  : Colors.blue,
+                              textButton: isLoading
+                                  ? const CustomCircularProgressButton()
+                                  : const Text(
+                                      'Xuất dữ liệu',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight(600),
+                                        color: Colors.white,
+                                      ),
+                                    ),
                             ),
                           ),
-                  ),
+                    ),
+                    Expanded(
+                      child:
+                          BlocSelector<ImportFileBloc, ImportFileState, bool>(
+                            selector: (state) => state.isLoading,
+                            builder: (context, isLoading) => CustomButton(
+                              onTap: isLoading
+                                  ? null
+                                  : () => _onImportFile(context),
+                              colorBackground: isLoading
+                                  ? Colors.grey
+                                  : Colors.blue,
+                              textButton: isLoading
+                                  ? const CustomCircularProgressButton()
+                                  : const Text(
+                                      'Nhập dữ liệu',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight(600),
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                            ),
+                          ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 20),
-                const Text('Kết quả: '),
                 BlocSelector<
                   ImportFileBloc,
                   ImportFileState,
@@ -221,53 +301,53 @@ class _ImportExportFilePageState extends State<ImportExportFilePage>
                   selector: (state) => state.result,
                   builder: (context, result) {
                     if (result == null) {
-                      return Container(
-                        height: 40,
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.blue.withValues(alpha: .1),
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.blue.shade300),
-                        ),
-                      );
+                      return const SizedBox.shrink();
                     }
                     final prettyJson = const JsonEncoder.withIndent(
                       '  ',
                     ).convert(result);
 
-                    return Container(
-                      height: 300,
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.blue.withValues(alpha: .1),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.blue.shade300),
-                      ),
-                      child: Scrollbar(
-                        controller: verticalController,
-                        thumbVisibility: true,
-                        child: SingleChildScrollView(
-                          controller: verticalController,
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      spacing: 5,
+                      children: [
+                        const Text('Kết quả: '),
+                        Container(
+                          height: 300,
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.blue.withValues(alpha: .1),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: Colors.blue.shade300),
+                          ),
                           child: Scrollbar(
-                            controller: horizontalController,
+                            controller: verticalController,
                             thumbVisibility: true,
-                            notificationPredicate: (notif) => notif.depth == 1,
                             child: SingleChildScrollView(
-                              controller: horizontalController,
-                              scrollDirection: Axis.horizontal,
-                              child: SelectableText(
-                                prettyJson,
-                                style: const TextStyle(
-                                  fontFamily: 'monospace',
-                                  fontSize: 13,
+                              controller: verticalController,
+                              child: Scrollbar(
+                                controller: horizontalController,
+                                thumbVisibility: true,
+                                notificationPredicate: (notif) =>
+                                    notif.depth == 1,
+                                child: SingleChildScrollView(
+                                  controller: horizontalController,
+                                  scrollDirection: Axis.horizontal,
+                                  child: SelectableText(
+                                    prettyJson,
+                                    style: const TextStyle(
+                                      fontFamily: 'monospace',
+                                      fontSize: 13,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
                           ),
                         ),
-                      ),
+                      ],
                     );
                   },
                 ),
@@ -335,6 +415,22 @@ class _ImportExportFilePageState extends State<ImportExportFilePage>
           ),
           type: _type!,
         ),
+      );
+    }
+  }
+
+  void _onExportFile(BuildContext context) {
+    if (_type == null) {
+      context.notificationCubit.warning('Vui lòng chọn loại dữ liệu cần xuất');
+      return;
+    }
+    if (_type == 0) {
+      context.exportFileBloc.add(
+        ExportFileEvent.exportCatalogFile(format: _format),
+      );
+    } else {
+      context.exportFileBloc.add(
+        ExportFileEvent.exportSingleFile(type: _type!, format: _format),
       );
     }
   }
