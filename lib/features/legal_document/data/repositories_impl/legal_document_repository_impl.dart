@@ -133,12 +133,33 @@ class LegalDocumentRepositoryImpl implements LegalDocumentRepository {
   }
 
   @override
-  Future<Either<Failure, List<LegalDocumentEntry>>> getAllHasFile({
+  Future<Either<Failure, PageEntry<LegalDocumentEntry>>> getAllHasFile({
     String? search,
+    int? page,
+    int? limit,
+    String? sortBy,
+    String? sort,
   }) async {
     try {
-      final models = await remoteDataSource.getAllHasFile(search: search);
-      return Right(models.map((m) => _toEntity(m)).toList());
+      final models = await remoteDataSource.getAllHasFile(
+        search: search,
+        page: page,
+        limit: limit,
+        sortBy: sortBy,
+        sort: sort,
+      );
+      return Right(
+        PageEntry<LegalDocumentEntry>(
+          entries: models.data.map((m) => _toEntity(m)).toList(),
+          pagination: PaginationEntry(
+            page: models.pagination.page,
+            limit: models.pagination.limit,
+            total: models.pagination.total,
+            totalPages: models.pagination.totalPages,
+            hasMore: models.pagination.hasMore,
+          ),
+        ),
+      );
     } on AppException catch (e) {
       return Left(mapExceptionToFailure(e));
     } catch (e) {

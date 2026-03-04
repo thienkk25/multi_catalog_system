@@ -43,7 +43,6 @@ class CategoryItemRoutes {
               builder: (context, state) {
                 final mode = state.uri.queryParameters['mode']!;
                 final itemId = state.uri.queryParameters['itemId'];
-                final versionId = state.uri.queryParameters['versionId'];
 
                 return MultiBlocProvider(
                   providers: [
@@ -55,7 +54,6 @@ class CategoryItemRoutes {
                   child: CategoryItemFormPage(
                     mode: CategoryItemFormMode.values.byName(mode),
                     itemId: itemId,
-                    versionId: versionId,
                   ),
                 );
               },

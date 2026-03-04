@@ -1,44 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:multi_catalog_system/core/domain/entities/category_group/category_group_ref_entry.dart';
-import 'package:multi_catalog_system/core/domain/entities/domain/domain_ref_entry.dart';
-import 'package:multi_catalog_system/core/responsive/screen_size.dart';
 import 'package:multi_catalog_system/core/utils/extensions/bloc_extension.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
-import 'package:multi_catalog_system/core/utils/extensions/auth_permission_extension.dart';
 import 'package:multi_catalog_system/core/widgets/bottom_form_actions.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/core/widgets/custom_dropdown_button.dart';
 import 'package:multi_catalog_system/core/widgets/custom_input.dart';
 import 'package:multi_catalog_system/core/widgets/file_icon_widget.dart';
-import 'package:multi_catalog_system/core/widgets/overlay_dropdown_load_button.dart';
-import 'package:multi_catalog_system/features/category_group/presentation/bloc/category_group_lookup_bloc.dart';
-import 'package:multi_catalog_system/features/category_group/presentation/bloc/category_group_lookup_event.dart';
-import 'package:multi_catalog_system/features/category_group/presentation/bloc/category_group_lookup_state.dart';
 import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_entry.dart';
-import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_bloc.dart';
-import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_event.dart';
-import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_state.dart';
+import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_version_entry.dart';
+import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_version_bloc.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_version_event.dart';
-import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_lookup_bloc.dart';
+import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_version_state.dart';
 import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_lookup_event.dart';
-import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_lookup_state.dart';
 import 'package:multi_catalog_system/features/legal_document/domain/entities/legal_document_entry.dart';
 
-enum CategoryItemFormMode { create, updateItem }
+class ApproveFormPage extends StatefulWidget {
+  final String versionId;
 
-class CategoryItemFormPage extends StatefulWidget {
-  final CategoryItemFormMode mode;
-  final String? itemId;
-
-  const CategoryItemFormPage({super.key, required this.mode, this.itemId});
+  const ApproveFormPage({super.key, required this.versionId});
 
   @override
-  State<CategoryItemFormPage> createState() => _CategoryItemFormPageState();
+  State<ApproveFormPage> createState() => _ApproveFormPageState();
 }
 
-class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
+class _ApproveFormPageState extends State<ApproveFormPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _codeController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
@@ -55,9 +42,6 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
 
   CategoryItemEntry? _entry;
 
-  bool get _isCreate => widget.mode == CategoryItemFormMode.create;
-  bool get _isAdmin => context.hasRole('admin');
-
   @override
   void initState() {
     super.initState();
@@ -66,37 +50,33 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
   }
 
   void _loadData() {
-    switch (widget.mode) {
-      case CategoryItemFormMode.create:
-        return;
-
-      case CategoryItemFormMode.updateItem:
-        context.itemBloc.add(CategoryItemEvent.getById(id: widget.itemId!));
-        break;
-    }
+    context.itemVersionBloc.add(
+      CategoryItemVersionEvent.getById(id: widget.versionId),
+    );
   }
 
-  Future<void> _initFromItem(CategoryItemEntry entry) async {
+  void _initFromVersion(CategoryItemVersionEntry version) {
     if (_didInit) return;
 
-    _entry = entry;
+    final json = version.newValue ?? {};
 
-    final domainId = entry.domainId;
-    final groupId = entry.groupId;
-    _codeController.text = entry.code ?? '';
-    _nameController.text = entry.name ?? '';
-    _descriptionController.text = entry.description ?? '';
-    _selectedStatus = entry.status;
-
-    _selectedDomainId = domainId;
-
-    context.categoryGroupLookupBloc.add(
-      CategoryGroupLookupEvent.lookup(domainIds: [domainId]),
+    _entry = CategoryItemEntry(
+      name: json['name'],
+      code: json['code'],
+      description: json['description'],
+      domainId: json['domain_id'],
+      groupId: json['group_id'],
+      status: json['status'],
     );
 
-    _selectedCategoryGroupId = groupId;
+    _codeController.text = json['code'] ?? '';
+    _nameController.text = json['name'] ?? '';
+    _descriptionController.text = json['description'] ?? '';
+    _selectedDomainId = json['domain_id'] ?? '';
+    _selectedCategoryGroupId = json['group_id'] ?? '';
+    _selectedStatus = json['status'] ?? '';
 
-    _legalDocuments = entry.legalDocuments ?? [];
+    _legalDocuments = version.legalDocuments ?? [];
 
     _didInit = true;
   }
@@ -126,13 +106,13 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<CategoryItemBloc, CategoryItemState>(
+    return BlocConsumer<CategoryItemVersionBloc, CategoryItemVersionState>(
       listenWhen: (prev, curr) =>
           prev.entry?.id != curr.entry?.id && curr.entry != null,
       listener: (context, state) {
         final entry = state.entry;
         if (entry != null) {
-          _initFromItem(entry);
+          _initFromVersion(entry);
         }
       },
       buildWhen: (prev, curr) =>
@@ -146,11 +126,9 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
                   padding: const EdgeInsets.all(10.0),
                   sliver: SliverList(
                     delegate: SliverChildListDelegate([
-                      Text(
-                        _isCreate
-                            ? 'Tạo Mục danh mục'
-                            : 'Cập nhật Mục danh mục',
-                        style: const TextStyle(
+                      const Text(
+                        'Cập nhật phiên bản Mục danh mục',
+                        style: TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 20,
                         ),
@@ -171,17 +149,17 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
                 ),
               ],
             ),
-            BlocSelector<CategoryItemBloc, CategoryItemState, bool>(
+            BlocSelector<
+              CategoryItemVersionBloc,
+              CategoryItemVersionState,
+              bool
+            >(
               selector: (state) => state.isLoading,
               builder: (context, isLoading) => BottomFormActions(
                 isLoading: isLoading,
                 key: _bottomBarKey,
                 onCancel: () {
-                  if (_isCreate) {
-                    context.goNamed(RouterNames.categoryItem);
-                  } else {
-                    context.pop();
-                  }
+                  context.goNamed(RouterNames.approve);
                 },
                 onSave: () => _onSave(context: context, isEdit: true),
               ),
@@ -218,79 +196,6 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
             validator: (v) =>
                 v == null || v.isEmpty ? 'Vui nhập tên danh mục' : null,
           ),
-          if (_isCreate)
-            Column(
-              spacing: 10,
-              children: [
-                BlocBuilder<DomainLookupBloc, DomainLookupState>(
-                  builder: (context, state) {
-                    return OverlayDropdownLoadButton<DomainRefEntry>(
-                      isMulti: false,
-                      maxWidthOverlay:
-                          ScreenSize.of(context).width -
-                          (ScreenSize.of(context).isMobile ? 0 : 300),
-                      label: Text(
-                        'Lĩnh vực',
-                        style: TextStyle(fontWeight: FontWeight.w600),
-                      ),
-                      entries: state.entries,
-                      selected: state.selectedEntries.firstOrNull,
-                      itemLabel: (item) => item.name!,
-                      hasMore: state.hasMore,
-                      isLoadingMore: state.isLoadingMore,
-                      onLoadMore: () {
-                        context.domainLookupBloc.add(
-                          const DomainLookupEvent.loadMore(),
-                        );
-                      },
-                      onSelected: (value) {
-                        _selectedDomainId = value.id;
-                        context.domainLookupBloc.add(
-                          DomainLookupEvent.selectedEntries(entries: [value]),
-                        );
-                        context.categoryGroupLookupBloc.add(
-                          CategoryGroupLookupEvent.lookup(
-                            domainIds: [_selectedDomainId!],
-                          ),
-                        );
-                      },
-                    );
-                  },
-                ),
-                BlocBuilder<CategoryGroupLookupBloc, CategoryGroupLookupState>(
-                  builder: (context, state) {
-                    return OverlayDropdownLoadButton<CategoryGroupRefEntry>(
-                      isMulti: false,
-                      maxWidthOverlay:
-                          ScreenSize.of(context).width -
-                          (ScreenSize.of(context).isMobile ? 0 : 300),
-                      label: Text(
-                        'Nhóm danh mục',
-                        style: TextStyle(fontWeight: FontWeight.w600),
-                      ),
-                      entries: state.entries,
-                      selected: state.selectedEntries.firstOrNull,
-                      itemLabel: (item) => item.name!,
-                      hasMore: state.hasMore,
-                      isLoadingMore: state.isLoadingMore,
-                      onLoadMore: () {
-                        context.categoryGroupLookupBloc.add(
-                          const CategoryGroupLookupEvent.loadMore(),
-                        );
-                      },
-                      onSelected: (value) {
-                        _selectedCategoryGroupId = value.id;
-                        context.categoryGroupLookupBloc.add(
-                          CategoryGroupLookupEvent.selectedEntries(
-                            entries: [value],
-                          ),
-                        );
-                      },
-                    );
-                  },
-                ),
-              ],
-            ),
           CustomDropdownButton<String>(
             lable: const Text(
               'Trạng thái',
@@ -352,7 +257,7 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
                 onPressed: () async {
                   final result =
                       await context.pushNamed(
-                            RouterNames.categoryItemFormAddLegalDocuments,
+                            RouterNames.approveFormAddLegalDocuments,
                             extra: _legalDocuments,
                           )
                           as List<LegalDocumentEntry>?;
@@ -417,58 +322,30 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
 
   void _onSave({required BuildContext context, required bool isEdit}) {
     if (!_formKey.currentState!.validate()) return;
-    if (_isCreate) {
-      final createEntry = CategoryItemEntry(
-        name: _nameController.text,
-        code: _codeController.text,
-        description: _descriptionController.text.isNotEmpty
-            ? _descriptionController.text
-            : null,
-        domainId: _selectedDomainId!,
-        groupId: _selectedCategoryGroupId,
-        status: _selectedStatus,
-        legalDocuments: _legalDocuments,
-      );
-      if (_isAdmin) {
-        context.itemBloc.add(CategoryItemEvent.create(entry: createEntry));
-      } else {
-        context.itemVersionBloc.add(
-          CategoryItemVersionEvent.createVersion(entry: createEntry),
-        );
-      }
-    } else {
-      final updateEntry = CategoryItemEntry(
-        id: _entry!.id,
-        name: _entry?.name != _nameController.text
-            ? _nameController.text
-            : _entry?.name,
-        code: _entry?.code != _codeController.text
-            ? _codeController.text
-            : _entry?.code,
-        description: _entry?.description != _descriptionController.text
-            ? _descriptionController.text
-            : _entry?.description,
-        domainId: _selectedDomainId!,
-        groupId: _selectedCategoryGroupId,
-        status: _selectedStatus,
-        legalDocuments: _legalDocuments,
-      );
-      if (_isAdmin) {
-        context.itemBloc.add(CategoryItemEvent.update(entry: updateEntry));
-      } else {
-        context.itemVersionBloc.add(
-          CategoryItemVersionEvent.updateVersion(
-            id: _entry!.id!,
-            type: 0,
-            entry: updateEntry,
-          ),
-        );
-      }
-    }
-    if (_isCreate) {
-      context.goNamed(RouterNames.categoryItem);
-    } else {
-      context.pop();
-    }
+
+    final updateEntry = CategoryItemEntry(
+      name: _entry?.name != _nameController.text
+          ? _nameController.text
+          : _entry?.name,
+      code: _entry?.code != _codeController.text
+          ? _codeController.text
+          : _entry?.code,
+      description: _entry?.description != _descriptionController.text
+          ? _descriptionController.text
+          : _entry?.description,
+      domainId: _selectedDomainId!,
+      groupId: _selectedCategoryGroupId!,
+      status: _selectedStatus,
+      legalDocuments: _legalDocuments,
+    );
+
+    context.itemVersionBloc.add(
+      CategoryItemVersionEvent.updateVersion(
+        id: widget.versionId,
+        type: 1,
+        entry: updateEntry,
+      ),
+    );
+    context.goNamed(RouterNames.approve);
   }
 }

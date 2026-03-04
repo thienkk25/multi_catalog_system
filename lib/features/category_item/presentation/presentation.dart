@@ -9,6 +9,4 @@ export 'pages/category_item_add_legal_documents_page.dart';
 export 'bloc/category_item_version_bloc.dart';
 export 'bloc/category_item_version_event.dart';
 export 'bloc/category_item_version_state.dart';
-export 'pages/approve_page.dart';
-export 'widgets/approve_card.dart';
 export 'widgets/category_item_filter_widget.dart';

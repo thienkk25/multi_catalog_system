@@ -13,8 +13,12 @@ abstract class LegalDocumentRepository {
     String? sort,
     Map<String, dynamic>? filter,
   });
-  Future<Either<Failure, List<LegalDocumentEntry>>> getAllHasFile({
+  Future<Either<Failure, PageEntry<LegalDocumentEntry>>> getAllHasFile({
     String? search,
+    int? page,
+    int? limit,
+    String? sortBy,
+    String? sort,
   });
   Future<Either<Failure, LegalDocumentEntry>> getById({required String id});
   Future<Either<Failure, LegalDocumentEntry>> create({

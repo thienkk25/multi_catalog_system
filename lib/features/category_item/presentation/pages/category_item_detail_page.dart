@@ -420,11 +420,11 @@ class _BottomActions extends StatelessWidget {
               child: Expanded(
                 child: CustomButton(
                   onTap: () {
-                    context.goNamed(
+                    context.pushNamed(
                       RouterNames.categoryItemForm,
                       queryParameters: {
                         'mode': 'updateItem',
-                        'itemId': entry.id.toString(),
+                        'itemId': entry.id!,
                       },
                     );
                   },

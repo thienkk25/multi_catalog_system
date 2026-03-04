@@ -15,18 +15,18 @@ import 'package:multi_catalog_system/features/legal_document/presentation/bloc/l
 import 'package:multi_catalog_system/features/legal_document/presentation/bloc/legal_document_event.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/bloc/legal_document_state.dart';
 
-class CategoryItemAddLegalDocumentsPage extends StatefulWidget {
+class ApproveAddLegalDocumentsPage extends StatefulWidget {
   final List<LegalDocumentEntry>? legalDocuments;
 
-  const CategoryItemAddLegalDocumentsPage({super.key, this.legalDocuments});
+  const ApproveAddLegalDocumentsPage({super.key, this.legalDocuments});
 
   @override
-  State<CategoryItemAddLegalDocumentsPage> createState() =>
-      _CategoryItemAddLegalDocumentsPageState();
+  State<ApproveAddLegalDocumentsPage> createState() =>
+      _ApproveAddLegalDocumentsPageState();
 }
 
-class _CategoryItemAddLegalDocumentsPageState
-    extends State<CategoryItemAddLegalDocumentsPage> {
+class _ApproveAddLegalDocumentsPageState
+    extends State<ApproveAddLegalDocumentsPage> {
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   Timer? _debounce;

@@ -13,7 +13,13 @@ abstract class LegalDocumentRemoteDataSource {
     String? sort,
     Map<String, dynamic>? filter,
   });
-  Future<List<LegalDocumentModel>> getAllHasFile({String? search});
+  Future<PageModel<LegalDocumentModel>> getAllHasFile({
+    String? search,
+    int? page,
+    int? limit,
+    String? sortBy,
+    String? sort,
+  });
   Future<LegalDocumentModel> getById({required String id});
   Future<LegalDocumentModel> create({required FormData data});
   Future<LegalDocumentModel> update({
@@ -66,19 +72,32 @@ class LegalDocumentRemoteDataSourceImpl extends BaseRemoteDataSource
   }
 
   @override
-  Future<List<LegalDocumentModel>> getAllHasFile({String? search}) async {
+  Future<PageModel<LegalDocumentModel>> getAllHasFile({
+    String? search,
+    int? page,
+    int? limit,
+    String? sortBy,
+    String? sort,
+  }) async {
     try {
       final queryParams = <String, dynamic>{};
 
       if (search != null) queryParams['search'] = search;
+      if (page != null) queryParams['page'] = page;
+      if (limit != null) queryParams['limit'] = limit;
+      if (sortBy != null) queryParams['sortBy'] = sortBy;
+      if (sort != null) queryParams['sort'] = sort;
 
       final response = await dio.get(
         '/legal-document/documents/with-file',
         queryParameters: queryParams,
       );
 
-      final List<dynamic> jsonList = response.data['data']['data'];
-      return jsonList.map((json) => LegalDocumentModel.fromJson(json)).toList();
+      final data = response.data['data'];
+      return PageModel<LegalDocumentModel>.fromJson(
+        data,
+        (e) => LegalDocumentModel.fromJson(e as Map<String, dynamic>),
+      );
     } on DioException catch (e) {
       handleDioError(e);
     } catch (e) {

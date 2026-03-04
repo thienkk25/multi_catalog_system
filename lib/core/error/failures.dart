@@ -54,7 +54,7 @@ class ForbiddenFailure extends Failure {
 
 class SessionExpiredFailure extends Failure {
   const SessionExpiredFailure({String? message})
-    : super(message: message ?? 'Phiên đăng nhập đã hết hạn', statusCode: 401);
+    : super(message: 'Phiên đăng nhập đã hết hạn', statusCode: 401);
 }
 
 /// ===== CACHE =====

@@ -2,8 +2,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/config/di/injection.dart';
 import 'package:multi_catalog_system/core/domain/entities/domain/domain_ref_entry.dart';
+import 'package:multi_catalog_system/core/utils/extensions/auth_permission_extension.dart';
 import 'package:multi_catalog_system/core/utils/extensions/bloc_extension.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
+import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_state.dart';
 import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_lookup_bloc.dart';
 import 'package:multi_catalog_system/features/user_management/presentation/presentation.dart';
 
@@ -63,6 +65,20 @@ class UserManagementRoutes {
           ],
         ),
       ],
+      redirect: (context, state) {
+        final authState = context.authBloc.state;
+
+        return authState.mapOrNull(
+          unauthenticated: (_) => '/login',
+          authenticated: (_) {
+            if (!context.hasAnyRole(['admin'])) {
+              return '/domains';
+            }
+            return null;
+          },
+          loading: (_) => null,
+        );
+      },
     ),
   ];
 }

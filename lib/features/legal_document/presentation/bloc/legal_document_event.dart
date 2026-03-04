@@ -14,9 +14,15 @@ class LegalDocumentEvent with _$LegalDocumentEvent {
     String? sort,
     Map<String, dynamic>? filter,
   }) = _GetAll;
-  const factory LegalDocumentEvent.getAllHasFile({String? search}) =
-      _GetAllHasFile;
+  const factory LegalDocumentEvent.getAllHasFile({
+    String? search,
+    int? page,
+    int? limit,
+    String? sortBy,
+    String? sort,
+  }) = _GetAllHasFile;
   const factory LegalDocumentEvent.loadMore() = _LoadMore;
+  const factory LegalDocumentEvent.loadMoreHasFile() = _LoadMoreHasFile;
   const factory LegalDocumentEvent.getById({required String id}) = _GetById;
 
   const factory LegalDocumentEvent.create({
