@@ -202,6 +202,8 @@ class _ApiKeyManagementPageState extends State<ApiKeyManagementPage>
                             constraints.maxWidth / crossAxisCount - 10;
 
                         return Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Wrap(
                               spacing: 10,
