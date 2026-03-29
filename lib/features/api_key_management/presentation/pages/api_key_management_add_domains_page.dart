@@ -264,31 +264,35 @@ class _ApiKeyManagementAddDomainsPageState
                   final domain = items[index];
                   final checked = _selected.contains(domain);
 
-                  return Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    margin: const EdgeInsets.only(bottom: 8),
-                    decoration: BoxDecoration(
-                      color: checked
-                          ? Colors.blue.shade50
-                          : Colors.grey.shade50,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: ListTile(
-                      title: Text(
-                        domain.name!,
-                        style: const TextStyle(fontWeight: FontWeight.w600),
+                  return InkWell(
+                    borderRadius: BorderRadius.circular(8),
+                    hoverColor: Colors.blue.withValues(alpha: .2),
+                    onTap: () => _toggle(domain),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
                       ),
-                      subtitle: Text(domain.code!),
-                      trailing: Icon(
-                        checked
-                            ? Icons.check_circle
-                            : Icons.radio_button_unchecked,
-                        color: checked ? Colors.blue : Colors.grey,
+                      margin: const EdgeInsets.only(bottom: 8),
+                      decoration: BoxDecoration(
+                        color: checked
+                            ? Colors.blue.shade50
+                            : Colors.grey.shade50,
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                      onTap: () => _toggle(domain),
+                      child: ListTile(
+                        title: Text(
+                          domain.name!,
+                          style: const TextStyle(fontWeight: FontWeight.w600),
+                        ),
+                        subtitle: Text(domain.code!),
+                        trailing: Icon(
+                          checked
+                              ? Icons.check_circle
+                              : Icons.radio_button_unchecked,
+                          color: checked ? Colors.blue : Colors.grey,
+                        ),
+                      ),
                     ),
                   );
                 },
