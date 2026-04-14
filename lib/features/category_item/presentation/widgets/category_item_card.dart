@@ -84,7 +84,7 @@ class CategoryItemCard extends StatelessWidget {
                       onCancel: () => context.pop(),
                       confirmText: isAdmin
                           ? 'Xóa'
-                          : 'Gửi yêu cầu ngừng hoạt động',
+                          : 'Gửi yêu cầu xóa mục danh mục',
                       onConfirm: () {
                         if (entry.id == null) return;
 

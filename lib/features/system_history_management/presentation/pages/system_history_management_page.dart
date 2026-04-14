@@ -265,13 +265,21 @@ class _SystemHistoryManagementPageState
             _debounce = Timer(const Duration(milliseconds: 500), () {
               if (search.isEmpty) {
                 _bloc.add(
-                  const SystemHistoryEvent.getAll(
-                    sortBy: 'timestamp',
-                    sort: 'desc',
+                  SystemHistoryEvent.getAll(
+                    sortBy: _bloc.state.sortBy,
+                    sort: _bloc.state.sort,
+                    filter: _bloc.state.filter,
                   ),
                 );
               } else {
-                _bloc.add(SystemHistoryEvent.getAll(search: search));
+                _bloc.add(
+                  SystemHistoryEvent.getAll(
+                    search: search,
+                    sortBy: _bloc.state.sortBy,
+                    sort: _bloc.state.sort,
+                    filter: _bloc.state.filter,
+                  ),
+                );
               }
             });
           },
@@ -284,49 +292,25 @@ class _SystemHistoryManagementPageState
               _buildFilterButton(
                 context: context,
                 label: 'Tất cả',
-                onTap: () => _bloc.add(
-                  const SystemHistoryEvent.getAll(
-                    sortBy: 'timestamp',
-                    sort: 'desc',
-                  ),
-                ),
+                onTap: () => _updateFilter('action', null),
               ),
               _buildFilterButton(
                 context: context,
                 label: 'Tạo',
-                onTap: () => _bloc.add(
-                  SystemHistoryEvent.getAll(
-                    search: _bloc.state.search,
-                    filter: {'action': 'INSERT'},
-                    sortBy: _bloc.state.sortBy,
-                    sort: _bloc.state.sort,
-                  ),
-                ),
+                onTap: () => _updateFilter('action', 'INSERT'),
               ),
               _buildFilterButton(
                 context: context,
                 label: 'Cập nhật',
-                onTap: () => _bloc.add(
-                  SystemHistoryEvent.getAll(
-                    search: _bloc.state.search,
-                    filter: {'action': 'UPDATE'},
-                    sortBy: _bloc.state.sortBy,
-                    sort: _bloc.state.sort,
-                  ),
-                ),
+                onTap: () => _updateFilter('action', 'UPDATE'),
               ),
               _buildFilterButton(
                 context: context,
                 label: 'Xóa',
-                onTap: () => _bloc.add(
-                  SystemHistoryEvent.getAll(
-                    search: _bloc.state.search,
-                    filter: {'action': 'DELETE'},
-                    sortBy: _bloc.state.sortBy,
-                    sort: _bloc.state.sort,
-                  ),
-                ),
+                onTap: () => _updateFilter('action', 'DELETE'),
               ),
+              const SizedBox(width: 5),
+              _buildDateFilterButton(context),
               const SizedBox(width: 5),
               SizedBox(
                 width: 250,
@@ -380,6 +364,97 @@ class _SystemHistoryManagementPageState
     );
   }
 
+  void _updateFilter(String key, String? value) {
+    final currentFilter = Map<String, dynamic>.from(_bloc.state.filter ?? {});
+    if (value == null) {
+      currentFilter.remove(key);
+    } else {
+      currentFilter[key] = value;
+    }
+    _bloc.add(
+      SystemHistoryEvent.getAll(
+        search: _bloc.state.search,
+        filter: currentFilter.isEmpty ? null : currentFilter,
+        sortBy: _bloc.state.sortBy,
+        sort: _bloc.state.sort,
+      ),
+    );
+  }
+
+  Widget _buildDateFilterButton(BuildContext context) {
+    return BlocSelector<
+      SystemHistoryBloc,
+      SystemHistoryState,
+      Map<String, dynamic>?
+    >(
+      selector: (state) => state.filter,
+      builder: (context, filter) {
+        final hasDateFilter =
+            filter != null && filter.containsKey('timestamp_between');
+        String label = 'Thời gian';
+        if (hasDateFilter) {
+          final dates = filter['timestamp_between'].toString().split(',');
+          if (dates.length == 2) {
+            final startParts = dates[0].split('-');
+            final endParts = dates[1].split('-');
+            if (startParts.length == 3 && endParts.length == 3) {
+              label = '${startParts[2]}/${startParts[1]} - ${endParts[2]}/${endParts[1]}';
+            }
+          }
+        }
+        return Container(
+          margin: const EdgeInsets.symmetric(horizontal: 5),
+          child: InkWell(
+            onTap: () async {
+              final DateTimeRange? picked = await showDateRangePicker(
+                context: context,
+                firstDate: DateTime(2000),
+                lastDate: DateTime(2100),
+              );
+              if (picked != null) {
+                final start = picked.start.toIso8601String().split('T')[0];
+                final end = picked.end.toIso8601String().split('T')[0];
+                _updateFilter('timestamp_between', '$start,$end');
+              }
+            },
+            borderRadius: BorderRadius.circular(10),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+              decoration: BoxDecoration(
+                color: hasDateFilter ? Colors.blue : Colors.transparent,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Colors.blue.withValues(alpha: .5)),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.calendar_month,
+                    size: 16,
+                    color: hasDateFilter ? Colors.white : Colors.black,
+                  ),
+                  const SizedBox(width: 5),
+                  Text(
+                    label,
+                    style: TextStyle(
+                      color: hasDateFilter ? Colors.white : Colors.black,
+                    ),
+                  ),
+                  if (hasDateFilter) ...[
+                    const SizedBox(width: 5),
+                    GestureDetector(
+                      onTap: () => _updateFilter('timestamp_between', null),
+                      child: const Icon(Icons.close, size: 16, color: Colors.white),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildFilterButton({
     required BuildContext context,
     required String label,
@@ -397,7 +472,7 @@ class _SystemHistoryManagementPageState
             builder: (context, state) {
               final isSelected =
                   (state != null && state['action'] == _actionText(label)) ||
-                  (state == null && label == 'Tất cả');
+                  ((state == null || !state.containsKey('action')) && label == 'Tất cả');
               return Container(
                 constraints: const BoxConstraints(minWidth: 60),
                 alignment: Alignment.center,
