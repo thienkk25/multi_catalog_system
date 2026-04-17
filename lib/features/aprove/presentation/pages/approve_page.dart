@@ -1,14 +1,18 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:multi_catalog_system/core/utils/extensions/bloc_extension.dart';
 import 'package:multi_catalog_system/core/responsive/screen_size.dart';
 import 'package:multi_catalog_system/core/widgets/buttom_up_widget.dart';
 import 'package:multi_catalog_system/core/widgets/custom_circular_progress.dart';
+import 'package:multi_catalog_system/core/widgets/custom_input.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_version_event.dart';
 import 'package:multi_catalog_system/features/aprove/presentation/widgets/approve_card.dart';
 import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_version_entry.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_version_bloc.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_version_state.dart';
+import 'package:multi_catalog_system/features/aprove/presentation/widgets/approve_filter_widget.dart';
 
 class ApprovePage extends StatefulWidget {
   const ApprovePage({super.key});
@@ -25,6 +29,8 @@ class _ApprovePageState extends State<ApprovePage>
   late final TabController _tabController;
 
   final ScrollController _scrollController = ScrollController();
+  final TextEditingController _searchController = TextEditingController();
+  Timer? _debounce;
   late final AnimationController _refreshController;
   late ValueNotifier<bool> _showUpButton;
 
@@ -70,6 +76,8 @@ class _ApprovePageState extends State<ApprovePage>
   void dispose() {
     _tabController.dispose();
     _scrollController.dispose();
+    _searchController.dispose();
+    _debounce?.cancel();
     super.dispose();
   }
 
@@ -92,24 +100,72 @@ class _ApprovePageState extends State<ApprovePage>
                       fontSize: 20,
                     ),
                   ),
-                  GestureDetector(
-                    onTap: _onRefresh,
-                    child: Row(
-                      children: [
-                        RotationTransition(
-                          turns: _refreshController,
-                          child: Icon(
-                            Icons.refresh,
-                            color: Colors.black,
-                            size: 20,
-                          ),
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          final domainLookupBloc = context.domainLookupBloc;
+                          final groupLookupBloc = context.categoryGroupLookupBloc;
+                          final itemVersionBloc = context.itemVersionBloc;
+
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            builder: (context) {
+                              return MultiBlocProvider(
+                                providers: [
+                                  BlocProvider.value(value: domainLookupBloc),
+                                  BlocProvider.value(value: groupLookupBloc),
+                                  BlocProvider.value(value: itemVersionBloc),
+                                ],
+                                child: DraggableScrollableSheet(
+                                  initialChildSize: 0.8,
+                                  minChildSize: 0.5,
+                                  maxChildSize: 0.9,
+                                  expand: false,
+                                  builder: (context, scrollController) {
+                                    return SingleChildScrollView(
+                                      controller: scrollController,
+                                      child: ApproveFilterWidget(
+                                        onClose: () => Navigator.pop(context),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              );
+                            },
+                          );
+                        },
+                        child: Row(
+                          children: [
+                            Icon(Icons.filter_alt_outlined, color: Colors.black, size: 20),
+                            const SizedBox(width: 4),
+                            Text('Lọc', style: TextStyle(color: Colors.black, fontSize: 14)),
+                          ],
                         ),
-                        Text(
-                          'Làm mới',
-                          style: TextStyle(color: Colors.black, fontSize: 14),
+                      ),
+                      const SizedBox(width: 16),
+                      GestureDetector(
+                        onTap: _onRefresh,
+                        child: Row(
+                          children: [
+                            RotationTransition(
+                              turns: _refreshController,
+                              child: Icon(
+                                Icons.refresh,
+                                color: Colors.black,
+                                size: 20,
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              'Làm mới',
+                              style: TextStyle(color: Colors.black, fontSize: 14),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -129,6 +185,12 @@ class _ApprovePageState extends State<ApprovePage>
                   Tab(text: "Đã duyệt"),
                   Tab(text: "Từ chối"),
                 ],
+              ),
+            ),
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+              sliver: SliverToBoxAdapter(
+                child: _buildSearchSection(context),
               ),
             ),
             BlocConsumer<CategoryItemVersionBloc, CategoryItemVersionState>(
@@ -255,6 +317,40 @@ class _ApprovePageState extends State<ApprovePage>
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: ApproveCard(version: version),
+    );
+  }
+
+  Widget _buildSearchSection(BuildContext context) {
+    return CustomInput(
+      controller: _searchController,
+      hintText: 'Tìm kiếm theo mã, tên...',
+      suffixIcon: const Icon(Icons.search),
+      onChanged: (value) {
+        final search = value.trim();
+        if (_debounce?.isActive ?? false) {
+          _debounce?.cancel();
+        }
+        _debounce = Timer(const Duration(milliseconds: 500), () {
+          if (search.isEmpty) {
+            _bloc.add(
+              CategoryItemVersionEvent.getAll(
+                sortBy: _bloc.state.sortBy,
+                sort: _bloc.state.sort,
+                filter: _bloc.state.filter,
+              ),
+            );
+          } else {
+            _bloc.add(
+              CategoryItemVersionEvent.getAll(
+                search: search,
+                sortBy: _bloc.state.sortBy,
+                sort: _bloc.state.sort,
+                filter: _bloc.state.filter,
+              ),
+            );
+          }
+        });
+      },
     );
   }
 }

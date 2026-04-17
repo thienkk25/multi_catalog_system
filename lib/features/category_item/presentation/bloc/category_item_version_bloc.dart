@@ -60,6 +60,9 @@ class CategoryItemVersionBloc
           search: e.search,
           page: 1,
           limit: state.limit,
+          sortBy: e.sortBy,
+          sort: e.sort,
+          filter: e.filter,
         );
         if (emit.isDone) return;
         result.fold(

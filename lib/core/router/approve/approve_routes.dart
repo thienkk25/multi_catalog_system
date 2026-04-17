@@ -18,6 +18,8 @@ class ApproveRoutes {
         return MultiBlocProvider(
           providers: [
             BlocProvider(create: (_) => getIt<CategoryItemVersionBloc>()),
+            BlocProvider(create: (_) => getIt<DomainLookupBloc>()),
+            BlocProvider(create: (_) => getIt<CategoryGroupLookupBloc>()),
           ],
           child: child,
         );
