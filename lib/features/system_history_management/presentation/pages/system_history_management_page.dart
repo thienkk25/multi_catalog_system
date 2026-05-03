@@ -9,6 +9,7 @@ import 'package:multi_catalog_system/core/widgets/custom_circular_progress.dart'
 import 'package:multi_catalog_system/core/widgets/custom_dropdown_button.dart';
 import 'package:multi_catalog_system/core/widgets/custom_input.dart';
 import 'package:multi_catalog_system/core/widgets/error_retry_widget.dart';
+import 'package:multi_catalog_system/core/widgets/custom_date_range_picker.dart';
 import 'package:multi_catalog_system/features/system_history_management/presentation/presentation.dart';
 
 class SystemHistoryManagementPage extends StatefulWidget {
@@ -398,7 +399,8 @@ class _SystemHistoryManagementPageState
             final startParts = dates[0].split('-');
             final endParts = dates[1].split('-');
             if (startParts.length == 3 && endParts.length == 3) {
-              label = '${startParts[2]}/${startParts[1]} - ${endParts[2]}/${endParts[1]}';
+              label =
+                  '${startParts[2]}/${startParts[1]} - ${endParts[2]}/${endParts[1]}';
             }
           }
         }
@@ -406,11 +408,8 @@ class _SystemHistoryManagementPageState
           margin: const EdgeInsets.symmetric(horizontal: 5),
           child: InkWell(
             onTap: () async {
-              final DateTimeRange? picked = await showDateRangePicker(
-                context: context,
-                firstDate: DateTime(2000),
-                lastDate: DateTime(2100),
-              );
+              final DateTimeRange? picked =
+                  await showCustomDateRangePicker(context);
               if (picked != null) {
                 final start = picked.start.toIso8601String().split('T')[0];
                 final end = picked.end.toIso8601String().split('T')[0];
@@ -443,7 +442,11 @@ class _SystemHistoryManagementPageState
                     const SizedBox(width: 5),
                     GestureDetector(
                       onTap: () => _updateFilter('timestamp_between', null),
-                      child: const Icon(Icons.close, size: 16, color: Colors.white),
+                      child: const Icon(
+                        Icons.close,
+                        size: 16,
+                        color: Colors.white,
+                      ),
                     ),
                   ],
                 ],
@@ -472,7 +475,8 @@ class _SystemHistoryManagementPageState
             builder: (context, state) {
               final isSelected =
                   (state != null && state['action'] == _actionText(label)) ||
-                  ((state == null || !state.containsKey('action')) && label == 'Tất cả');
+                  ((state == null || !state.containsKey('action')) &&
+                      label == 'Tất cả');
               return Container(
                 constraints: const BoxConstraints(minWidth: 60),
                 alignment: Alignment.center,

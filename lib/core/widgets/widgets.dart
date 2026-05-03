@@ -4,6 +4,7 @@ export 'custom_button.dart';
 export 'custom_card.dart';
 export 'custom_circular_progress.dart';
 export 'custom_date_picker.dart';
+export 'custom_date_range_picker.dart';
 export 'custom_dropdown_button.dart';
 export 'custom_floating_action_button.dart';
 export 'custom_input.dart';
