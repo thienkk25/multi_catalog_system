@@ -14,6 +14,7 @@ abstract class CategoryItemModel with _$CategoryItemModel {
     required String name,
     String? description,
     String? status,
+    @JsonKey(name: 'image_url') String? imageUrl,
     @JsonKey(name: 'group_id') required String groupId,
     @JsonKey(name: 'domain_id') required String domainId,
     required CategoryGroupRefModel group,

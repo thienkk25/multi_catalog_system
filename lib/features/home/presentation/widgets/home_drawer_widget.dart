@@ -58,11 +58,20 @@ class _HeaderDrawer extends StatelessWidget {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         final sizeW = drawerWidth - 20;
+        // print(state.mapOrNull(authenticated: (s) => s.entry));
 
         return state.maybeWhen(
           authenticated: (user) => Row(
             children: [
-              CircleAvatar(radius: 30, child: const Icon(Icons.person)),
+              CircleAvatar(
+                radius: 30,
+                backgroundImage: user.imageUrl != null
+                    ? NetworkImage(user.imageUrl!)
+                    : null,
+                child: user.imageUrl == null
+                    ? const Icon(Icons.person, size: 30)
+                    : null,
+              ),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(

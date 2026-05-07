@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/core.dart';
+import 'package:multi_catalog_system/core/widgets/image_url_input_widget.dart';
 import 'package:multi_catalog_system/features/domain_management/domain/domain.dart';
 import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_management_bloc.dart';
 import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_management_event.dart';
@@ -23,6 +24,7 @@ class _DomainManagementFormPageState extends State<DomainManagementFormPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _codeController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _imageUrlController = TextEditingController();
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey _bottomBarKey = GlobalKey();
@@ -57,6 +59,7 @@ class _DomainManagementFormPageState extends State<DomainManagementFormPage> {
     _nameController.text = entry.name ?? '';
     _codeController.text = entry.code ?? '';
     _descriptionController.text = entry.description ?? '';
+    _imageUrlController.text = entry.imageUrl ?? '';
 
     _didInit = true;
   }
@@ -66,6 +69,7 @@ class _DomainManagementFormPageState extends State<DomainManagementFormPage> {
     _nameController.dispose();
     _codeController.dispose();
     _descriptionController.dispose();
+    _imageUrlController.dispose();
     super.dispose();
   }
 
@@ -168,6 +172,27 @@ class _DomainManagementFormPageState extends State<DomainManagementFormPage> {
                                 maxLines: 5,
                               ),
                             ),
+                            CustomCard(
+                              child: ImageUrlInputWidget(
+                                controller: _imageUrlController,
+                                label: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text(
+                                      'Hình ảnh',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    Text(
+                                      'Tùy chọn',
+                                      style: TextStyle(color: Colors.grey[500]),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -230,6 +255,9 @@ class _DomainManagementFormPageState extends State<DomainManagementFormPage> {
         description: _entry?.description != _descriptionController.text
             ? _descriptionController.text
             : _entry?.description,
+        imageUrl: _imageUrlController.text.isNotEmpty
+            ? _imageUrlController.text
+            : null,
       );
       context.domainManagementBloc.add(
         DomainManagementEvent.update(entry: entry),
@@ -240,6 +268,9 @@ class _DomainManagementFormPageState extends State<DomainManagementFormPage> {
         name: _nameController.text,
         description: _descriptionController.text.isNotEmpty
             ? _descriptionController.text
+            : null,
+        imageUrl: _imageUrlController.text.isNotEmpty
+            ? _imageUrlController.text
             : null,
       );
       context.domainManagementBloc.add(

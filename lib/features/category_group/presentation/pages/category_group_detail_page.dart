@@ -41,6 +41,35 @@ class CategoryGroupDetailPage extends StatelessWidget {
                       value: entry.description,
                       isMultiLine: true,
                     ),
+                    if (entry.imageUrl != null &&
+                        entry.imageUrl!.isNotEmpty) ...[
+                      const Divider(height: 24),
+                      const Text(
+                        'Hình ảnh',
+                        style: TextStyle(fontSize: 13, color: Colors.grey),
+                      ),
+                      const SizedBox(height: 8),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.network(
+                          entry.imageUrl!,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              Container(
+                                height: 120,
+                                color: Colors.grey.shade100,
+                                child: Center(
+                                  child: Icon(
+                                    Icons.broken_image_outlined,
+                                    size: 48,
+                                    color: Colors.grey.shade400,
+                                  ),
+                                ),
+                              ),
+                        ),
+                      ),
+                    ],
                   ],
                 ),
                 _sectionCard(

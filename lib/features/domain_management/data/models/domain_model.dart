@@ -10,6 +10,7 @@ abstract class DomainModel with _$DomainModel {
     required String code,
     required String name,
     String? description,
+    @JsonKey(name: 'image_url') String? imageUrl,
     @JsonKey(name: 'created_at') required DateTime createdAt,
     @JsonKey(name: 'updated_at') DateTime? updatedAt,
   }) = _DomainModel;

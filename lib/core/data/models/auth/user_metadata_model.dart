@@ -12,6 +12,8 @@ abstract class UserMetadataModel with _$UserMetadataModel {
 
     @JsonKey(name: 'full_name') String? fullName,
 
+    @JsonKey(name: 'image_url') String? imageUrl,
+
     String? phone,
 
     @JsonKey(name: 'phone_verified') bool? phoneVerified,

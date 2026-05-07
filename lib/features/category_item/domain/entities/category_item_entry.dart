@@ -9,6 +9,7 @@ class CategoryItemEntry extends Equatable {
   final String? name;
   final String? description;
   final String? status;
+  final String? imageUrl;
   final String domainId;
   final String? groupId;
   final CategoryGroupRefEntry? group;
@@ -25,6 +26,7 @@ class CategoryItemEntry extends Equatable {
     this.name,
     this.description,
     this.status,
+    this.imageUrl,
     required this.domainId,
     this.groupId,
     this.group,
@@ -43,6 +45,7 @@ class CategoryItemEntry extends Equatable {
     name,
     description,
     status,
+    imageUrl,
     groupId,
     domainId,
     group,

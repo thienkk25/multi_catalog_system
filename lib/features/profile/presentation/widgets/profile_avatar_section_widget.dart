@@ -36,14 +36,31 @@ class ProfileAvatarSectionWidget extends StatelessWidget {
             ],
           ),
           alignment: Alignment.center,
-          child: Text(
-            initials,
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 48,
-            ),
-          ),
+          child: entry?.imageUrl != null && entry!.imageUrl!.isNotEmpty
+              ? ClipOval(
+                  child: Image.network(
+                    entry!.imageUrl!,
+                    width: 130,
+                    height: 130,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Text(
+                      initials,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 48,
+                      ),
+                    ),
+                  ),
+                )
+              : Text(
+                  initials,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 48,
+                  ),
+                ),
         ),
 
         const SizedBox(height: 16),

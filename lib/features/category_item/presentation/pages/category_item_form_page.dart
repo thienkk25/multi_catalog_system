@@ -12,6 +12,7 @@ import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/core/widgets/custom_dropdown_button.dart';
 import 'package:multi_catalog_system/core/widgets/custom_input.dart';
 import 'package:multi_catalog_system/core/widgets/file_icon_widget.dart';
+import 'package:multi_catalog_system/core/widgets/image_url_input_widget.dart';
 import 'package:multi_catalog_system/core/widgets/overlay_dropdown_load_button.dart';
 import 'package:multi_catalog_system/features/category_group/presentation/bloc/category_group_lookup_bloc.dart';
 import 'package:multi_catalog_system/features/category_group/presentation/bloc/category_group_lookup_event.dart';
@@ -43,6 +44,7 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
   final TextEditingController _codeController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _imageUrlController = TextEditingController();
   List<LegalDocumentEntry> _legalDocuments = [];
   String? _selectedDomainId;
   String? _selectedCategoryGroupId;
@@ -86,6 +88,7 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
     _codeController.text = entry.code ?? '';
     _nameController.text = entry.name ?? '';
     _descriptionController.text = entry.description ?? '';
+    _imageUrlController.text = entry.imageUrl ?? '';
     _selectedStatus = entry.status;
 
     _selectedDomainId = domainId;
@@ -121,6 +124,7 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
     _codeController.dispose();
     _nameController.dispose();
     _descriptionController.dispose();
+    _imageUrlController.dispose();
     super.dispose();
   }
 
@@ -330,6 +334,19 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
             minLines: 5,
             maxLines: 5,
           ),
+          ImageUrlInputWidget(
+            controller: _imageUrlController,
+            label: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Hình ảnh',
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+                Text('Tùy chọn', style: TextStyle(color: Colors.grey)),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -424,6 +441,9 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
         description: _descriptionController.text.isNotEmpty
             ? _descriptionController.text
             : null,
+        imageUrl: _imageUrlController.text.isNotEmpty
+            ? _imageUrlController.text
+            : null,
         domainId: _selectedDomainId!,
         groupId: _selectedCategoryGroupId,
         status: _selectedStatus,
@@ -448,6 +468,9 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
         description: _entry?.description != _descriptionController.text
             ? _descriptionController.text
             : _entry?.description,
+        imageUrl: _imageUrlController.text.isNotEmpty
+            ? _imageUrlController.text
+            : null,
         domainId: _selectedDomainId!,
         groupId: _selectedCategoryGroupId,
         status: _selectedStatus,

@@ -24,10 +24,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
           final result = await authLoginUseCase(email: e.email, pass: e.pass);
 
-          result.fold(
-            (failure) => emit(AuthState.error(message: mapFailure(failure))),
-            (user) => emit(AuthState.authenticated(entry: user)),
-          );
+          result.fold((failure) {
+            emit(AuthState.error(message: mapFailure(failure)));
+          }, (user) => emit(AuthState.authenticated(entry: user)));
         },
 
         getCurrentUser: (_) async {

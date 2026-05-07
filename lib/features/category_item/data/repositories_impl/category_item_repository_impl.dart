@@ -24,6 +24,7 @@ class CategoryItemRepositoryImpl implements CategoryItemRepository {
         name: model.name,
         description: model.description,
         status: model.status,
+        imageUrl: model.imageUrl,
         domainId: model.domainId,
         groupId: model.groupId,
         group: CategoryGroupRefEntry(
@@ -71,6 +72,7 @@ class CategoryItemRepositoryImpl implements CategoryItemRepository {
       'name': entry.name,
       'status': entry.status,
       if (entry.description != null) 'description': entry.description,
+      if (entry.imageUrl != null) 'image_url': entry.imageUrl,
     },
     'legal_document_ids': entry.legalDocuments?.map((e) => e.id).toList(),
   };
@@ -83,6 +85,7 @@ class CategoryItemRepositoryImpl implements CategoryItemRepository {
       if (entry.name != null) 'name': entry.name,
       if (entry.status != null) 'status': entry.status,
       if (entry.description != null) 'description': entry.description,
+      if (entry.imageUrl != null) 'image_url': entry.imageUrl,
     },
     if (entry.legalDocuments != null && entry.legalDocuments!.isNotEmpty)
       'legal_document_ids': entry.legalDocuments?.map((e) => e.id).toList(),

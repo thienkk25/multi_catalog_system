@@ -12,6 +12,7 @@ abstract class UserProfileModel with _$UserProfileModel {
     required String email,
     @JsonKey(name: 'full_name') String? fullName,
     String? phone,
+    @JsonKey(name: 'image_url') String? imageUrl,
     required String status,
     RoleModel? role,
     List<DomainRefModel>? domains,

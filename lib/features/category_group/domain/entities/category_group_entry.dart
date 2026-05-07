@@ -6,6 +6,7 @@ class CategoryGroupEntry extends Equatable {
   final String? code;
   final String? name;
   final String? description;
+  final String? imageUrl;
   final DomainRefEntry? domain;
   final DateTime? createdAt;
   final DateTime? updatedAt;
@@ -14,6 +15,7 @@ class CategoryGroupEntry extends Equatable {
     this.code,
     this.name,
     this.description,
+    this.imageUrl,
     this.domain,
     this.createdAt,
     this.updatedAt,
@@ -25,6 +27,7 @@ class CategoryGroupEntry extends Equatable {
     code,
     name,
     description,
+    imageUrl,
     domain,
     createdAt,
     updatedAt,

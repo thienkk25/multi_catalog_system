@@ -7,6 +7,7 @@ import 'package:multi_catalog_system/core/widgets/button_back_widget.dart';
 import 'package:multi_catalog_system/core/widgets/custom_button.dart';
 import 'package:multi_catalog_system/core/widgets/custom_circular_progress.dart';
 import 'package:multi_catalog_system/core/widgets/custom_input.dart';
+import 'package:multi_catalog_system/core/widgets/image_url_input_widget.dart';
 import 'package:multi_catalog_system/core/domain/entities/auth/user_entry.dart';
 import 'package:multi_catalog_system/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:multi_catalog_system/features/profile/presentation/bloc/profile_event.dart';
@@ -26,6 +27,7 @@ class _ProfileFormPageState extends State<ProfileFormPage> {
   final _fullNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
+  final _imageUrlController = TextEditingController();
 
   bool _didInit = false;
 
@@ -42,6 +44,7 @@ class _ProfileFormPageState extends State<ProfileFormPage> {
     _fullNameController.text = entry.fullName ?? '';
     _emailController.text = entry.email ?? '';
     _phoneController.text = entry.phone ?? '';
+    _imageUrlController.text = entry.imageUrl ?? '';
 
     _didInit = true;
   }
@@ -51,6 +54,7 @@ class _ProfileFormPageState extends State<ProfileFormPage> {
     _fullNameController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
+    _imageUrlController.dispose();
     super.dispose();
   }
 
@@ -94,14 +98,33 @@ class _ProfileFormPageState extends State<ProfileFormPage> {
                         ),
                       ),
                       alignment: Alignment.center,
-                      child: Text(
-                        _entry?.fullName?[0].toUpperCase() ?? '?',
-                        style: TextStyle(
-                          fontSize: 48,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      child: _entry?.imageUrl != null &&
+                              _entry!.imageUrl!.isNotEmpty
+                          ? ClipOval(
+                              child: Image.network(
+                                _entry!.imageUrl!,
+                                width: 120,
+                                height: 120,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) =>
+                                    Text(
+                                  _entry?.fullName?[0].toUpperCase() ?? '?',
+                                  style: TextStyle(
+                                    fontSize: 48,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            )
+                          : Text(
+                              _entry?.fullName?[0].toUpperCase() ?? '?',
+                              style: TextStyle(
+                                fontSize: 48,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                     ),
                     // CircleAvatar(
                     //   radius: 20,
@@ -156,6 +179,15 @@ class _ProfileFormPageState extends State<ProfileFormPage> {
                   },
                 ),
 
+                ImageUrlInputWidget(
+                  controller: _imageUrlController,
+                  label: Text(
+                    'URL ảnh đại diện',
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  hintText: 'Nhập URL ảnh đại diện...',
+                ),
+
                 const SizedBox(height: 10),
 
                 Row(
@@ -198,6 +230,9 @@ class _ProfileFormPageState extends State<ProfileFormPage> {
           : null,
       phone: _entry?.phone != _phoneController.text
           ? _phoneController.text
+          : null,
+      imageUrl: _imageUrlController.text.isNotEmpty
+          ? _imageUrlController.text
           : null,
     );
     showDialog(

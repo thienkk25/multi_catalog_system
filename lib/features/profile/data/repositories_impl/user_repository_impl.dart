@@ -19,6 +19,7 @@ class UserRepositoryImpl implements UserRepository {
     email: model.email,
     fullName: model.fullName,
     phone: model.phone,
+    imageUrl: model.imageUrl,
     status: model.status,
     role: RoleEntry(
       id: model.role?.id,
@@ -36,6 +37,7 @@ class UserRepositoryImpl implements UserRepository {
   Map<String, dynamic> _toJson(UserEntry entry) => {
     if (entry.fullName != null) 'full_name': entry.fullName,
     if (entry.phone != null) 'phone': entry.phone,
+    if (entry.imageUrl != null) 'image_url': entry.imageUrl,
   };
 
   @override

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/core.dart';
+import 'package:multi_catalog_system/core/widgets/image_url_input_widget.dart';
 import 'package:multi_catalog_system/features/category_group/domain/domain.dart';
 import 'package:multi_catalog_system/features/category_group/presentation/bloc/category_group_bloc.dart';
 import 'package:multi_catalog_system/features/category_group/presentation/bloc/category_group_event.dart';
@@ -26,6 +27,7 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
   final TextEditingController _codeController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _imageUrlController = TextEditingController();
   final GlobalKey _bottomBarKey = GlobalKey();
   double _bottomBarHeight = 0;
   CategoryGroupEntry? _entry;
@@ -56,6 +58,7 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
     _codeController.text = entry.code ?? '';
     _nameController.text = entry.name ?? '';
     _descriptionController.text = entry.description ?? '';
+    _imageUrlController.text = entry.imageUrl ?? '';
     _selectedDomain = entry.domain;
     _didInit = true;
   }
@@ -80,6 +83,7 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
     _codeController.dispose();
     _nameController.dispose();
     _descriptionController.dispose();
+    _imageUrlController.dispose();
     super.dispose();
   }
 
@@ -205,6 +209,27 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
                                 maxLines: 5,
                               ),
                             ),
+                            CustomCard(
+                              child: ImageUrlInputWidget(
+                                controller: _imageUrlController,
+                                label: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text(
+                                      'Hình ảnh',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    Text(
+                                      'Tùy chọn',
+                                      style: TextStyle(color: Colors.grey),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -269,6 +294,9 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
         description: _entry?.description != _descriptionController.text
             ? _descriptionController.text
             : _entry?.description,
+        imageUrl: _imageUrlController.text.isNotEmpty
+            ? _imageUrlController.text
+            : null,
       );
       context.groupBloc.add(CategoryGroupEvent.update(entry: entry));
     } else {
@@ -278,6 +306,9 @@ class _CategoryGroupFormPageState extends State<CategoryGroupFormPage> {
         name: _nameController.text,
         description: _descriptionController.text.isNotEmpty
             ? _descriptionController.text
+            : null,
+        imageUrl: _imageUrlController.text.isNotEmpty
+            ? _imageUrlController.text
             : null,
       );
       context.groupBloc.add(CategoryGroupEvent.create(entry: entry));

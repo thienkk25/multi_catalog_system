@@ -5,6 +5,7 @@ class DomainEntry extends Equatable {
   final String? code;
   final String? name;
   final String? description;
+  final String? imageUrl;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -13,6 +14,7 @@ class DomainEntry extends Equatable {
     this.code,
     this.name,
     this.description,
+    this.imageUrl,
     this.createdAt,
     this.updatedAt,
   });
@@ -23,6 +25,7 @@ class DomainEntry extends Equatable {
     code,
     name,
     description,
+    imageUrl,
     createdAt,
     updatedAt,
   ];

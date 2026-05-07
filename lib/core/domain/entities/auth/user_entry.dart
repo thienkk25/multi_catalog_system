@@ -7,6 +7,7 @@ class UserEntry extends Equatable {
   final String? email;
   final String? fullName;
   final String? phone;
+  final String? imageUrl;
   final String? status;
   final RoleEntry? role;
   final List<DomainRefEntry>? domains;
@@ -20,6 +21,7 @@ class UserEntry extends Equatable {
     this.email,
     this.fullName,
     this.phone,
+    this.imageUrl,
     this.status,
     this.role,
     this.domains,
@@ -35,6 +37,7 @@ class UserEntry extends Equatable {
     email,
     fullName,
     phone,
+    imageUrl,
     status,
     role,
     domains,

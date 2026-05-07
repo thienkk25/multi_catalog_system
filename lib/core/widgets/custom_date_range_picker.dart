@@ -296,7 +296,7 @@ class _CustomDateRangePickerSheetState
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
           itemCount: presets.length,
-          separatorBuilder: (_, __) => const SizedBox(width: 8),
+          separatorBuilder: (_, _) => const SizedBox(width: 8),
           itemBuilder: (context, index) {
             final label = presets.keys.elementAt(index);
             final range = presets.values.elementAt(index);
@@ -370,8 +370,8 @@ class _CustomDateRangePickerSheetState
                     _pickerMode == 'year'
                         ? '${_selectedYear - 5} – ${_selectedYear + 6}'
                         : _pickerMode == 'month'
-                            ? '$_selectedYear'
-                            : _monthYearString(_currentMonth),
+                        ? '$_selectedYear'
+                        : _monthYearString(_currentMonth),
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
@@ -435,8 +435,8 @@ class _CustomDateRangePickerSheetState
             color: isSelected
                 ? _primaryColor
                 : isCurrentYear
-                    ? _accentColor.withValues(alpha: .12)
-                    : const Color(0xFFF5F7FA),
+                ? _accentColor.withValues(alpha: .12)
+                : const Color(0xFFF5F7FA),
             borderRadius: BorderRadius.circular(10),
             child: InkWell(
               onTap: () {
@@ -451,13 +451,14 @@ class _CustomDateRangePickerSheetState
                   '$year',
                   style: TextStyle(
                     fontSize: 14,
-                    fontWeight:
-                        isSelected || isCurrentYear ? FontWeight.w700 : FontWeight.w500,
+                    fontWeight: isSelected || isCurrentYear
+                        ? FontWeight.w700
+                        : FontWeight.w500,
                     color: isSelected
                         ? Colors.white
                         : isCurrentYear
-                            ? _primaryColor
-                            : const Color(0xFF4A5568),
+                        ? _primaryColor
+                        : const Color(0xFF4A5568),
                   ),
                 ),
               ),
@@ -470,8 +471,18 @@ class _CustomDateRangePickerSheetState
 
   Widget _buildMonthGrid() {
     const monthNames = [
-      'Th1', 'Th2', 'Th3', 'Th4', 'Th5', 'Th6',
-      'Th7', 'Th8', 'Th9', 'Th10', 'Th11', 'Th12',
+      'Th1',
+      'Th2',
+      'Th3',
+      'Th4',
+      'Th5',
+      'Th6',
+      'Th7',
+      'Th8',
+      'Th9',
+      'Th10',
+      'Th11',
+      'Th12',
     ];
     final now = DateTime.now();
 
@@ -491,15 +502,16 @@ class _CustomDateRangePickerSheetState
           final month = index + 1;
           final isCurrentMonth =
               _selectedYear == now.year && month == now.month;
-          final isSelected = _selectedYear == _currentMonth.year &&
+          final isSelected =
+              _selectedYear == _currentMonth.year &&
               month == _currentMonth.month;
 
           return Material(
             color: isSelected
                 ? _primaryColor
                 : isCurrentMonth
-                    ? _accentColor.withValues(alpha: .12)
-                    : const Color(0xFFF5F7FA),
+                ? _accentColor.withValues(alpha: .12)
+                : const Color(0xFFF5F7FA),
             borderRadius: BorderRadius.circular(10),
             child: InkWell(
               onTap: () {
@@ -514,13 +526,14 @@ class _CustomDateRangePickerSheetState
                   monthNames[index],
                   style: TextStyle(
                     fontSize: 14,
-                    fontWeight:
-                        isSelected || isCurrentMonth ? FontWeight.w700 : FontWeight.w500,
+                    fontWeight: isSelected || isCurrentMonth
+                        ? FontWeight.w700
+                        : FontWeight.w500,
                     color: isSelected
                         ? Colors.white
                         : isCurrentMonth
-                            ? _primaryColor
-                            : const Color(0xFF4A5568),
+                        ? _primaryColor
+                        : const Color(0xFF4A5568),
                   ),
                 ),
               ),

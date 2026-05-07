@@ -22,6 +22,7 @@ class UserManagementRepositoryImpl implements UserManagementRepository {
       email: m.email,
       fullName: m.fullName,
       phone: m.phone,
+      imageUrl: m.imageUrl,
       status: m.status,
       role: RoleEntry(id: m.role?.id, code: m.role?.code, name: m.role?.name),
       domains: m.domains
@@ -36,19 +37,21 @@ class UserManagementRepositoryImpl implements UserManagementRepository {
   Map<String, dynamic> _createPayload(UserEntry e) => {
     'email': e.email,
     if (e.password != null) 'password': e.password,
-    if (e.fullName != null || e.phone != null)
+    if (e.fullName != null || e.phone != null || e.imageUrl != null)
       'user_metadata': {
         if (e.fullName != null) 'full_name': e.fullName,
         if (e.phone != null) 'phone': e.phone,
+        if (e.imageUrl != null) 'image_url': e.imageUrl,
       },
   };
 
   Map<String, dynamic> _updatePayload(UserEntry e) => {
     if (e.password != null) 'password': e.password,
-    if (e.fullName != null || e.phone != null)
+    if (e.fullName != null || e.phone != null || e.imageUrl != null)
       'user_metadata': {
         if (e.fullName != null) 'full_name': e.fullName,
         if (e.phone != null) 'phone': e.phone,
+        if (e.imageUrl != null) 'image_url': e.imageUrl,
       },
   };
 

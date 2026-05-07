@@ -19,6 +19,7 @@ class DomainRepositoryImpl implements DomainRepository {
     code: model.code,
     name: model.name,
     description: model.description,
+    imageUrl: model.imageUrl,
     createdAt: model.createdAt,
     updatedAt: model.updatedAt,
   );
@@ -27,12 +28,14 @@ class DomainRepositoryImpl implements DomainRepository {
     'code': entry.code,
     'name': entry.name,
     if (entry.description != null) 'description': entry.description,
+    if (entry.imageUrl != null) 'image_url': entry.imageUrl,
   };
 
   Map<String, dynamic> _updatePayload(DomainEntry entry) => {
     if (entry.code != null) 'code': entry.code,
     if (entry.name != null) 'name': entry.name,
     if (entry.description != null) 'description': entry.description,
+    if (entry.imageUrl != null) 'image_url': entry.imageUrl,
   };
 
   @override

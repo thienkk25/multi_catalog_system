@@ -25,6 +25,7 @@ class AuthRepositoryImpl implements AuthRepository {
     email: model.email,
     fullName: model.userMetadata?.fullName,
     phone: model.userMetadata?.phone,
+    imageUrl: model.userMetadata?.imageUrl,
     createdAt: model.createdAt,
     updatedAt: model.updatedAt,
     lastSignInAt: model.lastSignInAt,
