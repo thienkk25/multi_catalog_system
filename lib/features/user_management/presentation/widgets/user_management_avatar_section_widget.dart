@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:multi_catalog_system/core/domain/entities/auth/user_entry.dart';
+import 'package:multi_catalog_system/core/widgets/app_network_image.dart';
 
 class UserManagementAvatarSectionWidget extends StatelessWidget {
   final UserEntry? entry;
@@ -32,14 +33,36 @@ class UserManagementAvatarSectionWidget extends StatelessWidget {
         ],
       ),
       alignment: Alignment.center,
-      child: Text(
-        initials,
-        style: TextStyle(
-          fontSize: sizeAvatar != null ? sizeAvatar! / 2 : 30,
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
+      child: entry?.imageUrl != null && entry!.imageUrl!.isNotEmpty
+          ? ClipOval(
+              child: AppNetworkImage(
+                imageUrl: entry!.imageUrl!,
+                width: sizeAvatar ?? 60,
+                height: sizeAvatar ?? 60,
+                fit: BoxFit.cover,
+                errorWidget: Container(
+                  width: sizeAvatar ?? 60,
+                  height: sizeAvatar ?? 60,
+                  alignment: Alignment.center,
+                  child: Text(
+                    initials,
+                    style: TextStyle(
+                      fontSize: sizeAvatar != null ? sizeAvatar! / 2 : 30,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            )
+          : Text(
+              initials,
+              style: TextStyle(
+                fontSize: sizeAvatar != null ? sizeAvatar! / 2 : 30,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
     );
   }
 }

@@ -5,6 +5,7 @@ import 'package:multi_catalog_system/core/responsive/screen_size.dart';
 import 'package:multi_catalog_system/core/utils/extensions/bloc_extension.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/core/utils/formatter/data_time_formatter.dart';
+import 'package:multi_catalog_system/core/widgets/app_network_image.dart';
 import 'package:multi_catalog_system/core/widgets/buttom_up_widget.dart';
 import 'package:multi_catalog_system/core/widgets/custom_button.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
@@ -188,6 +189,29 @@ class _InfoTab extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
+        if (entry.imageUrl != null && entry.imageUrl!.isNotEmpty) ...[
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: AppNetworkImage(
+              imageUrl: entry.imageUrl!,
+              width: double.infinity,
+              height: 200,
+              fit: BoxFit.cover,
+              errorWidget: Container(
+                height: 200,
+                color: Colors.grey.shade200,
+                child: Center(
+                  child: Icon(
+                    Icons.image_not_supported_outlined,
+                    size: 50,
+                    color: Colors.grey.shade400,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+        ],
         CustomCard(
           child: Column(
             children: [

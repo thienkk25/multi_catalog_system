@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:multi_catalog_system/core/widgets/app_network_image.dart';
 import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/core/utils/extensions/auth_permission_extension.dart';
 import 'package:multi_catalog_system/core/utils/formatter/data_time_formatter.dart';
@@ -37,13 +38,12 @@ class CategoryItemCard extends StatelessWidget {
                 entry.imageUrl!.isNotEmpty) ...[
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: Image.network(
-                  entry.imageUrl!,
+                child: AppNetworkImage(
+                  imageUrl: entry.imageUrl!,
                   width: double.infinity,
                   height: 120,
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) =>
-                      Container(
+                  errorWidget: Container(
                     height: 120,
                     color: Colors.grey.shade200,
                     child: Center(
