@@ -189,29 +189,39 @@ class _InfoTab extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        if (entry.imageUrl != null && entry.imageUrl!.isNotEmpty) ...[
-          ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: AppNetworkImage(
-              imageUrl: entry.imageUrl!,
-              width: double.infinity,
-              height: 200,
-              fit: BoxFit.cover,
-              errorWidget: Container(
-                height: 200,
-                color: Colors.grey.shade200,
-                child: Center(
-                  child: Icon(
-                    Icons.image_not_supported_outlined,
-                    size: 50,
-                    color: Colors.grey.shade400,
+        ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: AspectRatio(
+            aspectRatio: 16 / 9,
+            child: entry.imageUrl != null && entry.imageUrl!.isNotEmpty
+                ? AppNetworkImage(
+                    imageUrl: entry.imageUrl!,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    errorWidget: Container(
+                      color: Colors.grey.shade200,
+                      child: Center(
+                        child: Icon(
+                          Icons.image_not_supported_outlined,
+                          size: 50,
+                          color: Colors.grey.shade400,
+                        ),
+                      ),
+                    ),
+                  )
+                : Container(
+                    color: Colors.grey.shade200,
+                    child: Center(
+                      child: Icon(
+                        Icons.image_not_supported_outlined,
+                        size: 50,
+                        color: Colors.grey.shade400,
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            ),
           ),
-          const SizedBox(height: 16),
-        ],
+        ),
+        const SizedBox(height: 16),
         CustomCard(
           child: Column(
             children: [
