@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:multi_catalog_system/core/data/models/auth/user_model.dart';
+import 'package:multi_catalog_system/core/data/models/auth/user_profile_model.dart';
 import 'package:multi_catalog_system/core/data/models/role/role_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -17,6 +18,9 @@ abstract class AuthLocalDataSource {
   Future<void> cacheUserRole(RoleModel? userRole);
   Future<RoleModel?> getCachedUserRole();
 
+  Future<void> cacheUserProfile(UserProfileModel? userProfile);
+  Future<UserProfileModel?> getCachedUserProfile();
+
   Future<void> clearAuthToken();
 }
 
@@ -27,6 +31,7 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   static const String _refreshTokenKey = 'CACHED_REFRESH_TOKEN';
   static const String _userKey = 'CACHED_USER';
   static const String _userRoleKey = 'CACHED_USER_ROLE';
+  static const String _userProfileKey = 'CACHED_USER_PROFILE';
 
   AuthLocalDataSourceImpl({required this.sharedPreferences});
 
@@ -81,12 +86,29 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   }
 
   @override
+  Future<void> cacheUserProfile(UserProfileModel? userProfile) {
+    if (userProfile == null) return sharedPreferences.remove(_userProfileKey);
+    final userProfileJson = jsonEncode(userProfile.toJson());
+    return sharedPreferences.setString(_userProfileKey, userProfileJson);
+  }
+
+  @override
+  Future<UserProfileModel?> getCachedUserProfile() async {
+    final userProfileJson = sharedPreferences.getString(_userProfileKey);
+
+    if (userProfileJson == null) return null;
+
+    return UserProfileModel.fromJson(jsonDecode(userProfileJson));
+  }
+
+  @override
   Future<void> clearAuthToken() async {
     await Future.wait([
       sharedPreferences.remove(_accessTokenKey),
       sharedPreferences.remove(_refreshTokenKey),
       sharedPreferences.remove(_userKey),
       sharedPreferences.remove(_userRoleKey),
+      sharedPreferences.remove(_userProfileKey),
     ]);
   }
 }

@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:dartz/dartz.dart';
 import 'package:multi_catalog_system/core/data/models/auth/user_model.dart';
 import 'package:multi_catalog_system/core/data/models/auth/user_profile_model.dart';
-import 'package:multi_catalog_system/core/data/models/auth/user_metadata_model.dart';
 import 'package:multi_catalog_system/core/domain/entities/role/role_entry.dart';
 import 'package:multi_catalog_system/core/error/exception_mapper.dart';
 import 'package:multi_catalog_system/core/error/exceptions.dart';
@@ -29,9 +28,9 @@ class AuthRepositoryImpl implements AuthRepository {
   }) => UserEntry(
     id: model.id,
     email: model.email,
-    fullName: profile?.fullName ?? model.userMetadata?.fullName,
-    phone: profile?.phone ?? model.userMetadata?.phone,
-    imageUrl: profile?.imageUrl ?? model.userMetadata?.imageUrl,
+    fullName: profile?.fullName,
+    phone: profile?.phone,
+    imageUrl: profile?.imageUrl,
     createdAt: model.createdAt,
     updatedAt: model.updatedAt,
     lastSignInAt: model.lastSignInAt,
@@ -57,29 +56,22 @@ class AuthRepositoryImpl implements AuthRepository {
       }
 
       try {
-        final remoteUser = await authRemoteDataSource.getCurrentUser();
+        final cachedUser = await authLocalDataSource.getCachedUser();
+        
+        if (cachedUser == null) {
+          return Left(CacheFailure(message: "User not found in cache"));
+        }
+
         final role = await authRemoteDataSource.getRole(accessToken: token);
         final profile = await authRemoteDataSource.getProfile(accessToken: token);
 
-        final userToCache = remoteUser.copyWith(
-          userMetadata: remoteUser.userMetadata?.copyWith(
-                fullName: profile?.fullName ?? remoteUser.userMetadata?.fullName,
-                phone: profile?.phone ?? remoteUser.userMetadata?.phone,
-                imageUrl: profile?.imageUrl ?? remoteUser.userMetadata?.imageUrl,
-              ) ??
-              UserMetadataModel(
-                fullName: profile?.fullName,
-                phone: profile?.phone,
-                imageUrl: profile?.imageUrl,
-              ),
-        );
-
-        await authLocalDataSource.cacheUser(userToCache);
+        await authLocalDataSource.cacheUser(cachedUser);
         await authLocalDataSource.cacheUserRole(role);
+        await authLocalDataSource.cacheUserProfile(profile);
 
         return Right(
           _toEntity(
-            model: remoteUser,
+            model: cachedUser,
             role: RoleEntry(id: role?.id, code: role?.code, name: role?.name),
             profile: profile,
           ),
@@ -87,6 +79,7 @@ class AuthRepositoryImpl implements AuthRepository {
       } catch (_) {
         final cachedUser = await authLocalDataSource.getCachedUser();
         final cachedRole = await authLocalDataSource.getCachedUserRole();
+        final cachedProfile = await authLocalDataSource.getCachedUserProfile();
 
         if (cachedUser != null && cachedRole != null) {
           return Right(
@@ -97,6 +90,7 @@ class AuthRepositoryImpl implements AuthRepository {
                 code: cachedRole.code,
                 name: cachedRole.name,
               ),
+              profile: cachedProfile,
             ),
           );
         }
@@ -123,24 +117,12 @@ class AuthRepositoryImpl implements AuthRepository {
         accessToken: result.accessToken,
       );
 
-      final userToCache = result.user.copyWith(
-        userMetadata: result.user.userMetadata?.copyWith(
-              fullName: profile?.fullName ?? result.user.userMetadata?.fullName,
-              phone: profile?.phone ?? result.user.userMetadata?.phone,
-              imageUrl: profile?.imageUrl ?? result.user.userMetadata?.imageUrl,
-            ) ??
-            UserMetadataModel(
-              fullName: profile?.fullName,
-              phone: profile?.phone,
-              imageUrl: profile?.imageUrl,
-            ),
-      );
-
       await authLocalDataSource.cacheAuthToken(result.accessToken);
       await authLocalDataSource.cacheRefreshToken(result.refreshToken);
-      await authLocalDataSource.cacheUser(userToCache);
+      await authLocalDataSource.cacheUser(result.user);
 
       await authLocalDataSource.cacheUserRole(role);
+      await authLocalDataSource.cacheUserProfile(profile);
 
       return Right(
         _toEntity(

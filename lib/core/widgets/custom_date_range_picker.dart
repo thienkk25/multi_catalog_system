@@ -112,28 +112,30 @@ class _CustomDateRangePickerSheetState
   Widget build(BuildContext context) {
     final bottomPadding = MediaQuery.of(context).viewInsets.bottom;
 
-    return Container(
-      margin: const EdgeInsets.only(top: 60),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _buildHeader(),
-          _buildPresetChips(),
-          const Divider(height: 1, indent: 16, endIndent: 16),
-          _buildMonthNavigation(),
-          if (_pickerMode != null)
-            _buildYearMonthPicker()
-          else ...[
-            _buildWeekdayLabels(),
-            _buildCalendarGrid(),
+    return SafeArea(
+      child: Container(
+        margin: const EdgeInsets.only(top: 60),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildHeader(),
+            _buildPresetChips(),
+            const Divider(height: 1, indent: 16, endIndent: 16),
+            _buildMonthNavigation(),
+            if (_pickerMode != null)
+              _buildYearMonthPicker()
+            else ...[
+              _buildWeekdayLabels(),
+              _buildCalendarGrid(),
+            ],
+            _buildFooter(),
+            SizedBox(height: bottomPadding + 8),
           ],
-          _buildFooter(),
-          SizedBox(height: bottomPadding + 8),
-        ],
+        ),
       ),
     );
   }
