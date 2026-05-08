@@ -21,7 +21,9 @@ import 'package:multi_catalog_system/features/category_item/domain/entities/cate
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_bloc.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_event.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_state.dart';
+import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_version_bloc.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_version_event.dart';
+import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_version_state.dart';
 import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_lookup_bloc.dart';
 import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_lookup_event.dart';
 import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_lookup_state.dart';
@@ -130,67 +132,107 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<CategoryItemBloc, CategoryItemState>(
-      listenWhen: (prev, curr) =>
-          prev.entry?.id != curr.entry?.id && curr.entry != null,
-      listener: (context, state) {
-        final entry = state.entry;
-        if (entry != null) {
-          _initFromItem(entry);
-        }
-      },
-      buildWhen: (prev, curr) =>
-          prev.entry?.id != curr.entry?.id && curr.entry != null,
-      builder: (context, state) => SafeArea(
-        child: Stack(
-          children: [
-            CustomScrollView(
-              slivers: [
-                SliverPadding(
-                  padding: const EdgeInsets.all(10.0),
-                  sliver: SliverList(
-                    delegate: SliverChildListDelegate([
-                      Text(
-                        _isCreate
-                            ? 'Tạo Mục danh mục'
-                            : 'Cập nhật Mục danh mục',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 20,
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<CategoryItemBloc, CategoryItemState>(
+          listenWhen: (prev, curr) =>
+              prev.entry?.id != curr.entry?.id && curr.entry != null,
+          listener: (context, state) {
+            final entry = state.entry;
+            if (entry != null) {
+              _initFromItem(entry);
+            }
+          },
+        ),
+        BlocListener<CategoryItemBloc, CategoryItemState>(
+          listenWhen: (prev, curr) =>
+              prev.successMessage != curr.successMessage &&
+              curr.successMessage != null,
+          listener: (context, state) {
+            if (_isCreate) {
+              context.goNamed(RouterNames.categoryItem);
+            } else {
+              context.pop(true);
+            }
+          },
+        ),
+        BlocListener<CategoryItemVersionBloc, CategoryItemVersionState>(
+          listenWhen: (prev, curr) =>
+              prev.successMessage != curr.successMessage &&
+              curr.successMessage != null,
+          listener: (context, state) {
+            if (_isCreate) {
+              context.goNamed(RouterNames.categoryItem);
+            } else {
+              context.pop(true);
+            }
+          },
+        ),
+      ],
+      child: BlocBuilder<CategoryItemBloc, CategoryItemState>(
+        buildWhen: (prev, curr) =>
+            prev.entry?.id != curr.entry?.id && curr.entry != null,
+        builder: (context, state) => SafeArea(
+          child: Stack(
+            children: [
+              CustomScrollView(
+                slivers: [
+                  SliverPadding(
+                    padding: const EdgeInsets.all(10.0),
+                    sliver: SliverList(
+                      delegate: SliverChildListDelegate([
+                        Text(
+                          _isCreate
+                              ? 'Tạo Mục danh mục'
+                              : 'Cập nhật Mục danh mục',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 20,
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 10),
-                      Form(
-                        key: _formKey,
-                        child: Column(
-                          spacing: 15,
-                          children: [_generalInformation(), _legalDocument()],
+                        SizedBox(height: 10),
+                        Form(
+                          key: _formKey,
+                          child: Column(
+                            spacing: 15,
+                            children: [_generalInformation(), _legalDocument()],
+                          ),
                         ),
-                      ),
-                    ]),
+                      ]),
+                    ),
                   ),
-                ),
-                SliverPadding(
-                  padding: EdgeInsets.only(bottom: _bottomBarHeight),
-                ),
-              ],
-            ),
-            BlocSelector<CategoryItemBloc, CategoryItemState, bool>(
-              selector: (state) => state.isLoading,
-              builder: (context, isLoading) => BottomFormActions(
-                isLoading: isLoading,
-                key: _bottomBarKey,
-                onCancel: () {
-                  if (_isCreate) {
-                    context.goNamed(RouterNames.categoryItem);
-                  } else {
-                    context.pop();
-                  }
-                },
-                onSave: () => _onSave(context: context, isEdit: true),
+                  SliverPadding(
+                    padding: EdgeInsets.only(bottom: _bottomBarHeight),
+                  ),
+                ],
               ),
-            ),
-          ],
+              BlocBuilder<CategoryItemBloc, CategoryItemState>(
+                builder: (context, itemState) {
+                  return BlocBuilder<
+                    CategoryItemVersionBloc,
+                    CategoryItemVersionState
+                  >(
+                    builder: (context, versionState) {
+                      final isLoading =
+                          itemState.isLoading || versionState.isLoading;
+                      return BottomFormActions(
+                        isLoading: isLoading,
+                        key: _bottomBarKey,
+                        onCancel: () {
+                          if (_isCreate) {
+                            context.goNamed(RouterNames.categoryItem);
+                          } else {
+                            context.pop();
+                          }
+                        },
+                        onSave: () => _onSave(context: context, isEdit: true),
+                      );
+                    },
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -487,11 +529,6 @@ class _CategoryItemFormPageState extends State<CategoryItemFormPage> {
           ),
         );
       }
-    }
-    if (_isCreate) {
-      context.goNamed(RouterNames.categoryItem);
-    } else {
-      context.pop();
     }
   }
 }

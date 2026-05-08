@@ -104,15 +104,15 @@ class _CategoryItemDetailPageState extends State<CategoryItemDetailPage>
             ),
 
           BlocConsumer<CategoryItemBloc, CategoryItemState>(
-            listenWhen: (previous, current) =>
-                previous.entry?.id != current.entry?.id &&
-                current.entry != null,
+            listenWhen: (previous, current) => previous.entry != current.entry,
             listener: (context, state) {
-              context.itemVersionBloc.add(
-                CategoryItemVersionEvent.getHistoryVersion(
-                  itemId: state.entry!.id!,
-                ),
-              );
+              if (state.entry != null) {
+                context.itemVersionBloc.add(
+                  CategoryItemVersionEvent.getHistoryVersion(
+                    itemId: state.entry!.id!,
+                  ),
+                );
+              }
             },
             builder: (context, state) {
               if (state.isLoading) {
@@ -453,14 +453,18 @@ class _BottomActions extends StatelessWidget {
               permission: ['admin', 'domainOfficer'],
               child: Expanded(
                 child: CustomButton(
-                  onTap: () {
-                    context.pushNamed(
+                  onTap: () async {
+                    final result = await context.pushNamed(
                       RouterNames.categoryItemForm,
                       queryParameters: {
                         'mode': 'updateItem',
                         'itemId': entry.id!,
                       },
                     );
+                    
+                    if (result == true && context.mounted) {
+                      context.itemBloc.add(CategoryItemEvent.getById(id: entry.id!));
+                    }
                   },
                   colorBackground: Colors.blue,
                   textButton: const Text(
