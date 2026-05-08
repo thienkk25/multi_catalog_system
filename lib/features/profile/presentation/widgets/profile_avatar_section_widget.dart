@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:multi_catalog_system/core/domain/entities/auth/user_entry.dart';
+import 'package:multi_catalog_system/core/widgets/app_network_image.dart';
 
 class ProfileAvatarSectionWidget extends StatelessWidget {
   final UserEntry? entry;
@@ -38,12 +39,12 @@ class ProfileAvatarSectionWidget extends StatelessWidget {
           alignment: Alignment.center,
           child: entry?.imageUrl != null && entry!.imageUrl!.isNotEmpty
               ? ClipOval(
-                  child: Image.network(
-                    entry!.imageUrl!,
+                  child: AppNetworkImage(
+                    imageUrl: entry!.imageUrl!,
                     width: 130,
                     height: 130,
                     fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Text(
+                    errorWidget: Text(
                       initials,
                       style: TextStyle(
                         color: Colors.white,

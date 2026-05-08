@@ -11,6 +11,7 @@ import 'package:multi_catalog_system/core/widgets/role_based_widget.dart';
 import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_event.dart';
 import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_state.dart';
+import 'package:multi_catalog_system/core/widgets/app_network_image.dart';
 
 class HomeDrawerWidget extends StatelessWidget {
   final int currentIndex;
@@ -58,19 +59,30 @@ class _HeaderDrawer extends StatelessWidget {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         final sizeW = drawerWidth - 20;
-        // print(state.mapOrNull(authenticated: (s) => s.entry));
 
         return state.maybeWhen(
           authenticated: (user) => Row(
             children: [
-              CircleAvatar(
-                radius: 30,
-                backgroundImage: user.imageUrl != null
-                    ? NetworkImage(user.imageUrl!)
-                    : null,
-                child: user.imageUrl == null
-                    ? const Icon(Icons.person, size: 30)
-                    : null,
+              ClipOval(
+                child: user.imageUrl != null && user.imageUrl!.isNotEmpty
+                    ? AppNetworkImage(
+                        imageUrl: user.imageUrl!,
+                        width: 60,
+                        height: 60,
+                        fit: BoxFit.cover,
+                        errorWidget: Container(
+                          width: 60,
+                          height: 60,
+                          color: Colors.grey.shade300,
+                          child: const Icon(Icons.person, size: 30),
+                        ),
+                      )
+                    : Container(
+                        width: 60,
+                        height: 60,
+                        color: Colors.grey.shade300,
+                        child: const Icon(Icons.person, size: 30),
+                      ),
               ),
               const SizedBox(width: 12),
               Expanded(

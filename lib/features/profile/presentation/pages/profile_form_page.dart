@@ -9,6 +9,7 @@ import 'package:multi_catalog_system/core/widgets/custom_circular_progress.dart'
 import 'package:multi_catalog_system/core/widgets/custom_input.dart';
 import 'package:multi_catalog_system/core/widgets/image_url_input_widget.dart';
 import 'package:multi_catalog_system/core/domain/entities/auth/user_entry.dart';
+import 'package:multi_catalog_system/features/auth/presentation/bloc/auth_event.dart';
 import 'package:multi_catalog_system/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:multi_catalog_system/features/profile/presentation/bloc/profile_event.dart';
 import 'package:multi_catalog_system/features/profile/presentation/bloc/profile_state.dart';
@@ -68,6 +69,7 @@ class _ProfileFormPageState extends State<ProfileFormPage> {
 
         if (state.successMessage != null) {
           context.notificationCubit.success(state.successMessage!);
+          context.authBloc.add(const AuthEvent.getCurrentUser());
         }
         if (state.entry != null) {
           _initFromData(state.entry!);
@@ -98,7 +100,8 @@ class _ProfileFormPageState extends State<ProfileFormPage> {
                         ),
                       ),
                       alignment: Alignment.center,
-                      child: _entry?.imageUrl != null &&
+                      child:
+                          _entry?.imageUrl != null &&
                               _entry!.imageUrl!.isNotEmpty
                           ? ClipOval(
                               child: Image.network(
@@ -108,13 +111,13 @@ class _ProfileFormPageState extends State<ProfileFormPage> {
                                 fit: BoxFit.cover,
                                 errorBuilder: (context, error, stackTrace) =>
                                     Text(
-                                  _entry?.fullName?[0].toUpperCase() ?? '?',
-                                  style: TextStyle(
-                                    fontSize: 48,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
+                                      _entry?.fullName?[0].toUpperCase() ?? '?',
+                                      style: TextStyle(
+                                        fontSize: 48,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                               ),
                             )
                           : Text(

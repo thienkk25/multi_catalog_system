@@ -26,9 +26,9 @@ abstract class UserModel with _$UserModel {
 
     @JsonKey(name: 'last_sign_in_at') DateTime? lastSignInAt,
 
-    @JsonKey(name: 'app_metadata') AppMetadataModel? appMetadata,
+    @JsonKey(name: 'raw_app_meta_data') AppMetadataModel? appMetadata,
 
-    @JsonKey(name: 'user_metadata') UserMetadataModel? userMetadata,
+    @JsonKey(name: 'raw_user_meta_data') UserMetadataModel? userMetadata,
 
     List<IdentityModel>? identities,
 

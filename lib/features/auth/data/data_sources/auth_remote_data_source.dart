@@ -3,6 +3,7 @@ import 'package:multi_catalog_system/core/config/networks/base_remote_data_sourc
 import 'package:multi_catalog_system/core/data/models/auth/session_model.dart';
 import 'package:multi_catalog_system/core/data/models/auth/user_model.dart';
 import 'package:multi_catalog_system/core/data/models/role/role_model.dart';
+import 'package:multi_catalog_system/core/data/models/auth/user_profile_model.dart';
 import 'package:multi_catalog_system/core/error/exceptions.dart';
 
 abstract class AuthRemoteDataSource {
@@ -11,6 +12,7 @@ abstract class AuthRemoteDataSource {
   Future<SessionModel> refreshToken({required String refreshToken});
   Future<void> logout();
   Future<RoleModel?> getRole({required String accessToken});
+  Future<UserProfileModel?> getProfile({required String accessToken});
 }
 
 class AuthRemoteDataSourceImpl extends BaseRemoteDataSource
@@ -139,6 +141,25 @@ class AuthRemoteDataSourceImpl extends BaseRemoteDataSource
       handleDioError(e);
     } catch (e) {
       throw UnexpectedException(e.toString());
+    }
+  }
+
+  @override
+  Future<UserProfileModel?> getProfile({required String accessToken}) async {
+    try {
+      final response = await dio.get(
+        '/user/profile',
+        options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
+      );
+
+      final profileJson = response.data['data'];
+      if (profileJson == null) return null;
+
+      return UserProfileModel.fromJson(profileJson);
+    } on DioException catch (e) {
+      handleDioError(e);
+    } catch (e) {
+      return null;
     }
   }
 }

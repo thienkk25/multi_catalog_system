@@ -37,22 +37,16 @@ class UserManagementRepositoryImpl implements UserManagementRepository {
   Map<String, dynamic> _createPayload(UserEntry e) => {
     'email': e.email,
     if (e.password != null) 'password': e.password,
-    if (e.fullName != null || e.phone != null || e.imageUrl != null)
-      'user_metadata': {
-        if (e.fullName != null) 'full_name': e.fullName,
-        if (e.phone != null) 'phone': e.phone,
-        if (e.imageUrl != null) 'image_url': e.imageUrl,
-      },
+    if (e.fullName != null) 'full_name': e.fullName,
+    if (e.phone != null) 'phone': e.phone,
+    if (e.imageUrl != null) 'image_url': e.imageUrl,
   };
 
   Map<String, dynamic> _updatePayload(UserEntry e) => {
     if (e.password != null) 'password': e.password,
-    if (e.fullName != null || e.phone != null || e.imageUrl != null)
-      'user_metadata': {
-        if (e.fullName != null) 'full_name': e.fullName,
-        if (e.phone != null) 'phone': e.phone,
-        if (e.imageUrl != null) 'image_url': e.imageUrl,
-      },
+    if (e.fullName != null) 'full_name': e.fullName,
+    if (e.phone != null) 'phone': e.phone,
+    if (e.imageUrl != null) 'image_url': e.imageUrl,
   };
 
   @override
