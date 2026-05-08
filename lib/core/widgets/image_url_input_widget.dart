@@ -86,9 +86,10 @@ class _ImageUrlInputWidgetState extends State<ImageUrlInputWidget> {
           const SizedBox(height: 12),
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
-            child: Container(
-              width: double.infinity,
-              constraints: const BoxConstraints(maxHeight: 200),
+            child: AspectRatio(
+              aspectRatio: 16 / 9,
+              child: Container(
+                width: double.infinity,
               decoration: BoxDecoration(
                 color: Colors.grey.shade100,
                 borderRadius: BorderRadius.circular(12),
@@ -163,6 +164,7 @@ class _ImageUrlInputWidgetState extends State<ImageUrlInputWidget> {
                         );
                       },
                     ),
+              ),
             ),
           ),
         ],
