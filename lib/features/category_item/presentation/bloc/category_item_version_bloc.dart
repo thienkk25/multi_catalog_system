@@ -185,7 +185,6 @@ class CategoryItemVersionBloc
             isLoading: true,
             error: null,
             successMessage: null,
-            entry: null,
           ),
         );
 
@@ -208,7 +207,6 @@ class CategoryItemVersionBloc
             isLoading: true,
             error: null,
             successMessage: null,
-            entry: null,
           ),
         );
         final result = await updateVersion(
@@ -232,7 +230,6 @@ class CategoryItemVersionBloc
             isLoading: true,
             error: null,
             successMessage: null,
-            entry: null,
           ),
         );
         final result = await deleteVersion(id: e.id, domainId: e.domainId);
@@ -256,7 +253,6 @@ class CategoryItemVersionBloc
             isLoading: true,
             error: null,
             successMessage: null,
-            entry: null,
           ),
         );
         final result = await approveVersion(id: e.id);
@@ -266,16 +262,18 @@ class CategoryItemVersionBloc
           (r) {
             final index = state.entries.indexWhere((d) => d.id == r.id);
 
-            if (index == -1 || state.entries[index] == r) return;
-
-            final updated = List.of(state.entries);
-            updated[index] = r;
+            List<CategoryItemVersionEntry> updated = state.entries;
+            if (index != -1 && state.entries[index] != r) {
+              updated = List.of(state.entries);
+              updated[index] = r;
+            }
 
             emit(
               state.copyWith(
                 isLoading: false,
                 successMessage: 'Phê duyệt thành công',
                 entries: updated,
+                entry: state.entry?.id == r.id ? r : state.entry,
               ),
             );
           },
@@ -287,7 +285,6 @@ class CategoryItemVersionBloc
             isLoading: true,
             error: null,
             successMessage: null,
-            entry: null,
           ),
         );
         final result = await rejectVersion(
@@ -300,15 +297,18 @@ class CategoryItemVersionBloc
           (r) {
             final index = state.entries.indexWhere((d) => d.id == r.id);
 
-            if (index == -1 || state.entries[index] == r) return;
+            List<CategoryItemVersionEntry> updated = state.entries;
+            if (index != -1 && state.entries[index] != r) {
+              updated = List.of(state.entries);
+              updated[index] = r;
+            }
 
-            final updated = List.of(state.entries);
-            updated[index] = r;
             emit(
               state.copyWith(
                 isLoading: false,
                 successMessage: 'Từ chối thành công',
                 entries: updated,
+                entry: state.entry?.id == r.id ? r : state.entry,
               ),
             );
           },
@@ -321,7 +321,6 @@ class CategoryItemVersionBloc
             entries: state.entries.where((d) => d.id != e.id).toList(),
             error: null,
             successMessage: null,
-            entry: null,
           ),
         );
         final result = await deleteOrigin(id: e.id);
@@ -337,7 +336,6 @@ class CategoryItemVersionBloc
             isLoading: true,
             error: null,
             successMessage: null,
-            entry: null,
           ),
         );
         final result = await rollbackVersion(id: e.id);

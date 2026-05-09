@@ -132,7 +132,6 @@ class CategoryItemBloc extends Bloc<CategoryItemEvent, CategoryItemState> {
             isLoading: true,
             error: null,
             successMessage: null,
-            entry: null,
           ),
         );
 
@@ -157,7 +156,6 @@ class CategoryItemBloc extends Bloc<CategoryItemEvent, CategoryItemState> {
             isLoading: true,
             error: null,
             successMessage: null,
-            entry: null,
           ),
         );
 
@@ -169,15 +167,17 @@ class CategoryItemBloc extends Bloc<CategoryItemEvent, CategoryItemState> {
           (r) {
             final index = state.entries.indexWhere((d) => d.id == r.id);
 
-            if (index == -1 || state.entries[index] == r) return;
-
-            final updated = List.of(state.entries);
-            updated[index] = r;
+            List<CategoryItemEntry> updated = state.entries;
+            if (index != -1 && state.entries[index] != r) {
+              updated = List.of(state.entries);
+              updated[index] = r;
+            }
 
             emit(
               state.copyWith(
                 isLoading: false,
                 entries: updated,
+                entry: state.entry?.id == r.id ? r : state.entry,
                 successMessage: 'Cập nhật thành công',
               ),
             );
