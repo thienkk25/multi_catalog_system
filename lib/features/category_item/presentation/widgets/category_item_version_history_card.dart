@@ -108,7 +108,7 @@ class CategoryItemVersionHistoryCard extends StatelessWidget {
   }
 }
 
-class _InfoBottomSheet extends StatelessWidget {
+class _InfoBottomSheet extends StatefulWidget {
   final CategoryItemVersionEntry entry;
   final int indexVersion;
   final int lengthHistory;
@@ -119,12 +119,24 @@ class _InfoBottomSheet extends StatelessWidget {
   });
 
   @override
+  State<_InfoBottomSheet> createState() => _InfoBottomSheetState();
+}
+
+class _InfoBottomSheetState extends State<_InfoBottomSheet> {
+  static const int _maxCollapsedRows = 5;
+
+  bool _isOldValueExpanded = false;
+  bool _isNewValueExpanded = false;
+
+  CategoryItemVersionEntry get entry => widget.entry;
+
+  @override
   Widget build(BuildContext context) {
     final canRollback =
         entry.status == 'approved' &&
-        lengthHistory > 0 &&
+        widget.lengthHistory > 0 &&
         context.hasRole('admin') &&
-        indexVersion != lengthHistory - 1;
+        widget.indexVersion != widget.lengthHistory - 1;
 
     return SingleChildScrollView(
       child: SafeArea(
@@ -208,7 +220,13 @@ class _InfoBottomSheet extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 6),
-                _jsonBox(entry.oldValue!, true),
+                _jsonBox(
+                  entry.oldValue!,
+                  true,
+                  isExpanded: _isOldValueExpanded,
+                  onToggle: () =>
+                      setState(() => _isOldValueExpanded = !_isOldValueExpanded),
+                ),
                 const SizedBox(height: 16),
               ],
 
@@ -221,7 +239,13 @@ class _InfoBottomSheet extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 6),
-                _jsonBox(entry.newValue!, false),
+                _jsonBox(
+                  entry.newValue!,
+                  false,
+                  isExpanded: _isNewValueExpanded,
+                  onToggle: () =>
+                      setState(() => _isNewValueExpanded = !_isNewValueExpanded),
+                ),
                 const SizedBox(height: 20),
               ],
 
@@ -265,7 +289,19 @@ class _InfoBottomSheet extends StatelessWidget {
     );
   }
 
-  Widget _jsonBox(Map<String, dynamic> data, bool isOldValue) {
+  Widget _jsonBox(
+    Map<String, dynamic> data,
+    bool isOldValue, {
+    required bool isExpanded,
+    required VoidCallback onToggle,
+  }) {
+    final entries = data.entries.toList();
+    final hasOverflow = entries.length > _maxCollapsedRows;
+    final visibleEntries =
+        hasOverflow && !isExpanded
+            ? entries.take(_maxCollapsedRows).toList()
+            : entries;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(12),
@@ -275,38 +311,73 @@ class _InfoBottomSheet extends StatelessWidget {
             : Colors.green.withValues(alpha: .05),
         borderRadius: BorderRadius.circular(8),
       ),
-      child: Table(
-        columnWidths: const {
-          0: IntrinsicColumnWidth(flex: 1),
-          1: FlexColumnWidth(),
-        },
-        border: TableBorder(
-          horizontalInside: BorderSide(color: Colors.blue.shade300, width: 0.8),
-          verticalInside: BorderSide(color: Colors.blue.shade300, width: 0.8),
-        ),
-        children: data.entries.map((e) {
-          return TableRow(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8),
-                child: Text(
-                  e.key,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 13,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Table(
+            columnWidths: const {
+              0: IntrinsicColumnWidth(flex: 1),
+              1: FlexColumnWidth(),
+            },
+            border: TableBorder(
+              horizontalInside:
+                  BorderSide(color: Colors.blue.shade300, width: 0.8),
+              verticalInside:
+                  BorderSide(color: Colors.blue.shade300, width: 0.8),
+            ),
+            children: visibleEntries.map((e) {
+              return TableRow(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Text(
+                      e.key,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                      ),
+                    ),
                   ),
-                ),
+                  Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: _ExpandableValueCell(
+                      text: _formatValue(e.value),
+                    ),
+                  ),
+                ],
+              );
+            }).toList(),
+          ),
+          if (hasOverflow) ...[
+            const SizedBox(height: 8),
+            GestureDetector(
+              onTap: onToggle,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    isExpanded
+                        ? 'Thu gọn'
+                        : 'Xem thêm (${entries.length - _maxCollapsedRows})',
+                    style: const TextStyle(
+                      color: Colors.blue,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Icon(
+                    isExpanded
+                        ? Icons.keyboard_arrow_up
+                        : Icons.keyboard_arrow_down,
+                    color: Colors.blue,
+                    size: 18,
+                  ),
+                ],
               ),
-              Padding(
-                padding: const EdgeInsets.all(8),
-                child: Text(
-                  _formatValue(e.value),
-                  style: const TextStyle(fontSize: 13),
-                ),
-              ),
-            ],
-          );
-        }).toList(),
+            ),
+          ],
+        ],
       ),
     );
   }
@@ -358,5 +429,65 @@ class _InfoBottomSheet extends StatelessWidget {
     );
     if (!context.mounted) return;
     context.pop();
+  }
+}
+
+class _ExpandableValueCell extends StatefulWidget {
+  final String text;
+  static const int _maxLines = 3;
+
+  const _ExpandableValueCell({required this.text});
+
+  @override
+  State<_ExpandableValueCell> createState() => _ExpandableValueCellState();
+}
+
+class _ExpandableValueCellState extends State<_ExpandableValueCell> {
+  bool _expanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final textSpan = TextSpan(
+          text: widget.text,
+          style: const TextStyle(fontSize: 13),
+        );
+        final textPainter = TextPainter(
+          text: textSpan,
+          maxLines: _ExpandableValueCell._maxLines,
+          textDirection: TextDirection.ltr,
+        )..layout(maxWidth: constraints.maxWidth);
+
+        final isOverflow = textPainter.didExceedMaxLines;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              widget.text,
+              style: const TextStyle(fontSize: 13),
+              maxLines: _expanded ? null : _ExpandableValueCell._maxLines,
+              overflow: _expanded ? null : TextOverflow.ellipsis,
+            ),
+            if (isOverflow)
+              GestureDetector(
+                onTap: () => setState(() => _expanded = !_expanded),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: Text(
+                    _expanded ? 'Thu gọn' : 'Xem thêm',
+                    style: const TextStyle(
+                      color: Colors.blue,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
+    );
   }
 }
