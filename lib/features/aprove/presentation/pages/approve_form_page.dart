@@ -8,6 +8,7 @@ import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/core/widgets/custom_dropdown_button.dart';
 import 'package:multi_catalog_system/core/widgets/custom_input.dart';
 import 'package:multi_catalog_system/core/widgets/file_icon_widget.dart';
+import 'package:multi_catalog_system/core/widgets/image_url_input_widget.dart';
 import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_entry.dart';
 import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_version_entry.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_version_bloc.dart';
@@ -30,6 +31,7 @@ class _ApproveFormPageState extends State<ApproveFormPage> {
   final TextEditingController _codeController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _imageUrlController = TextEditingController();
   List<LegalDocumentEntry> _legalDocuments = [];
   String? _selectedDomainId;
   String? _selectedCategoryGroupId;
@@ -64,6 +66,7 @@ class _ApproveFormPageState extends State<ApproveFormPage> {
       name: json['name'],
       code: json['code'],
       description: json['description'],
+      imageUrl: json['image_url'],
       domainId: json['domain_id'],
       groupId: json['group_id'],
       status: json['status'],
@@ -72,6 +75,7 @@ class _ApproveFormPageState extends State<ApproveFormPage> {
     _codeController.text = json['code'] ?? '';
     _nameController.text = json['name'] ?? '';
     _descriptionController.text = json['description'] ?? '';
+    _imageUrlController.text = json['image_url'] ?? '';
     _selectedDomainId = json['domain_id'] ?? '';
     _selectedCategoryGroupId = json['group_id'] ?? '';
     _selectedStatus = json['status'] ?? '';
@@ -101,6 +105,7 @@ class _ApproveFormPageState extends State<ApproveFormPage> {
     _codeController.dispose();
     _nameController.dispose();
     _descriptionController.dispose();
+    _imageUrlController.dispose();
     super.dispose();
   }
 
@@ -235,6 +240,19 @@ class _ApproveFormPageState extends State<ApproveFormPage> {
             minLines: 5,
             maxLines: 5,
           ),
+          ImageUrlInputWidget(
+            controller: _imageUrlController,
+            label: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Hình ảnh',
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+                Text('Tùy chọn', style: TextStyle(color: Colors.grey)),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -333,6 +351,9 @@ class _ApproveFormPageState extends State<ApproveFormPage> {
       description: _entry?.description != _descriptionController.text
           ? _descriptionController.text
           : _entry?.description,
+      imageUrl: _imageUrlController.text.isNotEmpty
+          ? _imageUrlController.text
+          : null,
       domainId: _selectedDomainId!,
       groupId: _selectedCategoryGroupId!,
       status: _selectedStatus,

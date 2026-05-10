@@ -11,10 +11,21 @@ import 'package:multi_catalog_system/core/widgets/role_based_widget.dart';
 import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_entry.dart';
 import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_version_entry.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_version_event.dart';
+import 'package:multi_catalog_system/core/widgets/app_network_image.dart';
 
-class ApproveCard extends StatelessWidget {
+class ApproveCard extends StatefulWidget {
   final CategoryItemVersionEntry version;
   const ApproveCard({super.key, required this.version});
+
+  @override
+  State<ApproveCard> createState() => _ApproveCardState();
+}
+
+class _ApproveCardState extends State<ApproveCard> {
+  static const int _maxCollapsedRows = 5;
+  bool _isDiffExpanded = false;
+
+  CategoryItemVersionEntry get version => widget.version;
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +36,7 @@ class ApproveCard extends StatelessWidget {
       code: version.oldValue?['code'] ?? '',
       name: version.oldValue?['name'] ?? '',
       description: version.oldValue?['description'] ?? '',
+      imageUrl: version.oldValue?['image_url'],
     );
 
     if (version.changeType == 'create') {
@@ -35,6 +47,7 @@ class ApproveCard extends StatelessWidget {
         code: version.newValue?['code'] ?? '',
         name: version.newValue?['name'] ?? '',
         description: version.newValue?['description'] ?? '',
+        imageUrl: version.newValue?['image_url'],
       );
     }
 
@@ -57,6 +70,41 @@ class ApproveCard extends StatelessWidget {
                 ),
                 _statusChip(version.status),
               ],
+            ),
+
+            const SizedBox(height: 10),
+
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: AspectRatio(
+                aspectRatio: 16 / 9,
+                child: item.imageUrl != null && item.imageUrl!.isNotEmpty
+                    ? AppNetworkImage(
+                        imageUrl: item.imageUrl!,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                        errorWidget: Container(
+                          color: Colors.grey.shade200,
+                          child: Center(
+                            child: Icon(
+                              Icons.image_not_supported_outlined,
+                              size: 36,
+                              color: Colors.grey.shade400,
+                            ),
+                          ),
+                        ),
+                      )
+                    : Container(
+                        color: Colors.grey.shade200,
+                        child: Center(
+                          child: Icon(
+                            Icons.image_not_supported_outlined,
+                            size: 36,
+                            color: Colors.grey.shade400,
+                          ),
+                        ),
+                      ),
+              ),
             ),
 
             const Divider(),
@@ -252,7 +300,12 @@ class ApproveCard extends StatelessWidget {
     Map<String, dynamic>? oldValue,
     Map<String, dynamic>? newValue,
   ) {
-    final Set<String> keys = {...?oldValue?.keys, ...?newValue?.keys};
+    final List<String> keys = {...?oldValue?.keys, ...?newValue?.keys}.toList();
+    final hasOverflow = keys.length > _maxCollapsedRows;
+    final visibleKeys =
+        hasOverflow && !_isDiffExpanded
+            ? keys.take(_maxCollapsedRows).toList()
+            : keys;
 
     return Container(
       width: double.infinity,
@@ -311,7 +364,7 @@ class ApproveCard extends StatelessWidget {
                   ],
                 ),
 
-                ...keys.map((key) {
+                ...visibleKeys.map((key) {
                   final oldVal = oldValue?[key];
                   final newVal = newValue?[key];
 
@@ -336,17 +389,51 @@ class ApproveCard extends StatelessWidget {
                       ),
                       Padding(
                         padding: const EdgeInsets.all(6),
-                        child: Text(oldVal?.toString() ?? ""),
+                        child: _ApproveExpandableValueCell(
+                          text: oldVal?.toString() ?? "",
+                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(6),
-                        child: Text(newVal?.toString() ?? ""),
+                        child: _ApproveExpandableValueCell(
+                          text: newVal?.toString() ?? "",
+                        ),
                       ),
                     ],
                   );
                 }),
               ],
             ),
+          if (hasOverflow) ...[
+            const SizedBox(height: 8),
+            GestureDetector(
+              onTap: () =>
+                  setState(() => _isDiffExpanded = !_isDiffExpanded),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    _isDiffExpanded
+                        ? 'Thu gọn'
+                        : 'Xem thêm (${keys.length - _maxCollapsedRows})',
+                    style: const TextStyle(
+                      color: Colors.blue,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Icon(
+                    _isDiffExpanded
+                        ? Icons.keyboard_arrow_up
+                        : Icons.keyboard_arrow_down,
+                    color: Colors.blue,
+                    size: 18,
+                  ),
+                ],
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -473,6 +560,69 @@ class ApproveCard extends StatelessWidget {
           context.pop();
         },
       ),
+    );
+  }
+}
+
+class _ApproveExpandableValueCell extends StatefulWidget {
+  final String text;
+  static const int _maxLines = 3;
+
+  const _ApproveExpandableValueCell({required this.text});
+
+  @override
+  State<_ApproveExpandableValueCell> createState() =>
+      _ApproveExpandableValueCellState();
+}
+
+class _ApproveExpandableValueCellState
+    extends State<_ApproveExpandableValueCell> {
+  bool _expanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final textSpan = TextSpan(
+          text: widget.text,
+          style: const TextStyle(fontSize: 13),
+        );
+        final textPainter = TextPainter(
+          text: textSpan,
+          maxLines: _ApproveExpandableValueCell._maxLines,
+          textDirection: TextDirection.ltr,
+        )..layout(maxWidth: constraints.maxWidth);
+
+        final isOverflow = textPainter.didExceedMaxLines;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              widget.text,
+              style: const TextStyle(fontSize: 13),
+              maxLines:
+                  _expanded ? null : _ApproveExpandableValueCell._maxLines,
+              overflow: _expanded ? null : TextOverflow.ellipsis,
+            ),
+            if (isOverflow)
+              GestureDetector(
+                onTap: () => setState(() => _expanded = !_expanded),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: Text(
+                    _expanded ? 'Thu gọn' : 'Xem thêm',
+                    style: const TextStyle(
+                      color: Colors.blue,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
     );
   }
 }
