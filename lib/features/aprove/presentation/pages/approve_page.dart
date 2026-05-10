@@ -93,8 +93,7 @@ class _ApprovePageState extends State<ApprovePage>
                     GestureDetector(
                       onTap: () {
                         final domainLookupBloc = context.domainLookupBloc;
-                        final groupLookupBloc =
-                            context.categoryGroupLookupBloc;
+                        final groupLookupBloc = context.categoryGroupLookupBloc;
                         final itemVersionBloc = context.itemVersionBloc;
 
                         showModalBottomSheet(
@@ -127,12 +126,16 @@ class _ApprovePageState extends State<ApprovePage>
                       },
                       child: Row(
                         children: [
-                          Icon(Icons.filter_alt_outlined,
-                              color: Colors.black, size: 20),
+                          Icon(
+                            Icons.filter_alt_outlined,
+                            color: Colors.black,
+                            size: 20,
+                          ),
                           const SizedBox(width: 4),
-                          Text('Lọc',
-                              style: TextStyle(
-                                  color: Colors.black, fontSize: 14)),
+                          Text(
+                            'Lọc',
+                            style: TextStyle(color: Colors.black, fontSize: 14),
+                          ),
                         ],
                       ),
                     ),
@@ -152,8 +155,7 @@ class _ApprovePageState extends State<ApprovePage>
                           const SizedBox(width: 4),
                           Text(
                             'Làm mới',
-                            style:
-                                TextStyle(color: Colors.black, fontSize: 14),
+                            style: TextStyle(color: Colors.black, fontSize: 14),
                           ),
                         ],
                       ),
@@ -189,51 +191,51 @@ class _ApprovePageState extends State<ApprovePage>
 
           // --- Tab content ---
           Expanded(
-            child: BlocBuilder<CategoryItemVersionBloc,
-                CategoryItemVersionState>(
-              buildWhen: (previous, current) =>
-                  previous.entries != current.entries ||
-                  previous.isLoading != current.isLoading,
-              builder: (context, state) {
-                if (state.isLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                }
+            child:
+                BlocBuilder<CategoryItemVersionBloc, CategoryItemVersionState>(
+                  buildWhen: (previous, current) =>
+                      previous.entries != current.entries ||
+                      previous.isLoading != current.isLoading,
+                  builder: (context, state) {
+                    if (state.isLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
 
-                final versions = state.entries;
+                    final versions = state.entries;
 
-                // Pre-filter once, not per-tab-build
-                final pending = versions
-                    .where((e) => e.status == 'pending')
-                    .toList(growable: false);
-                final approved = versions
-                    .where((e) => e.status == 'approved')
-                    .toList(growable: false);
-                final rejected = versions
-                    .where((e) => e.status == 'rejected')
-                    .toList(growable: false);
+                    // Pre-filter once, not per-tab-build
+                    final pending = versions
+                        .where((e) => e.status == 'pending')
+                        .toList(growable: false);
+                    final approved = versions
+                        .where((e) => e.status == 'approved')
+                        .toList(growable: false);
+                    final rejected = versions
+                        .where((e) => e.status == 'rejected')
+                        .toList(growable: false);
 
-                return TabBarView(
-                  controller: _tabController,
-                  children: [
-                    _ApproveTabContent(
-                      key: const PageStorageKey('pending'),
-                      data: pending,
-                      bloc: _bloc,
-                    ),
-                    _ApproveTabContent(
-                      key: const PageStorageKey('approved'),
-                      data: approved,
-                      bloc: _bloc,
-                    ),
-                    _ApproveTabContent(
-                      key: const PageStorageKey('rejected'),
-                      data: rejected,
-                      bloc: _bloc,
-                    ),
-                  ],
-                );
-              },
-            ),
+                    return TabBarView(
+                      controller: _tabController,
+                      children: [
+                        _ApproveTabContent(
+                          key: const PageStorageKey('pending'),
+                          data: pending,
+                          bloc: _bloc,
+                        ),
+                        _ApproveTabContent(
+                          key: const PageStorageKey('approved'),
+                          data: approved,
+                          bloc: _bloc,
+                        ),
+                        _ApproveTabContent(
+                          key: const PageStorageKey('rejected'),
+                          data: rejected,
+                          bloc: _bloc,
+                        ),
+                      ],
+                    );
+                  },
+                ),
           ),
 
           // --- Load more indicator ---
@@ -293,11 +295,7 @@ class _ApproveTabContent extends StatefulWidget {
   final List<CategoryItemVersionEntry> data;
   final CategoryItemVersionBloc bloc;
 
-  const _ApproveTabContent({
-    super.key,
-    required this.data,
-    required this.bloc,
-  });
+  const _ApproveTabContent({super.key, required this.data, required this.bloc});
 
   @override
   State<_ApproveTabContent> createState() => _ApproveTabContentState();
@@ -330,7 +328,10 @@ class _ApproveTabContentState extends State<_ApproveTabContent>
     if (widget.bloc.state.isLoadingMore) return;
 
     final position = _scrollController.position;
+    // Nội dung phải thực sự scrollable (dài hơn viewport)
     if (position.maxScrollExtent <= 0) return;
+    // User phải đã scroll ít nhất 100px để tránh false positive
+    if (position.pixels < 100) return;
 
     if (position.pixels >= position.maxScrollExtent - 200) {
       widget.bloc.add(const CategoryItemVersionEvent.loadMore());
@@ -386,14 +387,12 @@ class _ApproveTabContentState extends State<_ApproveTabContent>
                 return Wrap(
                   spacing: 10,
                   runSpacing: 10,
-                  children: [
-                    ...widget.data.map(
-                      (entry) => SizedBox(
-                        width: itemWidth,
-                        child: ApproveCard(version: entry),
-                      ),
+                  children: widget.data.map(
+                    (entry) => SizedBox(
+                      width: itemWidth,
+                      child: ApproveCard(version: entry),
                     ),
-                  ],
+                  ).toList(),
                 );
               },
             ),
