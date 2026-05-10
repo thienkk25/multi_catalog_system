@@ -5,8 +5,10 @@ import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/core/widgets/custom_alert_dialog.dart';
 import 'package:multi_catalog_system/core/widgets/custom_button.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
+import 'package:multi_catalog_system/core/widgets/custom_expansion_tile.dart';
 import 'package:multi_catalog_system/core/widgets/custom_input.dart';
 import 'package:multi_catalog_system/core/widgets/custom_label.dart';
+import 'package:multi_catalog_system/core/widgets/expandable_text.dart';
 import 'package:multi_catalog_system/core/widgets/role_based_widget.dart';
 import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_entry.dart';
 import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_version_entry.dart';
@@ -134,9 +136,17 @@ class _ApproveCardState extends State<ApproveCard> {
 
             const SizedBox(height: 10),
 
-            _DiffExpansionSection(
-              oldValue: version.oldValue,
-              newValue: version.newValue,
+            CustomExpansionTile(
+              title: const Text("So sánh thay đổi"),
+              collapsedBackgroundColor: Colors.blue.withValues(alpha: .05),
+              collapsedTextColor: Colors.blue,
+              collapsedIconColor: Colors.blue,
+              children: [
+                _DiffCompareTable(
+                  oldValue: version.oldValue,
+                  newValue: version.newValue,
+                ),
+              ],
             ),
 
             version.status == 'pending'
@@ -391,141 +401,28 @@ class _ApproveCardState extends State<ApproveCard> {
   }
 }
 
-class _ApproveExpandableValueCell extends StatefulWidget {
-  final String text;
-  static const int _maxLines = 3;
-
-  const _ApproveExpandableValueCell({required this.text});
-
-  @override
-  State<_ApproveExpandableValueCell> createState() =>
-      _ApproveExpandableValueCellState();
-}
-
-class _ApproveExpandableValueCellState
-    extends State<_ApproveExpandableValueCell> {
-  bool _expanded = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final textSpan = TextSpan(
-          text: widget.text,
-          style: const TextStyle(fontSize: 13),
-        );
-        final textPainter = TextPainter(
-          text: textSpan,
-          maxLines: _ApproveExpandableValueCell._maxLines,
-          textDirection: TextDirection.ltr,
-        )..layout(maxWidth: constraints.maxWidth);
-
-        final isOverflow = textPainter.didExceedMaxLines;
-
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              widget.text,
-              style: const TextStyle(fontSize: 13),
-              maxLines:
-                  _expanded ? null : _ApproveExpandableValueCell._maxLines,
-              overflow: _expanded ? null : TextOverflow.ellipsis,
-            ),
-            if (isOverflow)
-              GestureDetector(
-                onTap: () => setState(() => _expanded = !_expanded),
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 4),
-                  child: Text(
-                    _expanded ? 'Thu gọn' : 'Xem thêm',
-                    style: const TextStyle(
-                      color: Colors.blue,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-          ],
-        );
-      },
-    );
-  }
-}
-
-/// Custom expansion section to replace [ExpansionTile] which has a
-/// PageStorage bug on Flutter web (stores int instead of bool).
-class _DiffExpansionSection extends StatefulWidget {
+/// Diff comparison table widget for showing old vs new values.
+class _DiffCompareTable extends StatefulWidget {
   final Map<String, dynamic>? oldValue;
   final Map<String, dynamic>? newValue;
 
-  const _DiffExpansionSection({
+  const _DiffCompareTable({
     required this.oldValue,
     required this.newValue,
   });
 
   @override
-  State<_DiffExpansionSection> createState() => _DiffExpansionSectionState();
+  State<_DiffCompareTable> createState() => _DiffCompareTableState();
 }
 
-class _DiffExpansionSectionState extends State<_DiffExpansionSection> {
+class _DiffCompareTableState extends State<_DiffCompareTable> {
   static const int _maxCollapsedRows = 5;
-  bool _isExpanded = false;
   bool _isDiffExpanded = false;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        GestureDetector(
-          onTap: () => setState(() => _isExpanded = !_isExpanded),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            decoration: BoxDecoration(
-              color: _isExpanded
-                  ? Colors.transparent
-                  : Colors.blue.withValues(alpha: .05),
-              borderRadius: BorderRadius.circular(6),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    "So sánh thay đổi",
-                    style: TextStyle(
-                      color: _isExpanded ? Colors.black87 : Colors.blue,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-                Icon(
-                  _isExpanded
-                      ? Icons.keyboard_arrow_up
-                      : Icons.keyboard_arrow_down,
-                  color: _isExpanded ? Colors.black54 : Colors.blue,
-                ),
-              ],
-            ),
-          ),
-        ),
-        AnimatedCrossFade(
-          firstChild: const SizedBox.shrink(),
-          secondChild: _diffCompareTable(widget.oldValue, widget.newValue),
-          crossFadeState: _isExpanded
-              ? CrossFadeState.showSecond
-              : CrossFadeState.showFirst,
-          duration: const Duration(milliseconds: 200),
-        ),
-      ],
-    );
-  }
-
-  Widget _diffCompareTable(
-    Map<String, dynamic>? oldValue,
-    Map<String, dynamic>? newValue,
-  ) {
+    final oldValue = widget.oldValue;
+    final newValue = widget.newValue;
     final List<String> keys = {...?oldValue?.keys, ...?newValue?.keys}.toList();
     final hasOverflow = keys.length > _maxCollapsedRows;
     final visibleKeys =
@@ -615,14 +512,16 @@ class _DiffExpansionSectionState extends State<_DiffExpansionSection> {
                       ),
                       Padding(
                         padding: const EdgeInsets.all(6),
-                        child: _ApproveExpandableValueCell(
+                        child: ExpandableText(
                           text: oldVal?.toString() ?? "",
+                          style: const TextStyle(fontSize: 13),
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(6),
-                        child: _ApproveExpandableValueCell(
+                        child: ExpandableText(
                           text: newVal?.toString() ?? "",
+                          style: const TextStyle(fontSize: 13),
                         ),
                       ),
                     ],

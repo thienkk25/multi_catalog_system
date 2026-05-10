@@ -6,6 +6,7 @@ import 'package:multi_catalog_system/core/utils/formatter/data_time_formatter.da
 import 'package:multi_catalog_system/core/widgets/custom_alert_dialog.dart';
 import 'package:multi_catalog_system/core/widgets/custom_button.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
+import 'package:multi_catalog_system/core/widgets/expandable_text.dart';
 import 'package:multi_catalog_system/features/category_item/domain/entities/category_item_version_entry.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/bloc/category_item_version_event.dart';
 
@@ -340,8 +341,9 @@ class _InfoBottomSheetState extends State<_InfoBottomSheet> {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8),
-                    child: _ExpandableValueCell(
+                    child: ExpandableText(
                       text: _formatValue(e.value),
+                      style: const TextStyle(fontSize: 13),
                     ),
                   ),
                 ],
@@ -429,65 +431,5 @@ class _InfoBottomSheetState extends State<_InfoBottomSheet> {
     );
     if (!context.mounted) return;
     context.pop();
-  }
-}
-
-class _ExpandableValueCell extends StatefulWidget {
-  final String text;
-  static const int _maxLines = 3;
-
-  const _ExpandableValueCell({required this.text});
-
-  @override
-  State<_ExpandableValueCell> createState() => _ExpandableValueCellState();
-}
-
-class _ExpandableValueCellState extends State<_ExpandableValueCell> {
-  bool _expanded = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final textSpan = TextSpan(
-          text: widget.text,
-          style: const TextStyle(fontSize: 13),
-        );
-        final textPainter = TextPainter(
-          text: textSpan,
-          maxLines: _ExpandableValueCell._maxLines,
-          textDirection: TextDirection.ltr,
-        )..layout(maxWidth: constraints.maxWidth);
-
-        final isOverflow = textPainter.didExceedMaxLines;
-
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              widget.text,
-              style: const TextStyle(fontSize: 13),
-              maxLines: _expanded ? null : _ExpandableValueCell._maxLines,
-              overflow: _expanded ? null : TextOverflow.ellipsis,
-            ),
-            if (isOverflow)
-              GestureDetector(
-                onTap: () => setState(() => _expanded = !_expanded),
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 4),
-                  child: Text(
-                    _expanded ? 'Thu gọn' : 'Xem thêm',
-                    style: const TextStyle(
-                      color: Colors.blue,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-          ],
-        );
-      },
-    );
   }
 }
