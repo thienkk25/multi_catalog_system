@@ -75,6 +75,7 @@ class CategoryItemVersionRepositoryImpl
       'name': entry.name,
       'status': entry.status,
       if (entry.description != null) 'description': entry.description,
+      if (entry.imageUrl != null) 'image_url': entry.imageUrl,
     },
     'legal_document_ids': entry.legalDocuments?.map((e) => e.id).toList(),
   };
@@ -88,6 +89,7 @@ class CategoryItemVersionRepositoryImpl
       if (entry.name != null) 'name': entry.name,
       if (entry.status != null) 'status': entry.status,
       if (entry.description != null) 'description': entry.description,
+      if (entry.imageUrl != null) 'image_url': entry.imageUrl,
     },
     if (entry.legalDocuments != null && entry.legalDocuments!.isNotEmpty)
       'legal_document_ids': entry.legalDocuments?.map((e) => e.id).toList(),
