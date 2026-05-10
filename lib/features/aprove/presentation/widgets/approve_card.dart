@@ -22,9 +22,6 @@ class ApproveCard extends StatefulWidget {
 }
 
 class _ApproveCardState extends State<ApproveCard> {
-  static const int _maxCollapsedRows = 5;
-  bool _isDiffExpanded = false;
-
   CategoryItemVersionEntry get version => widget.version;
 
   @override
@@ -137,13 +134,9 @@ class _ApproveCardState extends State<ApproveCard> {
 
             const SizedBox(height: 10),
 
-            ExpansionTile(
-              title: const Text("So sánh thay đổi"),
-              backgroundColor: Colors.transparent,
-              collapsedBackgroundColor: Colors.blue.withValues(alpha: .05),
-              collapsedTextColor: Colors.blue,
-              collapsedIconColor: Colors.blue,
-              children: [_diffCompareTable(version.oldValue, version.newValue)],
+            _DiffExpansionSection(
+              oldValue: version.oldValue,
+              newValue: version.newValue,
             ),
 
             version.status == 'pending'
@@ -293,6 +286,239 @@ class _ApproveCardState extends State<ApproveCard> {
           Expanded(child: Text(value ?? "-")),
         ],
       ),
+    );
+  }
+
+
+  void _confirmApprove({required BuildContext context, required String id}) {
+    showDialog(
+      context: context,
+      builder: (_) => CustomAlertDialog(
+        title: 'Xác nhận',
+        content: 'Bạn có chắc chắn muốn DUYỆT bản ghi?',
+        confirmText: 'Duyệt',
+        onConfirm: () {
+          context.itemVersionBloc.add(
+            CategoryItemVersionEvent.approveVersion(id: id),
+          );
+          context.pop();
+        },
+      ),
+    );
+  }
+
+  void _confirmReject({required BuildContext context, required String id}) {
+    showDialog(
+      context: context,
+      builder: (_) {
+        final controller = TextEditingController();
+        final formKey = GlobalKey<FormState>();
+        return Form(
+          key: formKey,
+          child: AlertDialog(
+            title: Text(
+              'Từ chối',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            content: CustomInput(
+              controller: controller,
+              lable: RichText(
+                text: TextSpan(
+                  children: [
+                    const TextSpan(
+                      text: 'Lý do từ chối: ',
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    TextSpan(
+                      text: '*',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ],
+                ),
+              ),
+              validator: (p0) =>
+                  p0 == null || p0.isEmpty ? 'Vui lòng nhập lý do' : null,
+              minLines: 5,
+              maxLines: 5,
+            ),
+            actions: [
+              OutlinedButton(
+                onPressed: () => context.pop(),
+                style: OutlinedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: const Text('Hủy'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  if (!formKey.currentState!.validate()) return;
+                  context.itemVersionBloc.add(
+                    CategoryItemVersionEvent.rejectVersion(
+                      id: id,
+                      rejectReason: controller.text,
+                    ),
+                  );
+                  context.pop();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.redAccent,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: const Text('Từ chối'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _confirmDelete({required BuildContext context, required String id}) {
+    showDialog(
+      context: context,
+      builder: (_) => CustomAlertDialog(
+        onConfirm: () {
+          context.itemVersionBloc.add(CategoryItemVersionEvent.delete(id: id));
+          context.pop();
+        },
+      ),
+    );
+  }
+}
+
+class _ApproveExpandableValueCell extends StatefulWidget {
+  final String text;
+  static const int _maxLines = 3;
+
+  const _ApproveExpandableValueCell({required this.text});
+
+  @override
+  State<_ApproveExpandableValueCell> createState() =>
+      _ApproveExpandableValueCellState();
+}
+
+class _ApproveExpandableValueCellState
+    extends State<_ApproveExpandableValueCell> {
+  bool _expanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final textSpan = TextSpan(
+          text: widget.text,
+          style: const TextStyle(fontSize: 13),
+        );
+        final textPainter = TextPainter(
+          text: textSpan,
+          maxLines: _ApproveExpandableValueCell._maxLines,
+          textDirection: TextDirection.ltr,
+        )..layout(maxWidth: constraints.maxWidth);
+
+        final isOverflow = textPainter.didExceedMaxLines;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              widget.text,
+              style: const TextStyle(fontSize: 13),
+              maxLines:
+                  _expanded ? null : _ApproveExpandableValueCell._maxLines,
+              overflow: _expanded ? null : TextOverflow.ellipsis,
+            ),
+            if (isOverflow)
+              GestureDetector(
+                onTap: () => setState(() => _expanded = !_expanded),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: Text(
+                    _expanded ? 'Thu gọn' : 'Xem thêm',
+                    style: const TextStyle(
+                      color: Colors.blue,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+/// Custom expansion section to replace [ExpansionTile] which has a
+/// PageStorage bug on Flutter web (stores int instead of bool).
+class _DiffExpansionSection extends StatefulWidget {
+  final Map<String, dynamic>? oldValue;
+  final Map<String, dynamic>? newValue;
+
+  const _DiffExpansionSection({
+    required this.oldValue,
+    required this.newValue,
+  });
+
+  @override
+  State<_DiffExpansionSection> createState() => _DiffExpansionSectionState();
+}
+
+class _DiffExpansionSectionState extends State<_DiffExpansionSection> {
+  static const int _maxCollapsedRows = 5;
+  bool _isExpanded = false;
+  bool _isDiffExpanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        GestureDetector(
+          onTap: () => setState(() => _isExpanded = !_isExpanded),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            decoration: BoxDecoration(
+              color: _isExpanded
+                  ? Colors.transparent
+                  : Colors.blue.withValues(alpha: .05),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    "So sánh thay đổi",
+                    style: TextStyle(
+                      color: _isExpanded ? Colors.black87 : Colors.blue,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+                Icon(
+                  _isExpanded
+                      ? Icons.keyboard_arrow_up
+                      : Icons.keyboard_arrow_down,
+                  color: _isExpanded ? Colors.black54 : Colors.blue,
+                ),
+              ],
+            ),
+          ),
+        ),
+        AnimatedCrossFade(
+          firstChild: const SizedBox.shrink(),
+          secondChild: _diffCompareTable(widget.oldValue, widget.newValue),
+          crossFadeState: _isExpanded
+              ? CrossFadeState.showSecond
+              : CrossFadeState.showFirst,
+          duration: const Duration(milliseconds: 200),
+        ),
+      ],
     );
   }
 
@@ -461,168 +687,5 @@ class _ApproveCardState extends State<ApproveCard> {
     }
 
     return true;
-  }
-
-  void _confirmApprove({required BuildContext context, required String id}) {
-    showDialog(
-      context: context,
-      builder: (_) => CustomAlertDialog(
-        title: 'Xác nhận',
-        content: 'Bạn có chắc chắn muốn DUYỆT bản ghi?',
-        confirmText: 'Duyệt',
-        onConfirm: () {
-          context.itemVersionBloc.add(
-            CategoryItemVersionEvent.approveVersion(id: id),
-          );
-          context.pop();
-        },
-      ),
-    );
-  }
-
-  void _confirmReject({required BuildContext context, required String id}) {
-    showDialog(
-      context: context,
-      builder: (_) {
-        final controller = TextEditingController();
-        final formKey = GlobalKey<FormState>();
-        return Form(
-          key: formKey,
-          child: AlertDialog(
-            title: Text(
-              'Từ chối',
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            content: CustomInput(
-              controller: controller,
-              lable: RichText(
-                text: TextSpan(
-                  children: [
-                    const TextSpan(
-                      text: 'Lý do từ chối: ',
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                    TextSpan(
-                      text: '*',
-                      style: TextStyle(color: Colors.red),
-                    ),
-                  ],
-                ),
-              ),
-              validator: (p0) =>
-                  p0 == null || p0.isEmpty ? 'Vui lòng nhập lý do' : null,
-              minLines: 5,
-              maxLines: 5,
-            ),
-            actions: [
-              OutlinedButton(
-                onPressed: () => context.pop(),
-                style: OutlinedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                child: const Text('Hủy'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  if (!formKey.currentState!.validate()) return;
-                  context.itemVersionBloc.add(
-                    CategoryItemVersionEvent.rejectVersion(
-                      id: id,
-                      rejectReason: controller.text,
-                    ),
-                  );
-                  context.pop();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.redAccent,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                child: const Text('Từ chối'),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  void _confirmDelete({required BuildContext context, required String id}) {
-    showDialog(
-      context: context,
-      builder: (_) => CustomAlertDialog(
-        onConfirm: () {
-          context.itemVersionBloc.add(CategoryItemVersionEvent.delete(id: id));
-          context.pop();
-        },
-      ),
-    );
-  }
-}
-
-class _ApproveExpandableValueCell extends StatefulWidget {
-  final String text;
-  static const int _maxLines = 3;
-
-  const _ApproveExpandableValueCell({required this.text});
-
-  @override
-  State<_ApproveExpandableValueCell> createState() =>
-      _ApproveExpandableValueCellState();
-}
-
-class _ApproveExpandableValueCellState
-    extends State<_ApproveExpandableValueCell> {
-  bool _expanded = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final textSpan = TextSpan(
-          text: widget.text,
-          style: const TextStyle(fontSize: 13),
-        );
-        final textPainter = TextPainter(
-          text: textSpan,
-          maxLines: _ApproveExpandableValueCell._maxLines,
-          textDirection: TextDirection.ltr,
-        )..layout(maxWidth: constraints.maxWidth);
-
-        final isOverflow = textPainter.didExceedMaxLines;
-
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              widget.text,
-              style: const TextStyle(fontSize: 13),
-              maxLines:
-                  _expanded ? null : _ApproveExpandableValueCell._maxLines,
-              overflow: _expanded ? null : TextOverflow.ellipsis,
-            ),
-            if (isOverflow)
-              GestureDetector(
-                onTap: () => setState(() => _expanded = !_expanded),
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 4),
-                  child: Text(
-                    _expanded ? 'Thu gọn' : 'Xem thêm',
-                    style: const TextStyle(
-                      color: Colors.blue,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-          ],
-        );
-      },
-    );
   }
 }

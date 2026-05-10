@@ -28,13 +28,12 @@ class _ApprovePageState extends State<ApprovePage>
 
   late final TabController _tabController;
 
-  final ScrollController _scrollController = ScrollController();
   final TextEditingController _searchController = TextEditingController();
   Timer? _debounce;
   late final AnimationController _refreshController;
-  late ValueNotifier<bool> _showUpButton;
 
   late final CategoryItemVersionBloc _bloc;
+
   @override
   void initState() {
     super.initState();
@@ -43,10 +42,8 @@ class _ApprovePageState extends State<ApprovePage>
       vsync: this,
       duration: Duration(milliseconds: 700),
     );
-    _showUpButton = ValueNotifier(false);
     _bloc = context.itemVersionBloc;
     _bloc.add(const CategoryItemVersionEvent.getAll());
-    _scrollController.addListener(_onScroll);
   }
 
   void _onRefresh() {
@@ -54,29 +51,11 @@ class _ApprovePageState extends State<ApprovePage>
     _refreshController.forward(from: 0);
   }
 
-  void _onScroll() {
-    if (!_scrollController.hasClients) return;
-    final shouldShow = _scrollController.offset > 300;
-
-    if (_showUpButton.value != shouldShow) {
-      _showUpButton.value = shouldShow;
-    }
-    if (!_bloc.state.hasMore) return;
-    if (_bloc.state.isLoadingMore) return;
-
-    final position = _scrollController.position;
-    if (position.maxScrollExtent <= 0) return;
-
-    if (position.pixels >= position.maxScrollExtent - 200) {
-      _bloc.add(const CategoryItemVersionEvent.loadMore());
-    }
-  }
-
   @override
   void dispose() {
     _tabController.dispose();
-    _scrollController.dispose();
     _searchController.dispose();
+    _refreshController.dispose();
     _debounce?.cancel();
     super.dispose();
   }
@@ -84,239 +63,192 @@ class _ApprovePageState extends State<ApprovePage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Stack(
-      children: [
-        CustomScrollView(
-          slivers: [
-            SliverAppBar(
-              title: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Danh sách duyệt danh mục',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 20,
-                    ),
+    return BlocListener<CategoryItemVersionBloc, CategoryItemVersionState>(
+      listener: (context, state) {
+        if (state.error != null) {
+          context.notificationCubit.error(state.error!);
+        }
+        if (state.successMessage != null) {
+          context.notificationCubit.success(state.successMessage!);
+        }
+      },
+      child: Column(
+        children: [
+          // --- Header ---
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Danh sách duyệt danh mục',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 20,
                   ),
-                  Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          final domainLookupBloc = context.domainLookupBloc;
-                          final groupLookupBloc = context.categoryGroupLookupBloc;
-                          final itemVersionBloc = context.itemVersionBloc;
+                ),
+                Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        final domainLookupBloc = context.domainLookupBloc;
+                        final groupLookupBloc =
+                            context.categoryGroupLookupBloc;
+                        final itemVersionBloc = context.itemVersionBloc;
 
-                          showModalBottomSheet(
-                            context: context,
-                            isScrollControlled: true,
-                            builder: (context) {
-                              return MultiBlocProvider(
-                                providers: [
-                                  BlocProvider.value(value: domainLookupBloc),
-                                  BlocProvider.value(value: groupLookupBloc),
-                                  BlocProvider.value(value: itemVersionBloc),
-                                ],
-                                child: DraggableScrollableSheet(
-                                  initialChildSize: 0.8,
-                                  minChildSize: 0.5,
-                                  maxChildSize: 0.9,
-                                  expand: false,
-                                  builder: (context, scrollController) {
-                                    return SingleChildScrollView(
-                                      controller: scrollController,
-                                      child: ApproveFilterWidget(
-                                        onClose: () => Navigator.pop(context),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              );
-                            },
-                          );
-                        },
-                        child: Row(
-                          children: [
-                            Icon(Icons.filter_alt_outlined, color: Colors.black, size: 20),
-                            const SizedBox(width: 4),
-                            Text('Lọc', style: TextStyle(color: Colors.black, fontSize: 14)),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      GestureDetector(
-                        onTap: _onRefresh,
-                        child: Row(
-                          children: [
-                            RotationTransition(
-                              turns: _refreshController,
-                              child: Icon(
-                                Icons.refresh,
-                                color: Colors.black,
-                                size: 20,
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          builder: (context) {
+                            return MultiBlocProvider(
+                              providers: [
+                                BlocProvider.value(value: domainLookupBloc),
+                                BlocProvider.value(value: groupLookupBloc),
+                                BlocProvider.value(value: itemVersionBloc),
+                              ],
+                              child: DraggableScrollableSheet(
+                                initialChildSize: 0.8,
+                                minChildSize: 0.5,
+                                maxChildSize: 0.9,
+                                expand: false,
+                                builder: (context, scrollController) {
+                                  return SingleChildScrollView(
+                                    controller: scrollController,
+                                    child: ApproveFilterWidget(
+                                      onClose: () => Navigator.pop(context),
+                                    ),
+                                  );
+                                },
                               ),
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              'Làm mới',
-                              style: TextStyle(color: Colors.black, fontSize: 14),
-                            ),
-                          ],
-                        ),
+                            );
+                          },
+                        );
+                      },
+                      child: Row(
+                        children: [
+                          Icon(Icons.filter_alt_outlined,
+                              color: Colors.black, size: 20),
+                          const SizedBox(width: 4),
+                          Text('Lọc',
+                              style: TextStyle(
+                                  color: Colors.black, fontSize: 14)),
+                        ],
                       ),
-                    ],
-                  ),
-                ],
-              ),
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              bottom: TabBar(
-                controller: _tabController,
-                labelColor: Colors.blue,
-                unselectedLabelColor: Colors.grey,
-                dividerColor: Colors.grey,
-                indicatorColor: Colors.blue,
-                indicatorWeight: 5,
-                splashBorderRadius: BorderRadius.circular(10),
-                labelStyle: TextStyle(fontWeight: FontWeight.w600),
-                tabs: const [
-                  Tab(text: "Chờ duyệt"),
-                  Tab(text: "Đã duyệt"),
-                  Tab(text: "Từ chối"),
-                ],
-              ),
+                    ),
+                    const SizedBox(width: 16),
+                    GestureDetector(
+                      onTap: _onRefresh,
+                      child: Row(
+                        children: [
+                          RotationTransition(
+                            turns: _refreshController,
+                            child: Icon(
+                              Icons.refresh,
+                              color: Colors.black,
+                              size: 20,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Làm mới',
+                            style:
+                                TextStyle(color: Colors.black, fontSize: 14),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-              sliver: SliverToBoxAdapter(
-                child: _buildSearchSection(context),
-              ),
-            ),
-            BlocConsumer<CategoryItemVersionBloc, CategoryItemVersionState>(
-              listener: (context, state) {
-                if (state.error != null) {
-                  context.notificationCubit.error(state.error!);
-                }
-                if (state.successMessage != null) {
-                  context.notificationCubit.success(state.successMessage!);
-                }
-              },
+          ),
+
+          // --- TabBar ---
+          TabBar(
+            controller: _tabController,
+            labelColor: Colors.blue,
+            unselectedLabelColor: Colors.grey,
+            dividerColor: Colors.grey,
+            indicatorColor: Colors.blue,
+            indicatorWeight: 5,
+            splashBorderRadius: BorderRadius.circular(10),
+            labelStyle: TextStyle(fontWeight: FontWeight.w600),
+            tabs: const [
+              Tab(text: "Chờ duyệt"),
+              Tab(text: "Đã duyệt"),
+              Tab(text: "Từ chối"),
+            ],
+          ),
+
+          // --- Search ---
+          Padding(
+            padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+            child: _buildSearchSection(context),
+          ),
+
+          // --- Tab content ---
+          Expanded(
+            child: BlocBuilder<CategoryItemVersionBloc,
+                CategoryItemVersionState>(
               buildWhen: (previous, current) =>
                   previous.entries != current.entries ||
                   previous.isLoading != current.isLoading,
               builder: (context, state) {
                 if (state.isLoading) {
-                  return SliverFillRemaining(
-                    hasScrollBody: false,
-                    child: const Center(child: CircularProgressIndicator()),
-                  );
+                  return const Center(child: CircularProgressIndicator());
                 }
 
                 final versions = state.entries;
 
-                return SliverFillRemaining(
-                  child: Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: TabBarView(
-                      controller: _tabController,
-                      children: [
-                        _buildTab("pending", versions),
-                        _buildTab("approved", versions),
-                        _buildTab("rejected", versions),
-                      ],
+                // Pre-filter once, not per-tab-build
+                final pending = versions
+                    .where((e) => e.status == 'pending')
+                    .toList(growable: false);
+                final approved = versions
+                    .where((e) => e.status == 'approved')
+                    .toList(growable: false);
+                final rejected = versions
+                    .where((e) => e.status == 'rejected')
+                    .toList(growable: false);
+
+                return TabBarView(
+                  controller: _tabController,
+                  children: [
+                    _ApproveTabContent(
+                      key: const PageStorageKey('pending'),
+                      data: pending,
+                      bloc: _bloc,
                     ),
-                  ),
+                    _ApproveTabContent(
+                      key: const PageStorageKey('approved'),
+                      data: approved,
+                      bloc: _bloc,
+                    ),
+                    _ApproveTabContent(
+                      key: const PageStorageKey('rejected'),
+                      data: rejected,
+                      bloc: _bloc,
+                    ),
+                  ],
                 );
               },
             ),
-            BlocBuilder<CategoryItemVersionBloc, CategoryItemVersionState>(
-              buildWhen: (p, c) => p.isLoadingMore != c.isLoadingMore,
-              builder: (context, state) {
-                if (!state.isLoadingMore) {
-                  return const SliverToBoxAdapter(child: SizedBox.shrink());
-                }
+          ),
 
-                return const SliverToBoxAdapter(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 24),
-                    child: Center(child: CustomCircularProgressLoadMore()),
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
-        ValueListenableBuilder<bool>(
-          valueListenable: _showUpButton,
-          builder: (context, show, child) {
-            return ButtomUpWidget(
-              scrollController: _scrollController,
-              show: show,
-            );
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTab(String status, List<CategoryItemVersionEntry> versions) {
-    final data = versions.where((e) => e.status == status).toList();
-    if (data.isEmpty) {
-      return const Center(child: Text("Không có dữ liệu"));
-    }
-
-    final isMobile = ScreenSize.of(context).isMobile;
-    final isTablet = ScreenSize.of(context).isTablet;
-
-    if (isMobile || isTablet) {
-      return ListView.builder(
-        controller: _scrollController,
-        shrinkWrap: true,
-        itemCount: data.length,
-        itemBuilder: (_, i) {
-          final version = data[i];
-          return _buildGovApproveCard(version);
-        },
-      );
-    }
-    return SingleChildScrollView(
-      controller: _scrollController,
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final crossAxisCount = (constraints.maxWidth / 600).floor().clamp(
-            1,
-            6,
-          );
-
-          final itemWidth = constraints.maxWidth / crossAxisCount - 10;
-
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Wrap(
-                spacing: 10,
-                runSpacing: 10,
-                children: [
-                  ...data.map(
-                    (entry) => SizedBox(
-                      width: itemWidth,
-                      child: _buildGovApproveCard(entry),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          );
-        },
+          // --- Load more indicator ---
+          BlocBuilder<CategoryItemVersionBloc, CategoryItemVersionState>(
+            buildWhen: (p, c) => p.isLoadingMore != c.isLoadingMore,
+            builder: (context, state) {
+              if (!state.isLoadingMore) return const SizedBox.shrink();
+              return const Padding(
+                padding: EdgeInsets.symmetric(vertical: 12),
+                child: Center(child: CustomCircularProgressLoadMore()),
+              );
+            },
+          ),
+        ],
       ),
-    );
-  }
-
-  Widget _buildGovApproveCard(CategoryItemVersionEntry version) {
-    return Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: ApproveCard(version: version),
     );
   }
 
@@ -351,6 +283,131 @@ class _ApprovePageState extends State<ApprovePage>
           }
         });
       },
+    );
+  }
+}
+
+/// Separate stateful widget for each tab so each has its own ScrollController
+/// and uses AutomaticKeepAliveClientMixin to stay alive when switching tabs.
+class _ApproveTabContent extends StatefulWidget {
+  final List<CategoryItemVersionEntry> data;
+  final CategoryItemVersionBloc bloc;
+
+  const _ApproveTabContent({
+    super.key,
+    required this.data,
+    required this.bloc,
+  });
+
+  @override
+  State<_ApproveTabContent> createState() => _ApproveTabContentState();
+}
+
+class _ApproveTabContentState extends State<_ApproveTabContent>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  final ScrollController _scrollController = ScrollController();
+  late ValueNotifier<bool> _showUpButton;
+
+  @override
+  void initState() {
+    super.initState();
+    _showUpButton = ValueNotifier(false);
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (!_scrollController.hasClients) return;
+
+    final shouldShow = _scrollController.offset > 300;
+    if (_showUpButton.value != shouldShow) {
+      _showUpButton.value = shouldShow;
+    }
+
+    if (!widget.bloc.state.hasMore) return;
+    if (widget.bloc.state.isLoadingMore) return;
+
+    final position = _scrollController.position;
+    if (position.maxScrollExtent <= 0) return;
+
+    if (position.pixels >= position.maxScrollExtent - 200) {
+      widget.bloc.add(const CategoryItemVersionEvent.loadMore());
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _showUpButton.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+
+    if (widget.data.isEmpty) {
+      return const Center(child: Text("Không có dữ liệu"));
+    }
+
+    final isMobile = ScreenSize.of(context).isMobile;
+    final isTablet = ScreenSize.of(context).isTablet;
+
+    return Stack(
+      children: [
+        if (isMobile || isTablet)
+          ListView.builder(
+            controller: _scrollController,
+            padding: const EdgeInsets.all(10),
+            itemCount: widget.data.length,
+            // addAutomaticKeepAlives so cards near viewport edge aren't
+            // destroyed and rebuilt every swipe
+            addAutomaticKeepAlives: true,
+            itemBuilder: (_, i) {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: ApproveCard(version: widget.data[i]),
+              );
+            },
+          )
+        else
+          SingleChildScrollView(
+            controller: _scrollController,
+            padding: const EdgeInsets.all(10),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final crossAxisCount =
+                    (constraints.maxWidth / 600).floor().clamp(1, 6);
+                final itemWidth =
+                    constraints.maxWidth / crossAxisCount - 10;
+
+                return Wrap(
+                  spacing: 10,
+                  runSpacing: 10,
+                  children: [
+                    ...widget.data.map(
+                      (entry) => SizedBox(
+                        width: itemWidth,
+                        child: ApproveCard(version: entry),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+        ValueListenableBuilder<bool>(
+          valueListenable: _showUpButton,
+          builder: (context, show, child) {
+            return ButtomUpWidget(
+              scrollController: _scrollController,
+              show: show,
+            );
+          },
+        ),
+      ],
     );
   }
 }
