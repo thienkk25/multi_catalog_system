@@ -91,6 +91,9 @@ class _CategoryItemFilterWidgetState extends State<CategoryItemFilterWidget> {
                   },
                   onToggle: (value) {
                     if (!value) {
+                      _groupLookupBloc.add(
+                        CategoryGroupLookupEvent.selectedEntries(entries: []),
+                      );
                       _loadDataGroup(
                         _domainLookupBloc.state.selectedEntries
                             .map((e) => e.id!)
