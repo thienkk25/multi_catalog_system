@@ -22,7 +22,7 @@ import 'package:multi_catalog_system/features/category_item/presentation/bloc/ca
 import 'package:multi_catalog_system/features/category_item/presentation/widgets/category_item_status_chip.dart';
 import 'package:multi_catalog_system/features/category_item/presentation/widgets/category_item_version_history_card.dart';
 import 'package:multi_catalog_system/features/legal_document/domain/entities/legal_document_entry.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:multi_catalog_system/core/widgets/file_preview_dialog.dart';
 
 class CategoryItemDetailPage extends StatefulWidget {
   final String id;
@@ -537,9 +537,10 @@ class _LegalItem extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: InkWell(
         borderRadius: BorderRadius.circular(10),
-        onTap: () async {
-          final uri = Uri.parse(legalDocument!.fileUrl!);
-          await launchUrl(uri);
+        onTap: () {
+          if (legalDocument?.fileUrl != null && legalDocument?.fileName != null) {
+            showFilePreviewDialog(context, legalDocument!.fileUrl!, legalDocument!.fileName!);
+          }
         },
         child: Container(
           padding: const EdgeInsets.all(10),

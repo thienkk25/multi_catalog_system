@@ -9,7 +9,7 @@ import 'package:multi_catalog_system/core/widgets/file_icon_widget.dart';
 import 'package:multi_catalog_system/features/legal_document/domain/entities/legal_document_entry.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/bloc/legal_document_bloc.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/bloc/legal_document_state.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:multi_catalog_system/core/widgets/file_preview_dialog.dart';
 
 class LegalDocumentDetailPage extends StatelessWidget {
   const LegalDocumentDetailPage({super.key});
@@ -80,9 +80,10 @@ class LegalDocumentDetailPage extends StatelessWidget {
                     icon: Icons.attach_file,
                     child: InkWell(
                       borderRadius: BorderRadius.circular(10),
-                      onTap: () async {
-                        final uri = Uri.parse(entry.fileUrl!);
-                        await launchUrl(uri);
+                      onTap: () {
+                        if (entry.fileUrl != null && entry.fileName != null) {
+                          showFilePreviewDialog(context, entry.fileUrl!, entry.fileName!);
+                        }
                       },
                       child: Container(
                         padding: const EdgeInsets.all(10),

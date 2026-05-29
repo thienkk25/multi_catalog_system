@@ -10,7 +10,7 @@ import 'package:multi_catalog_system/core/widgets/file_icon_widget.dart';
 import 'package:multi_catalog_system/core/widgets/role_based_widget.dart';
 import 'package:multi_catalog_system/features/legal_document/domain/entities/legal_document_entry.dart';
 import 'package:multi_catalog_system/features/legal_document/presentation/bloc/legal_document_event.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:multi_catalog_system/core/widgets/file_preview_dialog.dart';
 
 class LegalDocumentCard extends StatelessWidget {
   final LegalDocumentEntry entry;
@@ -99,9 +99,8 @@ class LegalDocumentCard extends StatelessWidget {
             if (entry.fileUrl != null && entry.fileName != null)
               InkWell(
                 borderRadius: BorderRadius.circular(10),
-                onTap: () async {
-                  final uri = Uri.parse(entry.fileUrl!);
-                  await launchUrl(uri);
+                onTap: () {
+                  showFilePreviewDialog(context, entry.fileUrl!, entry.fileName!);
                 },
                 child: Container(
                   padding: const EdgeInsets.all(10),
