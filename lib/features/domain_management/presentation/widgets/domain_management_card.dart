@@ -6,6 +6,7 @@ import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/core/widgets/custom_alert_dialog.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/core/widgets/role_based_widget.dart';
+import 'package:multi_catalog_system/core/widgets/app_network_image.dart';
 import 'package:multi_catalog_system/features/domain_management/domain/entities/domain_entry.dart';
 import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_management_event.dart';
 
@@ -16,6 +17,12 @@ class DomainManagementCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomCard(
+      onTap: () {
+        context.goNamed(
+          RouterNames.domainDetail,
+          pathParameters: {'id': entry.id!},
+        );
+      },
       child: Stack(
         children: [
           Column(
@@ -26,27 +33,11 @@ class DomainManagementCard extends StatelessWidget {
               Row(
                 children: [
                   if (entry.imageUrl != null && entry.imageUrl!.isNotEmpty) ...[
-                    ClipRRect(
+                    AppNetworkImage(
+                      imageUrl: entry.imageUrl,
+                      width: 48,
+                      height: 48,
                       borderRadius: BorderRadius.circular(8),
-                      child: Image.network(
-                        entry.imageUrl!,
-                        width: 48,
-                        height: 48,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => Container(
-                          width: 48,
-                          height: 48,
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade200,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Icon(
-                            Icons.image_not_supported_outlined,
-                            size: 24,
-                            color: Colors.grey.shade400,
-                          ),
-                        ),
-                      ),
                     ),
                     const SizedBox(width: 12),
                   ],

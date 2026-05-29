@@ -38,6 +38,7 @@ class AppNetworkImage extends StatelessWidget {
           width: width,
           height: height,
           fit: fit,
+          filterQuality: FilterQuality.high,
           errorBuilder: (context, error, stackTrace) => _buildError(),
         );
       } catch (e) {
@@ -50,6 +51,7 @@ class AppNetworkImage extends StatelessWidget {
         width: width,
         height: height,
         fit: fit,
+        filterQuality: FilterQuality.high,
         loadingBuilder: (context, child, loadingProgress) {
           if (loadingProgress == null) return child;
           return placeholder ??

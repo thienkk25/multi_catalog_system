@@ -5,6 +5,7 @@ import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/core/widgets/custom_alert_dialog.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/core/widgets/role_based_widget.dart';
+import 'package:multi_catalog_system/core/widgets/app_network_image.dart';
 import 'package:multi_catalog_system/features/category_group/domain/entities/category_group_entry.dart';
 import 'package:multi_catalog_system/features/category_group/presentation/bloc/category_group_event.dart';
 
@@ -14,41 +15,24 @@ class CategoryGroupCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return CustomCard(
       onTap: () {
         context.goNamed(
           RouterNames.categoryGroupDetail,
           pathParameters: {'id': entry.id!},
         );
       },
-      child: CustomCard(
-        child: Column(
+      child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 if (entry.imageUrl != null && entry.imageUrl!.isNotEmpty) ...[
-                  ClipRRect(
+                  AppNetworkImage(
+                    imageUrl: entry.imageUrl,
+                    width: 48,
+                    height: 48,
                     borderRadius: BorderRadius.circular(8),
-                    child: Image.network(
-                      entry.imageUrl!,
-                      width: 48,
-                      height: 48,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => Container(
-                        width: 48,
-                        height: 48,
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade200,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Icon(
-                          Icons.image_not_supported_outlined,
-                          size: 24,
-                          color: Colors.grey.shade400,
-                        ),
-                      ),
-                    ),
                   ),
                   const SizedBox(width: 12),
                 ],
@@ -89,58 +73,43 @@ class CategoryGroupCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 spacing: 10,
                 children: [
-                  GestureDetector(
-                    onTap: () => _onUpdate(context: context),
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 8.0,
-                        vertical: 4.0,
+                  ElevatedButton.icon(
+                    onPressed: () => _onUpdate(context: context),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6.0),
                       ),
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.circular(4.0),
-                      ),
-                      child: Row(
-                        spacing: 4,
-                        children: [
-                          Icon(Icons.edit, color: Colors.white, size: 12),
-                          Text(
-                            'Chỉnh sửa',
-                            style: TextStyle(color: Colors.white, fontSize: 12),
-                          ),
-                        ],
-                      ),
+                      elevation: 0,
                     ),
+                    icon: const Icon(Icons.edit, size: 14),
+                    label: const Text('Chỉnh sửa', style: TextStyle(fontSize: 12)),
                   ),
-                  GestureDetector(
-                    onTap: () => _onRemove(context: context, id: entry.id!),
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 8.0,
-                        vertical: 4.0,
+                  ElevatedButton.icon(
+                    onPressed: () => _onRemove(context: context, id: entry.id!),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6.0),
                       ),
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(4.0),
-                      ),
-                      child: Row(
-                        spacing: 4,
-                        children: [
-                          Icon(Icons.delete, color: Colors.white, size: 12),
-                          Text(
-                            'Xóa',
-                            style: TextStyle(color: Colors.white, fontSize: 12),
-                          ),
-                        ],
-                      ),
+                      elevation: 0,
                     ),
+                    icon: const Icon(Icons.delete, size: 14),
+                    label: const Text('Xóa', style: TextStyle(fontSize: 12)),
                   ),
                 ],
               ),
             ),
           ],
         ),
-      ),
     );
   }
 

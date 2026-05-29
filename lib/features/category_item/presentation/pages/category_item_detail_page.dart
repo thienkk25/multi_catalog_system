@@ -85,18 +85,16 @@ class _CategoryItemDetailPageState extends State<CategoryItemDetailPage>
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    GestureDetector(
-                      onTap: _onRefresh,
-                      child: Row(
-                        children: [
-                          RotationTransition(
-                            turns: _refreshController,
-                            child: const Icon(Icons.refresh),
-                          ),
-                          const SizedBox(width: 4),
-                          const Text('Làm mới'),
-                        ],
+                    TextButton.icon(
+                      onPressed: _onRefresh,
+                      style: TextButton.styleFrom(
+                        foregroundColor: Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black87,
                       ),
+                      icon: RotationTransition(
+                        turns: _refreshController,
+                        child: const Icon(Icons.refresh, size: 20),
+                      ),
+                      label: const Text('Làm mới'),
                     ),
                   ],
                 ),

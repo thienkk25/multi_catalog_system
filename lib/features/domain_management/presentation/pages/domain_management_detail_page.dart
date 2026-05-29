@@ -4,6 +4,7 @@ import 'package:multi_catalog_system/core/utils/formatter/data_time_formatter.da
 import 'package:multi_catalog_system/core/widgets/button_back_widget.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
 import 'package:multi_catalog_system/core/widgets/custom_circular_progress.dart';
+import 'package:multi_catalog_system/core/widgets/app_network_image.dart';
 import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_management_bloc.dart';
 import 'package:multi_catalog_system/features/domain_management/presentation/bloc/domain_management_state.dart';
 
@@ -49,24 +50,20 @@ class DomainManagementDetailPage extends StatelessWidget {
                         style: TextStyle(fontSize: 13, color: Colors.grey),
                       ),
                       const SizedBox(height: 8),
-                      ClipRRect(
+                      AppNetworkImage(
+                        imageUrl: entry.imageUrl,
+                        width: double.infinity,
                         borderRadius: BorderRadius.circular(12),
-                        child: Image.network(
-                          entry.imageUrl!,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) =>
-                              Container(
-                                height: 120,
-                                color: Colors.grey.shade100,
-                                child: Center(
-                                  child: Icon(
-                                    Icons.broken_image_outlined,
-                                    size: 48,
-                                    color: Colors.grey.shade400,
-                                  ),
-                                ),
-                              ),
+                        errorWidget: Container(
+                          height: 120,
+                          color: Colors.grey.shade100,
+                          child: Center(
+                            child: Icon(
+                              Icons.broken_image_outlined,
+                              size: 48,
+                              color: Colors.grey.shade400,
+                            ),
+                          ),
                         ),
                       ),
                     ],

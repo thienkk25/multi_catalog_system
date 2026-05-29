@@ -23,15 +23,14 @@ class CategoryItemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isAdmin = context.hasRole('admin');
-    return GestureDetector(
+    return CustomCard(
       onTap: () {
         context.goNamed(
           RouterNames.categoryItemDetail,
           pathParameters: {'id': entry.id!},
         );
       },
-      child: CustomCard(
-        child: Column(
+      child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ClipRRect(
@@ -145,7 +144,6 @@ class CategoryItemCard extends StatelessWidget {
               ),
           ],
         ),
-      ),
     );
   }
 
@@ -164,14 +162,13 @@ class CategoryItemCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             const SizedBox(height: 12),
-            GestureDetector(
-              onTap: onTap,
-              child: Padding(
-                padding: EdgeInsets.all(10),
-                child: Icon(
-                  isAdmin ? Icons.delete : Icons.block,
-                  color: Colors.red,
-                ),
+            IconButton(
+              onPressed: onTap,
+              padding: const EdgeInsets.all(10),
+              constraints: const BoxConstraints(),
+              icon: Icon(
+                isAdmin ? Icons.delete : Icons.block,
+                color: Colors.red,
               ),
             ),
           ],
