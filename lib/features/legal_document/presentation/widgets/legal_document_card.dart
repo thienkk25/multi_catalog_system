@@ -100,7 +100,14 @@ class LegalDocumentCard extends StatelessWidget {
               InkWell(
                 borderRadius: BorderRadius.circular(10),
                 onTap: () {
-                  showFilePreviewDialog(context, entry.fileUrl!, entry.fileName!);
+                  showFilePreviewDialog(
+                    context,
+                    entry.fileUrl!,
+                    entry.fileName!,
+                    code: entry.code,
+                    type: entry.type,
+                    issueDate: entry.issueDate,
+                  );
                 },
                 child: Container(
                   padding: const EdgeInsets.all(10),

@@ -539,7 +539,14 @@ class _LegalItem extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
         onTap: () {
           if (legalDocument?.fileUrl != null && legalDocument?.fileName != null) {
-            showFilePreviewDialog(context, legalDocument!.fileUrl!, legalDocument!.fileName!);
+            showFilePreviewDialog(
+              context,
+              legalDocument!.fileUrl!,
+              legalDocument!.fileName!,
+              code: legalDocument!.code,
+              type: legalDocument!.type,
+              issueDate: legalDocument!.issueDate,
+            );
           }
         },
         child: Container(
