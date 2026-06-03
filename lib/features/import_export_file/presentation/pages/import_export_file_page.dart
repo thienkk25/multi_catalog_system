@@ -19,6 +19,7 @@ import 'package:multi_catalog_system/features/import_export_file/presentation/bl
 import 'package:multi_catalog_system/features/import_export_file/presentation/bloc/import_file_bloc.dart';
 import 'package:multi_catalog_system/features/import_export_file/presentation/bloc/import_file_event.dart';
 import 'package:multi_catalog_system/features/import_export_file/presentation/bloc/import_file_state.dart';
+import 'package:multi_catalog_system/core/responsive/screen_size.dart';
 import 'package:multi_catalog_system/features/import_export_file/presentation/widgets/import_file_dashed_boder_widget.dart';
 import 'package:multi_catalog_system/features/import_export_file/presentation/widgets/import_file_file_card.dart';
 
@@ -88,7 +89,7 @@ class _ImportExportFilePageState extends State<ImportExportFilePage>
     if (widget.typeImport != null) {
       _type = widget.typeImport;
     }
-    return MultiBlocListener(
+    final mainContent = MultiBlocListener(
       listeners: [
         BlocListener<ImportFileBloc, ImportFileState>(
           listener: (context, state) {
@@ -357,6 +358,17 @@ class _ImportExportFilePageState extends State<ImportExportFilePage>
         ),
       ),
     );
+
+    if (ScreenSize.of(context).isMobile) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Nhập / Xuất dữ liệu'),
+          centerTitle: true,
+        ),
+        body: mainContent,
+      );
+    }
+    return mainContent;
   }
 
   String _noteInforByType(int? type) {

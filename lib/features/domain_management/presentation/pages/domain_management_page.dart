@@ -100,6 +100,12 @@ class _DomainManagementPageState extends State<DomainManagementPage>
           CustomScrollView(
             controller: _scrollController,
             slivers: [
+              if (ScreenSize.of(context).isMobile)
+                const SliverAppBar(
+                  title: Text('Lĩnh vực'),
+                  centerTitle: true,
+                  pinned: true,
+                ),
               if (!ScreenSize.of(context).isMobile)
                 SliverPadding(
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),

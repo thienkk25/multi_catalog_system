@@ -96,6 +96,12 @@ class _SystemHistoryManagementPageState
           CustomScrollView(
             controller: _scrollController,
             slivers: [
+              if (ScreenSize.of(context).isMobile)
+                const SliverAppBar(
+                  title: Text('Nhật kí hệ thống'),
+                  centerTitle: true,
+                  pinned: true,
+                ),
               if (!ScreenSize.of(context).isMobile)
                 SliverPadding(
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),

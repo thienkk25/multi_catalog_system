@@ -19,7 +19,6 @@ class HomePage extends StatelessWidget {
       builder: (context, screen) {
         if (screen.isMobile) {
           return Scaffold(
-            appBar: AppBar(centerTitle: true, title: const Text('Danh mục')),
             drawer: HomeDrawerWidget(
               currentIndex: currentIndex,
               onSelectTab: onSelectTab,

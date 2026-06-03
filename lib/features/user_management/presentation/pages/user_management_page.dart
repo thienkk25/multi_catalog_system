@@ -131,6 +131,12 @@ class _UserManagementPageState extends State<UserManagementPage>
                   CustomScrollView(
                     controller: _scrollController,
                     slivers: [
+                      if (ScreenSize.of(context).isMobile)
+                        const SliverAppBar(
+                          title: Text('Quản lý người dùng'),
+                          centerTitle: true,
+                          pinned: true,
+                        ),
                       if (!ScreenSize.of(context).isMobile)
                         SliverPadding(
                           padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),

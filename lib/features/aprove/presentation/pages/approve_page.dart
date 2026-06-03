@@ -60,10 +60,44 @@ class _ApprovePageState extends State<ApprovePage>
     super.dispose();
   }
 
+  void _showFilter(BuildContext context) {
+    final domainLookupBloc = context.domainLookupBloc;
+    final groupLookupBloc = context.categoryGroupLookupBloc;
+    final itemVersionBloc = context.itemVersionBloc;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider.value(value: domainLookupBloc),
+            BlocProvider.value(value: groupLookupBloc),
+            BlocProvider.value(value: itemVersionBloc),
+          ],
+          child: DraggableScrollableSheet(
+            initialChildSize: 0.8,
+            minChildSize: 0.5,
+            maxChildSize: 0.9,
+            expand: false,
+            builder: (context, scrollController) {
+              return SingleChildScrollView(
+                controller: scrollController,
+                child: ApproveFilterWidget(
+                  onClose: () => Navigator.pop(context),
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return BlocListener<CategoryItemVersionBloc, CategoryItemVersionState>(
+    final mainContent = BlocListener<CategoryItemVersionBloc, CategoryItemVersionState>(
       listener: (context, state) {
         if (state.error != null) {
           context.notificationCubit.error(state.error!);
@@ -75,96 +109,65 @@ class _ApprovePageState extends State<ApprovePage>
       child: Column(
         children: [
           // --- Header ---
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Danh sách duyệt danh mục',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 20,
-                  ),
-                ),
-                Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        final domainLookupBloc = context.domainLookupBloc;
-                        final groupLookupBloc = context.categoryGroupLookupBloc;
-                        final itemVersionBloc = context.itemVersionBloc;
-
-                        showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true,
-                          builder: (context) {
-                            return MultiBlocProvider(
-                              providers: [
-                                BlocProvider.value(value: domainLookupBloc),
-                                BlocProvider.value(value: groupLookupBloc),
-                                BlocProvider.value(value: itemVersionBloc),
-                              ],
-                              child: DraggableScrollableSheet(
-                                initialChildSize: 0.8,
-                                minChildSize: 0.5,
-                                maxChildSize: 0.9,
-                                expand: false,
-                                builder: (context, scrollController) {
-                                  return SingleChildScrollView(
-                                    controller: scrollController,
-                                    child: ApproveFilterWidget(
-                                      onClose: () => Navigator.pop(context),
-                                    ),
-                                  );
-                                },
-                              ),
-                            );
-                          },
-                        );
-                      },
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.filter_alt_outlined,
-                            color: Colors.black,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            'Lọc',
-                            style: TextStyle(color: Colors.black, fontSize: 14),
-                          ),
-                        ],
-                      ),
+          if (!ScreenSize.of(context).isMobile)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Danh sách duyệt danh mục',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 20,
                     ),
-                    const SizedBox(width: 16),
-                    GestureDetector(
-                      onTap: _onRefresh,
-                      child: Row(
-                        children: [
-                          RotationTransition(
-                            turns: _refreshController,
-                            child: Icon(
-                              Icons.refresh,
+                  ),
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () => _showFilter(context),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.filter_alt_outlined,
                               color: Colors.black,
                               size: 20,
                             ),
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            'Làm mới',
-                            style: TextStyle(color: Colors.black, fontSize: 14),
-                          ),
-                        ],
+                            const SizedBox(width: 4),
+                            Text(
+                              'Lọc',
+                              style: TextStyle(color: Colors.black, fontSize: 14),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                      const SizedBox(width: 16),
+                      GestureDetector(
+                        onTap: _onRefresh,
+                        child: Row(
+                          children: [
+                            RotationTransition(
+                              turns: _refreshController,
+                              child: Icon(
+                                Icons.refresh,
+                                color: Colors.black,
+                                size: 20,
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              'Làm mới',
+                              style: TextStyle(color: Colors.black, fontSize: 14),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
 
           // --- TabBar ---
           TabBar(
@@ -252,6 +255,30 @@ class _ApprovePageState extends State<ApprovePage>
         ],
       ),
     );
+
+    if (ScreenSize.of(context).isMobile) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Duyệt danh mục'),
+          centerTitle: true,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.filter_alt_outlined),
+              onPressed: () => _showFilter(context),
+            ),
+            IconButton(
+              icon: RotationTransition(
+                turns: _refreshController,
+                child: const Icon(Icons.refresh),
+              ),
+              onPressed: _onRefresh,
+            ),
+          ],
+        ),
+        body: mainContent,
+      );
+    }
+    return mainContent;
   }
 
   Widget _buildSearchSection(BuildContext context) {

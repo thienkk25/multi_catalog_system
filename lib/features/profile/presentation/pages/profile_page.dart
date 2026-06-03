@@ -6,6 +6,7 @@ import 'package:multi_catalog_system/core/router/router_names.dart';
 import 'package:multi_catalog_system/core/utils/formatter/data_time_formatter.dart';
 import 'package:multi_catalog_system/core/widgets/custom_button.dart';
 import 'package:multi_catalog_system/core/widgets/custom_card.dart';
+import 'package:multi_catalog_system/core/responsive/screen_size.dart';
 import 'package:multi_catalog_system/core/widgets/error_retry_widget.dart';
 import 'package:multi_catalog_system/features/profile/presentation/presentation.dart';
 
@@ -54,7 +55,7 @@ class _ProfilePageState extends State<ProfilePage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return BlocBuilder<ProfileBloc, ProfileState>(
+    final mainContent = BlocBuilder<ProfileBloc, ProfileState>(
       builder: (context, state) {
         if (state.error != null) {
           return Center(
@@ -181,6 +182,17 @@ class _ProfilePageState extends State<ProfilePage>
         );
       },
     );
+
+    if (ScreenSize.of(context).isMobile) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Hồ sơ cá nhân'),
+          centerTitle: true,
+        ),
+        body: mainContent,
+      );
+    }
+    return mainContent;
   }
 
   String _statusText(String status) {

@@ -88,6 +88,12 @@ class _LegalDocumentPageState extends State<LegalDocumentPage>
           CustomScrollView(
             controller: _scrollController,
             slivers: [
+              if (ScreenSize.of(context).isMobile)
+                const SliverAppBar(
+                  title: Text('Văn bản pháp lý'),
+                  centerTitle: true,
+                  pinned: true,
+                ),
               if (!ScreenSize.of(context).isMobile)
                 SliverPadding(
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),

@@ -92,6 +92,12 @@ class _CategoryGroupPageState extends State<CategoryGroupPage>
           CustomScrollView(
             controller: _scrollController,
             slivers: [
+              if (ScreenSize.of(context).isMobile)
+                const SliverAppBar(
+                  title: Text('Nhóm danh mục'),
+                  centerTitle: true,
+                  pinned: true,
+                ),
               if (!ScreenSize.of(context).isMobile)
                 SliverPadding(
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
