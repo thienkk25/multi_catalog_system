@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multi_catalog_system/core/config/constants/app_constant.dart';
 import 'package:multi_catalog_system/core/utils/extensions/bloc_extension.dart';
+import 'package:multi_catalog_system/core/widgets/app_network_image.dart';
 import 'package:multi_catalog_system/core/widgets/button_back_widget.dart';
 import 'package:multi_catalog_system/core/widgets/custom_button.dart';
 import 'package:multi_catalog_system/core/widgets/custom_circular_progress.dart';
@@ -89,7 +90,7 @@ class _ProfileFormPageState extends State<ProfileFormPage> {
                     Container(
                       width: 120,
                       height: 120,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         shape: BoxShape.circle,
                         gradient: LinearGradient(
                           colors: [
@@ -104,25 +105,24 @@ class _ProfileFormPageState extends State<ProfileFormPage> {
                           _entry?.imageUrl != null &&
                               _entry!.imageUrl!.isNotEmpty
                           ? ClipOval(
-                              child: Image.network(
-                                _entry!.imageUrl!,
+                              child: AppNetworkImage(
+                                imageUrl: _entry!.imageUrl!,
                                 width: 120,
                                 height: 120,
                                 fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) =>
-                                    Text(
-                                      _entry?.fullName?[0].toUpperCase() ?? '?',
-                                      style: TextStyle(
-                                        fontSize: 48,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
+                                errorWidget: Text(
+                                  _entry?.fullName?[0].toUpperCase() ?? '?',
+                                  style: const TextStyle(
+                                    fontSize: 48,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                               ),
                             )
                           : Text(
                               _entry?.fullName?[0].toUpperCase() ?? '?',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 48,
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,

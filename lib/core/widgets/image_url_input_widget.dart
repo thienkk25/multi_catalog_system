@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class ImageUrlInputWidget extends StatefulWidget {
@@ -23,7 +24,9 @@ class _ImageUrlInputWidgetState extends State<ImageUrlInputWidget> {
   @override
   void initState() {
     super.initState();
-    _previewUrl = widget.controller.text.isNotEmpty ? widget.controller.text : null;
+    _previewUrl = widget.controller.text.isNotEmpty
+        ? widget.controller.text
+        : null;
     widget.controller.addListener(_onTextChanged);
   }
 
@@ -41,15 +44,41 @@ class _ImageUrlInputWidgetState extends State<ImageUrlInputWidget> {
     super.dispose();
   }
 
+  String _getWebSafeUrl(String url) {
+    var processedUrl = url.trim();
+    if (processedUrl.contains('drive.google.com')) {
+      final regExp = RegExp(r'\/d\/([a-zA-Z0-9-_]+)');
+      final match = regExp.firstMatch(processedUrl);
+      if (match != null && match.groupCount >= 1) {
+        final fileId = match.group(1);
+        processedUrl = 'https://lh3.googleusercontent.com/d/$fileId';
+      } else {
+        final idUri = Uri.tryParse(processedUrl);
+        final fileId = idUri?.queryParameters['id'];
+        if (fileId != null) {
+          processedUrl = 'https://lh3.googleusercontent.com/d/$fileId';
+        }
+      }
+    }
+
+    if (kIsWeb) {
+      try {
+        final uri = Uri.parse(processedUrl);
+        if (!uri.host.contains('localhost') &&
+            !uri.host.contains('127.0.0.1')) {
+          return 'https://wsrv.nl/?url=${Uri.encodeComponent(processedUrl)}';
+        }
+      } catch (_) {}
+    }
+    return processedUrl;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (widget.label != null) ...[
-          widget.label!,
-          const SizedBox(height: 8),
-        ],
+        if (widget.label != null) ...[widget.label!, const SizedBox(height: 8)],
         TextFormField(
           controller: widget.controller,
           decoration: InputDecoration(
@@ -90,80 +119,83 @@ class _ImageUrlInputWidgetState extends State<ImageUrlInputWidget> {
               aspectRatio: 16 / 9,
               child: Container(
                 width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade100,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: _hasError ? Colors.red.shade300 : Colors.grey.shade300,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade100,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: _hasError
+                        ? Colors.red.shade300
+                        : Colors.grey.shade300,
+                  ),
                 ),
-              ),
-              child: _hasError
-                  ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.broken_image_outlined,
-                            size: 48,
-                            color: Colors.grey.shade400,
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Không thể tải hình ảnh',
-                            style: TextStyle(
-                              color: Colors.grey.shade500,
-                              fontSize: 13,
+                child: _hasError
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.broken_image_outlined,
+                              size: 48,
+                              color: Colors.grey.shade400,
                             ),
-                          ),
-                        ],
-                      ),
-                    )
-                  : Image.network(
-                      _previewUrl!,
-                      fit: BoxFit.cover,
-                      loadingBuilder: (context, child, loadingProgress) {
-                        if (loadingProgress == null) return child;
-                        return Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(24),
-                            child: CircularProgressIndicator(
-                              value: loadingProgress.expectedTotalBytes != null
-                                  ? loadingProgress.cumulativeBytesLoaded /
-                                      loadingProgress.expectedTotalBytes!
-                                  : null,
-                              strokeWidth: 2,
-                            ),
-                          ),
-                        );
-                      },
-                      errorBuilder: (context, error, stackTrace) {
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          if (mounted) {
-                            setState(() => _hasError = true);
-                          }
-                        });
-                        return Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.broken_image_outlined,
-                                size: 48,
-                                color: Colors.grey.shade400,
+                            const SizedBox(height: 8),
+                            Text(
+                              'Không thể tải hình ảnh',
+                              style: TextStyle(
+                                color: Colors.grey.shade500,
+                                fontSize: 13,
                               ),
-                              const SizedBox(height: 8),
-                              Text(
-                                'Không thể tải hình ảnh',
-                                style: TextStyle(
-                                  color: Colors.grey.shade500,
-                                  fontSize: 13,
+                            ),
+                          ],
+                        ),
+                      )
+                    : Image.network(
+                        _getWebSafeUrl(_previewUrl!),
+                        fit: BoxFit.cover,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(24),
+                              child: CircularProgressIndicator(
+                                value:
+                                    loadingProgress.expectedTotalBytes != null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                          loadingProgress.expectedTotalBytes!
+                                    : null,
+                                strokeWidth: 2,
+                              ),
+                            ),
+                          );
+                        },
+                        errorBuilder: (context, error, stackTrace) {
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            if (mounted) {
+                              setState(() => _hasError = true);
+                            }
+                          });
+                          return Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.broken_image_outlined,
+                                  size: 48,
+                                  color: Colors.grey.shade400,
                                 ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Không thể tải hình ảnh',
+                                  style: TextStyle(
+                                    color: Colors.grey.shade500,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
               ),
             ),
           ),

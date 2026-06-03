@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class AppNetworkImage extends StatelessWidget {
@@ -20,6 +22,35 @@ class AppNetworkImage extends StatelessWidget {
     this.errorWidget,
     this.borderRadius,
   });
+
+  String _getWebSafeUrl(String url) {
+    var processedUrl = url.trim();
+    if (processedUrl.contains('drive.google.com')) {
+      final regExp = RegExp(r'\/d\/([a-zA-Z0-9-_]+)');
+      final match = regExp.firstMatch(processedUrl);
+      if (match != null && match.groupCount >= 1) {
+        final fileId = match.group(1);
+        processedUrl = 'https://lh3.googleusercontent.com/d/$fileId';
+      } else {
+        final idUri = Uri.tryParse(processedUrl);
+        final fileId = idUri?.queryParameters['id'];
+        if (fileId != null) {
+          processedUrl = 'https://lh3.googleusercontent.com/d/$fileId';
+        }
+      }
+    }
+
+    if (kIsWeb) {
+      try {
+        final uri = Uri.parse(processedUrl);
+        if (!uri.host.contains('localhost') &&
+            !uri.host.contains('127.0.0.1')) {
+          return 'https://wsrv.nl/?url=${Uri.encodeComponent(processedUrl)}';
+        }
+      } catch (_) {}
+    }
+    return processedUrl;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,25 +77,20 @@ class AppNetworkImage extends StatelessWidget {
       }
     } else {
       // Handle normal URL
-      image = Image.network(
-        imageUrl!,
+      image = CachedNetworkImage(
+        imageUrl: _getWebSafeUrl(imageUrl!),
         width: width,
         height: height,
         fit: fit,
         filterQuality: FilterQuality.high,
-        loadingBuilder: (context, child, loadingProgress) {
-          if (loadingProgress == null) return child;
-          return placeholder ??
-              Center(
-                child: CircularProgressIndicator(
-                  value: loadingProgress.expectedTotalBytes != null
-                      ? loadingProgress.cumulativeBytesLoaded /
-                          loadingProgress.expectedTotalBytes!
-                      : null,
-                ),
-              );
-        },
-        errorBuilder: (context, error, stackTrace) => _buildError(),
+        placeholder: (context, url) =>
+            placeholder ??
+            const Center(
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+              ),
+            ),
+        errorWidget: (context, url, error) => _buildError(),
       );
     }
 
