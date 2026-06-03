@@ -257,25 +257,27 @@ class _ApprovePageState extends State<ApprovePage>
     );
 
     if (ScreenSize.of(context).isMobile) {
-      return Scaffold(
-        appBar: AppBar(
-          title: const Text('Duyệt danh mục'),
-          centerTitle: true,
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.filter_alt_outlined),
-              onPressed: () => _showFilter(context),
-            ),
-            IconButton(
-              icon: RotationTransition(
-                turns: _refreshController,
-                child: const Icon(Icons.refresh),
+      return Column(
+        children: [
+          AppBar(
+            title: const Text('Duyệt danh mục'),
+            centerTitle: true,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.filter_alt_outlined),
+                onPressed: () => _showFilter(context),
               ),
-              onPressed: _onRefresh,
-            ),
-          ],
-        ),
-        body: mainContent,
+              IconButton(
+                icon: RotationTransition(
+                  turns: _refreshController,
+                  child: const Icon(Icons.refresh),
+                ),
+                onPressed: _onRefresh,
+              ),
+            ],
+          ),
+          Expanded(child: mainContent),
+        ],
       );
     }
     return mainContent;

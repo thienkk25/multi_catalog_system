@@ -360,12 +360,14 @@ class _ImportExportFilePageState extends State<ImportExportFilePage>
     );
 
     if (ScreenSize.of(context).isMobile) {
-      return Scaffold(
-        appBar: AppBar(
-          title: const Text('Nhập / Xuất dữ liệu'),
-          centerTitle: true,
-        ),
-        body: mainContent,
+      return Column(
+        children: [
+          AppBar(
+            title: const Text('Nhập / Xuất dữ liệu'),
+            centerTitle: true,
+          ),
+          Expanded(child: mainContent),
+        ],
       );
     }
     return mainContent;

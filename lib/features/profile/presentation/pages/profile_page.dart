@@ -55,7 +55,7 @@ class _ProfilePageState extends State<ProfilePage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final mainContent = BlocBuilder<ProfileBloc, ProfileState>(
+    return BlocBuilder<ProfileBloc, ProfileState>(
       builder: (context, state) {
         if (state.error != null) {
           return Center(
@@ -76,6 +76,12 @@ class _ProfilePageState extends State<ProfilePage>
             children: [
               CustomScrollView(
                 slivers: [
+                  if (ScreenSize.of(context).isMobile)
+                    const SliverAppBar(
+                      title: Text('Hồ sơ cá nhân'),
+                      centerTitle: true,
+                      pinned: true,
+                    ),
                   SliverPadding(
                     padding: const EdgeInsets.all(10),
                     sliver: SliverList(
@@ -182,17 +188,6 @@ class _ProfilePageState extends State<ProfilePage>
         );
       },
     );
-
-    if (ScreenSize.of(context).isMobile) {
-      return Scaffold(
-        appBar: AppBar(
-          title: const Text('Hồ sơ cá nhân'),
-          centerTitle: true,
-        ),
-        body: mainContent,
-      );
-    }
-    return mainContent;
   }
 
   String _statusText(String status) {
